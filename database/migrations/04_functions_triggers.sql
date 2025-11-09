@@ -371,12 +371,8 @@ BEGIN
     ranked_changes AS (
         SELECT
             ROW_NUMBER() OVER (ORDER BY
-                CASE
-                    WHEN p_mover_type = 'gainers' THEN
-                        (pc.current_price - pc.period_start_price)::NUMERIC / pc.period_start_price DESC
-                    ELSE
-                        (pc.current_price - pc.period_start_price)::NUMERIC / pc.period_start_price ASC
-                END
+                ((pc.current_price - pc.period_start_price)::NUMERIC / pc.period_start_price) *
+                CASE WHEN p_mover_type = 'gainers' THEN -1 ELSE 1 END
             )::INTEGER AS rank,
             pc.stock_code,
             pc.name,
