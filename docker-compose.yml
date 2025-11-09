@@ -1,0 +1,298 @@
+version: '3.8'
+
+# ============================================================================
+# Stock Screening Platform - Development Stack
+# ============================================================================
+
+services:
+  # ==========================================================================
+  # DATABASE
+  # ==========================================================================
+
+  postgres:
+    image: timescale/timescaledb:latest-pg16
+    container_name: screener_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-screener_db}
+      POSTGRES_USER: ${DB_USER:-screener_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-screener_password}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-screener_user} -d ${DB_NAME:-screener_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - screener_network
+
+  # ==========================================================================
+  # CACHE
+  # ==========================================================================
+
+  redis:
+    image: redis:7-alpine
+    container_name: screener_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - screener_network
+
+  # ==========================================================================
+  # BACKEND API
+  # ==========================================================================
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        PYTHON_VERSION: 3.11
+    container_name: screener_backend
+    restart: unless-stopped
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/${DB_NAME:-screener_db}
+
+      # Redis
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+
+      # JWT
+      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-this-in-production}
+      ACCESS_TOKEN_EXPIRE_MINUTES: 15
+      REFRESH_TOKEN_EXPIRE_DAYS: 30
+
+      # Application
+      DEBUG: ${DEBUG:-false}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+
+      # External APIs
+      KRX_API_KEY: ${KRX_API_KEY}
+      FGUIDE_API_KEY: ${FGUIDE_API_KEY}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - screener_network
+
+  # ==========================================================================
+  # CELERY WORKER (Background Tasks)
+  # ==========================================================================
+
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: screener_celery_worker
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/${DB_NAME:-screener_db}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/1
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/2
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=4
+    networks:
+      - screener_network
+
+  # ==========================================================================
+  # AIRFLOW (Data Pipeline)
+  # ==========================================================================
+
+  airflow_webserver:
+    image: apache/airflow:2.8.0-python3.11
+    container_name: screener_airflow_webserver
+    restart: unless-stopped
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-your-fernet-key-here}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-your-secret-key-here}
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+      _AIRFLOW_DB_UPGRADE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+      _AIRFLOW_WWW_USER_USERNAME: ${AIRFLOW_USER:-admin}
+      _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_PASSWORD:-admin}
+    ports:
+      - "${AIRFLOW_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./data_pipeline/dags:/opt/airflow/dags
+      - ./data_pipeline/plugins:/opt/airflow/plugins
+      - airflow_logs:/opt/airflow/logs
+    command: webserver
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - screener_network
+
+  airflow_scheduler:
+    image: apache/airflow:2.8.0-python3.11
+    container_name: screener_airflow_scheduler
+    restart: unless-stopped
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-your-fernet-key-here}
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    depends_on:
+      - airflow_webserver
+    volumes:
+      - ./data_pipeline/dags:/opt/airflow/dags
+      - ./data_pipeline/plugins:/opt/airflow/plugins
+      - airflow_logs:/opt/airflow/logs
+    command: scheduler
+    networks:
+      - screener_network
+
+  # ==========================================================================
+  # FRONTEND (Development Server)
+  # ==========================================================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      args:
+        NODE_VERSION: 18
+    container_name: screener_frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+      VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8000/ws}
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+    networks:
+      - screener_network
+
+  # ==========================================================================
+  # NGINX (Reverse Proxy)
+  # ==========================================================================
+
+  nginx:
+    image: nginx:alpine
+    container_name: screener_nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    depends_on:
+      - frontend
+      - backend
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - screener_network
+
+  # ==========================================================================
+  # MONITORING
+  # ==========================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: screener_prometheus
+    restart: unless-stopped
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./infrastructure/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - screener_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: screener_grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+    ports:
+      - "${GRAFANA_PORT:-3001}:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - ./infrastructure/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./infrastructure/monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - grafana_data:/var/lib/grafana
+    networks:
+      - screener_network
+
+# ============================================================================
+# VOLUMES
+# ============================================================================
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  airflow_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# ============================================================================
+# NETWORKS
+# ============================================================================
+
+networks:
+  screener_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
