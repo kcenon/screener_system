@@ -18,9 +18,16 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.utils.task_group import TaskGroup
 
 import logging
+import os
+import sys
 import requests
 import pandas as pd
 from typing import List, Dict
+
+# Add scripts directory to Python path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
+
+from krx_api_client import create_client, PriceData
 
 # Default arguments for the DAG
 default_args = {
@@ -54,44 +61,39 @@ dag = DAG(
 
 def fetch_krx_prices(**context):
     """
-    Fetch daily price data from KRX API or web scraping.
+    Fetch daily price data from KRX API using KRX API client.
 
-    In production, replace this with actual KRX API integration.
+    The client can use either real API data or mock data for testing.
+    Set KRX_USE_MOCK=true environment variable to use mock data.
     """
     logger = logging.getLogger(__name__)
     execution_date = context['ds']  # YYYY-MM-DD format
 
     logger.info(f"Fetching KRX prices for {execution_date}")
 
-    # TODO: Replace with actual KRX API call
-    # Example placeholder for demonstration
-    prices_data = []
-
     try:
-        # Pseudo-code for KRX API integration
-        # response = requests.get(
-        #     "https://api.krx.co.kr/data/prices",
-        #     params={"date": execution_date},
-        #     headers={"Authorization": f"Bearer {KRX_API_KEY}"}
-        # )
-        # response.raise_for_status()
-        # prices_data = response.json()['data']
+        # Create KRX API client (automatically uses environment configuration)
+        with create_client() as client:
+            # Fetch daily prices for execution date
+            price_objects = client.fetch_daily_prices(date=execution_date)
 
-        # Simulated data for demo
-        logger.warning("Using simulated data - replace with actual KRX API")
-        prices_data = [
-            {
-                'stock_code': '005930',
-                'trade_date': execution_date,
-                'open_price': 70000,
-                'high_price': 72000,
-                'low_price': 69500,
-                'close_price': 71000,
-                'volume': 15234567,
-                'trading_value': 1080000000000,
-                'market_cap': 423000000000000
-            }
-        ]
+            # Convert PriceData objects to dictionaries for XCom
+            prices_data = [
+                {
+                    'stock_code': p.stock_code,
+                    'trade_date': p.trade_date,
+                    'open_price': p.open_price,
+                    'high_price': p.high_price,
+                    'low_price': p.low_price,
+                    'close_price': p.close_price,
+                    'volume': p.volume,
+                    'trading_value': p.trading_value,
+                    'market_cap': p.market_cap
+                }
+                for p in price_objects
+            ]
+
+            logger.info(f"Fetched {len(prices_data)} stock prices from KRX API")
 
     except Exception as e:
         logger.error(f"Failed to fetch KRX prices: {e}")
@@ -100,7 +102,7 @@ def fetch_krx_prices(**context):
     # Push data to XCom for next task
     context['task_instance'].xcom_push(key='prices_data', value=prices_data)
 
-    logger.info(f"Fetched {len(prices_data)} stock prices")
+    logger.info(f"Successfully processed {len(prices_data)} stock prices")
     return len(prices_data)
 
 
