@@ -1,7 +1,7 @@
 """Application configuration settings"""
 
 from functools import lru_cache
-from typing import List
+from typing import List, Union
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
@@ -51,18 +51,20 @@ class Settings(BaseSettings):
     # CORS
     # ========================================================================
 
-    CORS_ORIGINS: List[str] = [
+    CORS_ORIGINS: Union[str, List[str]] = [
         "http://localhost:5173",
         "http://localhost:3000",
     ]
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
-    def assemble_cors_origins(cls, v):
+    def assemble_cors_origins(cls, v) -> List[str]:
         """Parse CORS origins from comma-separated string or list"""
         if isinstance(v, str):
             return [i.strip() for i in v.split(",")]
-        return v
+        elif isinstance(v, list):
+            return v
+        return []  # Default to empty list if neither string nor list
 
     # ========================================================================
     # RATE LIMITING
