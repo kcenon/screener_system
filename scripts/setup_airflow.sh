@@ -114,6 +114,22 @@ setup_docker() {
     log_info "Creating Docker volumes..."
     docker volume create screener_system_airflow_logs 2>/dev/null || true
 
+    # Create Airflow database if it doesn't exist
+    log_info "Checking Airflow database..."
+    DB_EXISTS=$(docker-compose exec -T postgres psql -U screener_user -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='airflow'" 2>/dev/null || echo "0")
+
+    if [ "$DB_EXISTS" != "1" ]; then
+        log_info "Creating Airflow database..."
+        docker-compose exec -T postgres psql -U screener_user -d postgres -c "CREATE DATABASE airflow OWNER screener_user;" || {
+            log_error "Failed to create Airflow database"
+            log_info "Make sure PostgreSQL is running: docker-compose up -d postgres"
+            exit 1
+        }
+        log_success "Airflow database created"
+    else
+        log_info "Airflow database already exists"
+    fi
+
     # Start Airflow services with 'full' profile
     log_info "Starting Airflow services..."
     cd "$PROJECT_ROOT"
