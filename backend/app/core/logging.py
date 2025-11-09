@@ -2,16 +2,20 @@
 
 import logging
 import sys
-from app.core.config import settings
 
 
 def setup_logging() -> logging.Logger:
     """
     Configure application logging
 
+    Note: Imports settings lazily to avoid circular import issues with app.core.config.
+
     Returns:
         Logger instance for the application
     """
+    # Lazy import to avoid circular dependency
+    from app.core.config import settings
+
     # Create logger
     logger = logging.getLogger("screener")
 
