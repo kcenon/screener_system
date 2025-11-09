@@ -1,0 +1,119 @@
+# ============================================================================
+# Prometheus Configuration - Stock Screening Platform
+# ============================================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: 'development'
+    cluster: 'screener-local'
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#             - alertmanager:9093
+
+# Rule files
+rule_files:
+  # - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # ============================================================================
+  # PROMETHEUS SELF-MONITORING
+  # ============================================================================
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # ============================================================================
+  # BACKEND API (FastAPI)
+  # ============================================================================
+
+  - job_name: 'backend'
+    scrape_interval: 10s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['backend:8000']
+        labels:
+          service: 'backend-api'
+          tier: 'application'
+
+  # ============================================================================
+  # POSTGRESQL (TimescaleDB)
+  # ============================================================================
+
+  - job_name: 'postgres'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'postgres'
+          tier: 'database'
+
+  # ============================================================================
+  # REDIS CACHE
+  # ============================================================================
+
+  - job_name: 'redis'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+          tier: 'cache'
+
+  # ============================================================================
+  # NGINX REVERSE PROXY
+  # ============================================================================
+
+  - job_name: 'nginx'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+        labels:
+          service: 'nginx'
+          tier: 'proxy'
+
+  # ============================================================================
+  # CELERY WORKERS
+  # ============================================================================
+
+  - job_name: 'celery'
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['celery_worker:8001']
+        labels:
+          service: 'celery-worker'
+          tier: 'background-jobs'
+
+  # ============================================================================
+  # AIRFLOW
+  # ============================================================================
+
+  - job_name: 'airflow'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['airflow-exporter:9112']
+        labels:
+          service: 'airflow'
+          tier: 'data-pipeline'
+
+  # ============================================================================
+  # NODE EXPORTER (System Metrics)
+  # ============================================================================
+
+  # - job_name: 'node'
+  #   scrape_interval: 30s
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #       labels:
+  #         service: 'node-exporter'
+  #         tier: 'infrastructure'

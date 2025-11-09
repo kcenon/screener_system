@@ -52,6 +52,8 @@ A comprehensive stock analysis and screening platform for Korean markets (KOSPI/
 
 ### Installation
 
+**Option 1: Docker Compose (Recommended)**
+
 ```bash
 # Clone repository
 git clone https://github.com/your-org/screener_system.git
@@ -61,31 +63,42 @@ cd screener_system
 cp .env.example .env
 # Edit .env with your configuration
 
-# Start services with Docker Compose
+# Start all services with Docker Compose
 docker-compose up -d
 
-# Initialize database
-cd database
-chmod +x scripts/run_migrations.sh
-./scripts/run_migrations.sh
+# Check service health
+docker-compose ps
 
-# Load seed data (development)
-psql -U screener_user -d screener_db -f seeds/dev_seed.sql
+# View logs
+docker-compose logs -f backend
+```
 
-# Start frontend
-cd ../frontend
+**Option 2: Local Development**
+
+```bash
+# Clone repository
+git clone https://github.com/your-org/screener_system.git
+cd screener_system
+
+# Setup environment
+cp .env.example .env
+
+# Start database and cache only
+docker-compose up -d postgres redis
+
+# Backend setup
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+
+# Frontend setup (in another terminal)
+cd frontend
 npm install
 npm run dev
 
-# Start backend
-cd ../backend
-pip install -r requirements.txt
-uvicorn main:app --reload
-
-# Start data pipeline (optional)
-cd ../data_pipeline
-airflow db init
-airflow webserver & airflow scheduler
+# Data pipeline setup (optional, in another terminal)
+cd data_pipeline
+# Follow data_pipeline/README.md for setup
 ```
 
 Access the application:
