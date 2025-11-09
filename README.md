@@ -279,7 +279,7 @@ Interactive API documentation available at:
 
 ## 📄 License
 
-Proprietary - All rights reserved. See [LICENSE](LICENSE) for details.
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
 
 ## 📞 Support
 
