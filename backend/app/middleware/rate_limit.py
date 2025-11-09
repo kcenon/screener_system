@@ -10,12 +10,20 @@ from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.logging import logger
 
+# Lua script for atomic incr+expire operation
+# This ensures that the counter is incremented and TTL is set atomically,
+# preventing race conditions where a key might persist without expiration
+RATE_LIMIT_SCRIPT = """
+local current = redis.call('incr', KEYS[1])
+if current == 1 then
+    redis.call('expire', KEYS[1], ARGV[1])
+end
+return current
+"""
+
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
-    """Middleware to implement rate limiting"""
-
-    # Whitelist paths that should not be rate limited
-    WHITELIST_PATHS = ["/health", "/health/db", "/health/redis", "/docs", "/redoc", "/openapi.json"]
+    """Middleware to implement rate limiting with atomic Redis operations"""
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """
@@ -29,7 +37,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             Response from next handler or 429 if rate limit exceeded
         """
         # Skip rate limiting for whitelisted paths
-        if request.url.path in self.WHITELIST_PATHS:
+        if request.url.path in settings.RATE_LIMIT_WHITELIST_PATHS:
             return await call_next(request)
 
         # Get user tier from request state (set by auth middleware)
@@ -55,12 +63,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 logger.warning("Redis not available, skipping rate limiting")
                 return await call_next(request)
 
-            # Increment counter
-            current = await cache_manager.redis.incr(key)
-
-            # Set expiry on first request (1 minute window)
-            if current == 1:
-                await cache_manager.redis.expire(key, 60)
+            # Atomically increment counter and set TTL
+            # Using Lua script to ensure atomicity
+            current = await cache_manager.redis.eval(
+                RATE_LIMIT_SCRIPT, keys=[key], args=[settings.RATE_LIMIT_WINDOW]
+            )
 
             # Check if limit exceeded
             if current > limit:
@@ -82,8 +89,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     headers={
                         "X-RateLimit-Limit": str(limit),
                         "X-RateLimit-Remaining": "0",
-                        "X-RateLimit-Reset": "60",
-                        "Retry-After": "60",
+                        "X-RateLimit-Reset": str(settings.RATE_LIMIT_WINDOW),
+                        "Retry-After": str(settings.RATE_LIMIT_WINDOW),
                     },
                 )
 
@@ -94,7 +101,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             remaining = max(0, limit - current)
             response.headers["X-RateLimit-Limit"] = str(limit)
             response.headers["X-RateLimit-Remaining"] = str(remaining)
-            response.headers["X-RateLimit-Reset"] = "60"
+            response.headers["X-RateLimit-Reset"] = str(settings.RATE_LIMIT_WINDOW)
 
             return response
 
