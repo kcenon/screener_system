@@ -5,7 +5,7 @@
 - **Priority**: High
 - **Assignee**: TBD
 - **Estimated Time**: 10 hours
-- **Sprint**: Sprint 2 (Week 4)
+- **Sprint**: Sprint 2 (Week 3-4)
 - **Tags**: #infrastructure #cicd #automation
 
 ## Description

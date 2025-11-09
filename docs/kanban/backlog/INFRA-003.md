@@ -5,7 +5,7 @@
 - **Priority**: Medium
 - **Assignee**: TBD
 - **Estimated Time**: 12 hours
-- **Sprint**: Sprint 2-3 (Week 4-5)
+- **Sprint**: Sprint 3 (Week 5-6)
 - **Tags**: #infrastructure #monitoring #observability
 
 ## Description
