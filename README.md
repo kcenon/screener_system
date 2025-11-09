@@ -325,6 +325,6 @@ Proprietary - All rights reserved. See [LICENSE](LICENSE) for details.
 
 ---
 
-**Built with ❤️ for Korean investors**
+**Made with ❤️ by 🍀☀🌕🌥 🌊**
 
 © 2024 Screener Platform. All rights reserved.
