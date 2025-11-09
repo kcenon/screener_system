@@ -1,0 +1,33 @@
+# Apache Airflow and Providers
+# =============================================================================
+
+# Core Airflow with constraints for Python 3.11
+apache-airflow[postgres,celery]==2.8.0
+
+# Airflow Providers
+apache-airflow-providers-postgres==5.10.0
+apache-airflow-providers-celery==3.6.0
+
+# Database Drivers
+# =============================================================================
+asyncpg==0.29.0  # Async PostgreSQL driver
+psycopg2-binary==2.9.9  # PostgreSQL driver (for Airflow metadata DB)
+
+# Data Processing
+# =============================================================================
+pandas==2.1.4
+numpy==1.26.2
+
+# HTTP Client
+# =============================================================================
+requests==2.31.0
+httpx==0.25.2  # Async HTTP client
+
+# Utilities
+# =============================================================================
+python-dotenv==1.0.0  # Environment variable management
+
+# Testing
+# =============================================================================
+pytest==7.4.3
+pytest-asyncio==0.21.1

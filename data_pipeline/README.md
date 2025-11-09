@@ -1,5 +1,17 @@
 # Data Pipeline - Apache Airflow
 
+## Quick Start
+
+**New to Airflow?** See [QUICKSTART.md](QUICKSTART.md) for a 5-minute setup guide.
+
+**TL;DR:**
+```bash
+# Automated setup (recommended)
+./scripts/setup_airflow.sh docker
+
+# Access UI at http://localhost:8080 (admin/admin)
+```
+
 ## Overview
 
 This directory contains Apache Airflow DAGs for the Stock Screening Platform's data ingestion and processing pipelines.
