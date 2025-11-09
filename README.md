@@ -326,5 +326,3 @@ Proprietary - All rights reserved. See [LICENSE](LICENSE) for details.
 ---
 
 **Made with ❤️ by 🍀☀🌕🌥 🌊**
-
-© 2024 Screener Platform. All rights reserved.
