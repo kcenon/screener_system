@@ -275,8 +275,8 @@ COMMENT ON INDEX idx_sessions_expired IS 'Optimizes cleanup job for expired sess
 CREATE OR REPLACE VIEW index_usage_stats AS
 SELECT
     schemaname,
-    tablename,
-    indexname,
+    relname AS tablename,
+    indexrelname AS indexname,
     idx_scan AS scans,
     idx_tup_read AS tuples_read,
     idx_tup_fetch AS tuples_fetched,
