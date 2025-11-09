@@ -26,7 +26,9 @@ FROM base as dependencies
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+# Note: Using npm install instead of npm ci for development
+# npm ci requires package-lock.json, which will be generated in FE-001
+RUN npm install
 
 # ============================================================================
 # STAGE 3: Development

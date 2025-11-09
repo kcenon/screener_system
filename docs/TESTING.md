@@ -57,15 +57,59 @@ KRX_API_KEY=
 FGUIDE_API_KEY=
 ```
 
+## Service Profiles
+
+The project uses Docker Compose profiles to manage optional services:
+
+### Available Profiles
+
+- **Default** (no profile): Core services only
+  - PostgreSQL + TimescaleDB
+  - Redis
+  - Backend API
+
+- **frontend**: Add frontend development server
+  - Includes: Vite dev server, NGINX reverse proxy
+  - Usage: `--profile frontend`
+
+- **monitoring**: Add monitoring stack
+  - Includes: Prometheus, Grafana
+  - Usage: `--profile monitoring`
+
+- **full**: All services
+  - Includes everything above + Celery, Airflow
+  - Usage: `--profile full`
+
+### Profile Usage Examples
+
+```bash
+# Core services only (recommended for initial testing)
+docker-compose up -d
+
+# Core + Frontend
+docker-compose --profile frontend up -d
+
+# Core + Monitoring
+docker-compose --profile monitoring up -d
+
+# All services
+docker-compose --profile full up -d
+
+# Multiple profiles
+docker-compose --profile frontend --profile monitoring up -d
+```
+
+**Note**: FE-001 (Frontend Setup) is not yet complete, so frontend services will fail to build. Use default profile for testing backend infrastructure.
+
 ## Testing Procedures
 
 ### 1. Build and Start Services
 
 ```bash
-# Build all images
+# Build core services only (recommended for initial testing)
 docker-compose build
 
-# Start all services in background
+# Start core services (PostgreSQL, Redis, Backend)
 docker-compose up -d
 
 # View logs
