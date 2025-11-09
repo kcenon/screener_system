@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import List
 
-from pydantic import AnyHttpUrl, validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -56,7 +56,8 @@ class Settings(BaseSettings):
         "http://localhost:3000",
     ]
 
-    @validator("CORS_ORIGINS", pre=True)
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
     def assemble_cors_origins(cls, v):
         """Parse CORS origins from comma-separated string or list"""
         if isinstance(v, str):

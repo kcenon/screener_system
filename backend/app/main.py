@@ -18,6 +18,9 @@ from app.api.v1.endpoints import health
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.exceptions import AppException
+from app.core.logging import logger
+from app.middleware.logging import LoggingMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
 
 
 @asynccontextmanager
@@ -28,26 +31,26 @@ async def lifespan(app: FastAPI):
     Handles startup and shutdown events for the application.
     """
     # Startup
-    print("🚀 Starting Stock Screening Platform API...")
+    logger.info("Starting Stock Screening Platform API...")
 
     # Connect to Redis
     try:
         await cache_manager.connect()
-        print("✅ Connected to Redis")
+        logger.info("Connected to Redis")
     except Exception as e:
-        print(f"⚠️  Failed to connect to Redis: {e}")
+        logger.warning(f"Failed to connect to Redis: {e}")
 
     yield
 
     # Shutdown
-    print("👋 Shutting down Stock Screening Platform API...")
+    logger.info("Shutting down Stock Screening Platform API...")
 
     # Disconnect from Redis
     try:
         await cache_manager.disconnect()
-        print("✅ Disconnected from Redis")
+        logger.info("Disconnected from Redis")
     except Exception as e:
-        print(f"⚠️  Error disconnecting from Redis: {e}")
+        logger.warning(f"Error disconnecting from Redis: {e}")
 
 
 # Create FastAPI application
@@ -77,6 +80,12 @@ app.add_middleware(
 
 # GZip compression middleware
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# Request logging middleware
+app.add_middleware(LoggingMiddleware)
+
+# Rate limiting middleware
+app.add_middleware(RateLimitMiddleware)
 
 # ============================================================================
 # EXCEPTION HANDLERS

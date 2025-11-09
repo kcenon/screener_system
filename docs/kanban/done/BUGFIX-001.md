@@ -1,13 +1,15 @@
 # [BUGFIX-001] Fix Critical Issues from Code Review
 
 ## Metadata
-- **Status**: TODO
+- **Status**: DONE
 - **Priority**: Critical
-- **Assignee**: TBD
+- **Assignee**: Development Team
 - **Estimated Time**: 4 hours
+- **Actual Time**: 2 hours
 - **Sprint**: Sprint 1 (Week 1-2)
 - **Tags**: #bugfix #critical #code-review
 - **Related Review**: docs/reviews/REVIEW_2025-11-09_initial-setup.md
+- **Completed**: 2025-11-09
 
 ## Description
 Fix critical issues identified in the initial project setup code review that must be resolved before merging to main.
@@ -15,24 +17,25 @@ Fix critical issues identified in the initial project setup code review that mus
 ## Subtasks
 
 ### Critical Issue #1: Redis Health Check
-- [ ] Update Redis health check in docker-compose.yml
-  - [ ] Remove invalid `incr` command
-  - [ ] Add password authentication with `-a` flag
-  - [ ] Test health check works correctly
+- [x] Update Redis health check in docker-compose.yml
+  - [x] Remove invalid `incr` command
+  - [x] Add password authentication with `-a` flag
+  - [x] Use sh -c with $$REDIS_PASSWORD for env var access
+  - [ ] Test health check works correctly (requires Docker daemon)
 
 ### Critical Issue #2: Backend Health Check
-- [ ] Fix backend container health check
-  - [ ] Option A: Add curl to backend Dockerfile
-  - [ ] Option B: Implement Python-based health check script
-  - [ ] Update docker-compose.yml health check command
-  - [ ] Verify health check works
+- [x] Fix backend container health check
+  - [x] Option A: Add curl to backend Dockerfile (already present)
+  - [x] Verified curl installed in Dockerfile line 21
+  - [ ] Verify health check works (requires Docker daemon)
 
 ### Critical Issue #3: NGINX CORS Configuration
-- [ ] Remove CORS headers from NGINX configuration
-  - [ ] Remove `add_header Access-Control-*` directives
-  - [ ] Remove OPTIONS request handling in NGINX
-  - [ ] Verify FastAPI CORS middleware handles requests
-  - [ ] Test CORS functionality from browser
+- [x] Remove CORS headers from NGINX configuration
+  - [x] Remove `add_header Access-Control-*` directives
+  - [x] Remove OPTIONS request handling in NGINX
+  - [x] Add comment that CORS is handled by FastAPI
+  - [ ] Verify FastAPI CORS middleware handles requests (requires Docker daemon)
+  - [ ] Test CORS functionality from browser (requires Docker daemon)
 
 ## Implementation Details
 
@@ -86,7 +89,7 @@ backend:
 - **PR**: #1
 
 ## Progress
-- **0%** - Not started
+- **100%** - Implementation completed (runtime testing pending)
 
 ## Notes
 - These are blocking issues that prevent production deployment
