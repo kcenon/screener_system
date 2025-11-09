@@ -14,7 +14,7 @@ from app.api.error_handlers import (
     sqlalchemy_exception_handler,
     validation_exception_handler,
 )
-from app.api.v1.endpoints import health
+from app.api.v1.endpoints import auth, health
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.exceptions import AppException
@@ -103,10 +103,12 @@ app.add_exception_handler(Exception, generic_exception_handler)
 # Include health check routes
 app.include_router(health.router)
 
+# Include authentication routes
+app.include_router(auth.router, prefix="/v1")
+
 # TODO: Add more routers here as they are implemented
-# app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-# app.include_router(stocks.router, prefix="/api/v1/stocks", tags=["stocks"])
-# app.include_router(screening.router, prefix="/api/v1/screening", tags=["screening"])
+# app.include_router(stocks.router, prefix="/v1/stocks", tags=["stocks"])
+# app.include_router(screening.router, prefix="/v1/screening", tags=["screening"])
 
 # ============================================================================
 # ROOT ENDPOINT

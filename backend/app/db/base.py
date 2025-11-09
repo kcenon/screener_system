@@ -1,11 +1,16 @@
 """Base database model"""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import DeclarativeBase
+
+
+def utc_now() -> datetime:
+    """Return current UTC time (timezone-aware)"""
+    return datetime.now(timezone.utc)
 
 
 class Base(DeclarativeBase):
@@ -24,15 +29,15 @@ class TimestampMixin:
     """Mixin to add created_at and updated_at timestamps"""
 
     created_at = Column(
-        DateTime,
-        default=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
         nullable=False,
     )
 
     updated_at = Column(
-        DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        DateTime(timezone=True),
+        default=utc_now,
+        onupdate=utc_now,
         nullable=False,
     )
 
