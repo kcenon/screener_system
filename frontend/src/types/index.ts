@@ -2,9 +2,33 @@
 export interface User {
   id: string
   email: string
-  username: string
+  name: string
+  tier: 'free' | 'basic' | 'premium'
   is_active: boolean
   created_at: string
+}
+
+// Authentication types
+export interface LoginRequest {
+  email: string
+  password: string
+}
+
+export interface RegisterRequest {
+  email: string
+  password: string
+  name: string
+}
+
+export interface TokenResponse {
+  access_token: string
+  refresh_token: string
+  token_type: string
+  user: User
+}
+
+export interface RefreshTokenRequest {
+  refresh_token: string
 }
 
 export interface Stock {

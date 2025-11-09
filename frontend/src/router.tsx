@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage'
 import ScreenerPage from './pages/ScreenerPage'
 import StockDetailPage from './pages/StockDetailPage'
 import NotFoundPage from './pages/NotFoundPage'
+import ProtectedRoute from './components/ProtectedRoute'
 
 export const router = createBrowserRouter([
   {
@@ -18,11 +19,19 @@ export const router = createBrowserRouter([
       },
       {
         path: 'screener',
-        element: <ScreenerPage />,
+        element: (
+          <ProtectedRoute>
+            <ScreenerPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'stocks/:code',
-        element: <StockDetailPage />,
+        element: (
+          <ProtectedRoute>
+            <StockDetailPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'login',

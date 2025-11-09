@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@/types'
+import { authService } from '@/services/authService'
 
 interface AuthState {
   user: User | null
@@ -9,7 +10,8 @@ interface AuthState {
   isAuthenticated: boolean
   login: (user: User, accessToken: string, refreshToken: string) => void
   logout: () => void
-  setUser: (user: User) => void
+  setUser: (user: User | null) => void
+  updateTokens: (accessToken: string, refreshToken: string) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -19,21 +21,36 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-      login: (user, accessToken, refreshToken) =>
+
+      login: (user, accessToken, refreshToken) => {
+        // Store tokens in localStorage
+        authService.storeTokens(accessToken, refreshToken)
         set({
           user,
           accessToken,
           refreshToken,
           isAuthenticated: true,
-        }),
-      logout: () =>
+        })
+      },
+
+      logout: () => {
+        // Clear tokens from localStorage
+        authService.clearTokens()
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        })
+      },
+
       setUser: (user) => set({ user }),
+
+      updateTokens: (accessToken, refreshToken) => {
+        // Update tokens in localStorage
+        authService.storeTokens(accessToken, refreshToken)
+        set({ accessToken, refreshToken })
+      },
     }),
     {
       name: 'auth-storage',
