@@ -86,33 +86,6 @@ async def list_stocks(
 
 
 @router.get(
-    "/{stock_code}",
-    response_model=StockDetail,
-    status_code=status.HTTP_200_OK,
-    summary="Get stock detail",
-    description="""
-    Get detailed information for a specific stock.
-
-    - Includes basic stock information
-    - Latest daily price data
-    - Latest calculated indicators
-    - Cached for 5 minutes
-    """,
-)
-async def get_stock_detail(
-    stock_code: str,
-    stock_service: StockService = Depends(get_stock_service),
-):
-    """
-    Get stock detail by code
-
-    Returns complete stock information including latest price
-    and calculated indicators.
-    """
-    return await stock_service.get_stock_by_code(stock_code)
-
-
-@router.get(
     "/search",
     response_model=StockSearchResponse,
     status_code=status.HTTP_200_OK,
@@ -157,6 +130,33 @@ async def search_stocks(
         market=market,
         limit=limit,
     )
+
+
+@router.get(
+    "/{stock_code}",
+    response_model=StockDetail,
+    status_code=status.HTTP_200_OK,
+    summary="Get stock detail",
+    description="""
+    Get detailed information for a specific stock.
+
+    - Includes basic stock information
+    - Latest daily price data
+    - Latest calculated indicators
+    - Cached for 5 minutes
+    """,
+)
+async def get_stock_detail(
+    stock_code: str,
+    stock_service: StockService = Depends(get_stock_service),
+):
+    """
+    Get stock detail by code
+
+    Returns complete stock information including latest price
+    and calculated indicators.
+    """
+    return await stock_service.get_stock_by_code(stock_code)
 
 
 # ============================================================================
