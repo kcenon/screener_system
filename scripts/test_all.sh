@@ -73,7 +73,8 @@ fi
 echo ""
 
 echo "1️⃣1️⃣ Testing CORS Headers..."
-response=$(curl -s -v http://localhost:8000/ 2>&1 | grep -i "access-control")
+# CORS headers only appear when Origin header is sent
+response=$(curl -s -v -H "Origin: http://localhost:5173" http://localhost:8000/health 2>&1 | grep -i "access-control" || true)
 if [ -n "$response" ]; then
   echo "   ✅ CORS Headers OK"
   echo "   $response"
@@ -83,7 +84,8 @@ fi
 echo ""
 
 echo "1️⃣2️⃣ Testing Rate Limit Headers..."
-response=$(curl -s -v http://localhost:8000/ 2>&1 | grep -i "x-ratelimit")
+# Add || true to prevent script exit when grep finds no matches
+response=$(curl -s -v http://localhost:8000/ 2>&1 | grep -i "x-ratelimit" || true)
 if [ -n "$response" ]; then
   echo "   ✅ Rate Limit Headers OK"
   echo "   $response"
