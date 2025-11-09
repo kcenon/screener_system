@@ -73,6 +73,26 @@ class Settings(BaseSettings):
     RATE_LIMIT_FREE: int = 100
     RATE_LIMIT_BASIC: int = 500
     RATE_LIMIT_PRO: int = 2000
+    RATE_LIMIT_WINDOW: int = 60  # Rate limit window in seconds
+
+    RATE_LIMIT_WHITELIST_PATHS: Union[str, List[str]] = [
+        "/health",
+        "/health/db",
+        "/health/redis",
+        "/docs",
+        "/redoc",
+        "/openapi.json",
+    ]
+
+    @field_validator("RATE_LIMIT_WHITELIST_PATHS", mode="before")
+    @classmethod
+    def parse_whitelist_paths(cls, v) -> List[str]:
+        """Parse whitelist paths from comma-separated string or list"""
+        if isinstance(v, str):
+            return [i.strip() for i in v.split(",")]
+        elif isinstance(v, list):
+            return v
+        return []
 
     # ========================================================================
     # EXTERNAL APIs
