@@ -1,0 +1,182 @@
+# [INFRA-003] Monitoring and Observability Setup
+
+## Metadata
+- **Status**: TODO
+- **Priority**: Medium
+- **Assignee**: TBD
+- **Estimated Time**: 12 hours
+- **Sprint**: Sprint 2-3 (Week 4-5)
+- **Tags**: #infrastructure #monitoring #observability
+
+## Description
+Set up comprehensive monitoring and observability stack using Prometheus, Grafana, and logging infrastructure to track system health and performance.
+
+## Subtasks
+- [ ] Prometheus Setup
+  - [ ] Infrastructure configuration
+    - [ ] prometheus.yml configuration file
+    - [ ] Scrape configs for all services
+    - [ ] Retention policy (15 days)
+  - [ ] Service discovery
+    - [ ] Static targets for development
+    - [ ] Kubernetes service discovery for production
+  - [ ] Metrics endpoints
+    - [ ] Backend: /metrics (prometheus_client)
+    - [ ] PostgreSQL: postgres_exporter
+    - [ ] Redis: redis_exporter
+    - [ ] NGINX: nginx_exporter
+- [ ] Backend Metrics Instrumentation
+  - [ ] Install prometheus_client
+  - [ ] app/core/metrics.py
+    - [ ] HTTP request counter (by method, endpoint, status)
+    - [ ] HTTP request duration histogram
+    - [ ] Database query duration histogram
+    - [ ] Cache hit/miss counters
+    - [ ] Custom business metrics:
+      - [ ] Stock screening requests counter
+      - [ ] User registration counter
+      - [ ] Portfolio creation counter
+  - [ ] Middleware to record HTTP metrics
+  - [ ] Expose /metrics endpoint
+- [ ] Grafana Setup
+  - [ ] Installation (Docker container)
+  - [ ] Data source configuration
+    - [ ] Add Prometheus as data source
+  - [ ] Dashboard creation
+    - [ ] API Performance Dashboard
+      - [ ] Request rate (requests/second)
+      - [ ] Request duration (p50, p95, p99)
+      - [ ] Error rate (5xx responses)
+      - [ ] Top endpoints by request count
+    - [ ] Database Performance Dashboard
+      - [ ] Active connections
+      - [ ] Query duration (p95, p99)
+      - [ ] Slow query count (> 1s)
+      - [ ] Database size growth
+    - [ ] Cache Performance Dashboard
+      - [ ] Cache hit rate
+      - [ ] Cache operations (get, set)
+      - [ ] Redis memory usage
+    - [ ] Business Metrics Dashboard
+      - [ ] Daily active users
+      - [ ] Screening requests (daily trend)
+      - [ ] New user registrations
+      - [ ] Portfolio creations
+    - [ ] System Health Dashboard
+      - [ ] CPU usage (per service)
+      - [ ] Memory usage (per service)
+      - [ ] Disk usage
+      - [ ] Network I/O
+  - [ ] Alert rules configuration
+    - [ ] High error rate (> 1%)
+    - [ ] Slow API response (p95 > 500ms)
+    - [ ] Database connection pool exhaustion
+    - [ ] High memory usage (> 80%)
+- [ ] Alerting Setup
+  - [ ] Alert manager configuration
+  - [ ] Notification channels
+    - [ ] Email (SMTP)
+    - [ ] Slack webhook
+  - [ ] Alert rules
+    - [ ] Service down
+    - [ ] High error rate
+    - [ ] Performance degradation
+    - [ ] Database issues
+    - [ ] Disk space low (< 10%)
+- [ ] Logging Infrastructure
+  - [ ] Structured logging setup
+    - [ ] JSON log format
+    - [ ] Include: timestamp, level, service, request_id, message
+  - [ ] Log aggregation (Optional: ELK or simpler solution)
+    - [ ] Centralized log storage
+    - [ ] Log search and filtering
+    - [ ] Log retention (30 days)
+  - [ ] Application logging
+    - [ ] Backend: Python logging with JSON formatter
+    - [ ] Database slow query log
+    - [ ] NGINX access logs
+- [ ] Application Performance Monitoring (APM)
+  - [ ] Install Sentry (error tracking)
+  - [ ] Backend integration
+    - [ ] Automatic error capture
+    - [ ] Performance transaction tracking
+    - [ ] Breadcrumbs for debugging
+  - [ ] Frontend integration
+    - [ ] JavaScript error tracking
+    - [ ] Performance metrics
+    - [ ] User session replay (optional)
+- [ ] Uptime Monitoring
+  - [ ] External uptime monitor (UptimeRobot or similar)
+  - [ ] Monitor endpoints:
+    - [ ] https://api.screener.kr/health
+    - [ ] https://screener.kr (frontend)
+  - [ ] Alert on downtime
+- [ ] Documentation
+  - [ ] Monitoring runbook
+  - [ ] Dashboard guide
+  - [ ] Alert response procedures
+  - [ ] Troubleshooting guide
+
+## Acceptance Criteria
+- [ ] **Prometheus**
+  - [ ] Prometheus accessible at http://localhost:9090
+  - [ ] All services being scraped successfully
+  - [ ] Metrics visible in Prometheus UI
+  - [ ] Query test: `http_requests_total` returns data
+- [ ] **Backend Metrics**
+  - [ ] /metrics endpoint returns Prometheus format
+  - [ ] HTTP metrics recorded correctly
+  - [ ] Database metrics tracked
+  - [ ] Cache metrics tracked
+- [ ] **Grafana**
+  - [ ] Grafana accessible at http://localhost:3001
+  - [ ] Prometheus data source connected
+  - [ ] All dashboards created and functional
+  - [ ] Graphs show real-time data
+  - [ ] Dashboards auto-refresh (30s interval)
+- [ ] **Dashboards**
+  - [ ] API Performance shows request rates
+  - [ ] Database dashboard shows query metrics
+  - [ ] Cache dashboard shows hit rates
+  - [ ] Business metrics dashboard shows trends
+  - [ ] System health shows resource usage
+- [ ] **Alerts**
+  - [ ] Test alert triggers successfully
+  - [ ] Email notification received
+  - [ ] Slack notification received
+  - [ ] Alert resolves automatically when fixed
+- [ ] **Logging**
+  - [ ] Logs in JSON format
+  - [ ] All services logging correctly
+  - [ ] Logs searchable (if aggregation setup)
+  - [ ] Errors logged with stack traces
+- [ ] **Sentry**
+  - [ ] Backend errors captured in Sentry
+  - [ ] Frontend errors captured in Sentry
+  - [ ] Source maps uploaded (for frontend)
+  - [ ] Errors include context (user, request)
+- [ ] **Uptime Monitoring**
+  - [ ] Uptime monitor configured
+  - [ ] Status page accessible
+  - [ ] Downtime alert received (test)
+
+## Dependencies
+- **Depends on**: INFRA-001, BE-001
+- **Blocks**: Production readiness
+
+## References
+- **SDS.md**: Section 9.4 Monitoring & Observability
+- **infrastructure/monitoring/** (configuration files)
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [Grafana Documentation](https://grafana.com/docs/)
+- [Sentry Documentation](https://docs.sentry.io/)
+
+## Progress
+- **0%** - Not started
+
+## Notes
+- Start with simple dashboards, iterate based on needs
+- Alert fatigue: only alert on actionable issues
+- Use service-level indicators (SLIs) and objectives (SLOs)
+- Consider cost when choosing managed services vs self-hosted
+- Retention balance: storage cost vs historical data value
