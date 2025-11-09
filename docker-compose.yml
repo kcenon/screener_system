@@ -300,6 +300,5 @@ volumes:
 networks:
   screener_network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+    # Let Docker automatically assign subnet to avoid conflicts
+    # Manual subnet assignment removed: 172.20.0.0/16
