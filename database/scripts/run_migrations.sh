@@ -1,56 +1,33 @@
 #!/bin/bash
-
 # ============================================================================
-# run_migrations.sh
-# Description: Execute all database migrations in sequence
-# Usage: ./run_migrations.sh [database_name] [username]
+# Database Migration Execution Script
+# Description: Run all SQL migrations in order
+# Author: Database Team
+# Created: 2025-11-09
 # ============================================================================
 
 set -e  # Exit on error
+set -u  # Exit on undefined variable
 
-# Configuration
-DB_NAME="${1:-screener_db}"
-DB_USER="${2:-screener_user}"
-DB_HOST="${3:-localhost}"
-DB_PORT="${4:-5432}"
-MIGRATIONS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../migrations" && pwd)"
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MIGRATIONS_DIR="${SCRIPT_DIR}/../migrations"
+LOG_FILE="${SCRIPT_DIR}/migration_$(date +%Y%m%d_%H%M%S).log"
 
-echo "=========================================="
-echo "Database Migration Script"
-echo "=========================================="
-echo "Database: $DB_NAME"
-echo "User: $DB_USER"
-echo "Host: $DB_HOST:$DB_PORT"
-echo "Migrations Directory: $MIGRATIONS_DIR"
-echo "=========================================="
-echo ""
+# PostgreSQL connection (from environment or defaults)
+PGHOST="${PGHOST:-localhost}"
+PGPORT="${PGPORT:-5432}"
+PGDATABASE="${PGDATABASE:-screener}"
+PGUSER="${PGUSER:-postgres}"
+PGPASSWORD="${PGPASSWORD:-postgres}"
 
-# Check if psql is installed
-if ! command -v psql &> /dev/null; then
-    echo -e "${RED}Error: psql is not installed${NC}"
-    echo "Please install PostgreSQL client tools"
-    exit 1
-fi
+# Export for psql
+export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
 
-# Test database connection
-echo -e "${YELLOW}Testing database connection...${NC}"
-if ! PGPASSWORD=$PGPASSWORD psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c '\q' 2>/dev/null; then
-    echo -e "${RED}Error: Cannot connect to database${NC}"
-    echo "Please check your credentials and ensure PostgreSQL is running"
-    echo ""
-    echo "Set password with: export PGPASSWORD=your_password"
-    exit 1
-fi
-echo -e "${GREEN}✓ Database connection successful${NC}"
-echo ""
-
-# Execute migrations in order
+# Migration files in execution order
 MIGRATION_FILES=(
     "00_extensions.sql"
     "01_create_tables.sql"
@@ -60,32 +37,134 @@ MIGRATION_FILES=(
     "05_views.sql"
 )
 
-for migration in "${MIGRATION_FILES[@]}"; do
-    MIGRATION_PATH="$MIGRATIONS_DIR/$migration"
+# ============================================================================
+# FUNCTIONS
+# ============================================================================
 
-    if [ ! -f "$MIGRATION_PATH" ]; then
-        echo -e "${RED}Error: Migration file not found: $migration${NC}"
-        exit 1
+log() {
+    local level="$1"
+    shift
+    local message="$@"
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $message" | tee -a "$LOG_FILE"
+}
+
+check_postgres_connection() {
+    log "INFO" "Checking PostgreSQL connection..."
+    if ! psql -c "SELECT version();" &>/dev/null; then
+        log "ERROR" "Cannot connect to PostgreSQL"
+        log "ERROR" "  Host: $PGHOST"
+        log "ERROR" "  Port: $PGPORT"
+        log "ERROR" "  Database: $PGDATABASE"
+        log "ERROR" "  User: $PGUSER"
+        return 1
+    fi
+    log "INFO" "PostgreSQL connection successful"
+    return 0
+}
+
+run_migration() {
+    local migration_file="$1"
+    local file_path="${MIGRATIONS_DIR}/${migration_file}"
+
+    if [ ! -f "$file_path" ]; then
+        log "ERROR" "Migration file not found: $migration_file"
+        return 1
     fi
 
-    echo -e "${YELLOW}Running migration: $migration${NC}"
+    log "INFO" "Running migration: $migration_file"
 
-    if PGPASSWORD=$PGPASSWORD psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -f "$MIGRATION_PATH"; then
-        echo -e "${GREEN}✓ $migration completed successfully${NC}"
+    if psql -f "$file_path" >> "$LOG_FILE" 2>&1; then
+        log "INFO" "✓ Success: $migration_file"
+        return 0
     else
-        echo -e "${RED}✗ $migration failed${NC}"
+        log "ERROR" "✗ Failed: $migration_file"
+        log "ERROR" "Check log file for details: $LOG_FILE"
+        return 1
+    fi
+}
+
+verify_tables() {
+    log "INFO" "Verifying tables..."
+
+    local table_count
+    table_count=$(psql -t -c "SELECT COUNT(*) FROM pg_tables WHERE schemaname = 'public';" 2>/dev/null || echo "0")
+
+    log "INFO" "Total tables created: $table_count"
+
+    if [ "$table_count" -ge 14 ]; then
+        log "INFO" "✓ Expected table count verified (minimum 14 tables)"
+        return 0
+    else
+        log "WARN" "Expected at least 14 tables, found: $table_count"
+        return 1
+    fi
+}
+
+verify_hypertable() {
+    log "INFO" "Verifying TimescaleDB hypertables..."
+
+    local hypertable_count
+    hypertable_count=$(psql -t -c "SELECT COUNT(*) FROM timescaledb_information.hypertables;" 2>/dev/null || echo "0")
+
+    if [ "$hypertable_count" -ge 1 ]; then
+        log "INFO" "✓ TimescaleDB hypertables verified: $hypertable_count"
+        return 0
+    else
+        log "WARN" "No hypertables found"
+        return 1
+    fi
+}
+
+list_tables() {
+    log "INFO" "Listing all tables:"
+    psql -c "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;" 2>&1 | tee -a "$LOG_FILE"
+}
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+main() {
+    log "INFO" "========================================"
+    log "INFO" "Database Migration Script"
+    log "INFO" "========================================"
+    log "INFO" "Log file: $LOG_FILE"
+    log "INFO" "Migrations directory: $MIGRATIONS_DIR"
+    echo
+
+    # Check connection
+    if ! check_postgres_connection; then
+        log "ERROR" "Migration aborted: Cannot connect to database"
         exit 1
     fi
+    echo
 
-    echo ""
-done
+    # Run migrations
+    log "INFO" "Starting migrations..."
+    for migration in "${MIGRATION_FILES[@]}"; do
+        if ! run_migration "$migration"; then
+            log "ERROR" "Migration failed: $migration"
+            log "ERROR" "All subsequent migrations skipped"
+            exit 1
+        fi
+    done
+    echo
 
-echo "=========================================="
-echo -e "${GREEN}All migrations completed successfully!${NC}"
-echo "=========================================="
-echo ""
-echo "Next steps:"
-echo "  1. Load seed data: ./scripts/seed_dev.sh"
-echo "  2. Verify schema: psql -U $DB_USER -d $DB_NAME -c '\dt'"
-echo "  3. Refresh materialized views: psql -U $DB_USER -d $DB_NAME -c 'SELECT refresh_all_materialized_views();'"
-echo ""
+    # Verify results
+    log "INFO" "Verifying migration results..."
+    verify_tables
+    verify_hypertable
+    echo
+
+    # List tables
+    list_tables
+    echo
+
+    log "INFO" "========================================"
+    log "INFO" "Migration completed successfully!"
+    log "INFO" "========================================"
+    log "INFO" "Full log: $LOG_FILE"
+}
+
+# Run main function
+main "$@"
