@@ -16,11 +16,19 @@ from app.main import app
 
 # Test database URL (use PostgreSQL test database)
 # Use environment variable or default to test database
-TEST_DATABASE_URL = os.getenv(
+# Support both Docker (screener_postgres) and CI (localhost/postgres) environments
+DEFAULT_TEST_DB_URL = os.getenv(
     "TEST_DATABASE_URL",
-    "postgresql+asyncpg://screener_user:your_secure_password_here@"
-    "screener_postgres:5432/screener_test",
+    os.getenv(
+        "DATABASE_URL",
+        "postgresql+asyncpg://screener_user:your_secure_password_here@"
+        "localhost:5432/screener_test",
+    ).replace("screener_db", "screener_test")
+    .replace("postgresql://", "postgresql+asyncpg://")
+    .replace("postgres://", "postgresql+asyncpg://"),
 )
+
+TEST_DATABASE_URL = DEFAULT_TEST_DB_URL
 
 
 @pytest.fixture(scope="session")
@@ -55,18 +63,25 @@ async def db_engine():
 
 @pytest_asyncio.fixture
 async def db(db_engine) -> AsyncGenerator[AsyncSession, None]:
-    """Create test database session"""
+    """Create test database session with transaction rollback"""
     from sqlalchemy.ext.asyncio import async_sessionmaker
 
-    async_session = async_sessionmaker(
-        db_engine,
-        class_=AsyncSession,
-        expire_on_commit=False,
-    )
+    # Create connection
+    async with db_engine.connect() as connection:
+        # Begin transaction
+        async with connection.begin() as transaction:
+            # Create session bound to connection
+            async_session = async_sessionmaker(
+                bind=connection,
+                class_=AsyncSession,
+                expire_on_commit=False,
+            )
 
-    async with async_session() as session:
-        yield session
-        await session.rollback()
+            async with async_session() as session:
+                yield session
+
+            # Rollback transaction (cleanup)
+            await transaction.rollback()
 
 
 @pytest_asyncio.fixture
