@@ -415,8 +415,8 @@ class ConnectionManager:
         if not websocket:
             return False
 
-        # Phase 4: Check rate limit
-        if self._enable_rate_limiting:
+        # Phase 4: Check rate limit (skip for error messages to avoid recursion)
+        if self._enable_rate_limiting and not isinstance(message, ErrorMessage):
             if not await self._check_rate_limit(connection_id):
                 logger.warning(
                     f"Rate limit exceeded for {connection_id} "
