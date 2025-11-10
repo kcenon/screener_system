@@ -1,7 +1,7 @@
 # [TECH-DEBT-006] Replace MD5 with SHA-256 for Cache Key Generation
 
 ## Metadata
-- **Status**: REVIEW
+- **Status**: DONE
 - **Priority**: Medium
 - **Assignee**: kcenon
 - **Estimated Time**: 2 hours
@@ -10,8 +10,9 @@
 - **Tags**: #security #technical-debt #caching #backend
 - **Created**: 2025-11-10
 - **Completed**: 2025-11-11
+- **Merged**: 2025-11-11
 - **Related**: BE-004
-- **PR**: #40 (https://github.com/kcenon/screener_system/pull/40)
+- **PR**: #40 (https://github.com/kcenon/screener_system/pull/40) - ✅ Merged
 
 ## Description
 The screening service uses MD5 for cache key generation. MD5 is cryptographically broken and vulnerable to collision attacks, potentially allowing cache poisoning. Replace with SHA-256.
