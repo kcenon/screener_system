@@ -48,7 +48,7 @@ class TestScreeningService:
         assert service.screening_repo is not None
 
     def test_build_cache_key(self, service):
-        """Test cache key generation"""
+        """Test cache key generation with SHA-256 and API version"""
         request = ScreeningRequest(
             filters=ScreeningFilters(
                 market="KOSPI",
@@ -62,8 +62,11 @@ class TestScreeningService:
 
         cache_key = service._build_cache_key(request)
 
-        # Should contain filter hash and pagination params
-        assert "screening:" in cache_key
+        # Should contain API version, filter hash (16 chars), and pagination params
+        assert cache_key.startswith("screening:v1:")
+        parts = cache_key.split(":")
+        assert len(parts) == 7  # screening:v1:hash:sort:order:page:per_page
+        assert len(parts[2]) == 16  # SHA-256 truncated to 16 chars
         assert ":per:asc:1:50" in cache_key
 
     def test_build_cache_key_deterministic(self, service):
@@ -404,7 +407,57 @@ class TestScreeningService:
         assert response.meta.per_page == 100
 
     @pytest.mark.asyncio
-    async def test_invalidate_screening_cache(self, service):
-        """Test cache invalidation (currently no-op)"""
-        # Should not raise exception
-        await service.invalidate_screening_cache()
+    async def test_invalidate_screening_cache_no_redis(self, service):
+        """Test cache invalidation when Redis is not connected"""
+        # Redis not connected
+        service.cache.redis = None
+        deleted = await service.invalidate_screening_cache()
+        assert deleted == 0
+
+    @pytest.mark.asyncio
+    async def test_invalidate_screening_cache_with_redis(self, service):
+        """Test cache invalidation deletes all screening keys"""
+        # Mock Redis with SCAN and DELETE
+        mock_redis = Mock()
+        mock_redis.scan = AsyncMock()
+        mock_redis.delete = AsyncMock()
+
+        # Simulate SCAN iterations
+        # First iteration: returns cursor=1 and some keys
+        # Second iteration: returns cursor=0 (done) and more keys
+        mock_redis.scan.side_effect = [
+            (1, ["screening:v1:abc123:field:asc:1:50", "screening:v1:def456:field:desc:2:50"]),
+            (0, ["screening:v1:ghi789:field:asc:1:100"]),
+        ]
+
+        # DELETE returns number of keys deleted
+        mock_redis.delete.side_effect = [2, 1]
+
+        service.cache.redis = mock_redis
+
+        deleted = await service.invalidate_screening_cache()
+
+        # Should have deleted 3 keys total (2 + 1)
+        assert deleted == 3
+
+        # Verify SCAN was called with correct pattern
+        assert mock_redis.scan.call_count == 2
+        scan_calls = mock_redis.scan.call_args_list
+        assert scan_calls[0][0] == (0,)  # First call with cursor 0
+        assert scan_calls[0][1]["match"] == "screening:v1:*"
+        assert scan_calls[1][0] == (1,)  # Second call with cursor 1
+
+        # Verify DELETE was called twice
+        assert mock_redis.delete.call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_invalidate_screening_cache_empty(self, service):
+        """Test cache invalidation when no keys match"""
+        mock_redis = Mock()
+        mock_redis.scan = AsyncMock(return_value=(0, []))
+        service.cache.redis = mock_redis
+
+        deleted = await service.invalidate_screening_cache()
+
+        assert deleted == 0
+        mock_redis.scan.assert_called_once()

@@ -2,10 +2,13 @@
 
 import hashlib
 import json
+import logging
 import time
 from typing import Any, Dict
 
 from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
 
 from app.core.cache import CacheManager
 from app.repositories.screening_repository import ScreeningRepository
@@ -17,6 +20,9 @@ from app.schemas.screening import (ScreenedStock, ScreeningFilters,
 
 class ScreeningService:
     """Service for stock screening operations with caching"""
+
+    # API version for cache key management
+    API_VERSION = "v1"
 
     # Cache TTL (seconds)
     SCREENING_TTL = 5 * 60  # 5 minutes
@@ -189,20 +195,29 @@ class ScreeningService:
         """
         Build cache key from request parameters
 
+        Security:
+            Uses SHA-256 instead of MD5 to prevent collision attacks.
+            Includes API version to prevent serving stale data after updates.
+
         Args:
             request: ScreeningRequest
 
         Returns:
-            Cache key string
+            Cache key string (e.g., "screening:v1:a3f2c9e4...:market_cap:desc:1:50")
         """
         # Create a deterministic hash of filters
         filters_dict = request.filters.model_dump(exclude_none=True)
         filters_json = json.dumps(filters_dict, sort_keys=True)
-        filters_hash = hashlib.md5(filters_json.encode()).hexdigest()
 
-        # Build cache key
+        # Use SHA-256 (secure against collisions)
+        filters_hash = hashlib.sha256(filters_json.encode()).hexdigest()
+
+        # Truncate hash (16 chars = 64 bits, sufficient for cache keys)
+        hash_short = filters_hash[:16]
+
+        # Build cache key with API version
         cache_key = (
-            f"screening:{filters_hash}:"
+            f"screening:{self.API_VERSION}:{hash_short}:"
             f"{request.sort_by}:{request.order}:"
             f"{request.page}:{request.per_page}"
         )
@@ -244,12 +259,42 @@ class ScreeningService:
 
         return summary
 
-    async def invalidate_screening_cache(self) -> None:
+    async def invalidate_screening_cache(self) -> int:
         """
-        Invalidate all screening cache
+        Invalidate all screening cache entries
 
-        Should be called after daily indicator calculation completes
+        This should be called after:
+            - Materialized view refresh
+            - API schema changes
+            - Emergency cache clear
+
+        Returns:
+            Number of cache keys deleted
         """
-        # In Redis, we would use KEYS screening:* and DEL
-        # For now, we rely on TTL expiration
-        # TODO: Implement cache invalidation by pattern
+        if not self.cache.redis:
+            logger.warning("Redis not connected, cannot invalidate cache")
+            return 0
+
+        # Pattern matching for screening cache keys
+        pattern = f"screening:{self.API_VERSION}:*"
+        deleted_count = 0
+
+        # Use SCAN to avoid blocking (don't use KEYS in production)
+        cursor = 0
+        while True:
+            # SCAN returns (cursor, keys) tuple
+            cursor, keys = await self.cache.redis.scan(
+                cursor, match=pattern, count=100
+            )
+
+            # Delete keys if found
+            if keys:
+                deleted = await self.cache.redis.delete(*keys)
+                deleted_count += deleted
+
+            # cursor == 0 means iteration complete
+            if cursor == 0:
+                break
+
+        logger.info(f"Invalidated {deleted_count} screening cache entries")
+        return deleted_count
