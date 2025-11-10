@@ -519,6 +519,454 @@ class KISAPIClient:
 
         return session
 
+    def _make_request(
+        self,
+        endpoint: str,
+        tr_id: str,
+        params: Optional[Dict] = None
+    ) -> Dict[str, Any]:
+        """
+        Make HTTP request to KIS API with authentication and rate limiting.
+
+        Args:
+            endpoint: API endpoint path
+            tr_id: Transaction ID (required by KIS API)
+            params: Query parameters
+
+        Returns:
+            JSON response data
+
+        Raises:
+            requests.HTTPError: If API returns error status
+            ValueError: If response is invalid
+        """
+        # Apply rate limiting
+        self.rate_limiter.wait_if_needed()
+
+        # Get access token
+        access_token = self.token_manager.get_token()
+
+        url = f"{self.base_url}{endpoint}"
+        headers = {
+            'authorization': f'Bearer {access_token}',
+            'appkey': self.app_key,
+            'appsecret': self.app_secret,
+            'tr_id': tr_id,
+            'custtype': 'P',  # P: 개인, B: 법인
+            'content-type': 'application/json; charset=utf-8'
+        }
+
+        try:
+            response = self.session.get(
+                url,
+                params=params,
+                headers=headers,
+                timeout=self.timeout
+            )
+            response.raise_for_status()
+
+            # Parse JSON response
+            data = response.json()
+
+            # Check API-level error
+            if data.get('rt_cd') != '0':
+                error_msg = data.get('msg1', 'Unknown error')
+                logger.error(f"KIS API error: {error_msg}")
+                raise ValueError(f"KIS API error: {error_msg}")
+
+            return data
+
+        except requests.exceptions.Timeout:
+            logger.error(f"Request timeout after {self.timeout}s: {url}")
+            raise
+
+        except requests.exceptions.HTTPError as e:
+            logger.error(f"HTTP error {response.status_code}: {response.text[:200]}")
+            raise
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request failed: {e}")
+            raise
+
+    def get_current_price(self, stock_code: str) -> CurrentPrice:
+        """
+        Get current price for a stock.
+
+        Args:
+            stock_code: 6-digit stock code (e.g., "005930" for Samsung)
+
+        Returns:
+            CurrentPrice object with current price data
+
+        Raises:
+            ValueError: If stock code is invalid
+            requests.HTTPError: If API call fails
+
+        Example:
+            >>> client = KISAPIClient()
+            >>> price = client.get_current_price("005930")
+            >>> print(f"Samsung: {price.current_price:,} KRW")
+            Samsung: 71,000 KRW
+        """
+        # Validate stock code
+        if not stock_code or len(stock_code) != 6 or not stock_code.isdigit():
+            raise ValueError(f"Invalid stock code: {stock_code}")
+
+        # Use mock data if configured
+        if self.use_mock:
+            return self._get_mock_current_price(stock_code)
+
+        # Make API request with circuit breaker
+        def api_call():
+            endpoint = "/uapi/domestic-stock/v1/quotations/inquire-price"
+            tr_id = "FHKST01010100"  # 주식현재가 시세
+            params = {
+                'FID_COND_MRKT_DIV_CODE': 'J',  # J: 주식, ETF, ETN
+                'FID_INPUT_ISCD': stock_code
+            }
+
+            response = self._make_request(endpoint, tr_id, params)
+            output = response.get('output', {})
+
+            return CurrentPrice(
+                stock_code=stock_code,
+                stock_name=output.get('hts_kor_isnm', ''),
+                current_price=float(output.get('stck_prpr', 0)),
+                change_price=float(output.get('prdy_vrss', 0)),
+                change_rate=float(output.get('prdy_ctrt', 0)),
+                open_price=float(output.get('stck_oprc', 0)),
+                high_price=float(output.get('stck_hgpr', 0)),
+                low_price=float(output.get('stck_lwpr', 0)),
+                volume=int(output.get('acml_vol', 0)),
+                trading_value=float(output.get('acml_tr_pbmn', 0)),
+                market_cap=float(output.get('hts_avls', 0)) if output.get('hts_avls') else None
+            )
+
+        return self.circuit_breaker.call(api_call)
+
+    def get_order_book(self, stock_code: str) -> OrderBook:
+        """
+        Get order book (호가) with 10-level depth.
+
+        Args:
+            stock_code: 6-digit stock code
+
+        Returns:
+            OrderBook object with bid/ask levels
+
+        Example:
+            >>> orderbook = client.get_order_book("005930")
+            >>> print(f"Best bid: {orderbook.best_bid:,}")
+            >>> print(f"Best ask: {orderbook.best_ask:,}")
+            >>> print(f"Spread: {orderbook.spread:,}")
+        """
+        if not stock_code or len(stock_code) != 6 or not stock_code.isdigit():
+            raise ValueError(f"Invalid stock code: {stock_code}")
+
+        if self.use_mock:
+            return self._get_mock_order_book(stock_code)
+
+        def api_call():
+            endpoint = "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn"
+            tr_id = "FHKST01010200"  # 주식호가
+            params = {
+                'FID_COND_MRKT_DIV_CODE': 'J',
+                'FID_INPUT_ISCD': stock_code
+            }
+
+            response = self._make_request(endpoint, tr_id, params)
+            output = response.get('output1', {})
+
+            # Parse bid levels (매수 호가)
+            bid_levels = []
+            for i in range(1, 11):
+                price = float(output.get(f'bidp{i}', 0))
+                volume = int(output.get(f'bidp_rsqn{i}', 0))
+                count = int(output.get(f'bidp_rsqn_icdc{i}', 0))
+                if price > 0:
+                    bid_levels.append(OrderBookLevel(price, volume, count))
+
+            # Parse ask levels (매도 호가)
+            ask_levels = []
+            for i in range(1, 11):
+                price = float(output.get(f'askp{i}', 0))
+                volume = int(output.get(f'askp_rsqn{i}', 0))
+                count = int(output.get(f'askp_rsqn_icdc{i}', 0))
+                if price > 0:
+                    ask_levels.append(OrderBookLevel(price, volume, count))
+
+            return OrderBook(
+                stock_code=stock_code,
+                stock_name=output.get('hts_kor_isnm', ''),
+                bid_levels=bid_levels,
+                ask_levels=ask_levels,
+                total_bid_volume=int(output.get('total_bidp_rsqn', 0)),
+                total_ask_volume=int(output.get('total_askp_rsqn', 0))
+            )
+
+        return self.circuit_breaker.call(api_call)
+
+    def get_chart_data(
+        self,
+        stock_code: str,
+        period: PriceType = PriceType.DAILY,
+        count: int = 100,
+        adj_price: bool = True
+    ) -> List[ChartData]:
+        """
+        Get chart data (OHLCV) for a stock.
+
+        Args:
+            stock_code: 6-digit stock code
+            period: Price type (DAILY, WEEKLY, MONTHLY, MINUTE_1, etc.)
+            count: Number of data points (max: 100)
+            adj_price: Use adjusted price (권리락 수정주가)
+
+        Returns:
+            List of ChartData objects (newest first)
+
+        Example:
+            >>> chart = client.get_chart_data("005930", PriceType.DAILY, 30)
+            >>> for candle in chart[:5]:
+            ...     print(f"{candle.date}: {candle.close_price:,}")
+        """
+        if not stock_code or len(stock_code) != 6 or not stock_code.isdigit():
+            raise ValueError(f"Invalid stock code: {stock_code}")
+
+        if count < 1 or count > 100:
+            raise ValueError(f"Count must be between 1 and 100, got {count}")
+
+        if self.use_mock:
+            return self._get_mock_chart_data(stock_code, period, count)
+
+        def api_call():
+            endpoint = "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
+            tr_id = "FHKST03010100"  # 국내주식기간별시세(일/주/월/년)
+
+            params = {
+                'FID_COND_MRKT_DIV_CODE': 'J',
+                'FID_INPUT_ISCD': stock_code,
+                'FID_INPUT_DATE_1': '',  # Empty for recent data
+                'FID_INPUT_DATE_2': '',
+                'FID_PERIOD_DIV_CODE': period.value,
+                'FID_ORG_ADJ_PRC': '0' if adj_price else '1'
+            }
+
+            response = self._make_request(endpoint, tr_id, params)
+            output = response.get('output2', [])
+
+            chart_data = []
+            for item in output[:count]:
+                chart_data.append(ChartData(
+                    stock_code=stock_code,
+                    date=item.get('stck_bsop_date', ''),
+                    open_price=float(item.get('stck_oprc', 0)),
+                    high_price=float(item.get('stck_hgpr', 0)),
+                    low_price=float(item.get('stck_lwpr', 0)),
+                    close_price=float(item.get('stck_clpr', 0)),
+                    volume=int(item.get('acml_vol', 0)),
+                    trading_value=float(item.get('acml_tr_pbmn', 0))
+                ))
+
+            return chart_data
+
+        return self.circuit_breaker.call(api_call)
+
+    def get_stock_info(self, stock_code: str) -> StockInfo:
+        """
+        Get stock information (종목 정보).
+
+        Args:
+            stock_code: 6-digit stock code
+
+        Returns:
+            StockInfo object
+
+        Example:
+            >>> info = client.get_stock_info("005930")
+            >>> print(f"{info.stock_name} ({info.market})")
+            >>> print(f"Sector: {info.sector}")
+        """
+        if not stock_code or len(stock_code) != 6 or not stock_code.isdigit():
+            raise ValueError(f"Invalid stock code: {stock_code}")
+
+        if self.use_mock:
+            return self._get_mock_stock_info(stock_code)
+
+        def api_call():
+            endpoint = "/uapi/domestic-stock/v1/quotations/search-stock-info"
+            tr_id = "CTPF1604R"  # 종목기본조회
+            params = {
+                'PRDT_TYPE_CD': '300',  # 주식
+                'PDNO': stock_code
+            }
+
+            response = self._make_request(endpoint, tr_id, params)
+            output = response.get('output', {})
+
+            return StockInfo(
+                stock_code=stock_code,
+                stock_name=output.get('prdt_name', ''),
+                market=output.get('std_pdno', ''),  # KOSPI/KOSDAQ
+                sector=output.get('sctr_name', None),
+                industry=output.get('bstp_name', None),
+                listed_shares=int(output.get('lstg_stqt', 0)) if output.get('lstg_stqt') else None,
+                face_value=float(output.get('face_val', 0)) if output.get('face_val') else None
+            )
+
+        return self.circuit_breaker.call(api_call)
+
+    # ========================================================================
+    # Mock Data Methods
+    # ========================================================================
+
+    def _get_mock_current_price(self, stock_code: str) -> CurrentPrice:
+        """Generate mock current price data"""
+        import random
+        random.seed(stock_code)
+
+        # Mock stock names
+        stock_names = {
+            '005930': 'Samsung Electronics',
+            '000660': 'SK Hynix',
+            '035420': 'NAVER',
+            '051910': 'LG Chem',
+            '035720': 'Kakao'
+        }
+
+        base_price = random.randint(50000, 500000)
+        change_rate = random.uniform(-5.0, 5.0)
+
+        current_price = base_price * (1 + change_rate / 100)
+        change_price = current_price - base_price
+
+        return CurrentPrice(
+            stock_code=stock_code,
+            stock_name=stock_names.get(stock_code, f'Stock {stock_code}'),
+            current_price=round(current_price, 0),
+            change_price=round(change_price, 0),
+            change_rate=round(change_rate, 2),
+            open_price=round(base_price * 0.98, 0),
+            high_price=round(current_price * 1.02, 0),
+            low_price=round(current_price * 0.98, 0),
+            volume=random.randint(1000000, 50000000),
+            trading_value=current_price * random.randint(1000000, 50000000),
+            market_cap=current_price * random.randint(100000000, 500000000)
+        )
+
+    def _get_mock_order_book(self, stock_code: str) -> OrderBook:
+        """Generate mock order book data"""
+        import random
+        random.seed(stock_code)
+
+        stock_names = {
+            '005930': 'Samsung Electronics',
+            '000660': 'SK Hynix',
+            '035420': 'NAVER'
+        }
+
+        base_price = random.randint(50000, 500000)
+
+        # Generate bid levels (매수 호가)
+        bid_levels = []
+        for i in range(10):
+            price = base_price - (i * 100)
+            volume = random.randint(1000, 100000)
+            count = random.randint(10, 500)
+            bid_levels.append(OrderBookLevel(price, volume, count))
+
+        # Generate ask levels (매도 호가)
+        ask_levels = []
+        for i in range(10):
+            price = base_price + ((i + 1) * 100)
+            volume = random.randint(1000, 100000)
+            count = random.randint(10, 500)
+            ask_levels.append(OrderBookLevel(price, volume, count))
+
+        return OrderBook(
+            stock_code=stock_code,
+            stock_name=stock_names.get(stock_code, f'Stock {stock_code}'),
+            bid_levels=bid_levels,
+            ask_levels=ask_levels,
+            total_bid_volume=sum(level.volume for level in bid_levels),
+            total_ask_volume=sum(level.volume for level in ask_levels)
+        )
+
+    def _get_mock_chart_data(
+        self,
+        stock_code: str,
+        period: PriceType,
+        count: int
+    ) -> List[ChartData]:
+        """Generate mock chart data"""
+        import random
+        from datetime import datetime, timedelta
+
+        random.seed(stock_code + period.value)
+        base_price = random.randint(50000, 500000)
+
+        chart_data = []
+        current_date = datetime.now()
+
+        for i in range(count):
+            # Calculate date based on period
+            if period == PriceType.DAILY:
+                date = (current_date - timedelta(days=i)).strftime('%Y%m%d')
+            elif period == PriceType.WEEKLY:
+                date = (current_date - timedelta(weeks=i)).strftime('%Y%m%d')
+            elif period == PriceType.MONTHLY:
+                date = (current_date - timedelta(days=i*30)).strftime('%Y%m%d')
+            else:
+                date = (current_date - timedelta(minutes=i)).strftime('%Y%m%d%H%M%S')
+
+            # Generate OHLCV
+            close = base_price * (1 + random.uniform(-0.05, 0.05))
+            open_price = close * (1 + random.uniform(-0.02, 0.02))
+            high = max(open_price, close) * (1 + random.uniform(0, 0.02))
+            low = min(open_price, close) * (1 - random.uniform(0, 0.02))
+            volume = random.randint(1000000, 50000000)
+
+            chart_data.append(ChartData(
+                stock_code=stock_code,
+                date=date,
+                open_price=round(open_price, 0),
+                high_price=round(high, 0),
+                low_price=round(low, 0),
+                close_price=round(close, 0),
+                volume=volume,
+                trading_value=close * volume
+            ))
+
+        return chart_data
+
+    def _get_mock_stock_info(self, stock_code: str) -> StockInfo:
+        """Generate mock stock info"""
+        stock_info = {
+            '005930': ('Samsung Electronics', 'KOSPI', 'Technology', 'Semiconductor'),
+            '000660': ('SK Hynix', 'KOSPI', 'Technology', 'Semiconductor'),
+            '035420': ('NAVER', 'KOSPI', 'Technology', 'Internet'),
+            '051910': ('LG Chem', 'KOSPI', 'Materials', 'Chemicals'),
+            '035720': ('Kakao', 'KOSPI', 'Technology', 'Internet')
+        }
+
+        if stock_code in stock_info:
+            name, market, sector, industry = stock_info[stock_code]
+        else:
+            name = f'Stock {stock_code}'
+            market = 'KOSPI'
+            sector = 'Unknown'
+            industry = 'Unknown'
+
+        return StockInfo(
+            stock_code=stock_code,
+            stock_name=name,
+            market=market,
+            sector=sector,
+            industry=industry,
+            listed_shares=1000000000,
+            face_value=100.0
+        )
+
     def close(self):
         """Close HTTP session"""
         self.session.close()
@@ -565,10 +1013,79 @@ if __name__ == "__main__":
     )
 
     # Test with mock data
+    logger.info("=" * 80)
     logger.info("Testing KIS API client with mock data")
+    logger.info("=" * 80)
 
     with create_client(use_mock=True) as client:
         logger.info(f"KIS API Client initialized successfully")
         logger.info(f"Base URL: {client.base_url}")
         logger.info(f"Using mock data: {client.use_mock}")
-        logger.info("Client is ready for use")
+
+        # Test stock codes
+        test_stocks = ['005930', '000660', '035420']
+
+        print("\n" + "=" * 80)
+        print("1. Testing get_current_price()")
+        print("=" * 80)
+        for stock_code in test_stocks:
+            try:
+                price = client.get_current_price(stock_code)
+                print(f"\n{price.stock_name} ({stock_code})")
+                print(f"  Current Price: {price.current_price:,.0f} KRW")
+                print(f"  Change: {price.change_price:+,.0f} ({price.change_rate:+.2f}%)")
+                print(f"  Volume: {price.volume:,}")
+            except Exception as e:
+                print(f"  Error: {e}")
+
+        print("\n" + "=" * 80)
+        print("2. Testing get_order_book()")
+        print("=" * 80)
+        try:
+            orderbook = client.get_order_book('005930')
+            print(f"\n{orderbook.stock_name} Order Book")
+            print(f"  Best Ask: {orderbook.best_ask:,.0f} KRW")
+            print(f"  Best Bid: {orderbook.best_bid:,.0f} KRW")
+            print(f"  Spread: {orderbook.spread:,.0f} KRW")
+            print(f"  Total Ask Volume: {orderbook.total_ask_volume:,}")
+            print(f"  Total Bid Volume: {orderbook.total_bid_volume:,}")
+            print(f"\n  Top 3 Ask Levels:")
+            for i, level in enumerate(orderbook.ask_levels[:3], 1):
+                print(f"    {i}. {level.price:,.0f} KRW - {level.volume:,} shares ({level.count} orders)")
+            print(f"  Top 3 Bid Levels:")
+            for i, level in enumerate(orderbook.bid_levels[:3], 1):
+                print(f"    {i}. {level.price:,.0f} KRW - {level.volume:,} shares ({level.count} orders)")
+        except Exception as e:
+            print(f"  Error: {e}")
+
+        print("\n" + "=" * 80)
+        print("3. Testing get_chart_data()")
+        print("=" * 80)
+        try:
+            chart = client.get_chart_data('005930', PriceType.DAILY, 5)
+            print(f"\nSamsung Electronics - Last 5 Days")
+            for candle in chart:
+                print(f"  {candle.date}: O={candle.open_price:,.0f} "
+                      f"H={candle.high_price:,.0f} L={candle.low_price:,.0f} "
+                      f"C={candle.close_price:,.0f} V={candle.volume:,}")
+        except Exception as e:
+            print(f"  Error: {e}")
+
+        print("\n" + "=" * 80)
+        print("4. Testing get_stock_info()")
+        print("=" * 80)
+        for stock_code in test_stocks:
+            try:
+                info = client.get_stock_info(stock_code)
+                print(f"\n{info.stock_name} ({stock_code})")
+                print(f"  Market: {info.market}")
+                print(f"  Sector: {info.sector}")
+                print(f"  Industry: {info.industry}")
+                if info.listed_shares:
+                    print(f"  Listed Shares: {info.listed_shares:,}")
+            except Exception as e:
+                print(f"  Error: {e}")
+
+        print("\n" + "=" * 80)
+        print("All tests completed successfully!")
+        print("=" * 80)
