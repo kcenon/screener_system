@@ -95,6 +95,18 @@ async def websocket_endpoint(
                 # Receive message from client
                 data = await websocket.receive_text()
 
+                # Check message size (DoS protection)
+                if len(data) > settings.WEBSOCKET_MAX_MESSAGE_SIZE:
+                    logger.warning(
+                        f"Message too large from {connection_id}: {len(data)} bytes"
+                    )
+                    await connection_manager.send_error(
+                        connection_id,
+                        code="MESSAGE_TOO_LARGE",
+                        message=f"Message exceeds maximum size of {settings.WEBSOCKET_MAX_MESSAGE_SIZE} bytes",
+                    )
+                    continue
+
                 # Parse JSON
                 try:
                     message = json.loads(data)
@@ -173,6 +185,29 @@ async def handle_subscribe(connection_id: str, message: dict):
     try:
         # Validate and parse request
         request = SubscribeRequest(**message)
+
+        # Check targets per request limit (DoS protection)
+        if len(request.targets) > settings.WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION:
+            await connection_manager.send_error(
+                connection_id,
+                code="TOO_MANY_TARGETS",
+                message=f"Cannot subscribe to more than {settings.WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION} targets at once",
+            )
+            return
+
+        # Check total subscription limit (DoS protection)
+        conn_info = connection_manager.get_connection_info(connection_id)
+        if conn_info:
+            current_subscriptions = sum(
+                len(targets) for targets in conn_info.subscriptions.values()
+            )
+            if current_subscriptions + len(request.targets) > settings.WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION:
+                await connection_manager.send_error(
+                    connection_id,
+                    code="SUBSCRIPTION_LIMIT_EXCEEDED",
+                    message=f"Maximum {settings.WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION} subscriptions per connection",
+                )
+                return
 
         # Subscribe to each target
         for target in request.targets:
