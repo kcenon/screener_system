@@ -11,8 +11,8 @@ from fastapi import WebSocket, WebSocketDisconnect
 from pydantic import ValidationError
 
 from app.core.logging import logger
-from app.schemas.websocket import (ConnectionInfo, ErrorMessage, MessageType,
-                                   PongMessage, SubscriptionType,
+from app.schemas.websocket import (BatchMessage, ConnectionInfo, ErrorMessage,
+                                   MessageType, PongMessage, SubscriptionType,
                                    WebSocketMessage)
 
 
@@ -27,12 +27,23 @@ class ConnectionManager:
     - Heartbeat/ping-pong mechanism
     """
 
-    def __init__(self, enable_redis: bool = True):
+    def __init__(
+        self,
+        enable_redis: bool = True,
+        enable_batching: bool = True,
+        batch_interval: float = 0.03,  # 30ms default
+        enable_rate_limiting: bool = True,
+        rate_limit: int = 100,  # messages per second per connection
+    ):
         """
         Initialize connection manager.
 
         Args:
             enable_redis: Enable Redis Pub/Sub for multi-instance support
+            enable_batching: Enable message batching (Phase 4)
+            batch_interval: Batch flush interval in seconds (Phase 4)
+            enable_rate_limiting: Enable per-connection rate limiting (Phase 4)
+            rate_limit: Max messages per second per connection (Phase 4)
         """
         # Active connections: connection_id -> WebSocket
         self.active_connections: Dict[str, WebSocket] = {}
@@ -71,6 +82,19 @@ class ConnectionManager:
         self._session_ttl = 300  # seconds (5 minutes)
         self._session_cleanup_task: Optional[asyncio.Task] = None
 
+        # Phase 4: Message batching
+        self._enable_batching = enable_batching
+        self._batch_interval = batch_interval
+        self._message_queues: Dict[str, List[WebSocketMessage]] = defaultdict(list)
+        self._batch_task: Optional[asyncio.Task] = None
+        self._batch_lock = asyncio.Lock()
+
+        # Phase 4: Rate limiting
+        self._enable_rate_limiting = enable_rate_limiting
+        self._rate_limit = rate_limit
+        self._message_timestamps: Dict[str, List[float]] = defaultdict(list)
+        self._rate_limit_window = 1.0  # 1 second window
+
     async def initialize_redis(self):
         """Initialize Redis Pub/Sub connection"""
         if not self._enable_redis or self._redis_initialized:
@@ -95,6 +119,123 @@ class ConnectionManager:
         async with self._sequence_lock:
             self._sequence_counter += 1
             return self._sequence_counter
+
+    async def _check_rate_limit(self, connection_id: str) -> bool:
+        """
+        Check if connection is within rate limit (Phase 4).
+
+        Args:
+            connection_id: Connection to check
+
+        Returns:
+            True if within limit, False if exceeded
+        """
+        if not self._enable_rate_limiting:
+            return True
+
+        import time
+
+        now = time.time()
+        timestamps = self._message_timestamps[connection_id]
+
+        # Remove timestamps outside the window
+        timestamps[:] = [ts for ts in timestamps if now - ts < self._rate_limit_window]
+
+        # Check if limit exceeded
+        if len(timestamps) >= self._rate_limit:
+            return False
+
+        # Add current timestamp
+        timestamps.append(now)
+        return True
+
+    async def _add_to_batch(self, connection_id: str, message: WebSocketMessage):
+        """
+        Add message to batch queue (Phase 4).
+
+        Args:
+            connection_id: Target connection
+            message: Message to queue
+        """
+        async with self._batch_lock:
+            # Add sequence number if not present
+            if message.sequence is None:
+                message.sequence = await self._next_sequence()
+
+            self._message_queues[connection_id].append(message)
+
+    async def _flush_batch(self, connection_id: str):
+        """
+        Flush batched messages for a connection (Phase 4).
+
+        Args:
+            connection_id: Connection to flush
+        """
+        websocket = self.active_connections.get(connection_id)
+        if not websocket:
+            return
+
+        async with self._batch_lock:
+            messages = self._message_queues.get(connection_id, [])
+            if not messages:
+                return
+
+            # Clear queue
+            self._message_queues[connection_id] = []
+
+        try:
+            if len(messages) == 1:
+                # Single message: send directly
+                await websocket.send_json(messages[0].model_dump(mode="json"))
+            else:
+                # Multiple messages: send as batch
+                batch = BatchMessage(
+                    messages=messages,
+                    batch_size=len(messages),
+                )
+                batch.sequence = await self._next_sequence()
+                await websocket.send_json(batch.model_dump(mode="json"))
+
+            # Update activity timestamp
+            if connection_id in self.connection_info:
+                self.connection_info[connection_id].last_activity = datetime.utcnow()
+                self.connection_info[connection_id].message_count += len(messages)
+
+            logger.debug(f"Flushed {len(messages)} messages to {connection_id}")
+
+        except WebSocketDisconnect:
+            logger.warning(f"Connection {connection_id} disconnected during batch flush")
+            await self.disconnect(connection_id)
+
+        except Exception as e:
+            logger.error(f"Error flushing batch to {connection_id}: {e}")
+
+    async def _batch_flush_loop(self):
+        """
+        Periodic batch flushing loop (Phase 4).
+        """
+        logger.info(
+            f"Starting batch flush loop (interval: {self._batch_interval * 1000:.0f}ms)"
+        )
+
+        try:
+            while self.active_connections:
+                await asyncio.sleep(self._batch_interval)
+
+                # Flush all connections with queued messages
+                flush_tasks = []
+                for conn_id in list(self.active_connections.keys()):
+                    if self._message_queues.get(conn_id):
+                        flush_tasks.append(self._flush_batch(conn_id))
+
+                if flush_tasks:
+                    await asyncio.gather(*flush_tasks, return_exceptions=True)
+
+        except asyncio.CancelledError:
+            logger.info("Batch flush loop cancelled")
+
+        except Exception as e:
+            logger.error(f"Error in batch flush loop: {e}")
 
     async def _handle_redis_message(self, channel: str, data: Dict[str, Any]):
         """
@@ -193,6 +334,13 @@ class ConnectionManager:
         if self._heartbeat_task is None or self._heartbeat_task.done():
             self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
 
+        # Phase 4: Start batch flush loop if enabled and not running
+        if (
+            self._enable_batching
+            and (self._batch_task is None or self._batch_task.done())
+        ):
+            self._batch_task = asyncio.create_task(self._batch_flush_loop())
+
         return connection_id
 
     async def disconnect(self, connection_id: str):
@@ -231,20 +379,34 @@ class ConnectionManager:
             f"(user: {user_id}, remaining: {len(self.active_connections)})"
         )
 
-        # Stop heartbeat if no connections
-        if not self.active_connections and self._heartbeat_task:
-            self._heartbeat_task.cancel()
-            self._heartbeat_task = None
+        # Phase 4: Clean up batching and rate limiting data
+        if connection_id in self._message_queues:
+            del self._message_queues[connection_id]
+        if connection_id in self._message_timestamps:
+            del self._message_timestamps[connection_id]
+
+        # Stop tasks if no connections
+        if not self.active_connections:
+            if self._heartbeat_task:
+                self._heartbeat_task.cancel()
+                self._heartbeat_task = None
+            if self._batch_task:
+                self._batch_task.cancel()
+                self._batch_task = None
 
     async def send_message(
-        self, connection_id: str, message: WebSocketMessage
+        self, connection_id: str, message: WebSocketMessage, immediate: bool = False
     ) -> bool:
         """
         Send a message to a specific connection.
 
+        Phase 4: Messages are batched by default unless immediate=True.
+        Rate limiting is applied if enabled.
+
         Args:
             connection_id: Target connection
             message: Message to send
+            immediate: Send immediately without batching (for critical messages)
 
         Returns:
             True if sent successfully, False otherwise
@@ -253,6 +415,28 @@ class ConnectionManager:
         if not websocket:
             return False
 
+        # Phase 4: Check rate limit
+        if self._enable_rate_limiting:
+            if not await self._check_rate_limit(connection_id):
+                logger.warning(
+                    f"Rate limit exceeded for {connection_id} "
+                    f"({self._rate_limit} msg/s)"
+                )
+                # Send error message
+                await self.send_error(
+                    connection_id,
+                    "RATE_LIMIT_EXCEEDED",
+                    f"Rate limit exceeded ({self._rate_limit} messages/second)",
+                    details={"rate_limit": self._rate_limit},
+                )
+                return False
+
+        # Phase 4: Use batching if enabled and not immediate
+        if self._enable_batching and not immediate:
+            await self._add_to_batch(connection_id, message)
+            return True
+
+        # Send immediately
         try:
             # Add sequence number if not present
             if message.sequence is None:
@@ -285,6 +469,8 @@ class ConnectionManager:
         """
         Send an error message to a connection.
 
+        Phase 4: Error messages are always sent immediately.
+
         Args:
             connection_id: Target connection
             code: Error code
@@ -292,7 +478,7 @@ class ConnectionManager:
             details: Optional error details
         """
         error_msg = ErrorMessage(code=code, message=message, details=details)
-        await self.send_message(connection_id, error_msg)
+        await self.send_message(connection_id, error_msg, immediate=True)
 
     async def broadcast(self, message: WebSocketMessage, exclude: Optional[Set[str]] = None):
         """
@@ -663,6 +849,14 @@ class ConnectionManager:
             for targets in sub_type.values()
         )
 
+        # Phase 4: Batching stats
+        total_queued = sum(len(q) for q in self._message_queues.values())
+        queued_by_connection = {
+            conn_id: len(q)
+            for conn_id, q in self._message_queues.items()
+            if q
+        }
+
         return {
             "active_connections": len(self.active_connections),
             "total_subscriptions": total_subscriptions,
@@ -674,6 +868,13 @@ class ConnectionManager:
             },
             "messages_sent": self._sequence_counter,
             "saved_sessions": len(self._disconnected_sessions),  # Phase 3
+            # Phase 4 stats
+            "batching_enabled": self._enable_batching,
+            "batch_interval_ms": self._batch_interval * 1000 if self._enable_batching else None,
+            "queued_messages": total_queued if self._enable_batching else None,
+            "queued_by_connection": queued_by_connection if self._enable_batching else None,
+            "rate_limiting_enabled": self._enable_rate_limiting,
+            "rate_limit": self._rate_limit if self._enable_rate_limiting else None,
         }
 
 

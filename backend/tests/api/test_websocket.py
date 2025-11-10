@@ -366,3 +366,159 @@ class TestWebSocketPhase3:
         stats = connection_manager.get_stats()
         assert "saved_sessions" in stats
         assert stats["saved_sessions"] >= 1
+
+
+class TestPhase4Features:
+    """Test Phase 4 features: batching and rate limiting"""
+
+    @pytest.mark.asyncio
+    async def test_message_batching(self):
+        """Test message batching functionality"""
+        from unittest.mock import AsyncMock, Mock
+        from app.schemas.websocket import PriceUpdateMessage
+
+        # Create connection with batching enabled
+        mock_ws = Mock()
+        mock_ws.accept = AsyncMock()
+        mock_ws.send_json = AsyncMock()
+
+        conn_id = await connection_manager.connect(mock_ws, user_id="test-user")
+
+        # Send multiple messages (should be batched)
+        for i in range(5):
+            msg = PriceUpdateMessage(
+                code=f"00593{i}",
+                price=70000 + i * 1000,
+                change_percent=1.5 + i * 0.1,
+            )
+            await connection_manager.send_message(conn_id, msg)
+
+        # Messages should be queued
+        assert len(connection_manager._message_queues[conn_id]) == 5
+
+        # Flush batch manually
+        await connection_manager._flush_batch(conn_id)
+
+        # Queue should be empty
+        assert len(connection_manager._message_queues[conn_id]) == 0
+
+        # WebSocket send_json should have been called
+        assert mock_ws.send_json.called
+
+    @pytest.mark.asyncio
+    async def test_immediate_message_bypass_batching(self):
+        """Test immediate messages bypass batching"""
+        from unittest.mock import AsyncMock, Mock
+        from app.schemas.websocket import ErrorMessage
+
+        mock_ws = Mock()
+        mock_ws.accept = AsyncMock()
+        mock_ws.send_json = AsyncMock()
+
+        conn_id = await connection_manager.connect(mock_ws, user_id="test-user")
+
+        # Send immediate message
+        error_msg = ErrorMessage(code="TEST_ERROR", message="Test error")
+        await connection_manager.send_message(conn_id, error_msg, immediate=True)
+
+        # Message should not be queued
+        assert len(connection_manager._message_queues.get(conn_id, [])) == 0
+
+        # Should be sent immediately
+        assert mock_ws.send_json.called
+
+    @pytest.mark.asyncio
+    async def test_rate_limiting(self):
+        """Test rate limiting functionality"""
+        from unittest.mock import AsyncMock, Mock
+        from app.schemas.websocket import PriceUpdateMessage
+        from app.core.websocket import ConnectionManager
+
+        # Create manager with low rate limit for testing
+        test_manager = ConnectionManager(
+            enable_redis=False,
+            enable_batching=False,  # Disable batching for direct testing
+            enable_rate_limiting=True,
+            rate_limit=5,  # Only 5 messages per second
+        )
+
+        mock_ws = Mock()
+        mock_ws.accept = AsyncMock()
+        mock_ws.send_json = AsyncMock()
+
+        conn_id = await test_manager.connect(mock_ws, user_id="test-user")
+
+        # Send messages up to rate limit
+        success_count = 0
+        for i in range(10):
+            msg = PriceUpdateMessage(
+                code="005930",
+                price=70000 + i * 100,
+                change_percent=1.5,
+            )
+            result = await test_manager.send_message(conn_id, msg, immediate=True)
+            if result:
+                success_count += 1
+
+        # Only first 5 should succeed (rate limit = 5)
+        assert success_count == 5
+
+    @pytest.mark.asyncio
+    async def test_batch_stats(self):
+        """Test Phase 4 statistics"""
+        from unittest.mock import AsyncMock, Mock
+        from app.schemas.websocket import PriceUpdateMessage
+
+        mock_ws = Mock()
+        mock_ws.accept = AsyncMock()
+        mock_ws.send_json = AsyncMock()
+
+        conn_id = await connection_manager.connect(mock_ws, user_id="test-user")
+
+        # Send some messages
+        for i in range(3):
+            msg = PriceUpdateMessage(
+                code="005930",
+                price=70000 + i * 1000,
+                change_percent=1.5,
+            )
+            await connection_manager.send_message(conn_id, msg)
+
+        # Check stats
+        stats = connection_manager.get_stats()
+        assert "batching_enabled" in stats
+        assert "batch_interval_ms" in stats
+        assert "queued_messages" in stats
+        assert "rate_limiting_enabled" in stats
+        assert "rate_limit" in stats
+
+        # Should have 3 queued messages
+        assert stats["queued_messages"] == 3
+
+    @pytest.mark.asyncio
+    async def test_batch_flush_loop(self):
+        """Test batch flush loop runs periodically"""
+        import asyncio
+        from unittest.mock import AsyncMock, Mock
+        from app.schemas.websocket import PriceUpdateMessage
+
+        mock_ws = Mock()
+        mock_ws.accept = AsyncMock()
+        mock_ws.send_json = AsyncMock()
+
+        conn_id = await connection_manager.connect(mock_ws, user_id="test-user")
+
+        # Send messages
+        for i in range(3):
+            msg = PriceUpdateMessage(
+                code="005930",
+                price=70000 + i * 1000,
+                change_percent=1.5,
+            )
+            await connection_manager.send_message(conn_id, msg)
+
+        # Wait for batch interval (30ms default) + small buffer
+        await asyncio.sleep(0.05)
+
+        # Queue should be empty (flushed by loop)
+        assert len(connection_manager._message_queues.get(conn_id, [])) == 0
