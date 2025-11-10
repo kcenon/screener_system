@@ -16,7 +16,9 @@ database/
 │   ├── 02_timescaledb_setup.sql
 │   ├── 03_indexes.sql
 │   ├── 04_functions_triggers.sql
-│   └── 05_views.sql
+│   ├── 05_views.sql
+│   ├── 06_add_calculated_indicators_updated_at.sql
+│   └── 07_order_book.sql
 ├── seeds/              # Initial/test data
 │   ├── dev_seed.sql
 │   └── prod_seed.sql
@@ -87,6 +89,8 @@ psql -U screener_user -d screener_db -f migrations/02_timescaledb_setup.sql
 psql -U screener_user -d screener_db -f migrations/03_indexes.sql
 psql -U screener_user -d screener_db -f migrations/04_functions_triggers.sql
 psql -U screener_user -d screener_db -f migrations/05_views.sql
+psql -U screener_user -d screener_db -f migrations/06_add_calculated_indicators_updated_at.sql
+psql -U screener_user -d screener_db -f migrations/07_order_book.sql
 ```
 
 Or use the automated script:
