@@ -445,20 +445,22 @@ class TestSQLInjectionPrevention:
             )
 
     def test_market_filter_sql_injection_safe(self, repository):
-        """Test that SQL injection in market filter is safely handled
+        """Test that SQL injection in market filter is prevented by Pydantic validation
 
-        Parameterized queries should safely handle malicious input without
-        executing it as SQL code.
+        Pydantic's Literal type validation should reject malicious input
+        before it reaches the SQL layer.
         """
+        import pytest
+        from pydantic import ValidationError
+
         malicious_market = "'; DROP TABLE stocks; --"
-        filters = ScreeningFilters(market=malicious_market)
 
-        conditions, params = repository._build_where_conditions(filters)
+        # Should raise ValidationError - Pydantic prevents SQL injection at validation layer
+        with pytest.raises(ValidationError) as exc_info:
+            filters = ScreeningFilters(market=malicious_market)
 
-        # Should use parameter placeholder
-        assert "market = :market" in conditions
-        # Parameter value contains the malicious string (will be escaped by SQLAlchemy)
-        assert params["market"] == malicious_market
+        # Verify error is about literal type validation
+        assert "literal_error" in str(exc_info.value)
 
     def test_sector_filter_sql_injection_safe(self, repository):
         """Test that SQL injection in sector filter is safely handled"""
