@@ -70,10 +70,17 @@ class Settings(BaseSettings):
     # RATE LIMITING
     # ========================================================================
 
-    RATE_LIMIT_FREE: int = 100
-    RATE_LIMIT_BASIC: int = 500
-    RATE_LIMIT_PRO: int = 2000
-    RATE_LIMIT_WINDOW: int = 60  # Rate limit window in seconds
+    # General API rate limits (requests per hour)
+    RATE_LIMIT_FREE: int = 100  # 100 req/hour
+    RATE_LIMIT_BASIC: int = 1000  # 1000 req/hour
+    RATE_LIMIT_PRO: int = 10000  # 10000 req/hour
+    RATE_LIMIT_WINDOW: int = 3600  # Rate limit window in seconds (1 hour)
+
+    # Per-endpoint rate limits (requests per hour)
+    # These limits are in addition to general tier limits
+    RATE_LIMIT_SCREENING: int = 50  # Screening queries (more expensive)
+    RATE_LIMIT_STOCK_DETAIL: int = 200  # Stock detail queries
+    RATE_LIMIT_AUTH: int = 10  # Authentication endpoints (prevent brute force)
 
     RATE_LIMIT_WHITELIST_PATHS: Union[str, List[str]] = [
         "/health",
@@ -93,6 +100,17 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return []
+
+    # ========================================================================
+    # EXTERNAL API QUOTA (KIS API)
+    # ========================================================================
+
+    KIS_API_RATE_LIMIT: int = 20  # 20 requests per second
+    KIS_API_QUOTA_WINDOW: int = 1  # 1 second window
+    KIS_API_ENABLE_QUEUE: bool = True  # Enable request queuing
+    KIS_API_QUEUE_TIMEOUT: int = 30  # Queue timeout in seconds
+    KIS_API_CIRCUIT_BREAKER_THRESHOLD: int = 5  # Failures before opening circuit
+    KIS_API_CIRCUIT_BREAKER_TIMEOUT: int = 60  # Circuit breaker timeout in seconds
 
     # ========================================================================
     # EXTERNAL APIs
