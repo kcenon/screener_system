@@ -1,5 +1,9 @@
 # Stock Screening Platform
 
+[![CI Pipeline](https://github.com/USERNAME/screener_system/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/screener_system/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/USERNAME/screener_system/branch/main/graph/badge.svg)](https://codecov.io/gh/USERNAME/screener_system)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A comprehensive stock analysis and screening platform for Korean markets (KOSPI/KOSDAQ) with 200+ financial and technical indicators.
 
 ## 🎯 Features

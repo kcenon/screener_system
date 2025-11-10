@@ -1,0 +1,30 @@
+backend:
+  - backend/**/*
+
+frontend:
+  - frontend/**/*
+
+database:
+  - database/**/*
+  - backend/app/db/**/*
+  - backend/alembic/**/*
+
+data-pipeline:
+  - data_pipeline/**/*
+
+infrastructure:
+  - docker-compose.yml
+  - Dockerfile
+  - .github/**/*
+  - infrastructure/**/*
+
+documentation:
+  - '**/*.md'
+  - docs/**/*
+
+tests:
+  - '**/*test*.py'
+  - '**/*test*.ts'
+  - '**/*test*.tsx'
+  - backend/tests/**/*
+  - frontend/src/**/__tests__/**/*
