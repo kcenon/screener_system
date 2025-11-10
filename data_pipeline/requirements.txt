@@ -23,6 +23,10 @@ numpy==1.26.2
 requests==2.32.4
 httpx==0.25.2  # Async HTTP client
 
+# Cache
+# =============================================================================
+redis==5.0.1  # Redis client for caching
+
 # Utilities
 # =============================================================================
 python-dotenv==1.0.0  # Environment variable management

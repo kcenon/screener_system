@@ -32,9 +32,10 @@ import os
 import time
 import logging
 import hashlib
+import json
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Any, Literal
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from enum import Enum
 import requests
 from requests.adapters import HTTPAdapter
@@ -43,6 +44,15 @@ from threading import Lock
 
 # Configure logging
 logger = logging.getLogger(__name__)
+
+# Redis import (optional, gracefully degrade if not available)
+try:
+    import redis
+    from redis import ConnectionPool
+    REDIS_AVAILABLE = True
+except ImportError:
+    REDIS_AVAILABLE = False
+    logger.warning("redis package not installed. Caching will be disabled.")
 
 
 # ============================================================================
@@ -377,6 +387,244 @@ class TokenManager:
 
 
 # ============================================================================
+# Redis Cache Layer
+# ============================================================================
+
+class RedisCache:
+    """
+    Redis-based caching layer for KIS API responses.
+
+    Features:
+    - Connection pooling for efficient resource usage
+    - Configurable TTL per data type
+    - JSON serialization/deserialization
+    - Graceful degradation if Redis unavailable
+    - Thread-safe operations
+
+    Cache Key Strategy:
+    - Current Price: kis:price:{stock_code}
+    - Order Book: kis:orderbook:{stock_code}
+    - Chart Data: kis:chart:{stock_code}:{period}:{count}
+    - Stock Info: kis:info:{stock_code}
+    """
+
+    def __init__(
+        self,
+        host: str = None,
+        port: int = None,
+        password: str = None,
+        db: int = 0,
+        enabled: bool = True,
+        ttl_config: Dict[str, int] = None
+    ):
+        """
+        Initialize Redis cache.
+
+        Args:
+            host: Redis host (default from env)
+            port: Redis port (default from env)
+            password: Redis password (default from env)
+            db: Redis database number
+            enabled: Enable/disable caching
+            ttl_config: TTL configuration dict (price, orderbook, chart, info)
+        """
+        self.enabled = enabled and REDIS_AVAILABLE
+        self.client = None
+        self.pool = None
+
+        if not self.enabled:
+            if not REDIS_AVAILABLE:
+                logger.warning("Redis caching disabled: redis package not installed")
+            else:
+                logger.info("Redis caching explicitly disabled")
+            return
+
+        # Get configuration from environment
+        self.host = host or os.getenv('REDIS_HOST', 'localhost')
+        self.port = int(port or os.getenv('REDIS_PORT', 6379))
+        self.password = password or os.getenv('REDIS_PASSWORD')
+        self.db = db
+
+        # TTL configuration (seconds)
+        self.ttl_config = ttl_config or {
+            'price': int(os.getenv('KIS_CACHE_TTL_PRICE', 1800)),        # 30 min
+            'orderbook': int(os.getenv('KIS_CACHE_TTL_ORDERBOOK', 10)),  # 10 sec
+            'chart': int(os.getenv('KIS_CACHE_TTL_CHART', 3600)),        # 1 hour
+            'info': int(os.getenv('KIS_CACHE_TTL_STOCK_INFO', 86400))    # 24 hours
+        }
+
+        # Initialize connection
+        try:
+            self._connect()
+            logger.info(f"Redis cache initialized: {self.host}:{self.port}")
+        except Exception as e:
+            logger.error(f"Failed to initialize Redis cache: {e}")
+            logger.warning("Redis caching disabled due to connection failure")
+            self.enabled = False
+
+    def _connect(self):
+        """Establish Redis connection with pooling"""
+        self.pool = ConnectionPool(
+            host=self.host,
+            port=self.port,
+            password=self.password,
+            db=self.db,
+            decode_responses=True,  # Auto-decode bytes to strings
+            max_connections=20,
+            socket_timeout=5,
+            socket_connect_timeout=5
+        )
+        self.client = redis.Redis(connection_pool=self.pool)
+
+        # Test connection
+        self.client.ping()
+
+    def _make_key(self, key_type: str, *args) -> str:
+        """
+        Generate cache key.
+
+        Args:
+            key_type: Type of data (price, orderbook, chart, info)
+            *args: Additional key components
+
+        Returns:
+            Cache key string
+        """
+        parts = ['kis', key_type] + [str(arg) for arg in args]
+        return ':'.join(parts)
+
+    def get(self, key_type: str, *args) -> Optional[Dict]:
+        """
+        Get cached data.
+
+        Args:
+            key_type: Type of data
+            *args: Key components
+
+        Returns:
+            Cached data dict or None
+        """
+        if not self.enabled:
+            return None
+
+        try:
+            key = self._make_key(key_type, *args)
+            data = self.client.get(key)
+
+            if data:
+                logger.debug(f"Cache HIT: {key}")
+                return json.loads(data)
+            else:
+                logger.debug(f"Cache MISS: {key}")
+                return None
+
+        except Exception as e:
+            logger.warning(f"Cache get error: {e}")
+            return None
+
+    def set(
+        self,
+        key_type: str,
+        data: Any,
+        *args,
+        ttl: int = None
+    ) -> bool:
+        """
+        Set cached data.
+
+        Args:
+            key_type: Type of data
+            data: Data to cache (will be JSON serialized)
+            *args: Key components
+            ttl: TTL in seconds (default from config)
+
+        Returns:
+            True if successful, False otherwise
+        """
+        if not self.enabled:
+            return False
+
+        try:
+            key = self._make_key(key_type, *args)
+
+            # Convert dataclass to dict if needed
+            if hasattr(data, '__dataclass_fields__'):
+                data = asdict(data)
+            elif isinstance(data, list) and data and hasattr(data[0], '__dataclass_fields__'):
+                data = [asdict(item) for item in data]
+
+            # Serialize to JSON
+            json_data = json.dumps(data, default=str)
+
+            # Get TTL
+            ttl = ttl or self.ttl_config.get(key_type, 300)
+
+            # Set with expiration
+            self.client.setex(key, ttl, json_data)
+            logger.debug(f"Cache SET: {key} (TTL={ttl}s)")
+            return True
+
+        except Exception as e:
+            logger.warning(f"Cache set error: {e}")
+            return False
+
+    def delete(self, key_type: str, *args) -> bool:
+        """
+        Delete cached data.
+
+        Args:
+            key_type: Type of data
+            *args: Key components
+
+        Returns:
+            True if deleted, False otherwise
+        """
+        if not self.enabled:
+            return False
+
+        try:
+            key = self._make_key(key_type, *args)
+            deleted = self.client.delete(key)
+            logger.debug(f"Cache DELETE: {key}")
+            return bool(deleted)
+
+        except Exception as e:
+            logger.warning(f"Cache delete error: {e}")
+            return False
+
+    def clear_pattern(self, pattern: str) -> int:
+        """
+        Clear all keys matching pattern.
+
+        Args:
+            pattern: Redis key pattern (e.g., "kis:price:*")
+
+        Returns:
+            Number of keys deleted
+        """
+        if not self.enabled:
+            return 0
+
+        try:
+            keys = list(self.client.scan_iter(match=pattern))
+            if keys:
+                deleted = self.client.delete(*keys)
+                logger.info(f"Cache CLEAR: {pattern} ({deleted} keys)")
+                return deleted
+            return 0
+
+        except Exception as e:
+            logger.warning(f"Cache clear error: {e}")
+            return 0
+
+    def close(self):
+        """Close Redis connection"""
+        if self.pool:
+            self.pool.disconnect()
+            logger.info("Redis cache connection closed")
+
+
+# ============================================================================
 # KIS API Client
 # ============================================================================
 
@@ -427,7 +675,8 @@ class KISAPIClient:
         use_virtual: bool = None,
         use_mock: bool = None,
         timeout: int = 30,
-        max_retries: int = 3
+        max_retries: int = 3,
+        enable_cache: bool = None
     ):
         """
         Initialize KIS API client.
@@ -439,6 +688,7 @@ class KISAPIClient:
             use_mock: Use mock data for testing (if None, reads from environment)
             timeout: Request timeout in seconds
             max_retries: Maximum number of retries for failed requests
+            enable_cache: Enable Redis caching (if None, auto-detect based on Redis availability)
         """
         # Get credentials
         self.app_key = app_key or os.getenv('KIS_APP_KEY')
@@ -496,6 +746,12 @@ class KISAPIClient:
         else:
             self.token_manager = None
             logger.info("Using mock data mode (no API calls will be made)")
+
+        # Initialize Redis cache
+        if enable_cache is None:
+            enable_cache = os.getenv('REDIS_ENABLED', 'true').lower() == 'true'
+
+        self.cache = RedisCache(enabled=enable_cache)
 
     def _create_session(self) -> requests.Session:
         """Create requests session with retry strategy"""
@@ -616,6 +872,12 @@ class KISAPIClient:
         if self.use_mock:
             return self._get_mock_current_price(stock_code)
 
+        # Try cache first
+        cached_data = self.cache.get('price', stock_code)
+        if cached_data:
+            logger.debug(f"Using cached price for {stock_code}")
+            return CurrentPrice(**cached_data)
+
         # Make API request with circuit breaker
         def api_call():
             endpoint = "/uapi/domestic-stock/v1/quotations/inquire-price"
@@ -628,7 +890,7 @@ class KISAPIClient:
             response = self._make_request(endpoint, tr_id, params)
             output = response.get('output', {})
 
-            return CurrentPrice(
+            price_data = CurrentPrice(
                 stock_code=stock_code,
                 stock_name=output.get('hts_kor_isnm', ''),
                 current_price=float(output.get('stck_prpr', 0)),
@@ -641,6 +903,11 @@ class KISAPIClient:
                 trading_value=float(output.get('acml_tr_pbmn', 0)),
                 market_cap=float(output.get('hts_avls', 0)) if output.get('hts_avls') else None
             )
+
+            # Cache the result
+            self.cache.set('price', price_data, stock_code)
+
+            return price_data
 
         return self.circuit_breaker.call(api_call)
 
@@ -665,6 +932,17 @@ class KISAPIClient:
 
         if self.use_mock:
             return self._get_mock_order_book(stock_code)
+
+        # Try cache first
+        cached_data = self.cache.get('orderbook', stock_code)
+        if cached_data:
+            logger.debug(f"Using cached order book for {stock_code}")
+            # Reconstruct OrderBook with OrderBookLevel objects
+            bid_levels = [OrderBookLevel(**level) for level in cached_data['bid_levels']]
+            ask_levels = [OrderBookLevel(**level) for level in cached_data['ask_levels']]
+            cached_data['bid_levels'] = bid_levels
+            cached_data['ask_levels'] = ask_levels
+            return OrderBook(**cached_data)
 
         def api_call():
             endpoint = "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn"
@@ -695,7 +973,7 @@ class KISAPIClient:
                 if price > 0:
                     ask_levels.append(OrderBookLevel(price, volume, count))
 
-            return OrderBook(
+            orderbook_data = OrderBook(
                 stock_code=stock_code,
                 stock_name=output.get('hts_kor_isnm', ''),
                 bid_levels=bid_levels,
@@ -703,6 +981,11 @@ class KISAPIClient:
                 total_bid_volume=int(output.get('total_bidp_rsqn', 0)),
                 total_ask_volume=int(output.get('total_askp_rsqn', 0))
             )
+
+            # Cache the result
+            self.cache.set('orderbook', orderbook_data, stock_code)
+
+            return orderbook_data
 
         return self.circuit_breaker.call(api_call)
 
@@ -739,6 +1022,13 @@ class KISAPIClient:
         if self.use_mock:
             return self._get_mock_chart_data(stock_code, period, count)
 
+        # Try cache first (key includes period and count)
+        period_str = period.value if isinstance(period, PriceType) else str(period)
+        cached_data = self.cache.get('chart', stock_code, period_str, str(count))
+        if cached_data:
+            logger.debug(f"Using cached chart data for {stock_code} ({period_str}, {count})")
+            return [ChartData(**item) for item in cached_data]
+
         def api_call():
             endpoint = "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
             tr_id = "FHKST03010100"  # 국내주식기간별시세(일/주/월/년)
@@ -768,6 +1058,9 @@ class KISAPIClient:
                     trading_value=float(item.get('acml_tr_pbmn', 0))
                 ))
 
+            # Cache the result
+            self.cache.set('chart', chart_data, stock_code, period_str, str(count))
+
             return chart_data
 
         return self.circuit_breaker.call(api_call)
@@ -793,6 +1086,12 @@ class KISAPIClient:
         if self.use_mock:
             return self._get_mock_stock_info(stock_code)
 
+        # Try cache first
+        cached_data = self.cache.get('info', stock_code)
+        if cached_data:
+            logger.debug(f"Using cached stock info for {stock_code}")
+            return StockInfo(**cached_data)
+
         def api_call():
             endpoint = "/uapi/domestic-stock/v1/quotations/search-stock-info"
             tr_id = "CTPF1604R"  # 종목기본조회
@@ -804,7 +1103,7 @@ class KISAPIClient:
             response = self._make_request(endpoint, tr_id, params)
             output = response.get('output', {})
 
-            return StockInfo(
+            stock_info = StockInfo(
                 stock_code=stock_code,
                 stock_name=output.get('prdt_name', ''),
                 market=output.get('std_pdno', ''),  # KOSPI/KOSDAQ
@@ -813,6 +1112,11 @@ class KISAPIClient:
                 listed_shares=int(output.get('lstg_stqt', 0)) if output.get('lstg_stqt') else None,
                 face_value=float(output.get('face_val', 0)) if output.get('face_val') else None
             )
+
+            # Cache the result
+            self.cache.set('info', stock_info, stock_code)
+
+            return stock_info
 
         return self.circuit_breaker.call(api_call)
 
