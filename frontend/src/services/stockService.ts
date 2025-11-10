@@ -4,10 +4,16 @@ import type {
   ScreeningResponse,
   ScreeningSortField,
   SortOrder,
-  StockScreeningResult,
   ScreeningFilters,
 } from '../types/screening'
-import type { Stock, PaginatedResponse } from '../types'
+import type {
+  Stock,
+  PaginatedResponse,
+  StockDetail,
+  PriceHistoryResponse,
+  FinancialsResponse,
+  FinancialPeriod,
+} from '../types'
 
 /**
  * Stock service for managing stock screening and stock data operations
@@ -56,11 +62,64 @@ class StockService {
    * Get detailed information for a single stock by code
    *
    * @param code - Stock code (e.g., '005930' for Samsung Electronics)
-   * @returns Promise with stock screening result containing all available indicators
+   * @returns Promise with stock detail containing all available indicators and metadata
    */
-  async getStock(code: string): Promise<StockScreeningResult> {
-    const response = await api.get<StockScreeningResult>(
+  async getStock(code: string): Promise<StockDetail> {
+    const response = await api.get<StockDetail>(
       `${this.STOCKS_BASE_URL}/${code}`
+    )
+    return response.data
+  }
+
+  /**
+   * Get price history for a stock
+   *
+   * @param code - Stock code
+   * @param fromDate - Start date (ISO 8601 format, e.g., '2023-01-01')
+   * @param toDate - End date (ISO 8601 format, e.g., '2023-12-31')
+   * @param interval - Time interval ('1D', '1W', '1M', etc.)
+   * @returns Promise with price history data
+   */
+  async getPriceHistory(
+    code: string,
+    fromDate: string,
+    toDate: string,
+    interval: string = '1D'
+  ): Promise<PriceHistoryResponse> {
+    const response = await api.get<PriceHistoryResponse>(
+      `${this.STOCKS_BASE_URL}/${code}/prices`,
+      {
+        params: {
+          from_date: fromDate,
+          to_date: toDate,
+          interval,
+        },
+      }
+    )
+    return response.data
+  }
+
+  /**
+   * Get financial statements for a stock
+   *
+   * @param code - Stock code
+   * @param periodType - Period type ('Q' for quarterly, 'Y' for yearly)
+   * @param years - Number of years/periods to fetch (default: 5)
+   * @returns Promise with financial statements data
+   */
+  async getFinancials(
+    code: string,
+    periodType: FinancialPeriod = 'Y',
+    years: number = 5
+  ): Promise<FinancialsResponse> {
+    const response = await api.get<FinancialsResponse>(
+      `${this.STOCKS_BASE_URL}/${code}/financials`,
+      {
+        params: {
+          period_type: periodType,
+          years,
+        },
+      }
     )
     return response.data
   }

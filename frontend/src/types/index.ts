@@ -73,3 +73,6 @@ export interface ApiError {
 
 // Screening types
 export * from './screening'
+
+// Stock detail types
+export * from './stock'
