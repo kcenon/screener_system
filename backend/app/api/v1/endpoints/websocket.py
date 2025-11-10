@@ -148,7 +148,7 @@ async def websocket_endpoint(
                     connection_id,
                     code="PROCESSING_ERROR",
                     message="Error processing message",
-                    details={"error": str(e)},
+                    details={"error": str(e)} if settings.DEBUG else None,
                 )
 
     except WebSocketDisconnect:
@@ -199,7 +199,7 @@ async def handle_subscribe(connection_id: str, message: dict):
             connection_id,
             code="SUBSCRIBE_ERROR",
             message="Failed to process subscription",
-            details={"error": str(e)},
+            details={"error": str(e)} if settings.DEBUG else None,
         )
 
 
@@ -240,7 +240,7 @@ async def handle_unsubscribe(connection_id: str, message: dict):
             connection_id,
             code="UNSUBSCRIBE_ERROR",
             message="Failed to process unsubscription",
-            details={"error": str(e)},
+            details={"error": str(e)} if settings.DEBUG else None,
         )
 
 

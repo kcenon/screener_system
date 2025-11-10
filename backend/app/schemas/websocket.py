@@ -100,13 +100,11 @@ class UnsubscribeRequest(BaseModel):
         }
 
 
-class SubscriptionResponse(BaseModel):
+class SubscriptionResponse(WebSocketMessage):
     """Subscription confirmation"""
 
-    type: MessageType  # SUBSCRIBED or UNSUBSCRIBED
     subscription_type: SubscriptionType
     targets: List[str]
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
 # ============================================================================
@@ -114,7 +112,7 @@ class SubscriptionResponse(BaseModel):
 # ============================================================================
 
 
-class PriceUpdate(BaseModel):
+class PriceUpdate(WebSocketMessage):
     """Real-time price update"""
 
     type: MessageType = MessageType.PRICE_UPDATE
@@ -123,7 +121,6 @@ class PriceUpdate(BaseModel):
     change: float
     change_percent: float
     volume: int
-    timestamp: datetime
 
     class Config:
         json_schema_extra = {
@@ -147,14 +144,13 @@ class OrderBookLevel(BaseModel):
     orders: int = 0
 
 
-class OrderBookUpdate(BaseModel):
+class OrderBookUpdate(WebSocketMessage):
     """Real-time order book update"""
 
     type: MessageType = MessageType.ORDERBOOK_UPDATE
     stock_code: str
     bids: List[OrderBookLevel]  # Buy orders (highest to lowest)
     asks: List[OrderBookLevel]  # Sell orders (lowest to highest)
-    timestamp: datetime
 
     class Config:
         json_schema_extra = {
@@ -174,16 +170,15 @@ class OrderBookUpdate(BaseModel):
         }
 
 
-class MarketStatus(BaseModel):
+class MarketStatus(WebSocketMessage):
     """Market status update"""
 
     type: MessageType = MessageType.MARKET_STATUS
     market: str  # KOSPI, KOSDAQ
     status: str  # open, closed, pre_market, after_hours
-    timestamp: datetime
 
 
-class Alert(BaseModel):
+class Alert(WebSocketMessage):
     """Alert notification"""
 
     type: MessageType = MessageType.ALERT
@@ -192,7 +187,6 @@ class Alert(BaseModel):
     alert_type: str  # price_target, volume_spike, news, etc.
     message: str
     data: Dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime
 
 
 # ============================================================================
@@ -200,28 +194,25 @@ class Alert(BaseModel):
 # ============================================================================
 
 
-class PingMessage(BaseModel):
+class PingMessage(WebSocketMessage):
     """Ping message (keep-alive)"""
 
     type: MessageType = MessageType.PING
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
-class PongMessage(BaseModel):
+class PongMessage(WebSocketMessage):
     """Pong response"""
 
     type: MessageType = MessageType.PONG
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 
-class ErrorMessage(BaseModel):
+class ErrorMessage(WebSocketMessage):
     """Error message"""
 
     type: MessageType = MessageType.ERROR
     code: str
     message: str
     details: Optional[Dict[str, Any]] = None
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
         json_schema_extra = {

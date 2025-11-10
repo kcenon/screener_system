@@ -49,15 +49,17 @@ class ConnectionManager:
 
         # Message sequence counter for ordering
         self._sequence_counter = 0
+        self._sequence_lock = asyncio.Lock()
 
         # Heartbeat task
         self._heartbeat_task: Optional[asyncio.Task] = None
         self._heartbeat_interval = 30  # seconds
 
-    def _next_sequence(self) -> int:
-        """Get next message sequence number"""
-        self._sequence_counter += 1
-        return self._sequence_counter
+    async def _next_sequence(self) -> int:
+        """Get next message sequence number (thread-safe)"""
+        async with self._sequence_lock:
+            self._sequence_counter += 1
+            return self._sequence_counter
 
     async def connect(
         self, websocket: WebSocket, user_id: Optional[str] = None
@@ -119,6 +121,9 @@ class ConnectionManager:
             ].items():
                 for target in targets:
                     self.subscriptions[sub_type][target].discard(connection_id)
+                    # Clean up empty subscription sets to prevent memory leak
+                    if not self.subscriptions[sub_type][target]:
+                        del self.subscriptions[sub_type][target]
 
             del self.connection_subscriptions[connection_id]
 
@@ -156,7 +161,7 @@ class ConnectionManager:
         try:
             # Add sequence number if not present
             if message.sequence is None:
-                message.sequence = self._next_sequence()
+                message.sequence = await self._next_sequence()
 
             # Send as JSON
             await websocket.send_json(message.model_dump(mode="json"))
@@ -282,6 +287,9 @@ class ConnectionManager:
         """
         # Remove from subscriptions
         self.subscriptions[subscription_type][target].discard(connection_id)
+        # Clean up empty subscription sets to prevent memory leak
+        if not self.subscriptions[subscription_type][target]:
+            del self.subscriptions[subscription_type][target]
 
         # Remove from reverse index
         self.connection_subscriptions[connection_id][subscription_type].discard(
