@@ -1,7 +1,8 @@
 """Unit and integration tests for screening repository"""
 
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from unittest.mock import Mock, AsyncMock, MagicMock
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.screening_repository import ScreeningRepository
@@ -412,7 +413,7 @@ class TestSQLInjectionPrevention:
                 sort_by=malicious_sort,
                 order="desc",
                 offset=0,
-                limit=50
+                limit=50,
             )
 
     async def test_sort_by_union_attack_blocked(self, repository):
@@ -426,7 +427,7 @@ class TestSQLInjectionPrevention:
                 sort_by=malicious_sort,
                 order="desc",
                 offset=0,
-                limit=50
+                limit=50,
             )
 
     async def test_sort_by_comment_injection_blocked(self, repository):
@@ -440,7 +441,7 @@ class TestSQLInjectionPrevention:
                 sort_by=malicious_sort,
                 order="desc",
                 offset=0,
-                limit=50
+                limit=50,
             )
 
     def test_market_filter_sql_injection_safe(self, repository):
@@ -489,9 +490,7 @@ class TestSQLInjectionPrevention:
         Even though numeric values are less vulnerable, we still use
         parameterized queries for consistency and defense in depth.
         """
-        filters = ScreeningFilters(
-            per=FilterRange(min=5.0, max=15.0)
-        )
+        filters = ScreeningFilters(per=FilterRange(min=5.0, max=15.0))
 
         conditions, params = repository._build_where_conditions(filters)
 
@@ -505,15 +504,41 @@ class TestSQLInjectionPrevention:
     def test_allowed_sort_fields_completeness(self, repository):
         """Test that ALLOWED_SORT_FIELDS includes all necessary fields"""
         expected_fields = {
-            "code", "name", "market", "current_price", "market_cap",
-            "per", "pbr", "pcr", "psr", "roe", "roa", "roic",
-            "net_margin", "operating_margin", "gross_margin",
-            "revenue_growth_yoy", "profit_growth_yoy", "eps_growth_yoy",
-            "debt_to_equity", "current_ratio", "altman_z_score", "piotroski_f_score",
-            "dividend_yield", "price_change_1d", "price_change_1w",
-            "price_change_1m", "price_change_3m", "price_change_6m", "price_change_1y",
-            "volume_surge_pct", "quality_score", "value_score",
-            "growth_score", "momentum_score", "overall_score"
+            "code",
+            "name",
+            "market",
+            "current_price",
+            "market_cap",
+            "per",
+            "pbr",
+            "pcr",
+            "psr",
+            "roe",
+            "roa",
+            "roic",
+            "net_margin",
+            "operating_margin",
+            "gross_margin",
+            "revenue_growth_yoy",
+            "profit_growth_yoy",
+            "eps_growth_yoy",
+            "debt_to_equity",
+            "current_ratio",
+            "altman_z_score",
+            "piotroski_f_score",
+            "dividend_yield",
+            "price_change_1d",
+            "price_change_1w",
+            "price_change_1m",
+            "price_change_3m",
+            "price_change_6m",
+            "price_change_1y",
+            "volume_surge_pct",
+            "quality_score",
+            "value_score",
+            "growth_score",
+            "momentum_score",
+            "overall_score",
         }
 
         assert repository.ALLOWED_SORT_FIELDS == expected_fields
@@ -534,11 +559,7 @@ class TestSQLInjectionPrevention:
         for field in valid_fields:
             # Should not raise any exception
             await repository.screen_stocks(
-                filters=filters,
-                sort_by=field,
-                order="desc",
-                offset=0,
-                limit=50
+                filters=filters, sort_by=field, order="desc", offset=0, limit=50
             )
 
     def test_parameterized_queries_prevent_type_confusion(self, repository):

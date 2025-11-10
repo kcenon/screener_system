@@ -1,20 +1,13 @@
 """Unit tests for screening service"""
 
-import hashlib
-import json
 from decimal import Decimal
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
 from app.core.exceptions import NotFoundException
-from app.schemas.screening import (
-    FilterRange,
-    ScreenedStock,
-    ScreeningFilters,
-    ScreeningRequest,
-    ScreeningTemplate,
-)
+from app.schemas.screening import (FilterRange, ScreeningFilters,
+                                   ScreeningRequest)
 from app.services.screening_service import ScreeningService
 
 

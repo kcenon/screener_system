@@ -1,19 +1,10 @@
 """Financial statement database model"""
 
-from datetime import date
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import (
-    BigInteger,
-    CheckConstraint,
-    Column,
-    Date,
-    ForeignKey,
-    Integer,
-    Numeric,
-    String,
-)
+from sqlalchemy import (BigInteger, CheckConstraint, Column, Date, ForeignKey,
+                        Integer, Numeric, String)
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base, TimestampMixin
@@ -146,6 +137,10 @@ class FinancialStatement(Base, TimestampMixin):
     @property
     def current_ratio(self) -> Optional[Decimal]:
         """Calculate current ratio"""
-        if self.current_assets and self.current_liabilities and self.current_liabilities > 0:
+        if (
+            self.current_assets
+            and self.current_liabilities
+            and self.current_liabilities > 0
+        ):
             return Decimal(self.current_assets) / Decimal(self.current_liabilities)
         return None

@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Set, Tuple
 
-from sqlalchemy import and_, desc, func, select, text
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.schemas.screening import FilterRange, ScreeningFilters
@@ -133,10 +133,7 @@ class ScreeningRepository:
         total_count = rows[0]["total_count"] if rows else 0
 
         # Convert to dict format (excluding total_count column)
-        stocks = [
-            {k: v for k, v in row.items() if k != "total_count"}
-            for row in rows
-        ]
+        stocks = [{k: v for k, v in row.items() if k != "total_count"} for row in rows]
 
         return stocks, total_count
 
@@ -176,47 +173,87 @@ class ScreeningRepository:
         self._add_range_filter(conditions, params, "pbr", filters.pbr)
         self._add_range_filter(conditions, params, "psr", filters.psr)
         self._add_range_filter(conditions, params, "pcr", filters.pcr)
-        self._add_range_filter(conditions, params, "dividend_yield", filters.dividend_yield)
+        self._add_range_filter(
+            conditions, params, "dividend_yield", filters.dividend_yield
+        )
 
         # Profitability filters
         self._add_range_filter(conditions, params, "roe", filters.roe)
         self._add_range_filter(conditions, params, "roa", filters.roa)
         self._add_range_filter(conditions, params, "roic", filters.roic)
         self._add_range_filter(conditions, params, "gross_margin", filters.gross_margin)
-        self._add_range_filter(conditions, params, "operating_margin", filters.operating_margin)
+        self._add_range_filter(
+            conditions, params, "operating_margin", filters.operating_margin
+        )
         self._add_range_filter(conditions, params, "net_margin", filters.net_margin)
 
         # Growth filters
-        self._add_range_filter(conditions, params, "revenue_growth_yoy", filters.revenue_growth_yoy)
-        self._add_range_filter(conditions, params, "profit_growth_yoy", filters.profit_growth_yoy)
-        self._add_range_filter(conditions, params, "eps_growth_yoy", filters.eps_growth_yoy)
+        self._add_range_filter(
+            conditions, params, "revenue_growth_yoy", filters.revenue_growth_yoy
+        )
+        self._add_range_filter(
+            conditions, params, "profit_growth_yoy", filters.profit_growth_yoy
+        )
+        self._add_range_filter(
+            conditions, params, "eps_growth_yoy", filters.eps_growth_yoy
+        )
 
         # Stability filters
-        self._add_range_filter(conditions, params, "debt_to_equity", filters.debt_to_equity)
-        self._add_range_filter(conditions, params, "current_ratio", filters.current_ratio)
-        self._add_range_filter(conditions, params, "altman_z_score", filters.altman_z_score)
-        self._add_range_filter(conditions, params, "piotroski_f_score", filters.piotroski_f_score)
+        self._add_range_filter(
+            conditions, params, "debt_to_equity", filters.debt_to_equity
+        )
+        self._add_range_filter(
+            conditions, params, "current_ratio", filters.current_ratio
+        )
+        self._add_range_filter(
+            conditions, params, "altman_z_score", filters.altman_z_score
+        )
+        self._add_range_filter(
+            conditions, params, "piotroski_f_score", filters.piotroski_f_score
+        )
 
         # Price momentum filters
-        self._add_range_filter(conditions, params, "price_change_1d", filters.price_change_1d)
-        self._add_range_filter(conditions, params, "price_change_1w", filters.price_change_1w)
-        self._add_range_filter(conditions, params, "price_change_1m", filters.price_change_1m)
-        self._add_range_filter(conditions, params, "price_change_3m", filters.price_change_3m)
-        self._add_range_filter(conditions, params, "price_change_6m", filters.price_change_6m)
-        self._add_range_filter(conditions, params, "price_change_1y", filters.price_change_1y)
+        self._add_range_filter(
+            conditions, params, "price_change_1d", filters.price_change_1d
+        )
+        self._add_range_filter(
+            conditions, params, "price_change_1w", filters.price_change_1w
+        )
+        self._add_range_filter(
+            conditions, params, "price_change_1m", filters.price_change_1m
+        )
+        self._add_range_filter(
+            conditions, params, "price_change_3m", filters.price_change_3m
+        )
+        self._add_range_filter(
+            conditions, params, "price_change_6m", filters.price_change_6m
+        )
+        self._add_range_filter(
+            conditions, params, "price_change_1y", filters.price_change_1y
+        )
 
         # Volume filter
-        self._add_range_filter(conditions, params, "volume_surge_pct", filters.volume_surge_pct)
+        self._add_range_filter(
+            conditions, params, "volume_surge_pct", filters.volume_surge_pct
+        )
 
         # Composite score filters
-        self._add_range_filter(conditions, params, "quality_score", filters.quality_score)
+        self._add_range_filter(
+            conditions, params, "quality_score", filters.quality_score
+        )
         self._add_range_filter(conditions, params, "value_score", filters.value_score)
         self._add_range_filter(conditions, params, "growth_score", filters.growth_score)
-        self._add_range_filter(conditions, params, "momentum_score", filters.momentum_score)
-        self._add_range_filter(conditions, params, "overall_score", filters.overall_score)
+        self._add_range_filter(
+            conditions, params, "momentum_score", filters.momentum_score
+        )
+        self._add_range_filter(
+            conditions, params, "overall_score", filters.overall_score
+        )
 
         # Price and market cap filters
-        self._add_range_filter(conditions, params, "current_price", filters.current_price)
+        self._add_range_filter(
+            conditions, params, "current_price", filters.current_price
+        )
         self._add_range_filter(conditions, params, "market_cap", filters.market_cap)
 
         return conditions, params

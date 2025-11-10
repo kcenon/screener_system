@@ -5,9 +5,9 @@ from typing import List, Optional, Tuple
 
 from sqlalchemy import and_, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
-from app.db.models import CalculatedIndicator, DailyPrice, FinancialStatement, Stock
+from app.db.models import (CalculatedIndicator, DailyPrice, FinancialStatement,
+                           Stock)
 
 
 class StockRepository:
@@ -85,7 +85,9 @@ class StockRepository:
         sector: Optional[str] = None,
         offset: int = 0,
         limit: int = 50,
-    ) -> Tuple[List[Tuple[Stock, Optional[DailyPrice], Optional[CalculatedIndicator]]], int]:
+    ) -> Tuple[
+        List[Tuple[Stock, Optional[DailyPrice], Optional[CalculatedIndicator]]], int
+    ]:
         """
         List stocks with latest price and indicators
         Returns (list of (stock, latest_price, latest_indicators), total_count)

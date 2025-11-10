@@ -4,19 +4,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
-from app.api.dependencies import (
-    CurrentActiveUser,
-    DatabaseSession,
-    get_auth_service,
-)
+from app.api.dependencies import CurrentActiveUser, get_auth_service
 from app.core.exceptions import UnauthorizedException
-from app.schemas import (
-    RefreshTokenRequest,
-    TokenResponse,
-    UserCreate,
-    UserLogin,
-    UserResponse,
-)
+from app.schemas import (RefreshTokenRequest, TokenResponse, UserCreate,
+                         UserLogin, UserResponse)
 from app.services import AuthService
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])

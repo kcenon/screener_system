@@ -1,6 +1,5 @@
 """Stock database model"""
 
-from datetime import date
 from typing import Optional
 
 from sqlalchemy import BigInteger, CheckConstraint, Column, Date, String

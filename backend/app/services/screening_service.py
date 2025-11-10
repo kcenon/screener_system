@@ -3,21 +3,16 @@
 import hashlib
 import json
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache import CacheManager
 from app.repositories.screening_repository import ScreeningRepository
-from app.schemas.screening import (
-    ScreenedStock,
-    ScreeningFilters,
-    ScreeningMetadata,
-    ScreeningRequest,
-    ScreeningResponse,
-    ScreeningTemplate,
-    ScreeningTemplateList,
-)
+from app.schemas.screening import (ScreenedStock, ScreeningFilters,
+                                   ScreeningMetadata, ScreeningRequest,
+                                   ScreeningResponse, ScreeningTemplate,
+                                   ScreeningTemplateList)
 
 
 class ScreeningService:
@@ -33,9 +28,7 @@ class ScreeningService:
         self.cache = cache
         self.screening_repo = ScreeningRepository(session)
 
-    async def execute_screening(
-        self, request: ScreeningRequest
-    ) -> ScreeningResponse:
+    async def execute_screening(self, request: ScreeningRequest) -> ScreeningResponse:
         """
         Execute stock screening with filters and caching
 
@@ -177,6 +170,7 @@ class ScreeningService:
 
         if not template:
             from app.core.exceptions import NotFoundException
+
             raise NotFoundException(f"Template not found: {template_id}")
 
         # Create screening request from template
@@ -259,4 +253,3 @@ class ScreeningService:
         # In Redis, we would use KEYS screening:* and DEL
         # For now, we rely on TTL expiration
         # TODO: Implement cache invalidation by pattern
-        pass

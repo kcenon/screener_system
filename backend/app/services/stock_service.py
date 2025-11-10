@@ -8,18 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.cache import CacheManager
 from app.core.exceptions import NotFoundException
 from app.repositories import StockRepository
-from app.schemas import (
-    CalculatedIndicator,
-    DailyPrice,
-    FinancialStatement,
-    PaginationMeta,
-    Stock,
-    StockDetail,
-    StockListItem,
-    StockListResponse,
-    StockSearchResponse,
-    StockSearchResult,
-)
+from app.schemas import (CalculatedIndicator, DailyPrice, FinancialStatement,
+                         PaginationMeta, StockDetail, StockListItem,
+                         StockListResponse, StockSearchResponse,
+                         StockSearchResult)
 
 
 class StockService:
@@ -88,9 +80,7 @@ class StockService:
                     sector=stock.sector,
                     latest_close=latest_price.close_price if latest_price else None,
                     price_change_1d=(
-                        latest_indicators.price_change_1d
-                        if latest_indicators
-                        else None
+                        latest_indicators.price_change_1d if latest_indicators else None
                     ),
                     volume=latest_price.volume if latest_price else None,
                     market_cap=latest_price.market_cap if latest_price else None,
@@ -164,9 +154,7 @@ class StockService:
         )
 
         # Cache result
-        await self.cache.set(
-            cache_key, detail.model_dump(), ttl=self.STOCK_DETAIL_TTL
-        )
+        await self.cache.set(cache_key, detail.model_dump(), ttl=self.STOCK_DETAIL_TTL)
 
         return detail
 

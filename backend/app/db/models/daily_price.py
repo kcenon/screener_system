@@ -1,8 +1,8 @@
 """Daily price database model"""
 
-from datetime import date
 
-from sqlalchemy import BigInteger, CheckConstraint, Column, Date, ForeignKey, Integer, String
+from sqlalchemy import (BigInteger, CheckConstraint, Column, Date, ForeignKey,
+                        Integer, String)
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base

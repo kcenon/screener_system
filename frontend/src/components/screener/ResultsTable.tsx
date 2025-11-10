@@ -34,7 +34,7 @@ interface Column {
   label: string
   sortable: boolean
   align?: 'left' | 'right' | 'center'
-  format?: (value: any) => string
+  format?: (value: number | null | undefined) => string
 }
 
 /**

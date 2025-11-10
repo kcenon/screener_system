@@ -3,16 +3,10 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.screening import (
-    FilterRange,
-    ScreenedStock,
-    ScreeningFilters,
-    ScreeningMetadata,
-    ScreeningRequest,
-    ScreeningResponse,
-    ScreeningTemplate,
-    ScreeningTemplateList,
-)
+from app.schemas.screening import (FilterRange, ScreenedStock,
+                                   ScreeningFilters, ScreeningMetadata,
+                                   ScreeningRequest, ScreeningResponse,
+                                   ScreeningTemplate, ScreeningTemplateList)
 
 
 class TestFilterRange:
@@ -140,9 +134,7 @@ class TestScreeningFilters:
     def test_filter_range_validation_on_creation(self):
         """Test that invalid ranges are caught during creation"""
         with pytest.raises(ValidationError) as exc_info:
-            ScreeningFilters(
-                per={"min": 20.0, "max": 10.0}  # min > max
-            )
+            ScreeningFilters(per={"min": 20.0, "max": 10.0})  # min > max
         assert "min must be less than or equal to max" in str(exc_info.value)
 
 

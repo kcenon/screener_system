@@ -21,7 +21,9 @@ class AppException(Exception):
 class NotFoundException(AppException):
     """Exception raised when resource is not found"""
 
-    def __init__(self, message: str = "Resource not found", detail: Optional[Any] = None):
+    def __init__(
+        self, message: str = "Resource not found", detail: Optional[Any] = None
+    ):
         super().__init__(message, status_code=404, detail=detail)
 
 

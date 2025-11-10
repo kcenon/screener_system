@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, String
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
@@ -58,7 +58,9 @@ class User(BaseModel):
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<User(id={self.id}, email={self.email}, tier={self.subscription_tier})>"
+        return (
+            f"<User(id={self.id}, email={self.email}, tier={self.subscription_tier})>"
+        )
 
     @property
     def is_active(self) -> bool:

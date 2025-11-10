@@ -18,7 +18,8 @@ from app.main import app
 # Use environment variable or default to test database
 TEST_DATABASE_URL = os.getenv(
     "TEST_DATABASE_URL",
-    "postgresql+asyncpg://screener_user:your_secure_password_here@screener_postgres:5432/screener_test"
+    "postgresql+asyncpg://screener_user:your_secure_password_here@"
+    "screener_postgres:5432/screener_test",
 )
 
 

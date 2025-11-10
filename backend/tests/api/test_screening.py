@@ -1,12 +1,10 @@
 """Integration tests for screening API endpoints"""
 
-import pytest
-from unittest.mock import AsyncMock, patch
 from decimal import Decimal
+from unittest.mock import patch
 
+import pytest
 from httpx import AsyncClient
-
-from app.schemas.screening import FilterRange, ScreeningFilters
 
 
 @pytest.mark.asyncio
@@ -146,11 +144,7 @@ class TestScreeningEndpoints:
 
     async def test_screen_stocks_range_filter_validation(self, client: AsyncClient):
         """Test POST /v1/screen with invalid range (min > max)"""
-        request_data = {
-            "filters": {
-                "per": {"min": 20.0, "max": 10.0}  # min > max
-            }
-        }
+        request_data = {"filters": {"per": {"min": 20.0, "max": 10.0}}}  # min > max
 
         response = await client.post("/v1/screen", json=request_data)
 
@@ -243,7 +237,9 @@ class TestScreeningEndpoints:
             # Should return 404 Not Found
             assert response.status_code == 404
 
-    async def test_apply_screening_template_custom_pagination(self, client: AsyncClient):
+    async def test_apply_screening_template_custom_pagination(
+        self, client: AsyncClient
+    ):
         """Test POST /v1/screen/templates/{template_id} with custom pagination"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository.get_screening_templates"

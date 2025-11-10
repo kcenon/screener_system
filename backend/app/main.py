@@ -3,17 +3,15 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.error_handlers import (
-    app_exception_handler,
-    generic_exception_handler,
-    sqlalchemy_exception_handler,
-    validation_exception_handler,
-)
+from app.api.error_handlers import (app_exception_handler,
+                                    generic_exception_handler,
+                                    sqlalchemy_exception_handler,
+                                    validation_exception_handler)
 from app.api.v1.endpoints import auth, health, screening, stocks
 from app.core.cache import cache_manager
 from app.core.config import settings

@@ -8,13 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache import CacheManager, get_cache
 from app.db.session import get_db
-from app.schemas import (
-    DailyPrice,
-    FinancialStatement,
-    StockDetail,
-    StockListResponse,
-    StockSearchResponse,
-)
+from app.schemas import (DailyPrice, FinancialStatement, StockDetail,
+                         StockListResponse, StockSearchResponse)
 from app.services.stock_service import StockService
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])

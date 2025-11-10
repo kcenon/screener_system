@@ -32,7 +32,9 @@ class TestAuthRegistration:
         assert data["user"]["subscription_tier"] == "free"
 
     @pytest.mark.asyncio
-    async def test_register_duplicate_email(self, client: AsyncClient, db: AsyncSession):
+    async def test_register_duplicate_email(
+        self, client: AsyncClient, db: AsyncSession
+    ):
         """Test registration with existing email"""
         # Create existing user
         existing_user = User(

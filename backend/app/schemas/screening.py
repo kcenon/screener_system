@@ -6,7 +6,6 @@ from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-
 # ============================================================================
 # Filter Schemas
 # ============================================================================
@@ -128,7 +127,9 @@ class ScreeningFilters(BaseModel):
     )
 
     # Price and market cap filters
-    current_price: Optional[FilterRange] = Field(None, description="Current Price (KRW)")
+    current_price: Optional[FilterRange] = Field(
+        None, description="Current Price (KRW)"
+    )
     market_cap: Optional[FilterRange] = Field(
         None, description="Market Capitalization (KRW billion)"
     )
@@ -211,7 +212,9 @@ class ScreeningRequest(BaseModel):
         }
 
         if v not in allowed_fields:
-            raise ValueError(f"Invalid sort field: {v}. Must be one of: {allowed_fields}")
+            raise ValueError(
+                f"Invalid sort field: {v}. Must be one of: {allowed_fields}"
+            )
 
         return v
 
