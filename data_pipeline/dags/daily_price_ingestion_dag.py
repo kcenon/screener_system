@@ -27,7 +27,10 @@ from typing import List, Dict
 # Add scripts directory to Python path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 
-from krx_api_client import create_client, PriceData
+# Import both KRX client and data source abstraction layer
+from krx_api_client import create_client as create_krx_client, PriceData
+from data_source import DataSourceFactory, DataSourceType, ChartData
+from kis_api_client import PriceType
 
 # Default arguments for the DAG
 default_args = {
@@ -56,114 +59,369 @@ dag = DAG(
 
 
 # ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+def convert_chart_data_to_price_data(
+    chart_data_list: List[ChartData],
+    stock_code: str
+) -> List[Dict]:
+    """
+    Convert KIS ChartData objects to price_data format.
+
+    Args:
+        chart_data_list: List of ChartData from KIS API
+        stock_code: 6-digit stock code
+
+    Returns:
+        List of price dictionaries compatible with DAG pipeline
+    """
+    prices_data = []
+
+    for chart in chart_data_list:
+        prices_data.append({
+            'stock_code': stock_code,
+            'trade_date': chart.date,
+            'open_price': chart.open_price,
+            'high_price': chart.high_price,
+            'low_price': chart.low_price,
+            'close_price': chart.close_price,
+            'volume': chart.volume,
+            'trading_value': chart.trading_value if hasattr(chart, 'trading_value') else None,
+            'market_cap': None  # KIS API doesn't provide market cap in chart data
+        })
+
+    return prices_data
+
+
+def get_all_stock_codes(**context) -> List[str]:
+    """
+    Fetch list of all active stock codes from database.
+
+    Returns:
+        List of stock codes (6-digit strings)
+    """
+    logger = logging.getLogger(__name__)
+    pg_hook = PostgresHook(postgres_conn_id='screener_db')
+
+    # Query active stocks (not delisted)
+    result = pg_hook.get_records(
+        "SELECT stock_code FROM stocks WHERE delisting_date IS NULL ORDER BY stock_code"
+    )
+
+    stock_codes = [row[0] for row in result]
+    logger.info(f"Found {len(stock_codes)} active stocks")
+
+    return stock_codes
+
+
+# ============================================================================
 # TASK FUNCTIONS
 # ============================================================================
 
-def fetch_krx_prices(**context):
+def fetch_stock_prices(**context):
     """
-    Fetch daily price data from KRX API using KRX API client.
+    Fetch daily price data using configured data source.
 
-    The client can use either real API data or mock data for testing.
-    Set KRX_USE_MOCK=true environment variable to use mock data.
+    Supports multiple data sources via DataSourceFactory:
+    - KIS API: Korea Investment & Securities (production)
+    - KRX API: Korea Exchange (fallback)
+    - Mock: Test data for development
+
+    Data source selection:
+    1. Environment variable DATA_SOURCE_TYPE (kis/krx/mock)
+    2. Auto-detection based on available credentials
+    3. Default: mock data
     """
     logger = logging.getLogger(__name__)
     execution_date = context['ds']  # YYYY-MM-DD format
 
-    logger.info(f"Fetching KRX prices for {execution_date}")
+    # Determine data source type
+    source_type_str = os.getenv('DATA_SOURCE_TYPE', '').lower()
+    source_type = None
+
+    if source_type_str == 'kis':
+        source_type = DataSourceType.KIS
+        logger.info("Using KIS API data source")
+    elif source_type_str == 'krx':
+        source_type = DataSourceType.KRX
+        logger.info("Using KRX API data source")
+    elif source_type_str == 'mock':
+        source_type = DataSourceType.MOCK
+        logger.info("Using Mock data source")
+    else:
+        logger.info("Auto-detecting data source from environment")
 
     try:
-        # Create KRX API client (automatically uses environment configuration)
-        with create_client() as client:
-            # Fetch daily prices for execution date
-            price_objects = client.fetch_daily_prices(date=execution_date)
+        # Use DataSourceFactory if using KIS or Mock
+        if source_type in [DataSourceType.KIS, DataSourceType.MOCK, None]:
+            prices_data = fetch_prices_with_data_source(
+                execution_date, source_type, context
+            )
+        else:  # KRX (legacy path)
+            prices_data = fetch_prices_with_krx(execution_date, context)
 
-            # Convert PriceData objects to dictionaries for XCom
-            prices_data = [
-                {
-                    'stock_code': p.stock_code,
-                    'trade_date': p.trade_date,
-                    'open_price': p.open_price,
-                    'high_price': p.high_price,
-                    'low_price': p.low_price,
-                    'close_price': p.close_price,
-                    'volume': p.volume,
-                    'trading_value': p.trading_value,
-                    'market_cap': p.market_cap
-                }
-                for p in price_objects
-            ]
+        # Push data to XCom for next task
+        context['task_instance'].xcom_push(key='prices_data', value=prices_data)
 
-            logger.info(f"Fetched {len(prices_data)} stock prices from KRX API")
+        logger.info(f"Successfully fetched {len(prices_data)} stock prices")
+        return len(prices_data)
 
     except Exception as e:
-        logger.error(f"Failed to fetch KRX prices: {e}")
+        logger.error(f"Failed to fetch stock prices: {e}")
         raise
 
-    # Push data to XCom for next task
-    context['task_instance'].xcom_push(key='prices_data', value=prices_data)
 
-    logger.info(f"Successfully processed {len(prices_data)} stock prices")
-    return len(prices_data)
+def fetch_prices_with_data_source(
+    execution_date: str,
+    source_type: Optional[DataSourceType],
+    context: Dict
+) -> List[Dict]:
+    """
+    Fetch prices using DataSourceFactory (KIS or Mock).
+
+    Args:
+        execution_date: Trade date in YYYY-MM-DD format
+        source_type: Type of data source (None = auto-detect)
+        context: Airflow context
+
+    Returns:
+        List of price dictionaries
+    """
+    logger = logging.getLogger(__name__)
+    logger.info(f"Fetching prices for {execution_date} using data source abstraction")
+
+    # Get list of all stock codes
+    stock_codes = get_all_stock_codes(**context)
+
+    if not stock_codes:
+        logger.warning("No active stock codes found")
+        return []
+
+    all_prices = []
+    failed_stocks = []
+
+    with DataSourceFactory.create(source_type) as data_source:
+        logger.info(f"Created data source: {type(data_source).__name__}")
+
+        # Fetch historical data for each stock
+        # Note: KIS API doesn't support batch queries, so we fetch one by one
+        for idx, stock_code in enumerate(stock_codes):
+            try:
+                # Fetch daily chart data (last 1 day)
+                chart_data = data_source.get_chart_data(
+                    stock_code=stock_code,
+                    period=PriceType.DAILY,
+                    count=1  # Just today's data
+                )
+
+                if not chart_data:
+                    logger.warning(f"No data for {stock_code}")
+                    continue
+
+                # Convert to price_data format
+                prices = convert_chart_data_to_price_data(chart_data, stock_code)
+                all_prices.extend(prices)
+
+                # Log progress every 100 stocks
+                if (idx + 1) % 100 == 0:
+                    logger.info(f"Progress: {idx + 1}/{len(stock_codes)} stocks")
+
+            except Exception as e:
+                logger.warning(f"Failed to fetch data for {stock_code}: {e}")
+                failed_stocks.append(stock_code)
+                continue
+
+    # Log summary
+    logger.info(f"Fetched {len(all_prices)} price records for {len(stock_codes) - len(failed_stocks)} stocks")
+
+    if failed_stocks:
+        logger.warning(f"Failed to fetch {len(failed_stocks)} stocks: {failed_stocks[:10]}")
+
+    return all_prices
+
+
+def fetch_prices_with_krx(execution_date: str, context: Dict) -> List[Dict]:
+    """
+    Fetch prices using KRX API client (legacy path).
+
+    Args:
+        execution_date: Trade date in YYYY-MM-DD format
+        context: Airflow context
+
+    Returns:
+        List of price dictionaries
+    """
+    logger = logging.getLogger(__name__)
+    logger.info(f"Fetching KRX prices for {execution_date}")
+
+    # Create KRX API client (automatically uses environment configuration)
+    with create_krx_client() as client:
+        # Fetch daily prices for execution date
+        price_objects = client.fetch_daily_prices(date=execution_date)
+
+        # Convert PriceData objects to dictionaries for XCom
+        prices_data = [
+            {
+                'stock_code': p.stock_code,
+                'trade_date': p.trade_date,
+                'open_price': p.open_price,
+                'high_price': p.high_price,
+                'low_price': p.low_price,
+                'close_price': p.close_price,
+                'volume': p.volume,
+                'trading_value': p.trading_value,
+                'market_cap': p.market_cap
+            }
+            for p in price_objects
+        ]
+
+        logger.info(f"Fetched {len(prices_data)} stock prices from KRX API")
+        return prices_data
+
+
+def fetch_krx_prices(**context):
+    """
+    [DEPRECATED] Legacy function for KRX API.
+
+    Use fetch_stock_prices() instead, which supports multiple data sources.
+    This function is kept for backward compatibility.
+    """
+    logger = logging.getLogger(__name__)
+    logger.warning("fetch_krx_prices is deprecated. Use fetch_stock_prices instead.")
+
+    # Delegate to new implementation
+    return fetch_stock_prices(**context)
 
 
 def validate_price_data(**context):
     """
     Validate fetched price data for quality and completeness.
+
+    Enhanced validation with:
+    - Data source detection and logging
+    - Comprehensive validation rules
+    - Detailed error categorization
+    - Performance metrics tracking
     """
     logger = logging.getLogger(__name__)
     ti = context['task_instance']
+    execution_date = context['ds']
+
+    # Get data from XCom
     prices_data = ti.xcom_pull(task_ids='fetch_krx_prices', key='prices_data')
 
     if not prices_data:
-        raise ValueError("No price data received")
+        raise ValueError("No price data received from fetch task")
 
-    # Validation checks
+    # Log data source information
+    data_source_type = os.getenv('DATA_SOURCE_TYPE', 'auto-detect')
+    logger.info(f"Validating price data from source: {data_source_type}")
+    logger.info(f"Execution date: {execution_date}")
+
+    # Start validation
+    start_time = time.time()
     total_stocks = len(prices_data)
     invalid_records = []
+    validation_warnings = []
+
+    # Categorize errors
+    error_categories = {
+        'missing_fields': [],
+        'invalid_price_relationship': [],
+        'negative_values': [],
+        'missing_market_cap': [],
+        'data_quality': []
+    }
 
     for record in prices_data:
+        stock_code = record.get('stock_code', 'UNKNOWN')
+
         # Check required fields
         required_fields = ['stock_code', 'trade_date', 'close_price', 'volume']
         missing_fields = [f for f in required_fields if f not in record or record[f] is None]
 
         if missing_fields:
+            error_categories['missing_fields'].append(stock_code)
             invalid_records.append({
-                'stock_code': record.get('stock_code', 'UNKNOWN'),
+                'stock_code': stock_code,
                 'error': f"Missing fields: {missing_fields}"
             })
             continue
 
-        # Validate price relationships: high >= low, close within [low, high]
+        # Validate price relationships: high >= low
         if record.get('high_price') and record.get('low_price'):
             if record['high_price'] < record['low_price']:
+                error_categories['invalid_price_relationship'].append(stock_code)
                 invalid_records.append({
-                    'stock_code': record['stock_code'],
+                    'stock_code': stock_code,
                     'error': f"High price {record['high_price']} < Low price {record['low_price']}"
                 })
 
         # Validate positive values
-        if record['close_price'] <= 0 or record['volume'] < 0:
+        if record.get('close_price') and (record['close_price'] <= 0 or record['volume'] < 0):
+            error_categories['negative_values'].append(stock_code)
             invalid_records.append({
-                'stock_code': record['stock_code'],
+                'stock_code': stock_code,
                 'error': "Invalid price or volume (must be positive)"
             })
 
-    # Log validation results
-    valid_count = total_stocks - len(invalid_records)
-    logger.info(f"Validation: {valid_count}/{total_stocks} records valid")
+        # Warning: missing market cap (non-critical for KIS data)
+        if record.get('market_cap') is None:
+            error_categories['missing_market_cap'].append(stock_code)
+            # This is just a warning, not an error
 
+    # Calculate validation metrics
+    validation_time = time.time() - start_time
+    valid_count = total_stocks - len(invalid_records)
+    validity_rate = (valid_count / total_stocks * 100) if total_stocks > 0 else 0
+
+    # Log validation results
+    logger.info("=" * 70)
+    logger.info(f"Validation Summary (completed in {validation_time:.2f}s)")
+    logger.info("=" * 70)
+    logger.info(f"Total records: {total_stocks}")
+    logger.info(f"Valid records: {valid_count} ({validity_rate:.2f}%)")
+    logger.info(f"Invalid records: {len(invalid_records)}")
+
+    # Log error categories
+    if error_categories['missing_fields']:
+        logger.warning(f"Missing fields: {len(error_categories['missing_fields'])} stocks")
+    if error_categories['invalid_price_relationship']:
+        logger.warning(f"Invalid price relationships: {len(error_categories['invalid_price_relationship'])} stocks")
+    if error_categories['negative_values']:
+        logger.error(f"Negative values: {len(error_categories['negative_values'])} stocks")
+    if error_categories['missing_market_cap']:
+        logger.info(f"Missing market cap: {len(error_categories['missing_market_cap'])} stocks (expected for KIS data)")
+
+    # Log specific invalid records (first 10)
     if invalid_records:
-        logger.warning(f"Invalid records: {invalid_records[:10]}")  # Log first 10
+        logger.warning("Sample invalid records:")
+        for inv_record in invalid_records[:10]:
+            logger.warning(f"  {inv_record['stock_code']}: {inv_record['error']}")
+        if len(invalid_records) > 10:
+            logger.warning(f"  ... and {len(invalid_records) - 10} more")
 
     # Fail if >5% of records are invalid
     if len(invalid_records) / total_stocks > 0.05:
-        raise ValueError(f"Too many invalid records: {len(invalid_records)}/{total_stocks}")
+        logger.error(f"VALIDATION FAILED: Too many invalid records ({validity_rate:.2f}% valid)")
+        raise ValueError(f"Too many invalid records: {len(invalid_records)}/{total_stocks} ({100-validity_rate:.2f}% invalid)")
 
-    # Filter out invalid records and push to XCom
-    valid_data = [r for r in prices_data if r['stock_code'] not in
-                  [inv['stock_code'] for inv in invalid_records]]
+    # Filter out invalid records
+    invalid_stock_codes = {inv['stock_code'] for inv in invalid_records}
+    valid_data = [r for r in prices_data if r['stock_code'] not in invalid_stock_codes]
 
+    # Push to XCom
     ti.xcom_push(key='valid_prices', value=valid_data)
+
+    # Log metrics for monitoring
+    logger.info("=" * 70)
+    logger.info("Validation Metrics:")
+    logger.info(f"  Processing time: {validation_time:.2f}s")
+    logger.info(f"  Records/second: {total_stocks / validation_time:.0f}")
+    logger.info(f"  Validity rate: {validity_rate:.2f}%")
+    logger.info("=" * 70)
+
     return valid_count
 
 
