@@ -65,8 +65,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
             # Atomically increment counter and set TTL
             # Using Lua script to ensure atomicity
+            # redis-py 5.x API: eval(script, numkeys, *keys_and_args)
             current = await cache_manager.redis.eval(
-                RATE_LIMIT_SCRIPT, keys=[key], args=[settings.RATE_LIMIT_WINDOW]
+                RATE_LIMIT_SCRIPT, 1, key, settings.RATE_LIMIT_WINDOW
             )
 
             # Check if limit exceeded
