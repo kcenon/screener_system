@@ -41,6 +41,36 @@ def get_screening_service(
     - Sorting and pagination
     - Response cached for 5 minutes
 
+    **Rate Limits:**
+
+    This endpoint has two levels of rate limiting:
+
+    1. **Tier-based limits** (applies to all API endpoints):
+       - Free tier: 100 requests per hour
+       - Basic tier: 1,000 requests per hour
+       - Pro tier: 10,000 requests per hour
+
+    2. **Endpoint-specific limit** (applies only to screening):
+       - 50 requests per hour (additional restriction due to query complexity)
+
+    When you exceed either limit, you'll receive a 429 response:
+    ```json
+    {
+      "success": false,
+      "message": "Rate limit exceeded",
+      "detail": "Maximum 50 requests per hour allowed for /v1/screen"
+    }
+    ```
+
+    **Rate Limit Headers:**
+
+    Every response includes rate limit information:
+    - `X-RateLimit-Limit`: Maximum requests allowed per hour
+    - `X-RateLimit-Remaining`: Requests remaining in current window
+    - `X-RateLimit-Reset`: Seconds until limit resets (3600 = 1 hour)
+    - `X-RateLimit-Endpoint`: Current endpoint path (screening endpoints only)
+    - `Retry-After`: Seconds to wait before retrying (429 responses only)
+
     **Performance Target:**
     - Simple queries: < 200ms (p95)
     - Complex queries: < 500ms (p99)
@@ -61,7 +91,70 @@ def get_screening_service(
       "per_page": 50
     }
     ```
+
+    **Best Practices:**
+    - Monitor `X-RateLimit-Remaining` header to avoid hitting limits
+    - Use caching: identical requests within 5 minutes return cached results
+    - Batch filters instead of making multiple separate requests
+    - Consider using predefined templates for common queries
     """,
+    responses={
+        200: {
+            "description": "Successful screening with stocks and metadata",
+            "headers": {
+                "X-RateLimit-Limit": {
+                    "description": "Maximum requests allowed per hour for this endpoint",
+                    "schema": {"type": "integer", "example": 50}
+                },
+                "X-RateLimit-Remaining": {
+                    "description": "Requests remaining in current 1-hour window",
+                    "schema": {"type": "integer", "example": 45}
+                },
+                "X-RateLimit-Reset": {
+                    "description": "Seconds until rate limit resets (always 3600 for 1-hour window)",
+                    "schema": {"type": "integer", "example": 3600}
+                },
+                "X-RateLimit-Endpoint": {
+                    "description": "Current endpoint path",
+                    "schema": {"type": "string", "example": "/v1/screen"}
+                }
+            }
+        },
+        429: {
+            "description": "Rate limit exceeded - too many requests",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "success": False,
+                        "message": "Endpoint rate limit exceeded",
+                        "detail": "Maximum 50 requests per hour allowed for /v1/screen"
+                    }
+                }
+            },
+            "headers": {
+                "X-RateLimit-Limit": {
+                    "description": "Maximum requests allowed per hour",
+                    "schema": {"type": "integer", "example": 50}
+                },
+                "X-RateLimit-Remaining": {
+                    "description": "Requests remaining (0 when rate limited)",
+                    "schema": {"type": "integer", "example": 0}
+                },
+                "X-RateLimit-Reset": {
+                    "description": "Seconds until rate limit resets",
+                    "schema": {"type": "integer", "example": 3600}
+                },
+                "X-RateLimit-Endpoint": {
+                    "description": "Endpoint that exceeded the limit",
+                    "schema": {"type": "string", "example": "/v1/screen"}
+                },
+                "Retry-After": {
+                    "description": "Seconds to wait before retrying",
+                    "schema": {"type": "integer", "example": 3600}
+                }
+            }
+        }
+    },
 )
 async def screen_stocks(
     request: ScreeningRequest,
