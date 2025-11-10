@@ -41,9 +41,17 @@ async def lifespan(app: FastAPI):
     # Initialize WebSocket Redis Pub/Sub
     try:
         from app.core.websocket import connection_manager
+        import asyncio
 
         await connection_manager.initialize_redis()
         logger.info("WebSocket Redis Pub/Sub initialized")
+
+        # Phase 3: Start session cleanup task
+        if not connection_manager._session_cleanup_task:
+            connection_manager._session_cleanup_task = asyncio.create_task(
+                connection_manager._cleanup_expired_sessions()
+            )
+            logger.info("WebSocket session cleanup task started")
     except Exception as e:
         logger.warning(f"Failed to initialize WebSocket Redis Pub/Sub: {e}")
 
@@ -51,6 +59,20 @@ async def lifespan(app: FastAPI):
 
     # Shutdown
     logger.info("Shutting down Stock Screening Platform API...")
+
+    # Phase 3: Stop session cleanup task
+    try:
+        from app.core.websocket import connection_manager
+
+        if connection_manager._session_cleanup_task:
+            connection_manager._session_cleanup_task.cancel()
+            try:
+                await connection_manager._session_cleanup_task
+            except asyncio.CancelledError:
+                pass
+            logger.info("WebSocket session cleanup task stopped")
+    except Exception as e:
+        logger.warning(f"Error stopping session cleanup task: {e}")
 
     # Disconnect WebSocket Redis Pub/Sub
     try:

@@ -14,6 +14,8 @@ class MessageType(str, Enum):
     SUBSCRIBE = "subscribe"
     UNSUBSCRIBE = "unsubscribe"
     PING = "ping"
+    REFRESH_TOKEN = "refresh_token"  # Phase 3: Token refresh request
+    RECONNECT = "reconnect"  # Phase 3: Reconnection with session restoration
 
     # Server -> Client
     PRICE_UPDATE = "price_update"
@@ -24,6 +26,9 @@ class MessageType(str, Enum):
     PONG = "pong"
     SUBSCRIBED = "subscribed"
     UNSUBSCRIBED = "unsubscribed"
+    TOKEN_REFRESHED = "token_refreshed"  # Phase 3: Token refresh confirmation
+    RECONNECTED = "reconnected"  # Phase 3: Reconnection confirmation
+    FALLBACK_TO_REST = "fallback_to_rest"  # Phase 3: Suggest REST fallback
 
 
 class SubscriptionType(str, Enum):
@@ -221,6 +226,104 @@ class ErrorMessage(WebSocketMessage):
                 "code": "INVALID_SUBSCRIPTION",
                 "message": "Stock code not found: 999999",
                 "details": {"stock_code": "999999"},
+                "timestamp": "2025-11-10T12:00:00Z",
+            }
+        }
+
+
+# ============================================================================
+# Phase 3: Enhanced Authentication & Recovery Messages
+# ============================================================================
+
+
+class RefreshTokenRequest(BaseModel):
+    """Token refresh request (Phase 3)"""
+
+    type: MessageType = MessageType.REFRESH_TOKEN
+    refresh_token: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "type": "refresh_token",
+                "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            }
+        }
+
+
+class TokenRefreshedMessage(WebSocketMessage):
+    """Token refresh confirmation (Phase 3)"""
+
+    type: MessageType = MessageType.TOKEN_REFRESHED
+    access_token: str
+    expires_in: int  # seconds
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "type": "token_refreshed",
+                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "expires_in": 900,
+                "timestamp": "2025-11-10T12:00:00Z",
+            }
+        }
+
+
+class ReconnectRequest(BaseModel):
+    """Reconnection request with session restoration (Phase 3)"""
+
+    type: MessageType = MessageType.RECONNECT
+    session_id: str  # Previous connection ID
+    last_sequence: Optional[int] = None  # Last received sequence number
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "type": "reconnect",
+                "session_id": "550e8400-e29b-41d4-a716-446655440000",
+                "last_sequence": 12345,
+            }
+        }
+
+
+class ReconnectedMessage(WebSocketMessage):
+    """Reconnection confirmation (Phase 3)"""
+
+    type: MessageType = MessageType.RECONNECTED
+    session_id: str
+    restored_subscriptions: Dict[SubscriptionType, List[str]]
+    missed_messages_count: int = 0
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "type": "reconnected",
+                "session_id": "550e8400-e29b-41d4-a716-446655440000",
+                "restored_subscriptions": {
+                    "stock": ["005930", "000660"],
+                    "market": ["KOSPI"],
+                },
+                "missed_messages_count": 5,
+                "timestamp": "2025-11-10T12:00:00Z",
+            }
+        }
+
+
+class FallbackToRestMessage(WebSocketMessage):
+    """Suggest fallback to REST API (Phase 3)"""
+
+    type: MessageType = MessageType.FALLBACK_TO_REST
+    reason: str
+    rest_endpoint: str
+    retry_after: Optional[int] = None  # seconds
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "type": "fallback_to_rest",
+                "reason": "Server overloaded, please use REST API",
+                "rest_endpoint": "/v1/stocks/prices",
+                "retry_after": 60,
                 "timestamp": "2025-11-10T12:00:00Z",
             }
         }

@@ -65,6 +65,12 @@ class ConnectionManager:
         self._redis_initialized = False
         self._redis_channels: Set[str] = set()  # Track subscribed Redis channels
 
+        # Phase 3: Session restoration support
+        # Store disconnected session info for 5 minutes to allow reconnection
+        self._disconnected_sessions: Dict[str, Dict[str, Any]] = {}
+        self._session_ttl = 300  # seconds (5 minutes)
+        self._session_cleanup_task: Optional[asyncio.Task] = None
+
     async def initialize_redis(self):
         """Initialize Redis Pub/Sub connection"""
         if not self._enable_redis or self._redis_initialized:
@@ -196,6 +202,9 @@ class ConnectionManager:
         Args:
             connection_id: Connection to disconnect
         """
+        # Phase 3: Save session before disconnecting (for reconnection)
+        await self._save_session(connection_id)
+
         # Remove from active connections
         if connection_id in self.active_connections:
             del self.active_connections[connection_id]
@@ -509,6 +518,138 @@ class ConnectionManager:
         except Exception as e:
             logger.error(f"Error in heartbeat loop: {e}")
 
+    async def _save_session(self, connection_id: str):
+        """
+        Save session information for reconnection (Phase 3).
+
+        Args:
+            connection_id: Connection ID to save
+        """
+        if connection_id not in self.connection_info:
+            return
+
+        info = self.connection_info[connection_id]
+
+        # Save session with TTL
+        session_data = {
+            "connection_id": connection_id,
+            "user_id": info.user_id,
+            "subscriptions": {
+                sub_type: list(targets)
+                for sub_type, targets in self.connection_subscriptions[
+                    connection_id
+                ].items()
+            },
+            "last_sequence": self._sequence_counter,
+            "saved_at": datetime.utcnow(),
+        }
+
+        self._disconnected_sessions[connection_id] = session_data
+
+        logger.info(
+            f"Saved session {connection_id} for reconnection "
+            f"(TTL: {self._session_ttl}s)"
+        )
+
+    async def reconnect(
+        self, websocket: WebSocket, session_id: str, user_id: Optional[str] = None
+    ) -> tuple[str, Dict[SubscriptionType, List[str]], int]:
+        """
+        Reconnect a client with session restoration (Phase 3).
+
+        Args:
+            websocket: New WebSocket connection
+            session_id: Previous connection ID
+            user_id: User ID (for verification)
+
+        Returns:
+            Tuple of (new_connection_id, restored_subscriptions, missed_messages)
+
+        Raises:
+            ValueError: If session not found or user mismatch
+        """
+        # Check if session exists
+        if session_id not in self._disconnected_sessions:
+            raise ValueError(f"Session {session_id} not found or expired")
+
+        session_data = self._disconnected_sessions[session_id]
+
+        # Verify user ID matches (security check)
+        if user_id and session_data["user_id"] != user_id:
+            raise ValueError("User ID mismatch")
+
+        # Check session age
+        saved_at = session_data["saved_at"]
+        age = (datetime.utcnow() - saved_at).total_seconds()
+        if age > self._session_ttl:
+            # Session expired
+            del self._disconnected_sessions[session_id]
+            raise ValueError(f"Session expired ({age:.0f}s > {self._session_ttl}s)")
+
+        # Create new connection
+        new_connection_id = await self.connect(websocket, user_id)
+
+        # Restore subscriptions
+        restored_subscriptions: Dict[SubscriptionType, List[str]] = {}
+        subscriptions = session_data.get("subscriptions", {})
+
+        for sub_type_str, targets in subscriptions.items():
+            sub_type = SubscriptionType(sub_type_str)
+            restored_subscriptions[sub_type] = []
+
+            for target in targets:
+                await self.subscribe(new_connection_id, sub_type, target)
+                restored_subscriptions[sub_type].append(target)
+
+        # Calculate missed messages
+        last_sequence = session_data.get("last_sequence", 0)
+        missed_messages = max(0, self._sequence_counter - last_sequence)
+
+        # Remove saved session
+        del self._disconnected_sessions[session_id]
+
+        logger.info(
+            f"Reconnected session {session_id} -> {new_connection_id} "
+            f"(restored {sum(len(t) for t in restored_subscriptions.values())} subs, "
+            f"missed {missed_messages} messages)"
+        )
+
+        return new_connection_id, restored_subscriptions, missed_messages
+
+    async def _cleanup_expired_sessions(self):
+        """
+        Periodically clean up expired sessions (Phase 3).
+        """
+        logger.info("Starting session cleanup task")
+
+        try:
+            while True:
+                await asyncio.sleep(60)  # Check every minute
+
+                now = datetime.utcnow()
+                expired = []
+
+                for session_id, session_data in self._disconnected_sessions.items():
+                    saved_at = session_data["saved_at"]
+                    age = (now - saved_at).total_seconds()
+
+                    if age > self._session_ttl:
+                        expired.append(session_id)
+
+                # Remove expired sessions
+                for session_id in expired:
+                    del self._disconnected_sessions[session_id]
+                    logger.debug(f"Cleaned up expired session {session_id}")
+
+                if expired:
+                    logger.info(f"Cleaned up {len(expired)} expired sessions")
+
+        except asyncio.CancelledError:
+            logger.info("Session cleanup task cancelled")
+
+        except Exception as e:
+            logger.error(f"Error in session cleanup: {e}")
+
     def get_stats(self) -> Dict[str, Any]:
         """
         Get connection manager statistics.
@@ -532,6 +673,7 @@ class ConnectionManager:
                 for sub_type, targets in self.subscriptions.items()
             },
             "messages_sent": self._sequence_counter,
+            "saved_sessions": len(self._disconnected_sessions),  # Phase 3
         }
 
 
