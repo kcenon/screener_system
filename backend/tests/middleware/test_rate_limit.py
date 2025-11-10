@@ -38,27 +38,50 @@ def app():
     return app
 
 
-@pytest.fixture
-async def clear_redis():
-    """Clear Redis before each test"""
-    if cache_manager.redis:
-        await cache_manager.redis.flushdb()
-    yield
-    if cache_manager.redis:
-        await cache_manager.redis.flushdb()
+@pytest.fixture(autouse=False)
+def mock_redis(monkeypatch):
+    """Mock Redis for testing rate limiting without actual Redis connection"""
+    from unittest.mock import AsyncMock, MagicMock
+
+    # Create a simple in-memory counter for testing
+    counters = {}
+
+    class MockRedis:
+        async def eval(self, script, numkeys, *keys_and_args):
+            """Mock Redis eval for rate limiting Lua script"""
+            key = keys_and_args[0]
+            ttl = int(keys_and_args[1])
+
+            if key not in counters:
+                counters[key] = {"count": 0, "created": True}
+
+            counters[key]["count"] += 1
+            return counters[key]["count"]
+
+        async def flushdb(self):
+            """Mock flushdb to clear counters"""
+            counters.clear()
+
+    mock_redis_instance = MockRedis()
+    monkeypatch.setattr(cache_manager, "redis", mock_redis_instance)
+
+    yield mock_redis_instance
+
+    # Cleanup
+    counters.clear()
 
 
 class TestRateLimitMiddleware:
     """Test suite for rate limiting middleware"""
 
-    def test_tier_rate_limiting_free(self, app: FastAPI, clear_redis):
+    def test_tier_rate_limiting_free(self, app: FastAPI, mock_redis):
         """Test free tier rate limiting (100 req/hour)"""
         client = TestClient(app)
 
         # Make requests up to limit
         for i in range(settings.RATE_LIMIT_FREE):
             response = client.get("/test")
-            assert response.status_code == 200
+            assert response.status_code == 200, f"Request {i+1} failed: {response.text}"
 
             # Check rate limit headers
             assert "X-RateLimit-Limit" in response.headers
@@ -67,7 +90,7 @@ class TestRateLimitMiddleware:
 
         # Next request should be rate limited
         response = client.get("/test")
-        assert response.status_code == 429
+        assert response.status_code == 429, f"Expected 429 but got {response.status_code}: {response.text}"
         assert response.json()["success"] is False
         assert "rate limit exceeded" in response.json()["message"].lower()
 
@@ -75,22 +98,22 @@ class TestRateLimitMiddleware:
         assert "X-RateLimit-Limit" in response.headers
         assert "Retry-After" in response.headers
 
-    def test_endpoint_specific_rate_limiting(self, app: FastAPI, clear_redis):
+    def test_endpoint_specific_rate_limiting(self, app: FastAPI, mock_redis):
         """Test endpoint-specific rate limits"""
         client = TestClient(app)
 
         # Test screening endpoint (50 req/hour)
         for i in range(settings.RATE_LIMIT_SCREENING):
             response = client.post("/v1/screen")
-            assert response.status_code == 200
+            assert response.status_code == 200, f"Request {i+1} failed"
 
         # Next request should be rate limited
         response = client.post("/v1/screen")
-        assert response.status_code == 429
+        assert response.status_code == 429, f"Expected 429 but got {response.status_code}"
         assert "endpoint rate limit exceeded" in response.json()["message"].lower()
         assert "X-RateLimit-Endpoint" in response.headers
 
-    def test_whitelist_paths_bypass_rate_limiting(self, app: FastAPI, clear_redis):
+    def test_whitelist_paths_bypass_rate_limiting(self, app: FastAPI):
         """Test that whitelisted paths bypass rate limiting"""
         client = TestClient(app)
 
@@ -101,7 +124,7 @@ class TestRateLimitMiddleware:
             # Should not have rate limit headers
             assert "X-RateLimit-Limit" not in response.headers
 
-    def test_rate_limit_headers_accuracy(self, app: FastAPI, clear_redis):
+    def test_rate_limit_headers_accuracy(self, app: FastAPI, mock_redis):
         """Test rate limit headers show accurate information"""
         client = TestClient(app)
 
@@ -113,28 +136,28 @@ class TestRateLimitMiddleware:
         remaining = int(response.headers["X-RateLimit-Remaining"])
         reset = int(response.headers["X-RateLimit-Reset"])
 
-        assert limit == settings.RATE_LIMIT_FREE
-        assert remaining == settings.RATE_LIMIT_FREE - 1
-        assert reset == settings.RATE_LIMIT_WINDOW
+        assert limit == settings.RATE_LIMIT_FREE, f"Limit should be {settings.RATE_LIMIT_FREE} but got {limit}"
+        assert remaining == settings.RATE_LIMIT_FREE - 1, f"Remaining should be {settings.RATE_LIMIT_FREE - 1} but got {remaining}"
+        assert reset == settings.RATE_LIMIT_WINDOW, f"Reset should be {settings.RATE_LIMIT_WINDOW} but got {reset}"
 
-    def test_different_endpoints_separate_limits(self, app: FastAPI, clear_redis):
+    def test_different_endpoints_separate_limits(self, app: FastAPI, mock_redis):
         """Test that different endpoints have separate rate limits"""
         client = TestClient(app)
 
         # Exhaust screening endpoint limit
         for i in range(settings.RATE_LIMIT_SCREENING):
             response = client.post("/v1/screen")
-            assert response.status_code == 200
+            assert response.status_code == 200, f"Screening request {i+1} failed"
 
         # Screening should be rate limited
         response = client.post("/v1/screen")
-        assert response.status_code == 429
+        assert response.status_code == 429, f"Expected screening to be rate limited"
 
         # But other endpoints should still work (subject to tier limit)
         response = client.get("/test")
-        assert response.status_code == 200
+        assert response.status_code == 200, "Other endpoints should still work"
 
-    def test_rate_limit_reset_after_window(self, app: FastAPI, clear_redis):
+    def test_rate_limit_reset_after_window(self, app: FastAPI):
         """Test rate limit resets after time window (simplified)"""
         # Note: In real tests, we'd mock time or use Redis TTL manipulation
         # This is a placeholder for the concept
@@ -152,13 +175,13 @@ class TestRateLimitMiddleware:
             response = client.get("/test")
             assert response.status_code == 200
 
-    def test_multiple_clients_separate_limits(self, app: FastAPI, clear_redis):
+    def test_multiple_clients_separate_limits(self, app: FastAPI):
         """Test that different clients (IPs) have separate rate limits"""
         # Note: TestClient doesn't easily support different IPs
         # In integration tests, we'd use actual HTTP requests with different IPs
         pytest.skip("Requires integration test with actual HTTP requests")
 
-    def test_authenticated_user_tier_limits(self, app: FastAPI, clear_redis):
+    def test_authenticated_user_tier_limits(self, app: FastAPI):
         """Test tier-based limits for authenticated users"""
         # Note: Requires auth middleware to be set up
         # This would test basic/pro tier limits
@@ -186,7 +209,7 @@ class TestEndpointRateLimitConfiguration:
 class TestRateLimitMiddlewareAsync:
     """Async tests for rate limiting"""
 
-    async def test_concurrent_requests_within_limit(self, app: FastAPI, clear_redis):
+    async def test_concurrent_requests_within_limit(self, app: FastAPI, mock_redis):
         """Test handling of concurrent requests within rate limit"""
         import asyncio
 
@@ -203,7 +226,7 @@ class TestRateLimitMiddlewareAsync:
             for response in responses:
                 assert response.status_code == 200
 
-    async def test_concurrent_requests_exceed_limit(self, app: FastAPI, clear_redis):
+    async def test_concurrent_requests_exceed_limit(self, app: FastAPI, mock_redis):
         """Test that concurrent requests properly enforce rate limits"""
         import asyncio
 
@@ -218,7 +241,7 @@ class TestRateLimitMiddlewareAsync:
 
             # Some should be rate limited
             status_codes = [r.status_code for r in responses]
-            assert 429 in status_codes, "Expected some requests to be rate limited"
+            assert 429 in status_codes, f"Expected some requests to be rate limited. Got: {status_codes.count(200)} success, {status_codes.count(429)} rate limited"
             assert 200 in status_codes, "Expected some requests to succeed"
 
 
