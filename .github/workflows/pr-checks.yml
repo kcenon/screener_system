@@ -93,6 +93,7 @@ jobs:
           DATABASE_URL: sqlite+aiosqlite:///:memory:
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key
+          PYTHONPATH: ${{ github.workspace }}/backend
         run: |
           pytest --verbose --tb=short
 
@@ -105,7 +106,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Run frontend tests
         working-directory: frontend
