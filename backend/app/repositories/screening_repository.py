@@ -1,6 +1,6 @@
 """Screening repository for stock filtering operations"""
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 from sqlalchemy import and_, desc, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +10,55 @@ from app.schemas.screening import FilterRange, ScreeningFilters
 
 class ScreeningRepository:
     """Repository for stock screening operations"""
+
+    # Allowed sort fields to prevent SQL injection
+    # These must match the columns in stock_screening_view
+    ALLOWED_SORT_FIELDS: Set[str] = {
+        # Stock identification
+        "code",
+        "name",
+        "market",
+        # Price and valuation
+        "current_price",
+        "market_cap",
+        "per",
+        "pbr",
+        "pcr",
+        "psr",
+        # Profitability
+        "roe",
+        "roa",
+        "roic",
+        "net_margin",
+        "operating_margin",
+        "gross_margin",
+        # Growth
+        "revenue_growth_yoy",
+        "profit_growth_yoy",
+        "eps_growth_yoy",
+        # Stability
+        "debt_to_equity",
+        "current_ratio",
+        "altman_z_score",
+        "piotroski_f_score",
+        # Dividends
+        "dividend_yield",
+        # Momentum
+        "price_change_1d",
+        "price_change_1w",
+        "price_change_1m",
+        "price_change_3m",
+        "price_change_6m",
+        "price_change_1y",
+        # Volume
+        "volume_surge_pct",
+        # Scores
+        "quality_score",
+        "value_score",
+        "growth_score",
+        "momentum_score",
+        "overall_score",
+    }
 
     def __init__(self, session: AsyncSession):
         """Initialize repository with database session"""
@@ -26,11 +75,26 @@ class ScreeningRepository:
         """
         Screen stocks using filters with dynamic query building
 
+        Security:
+            - sort_by is validated against ALLOWED_SORT_FIELDS allowlist
+            - All filter values use parameterized queries
+            - No user input is directly interpolated into SQL
+
         Returns:
             Tuple of (results list, total count)
+
+        Raises:
+            ValueError: If sort_by is not in ALLOWED_SORT_FIELDS
         """
-        # Build WHERE conditions
-        where_conditions = self._build_where_conditions(filters)
+        # Validate sort field to prevent SQL injection
+        if sort_by not in self.ALLOWED_SORT_FIELDS:
+            raise ValueError(
+                f"Invalid sort field '{sort_by}'. "
+                f"Allowed fields: {sorted(self.ALLOWED_SORT_FIELDS)}"
+            )
+
+        # Build WHERE conditions with parameters
+        where_conditions, params = self._build_where_conditions(filters)
 
         # Build base query
         base_query = """
@@ -45,10 +109,10 @@ class ScreeningRepository:
 
         # Count total results
         count_query = f"SELECT COUNT(*) as total FROM ({base_query}) AS filtered"
-        count_result = await self.session.execute(text(count_query))
+        count_result = await self.session.execute(text(count_query), params)
         total_count = count_result.scalar_one()
 
-        # Build ORDER BY clause
+        # Build ORDER BY clause (safe: sort_by validated above)
         order_direction = "DESC" if order == "desc" else "ASC"
         # Handle NULL values: put them last
         order_clause = f"""
@@ -64,102 +128,115 @@ class ScreeningRepository:
             LIMIT :limit OFFSET :offset
         """
 
+        # Add pagination parameters
+        params["limit"] = limit
+        params["offset"] = offset
+
         # Execute query
-        result = await self.session.execute(
-            text(final_query),
-            {"limit": limit, "offset": offset}
-        )
+        result = await self.session.execute(text(final_query), params)
 
         # Convert to dict list
         stocks = [dict(row._mapping) for row in result]
 
         return stocks, total_count
 
-    def _build_where_conditions(self, filters: ScreeningFilters) -> List[str]:
+    def _build_where_conditions(
+        self, filters: ScreeningFilters
+    ) -> Tuple[List[str], Dict[str, Any]]:
         """
-        Build WHERE clause conditions from filters
+        Build WHERE clause conditions from filters using parameterized queries
+
+        Security:
+            All user inputs are passed as parameters, never interpolated.
+            This prevents SQL injection attacks.
 
         Returns:
-            List of SQL condition strings
+            Tuple of (conditions list, parameters dict)
         """
         conditions = []
+        params = {}
 
-        # Market filter
+        # Market filter (parameterized)
         if filters.market and filters.market != "ALL":
-            conditions.append(f"market = '{filters.market}'")
+            conditions.append("market = :market")
+            params["market"] = filters.market
 
-        # Sector filter
+        # Sector filter (parameterized)
         if filters.sector:
-            # Escape single quotes to prevent SQL injection
-            escaped_sector = filters.sector.replace("'", "''")
-            conditions.append(f"sector = '{escaped_sector}'")
+            conditions.append("sector = :sector")
+            params["sector"] = filters.sector
 
-        # Industry filter
+        # Industry filter (parameterized)
         if filters.industry:
-            escaped_industry = filters.industry.replace("'", "''")
-            conditions.append(f"industry = '{escaped_industry}'")
+            conditions.append("industry = :industry")
+            params["industry"] = filters.industry
 
         # Valuation filters
-        self._add_range_filter(conditions, "per", filters.per)
-        self._add_range_filter(conditions, "pbr", filters.pbr)
-        self._add_range_filter(conditions, "psr", filters.psr)
-        self._add_range_filter(conditions, "pcr", filters.pcr)
-        self._add_range_filter(conditions, "dividend_yield", filters.dividend_yield)
+        self._add_range_filter(conditions, params, "per", filters.per)
+        self._add_range_filter(conditions, params, "pbr", filters.pbr)
+        self._add_range_filter(conditions, params, "psr", filters.psr)
+        self._add_range_filter(conditions, params, "pcr", filters.pcr)
+        self._add_range_filter(conditions, params, "dividend_yield", filters.dividend_yield)
 
         # Profitability filters
-        self._add_range_filter(conditions, "roe", filters.roe)
-        self._add_range_filter(conditions, "roa", filters.roa)
-        self._add_range_filter(conditions, "roic", filters.roic)
-        self._add_range_filter(conditions, "gross_margin", filters.gross_margin)
-        self._add_range_filter(conditions, "operating_margin", filters.operating_margin)
-        self._add_range_filter(conditions, "net_margin", filters.net_margin)
+        self._add_range_filter(conditions, params, "roe", filters.roe)
+        self._add_range_filter(conditions, params, "roa", filters.roa)
+        self._add_range_filter(conditions, params, "roic", filters.roic)
+        self._add_range_filter(conditions, params, "gross_margin", filters.gross_margin)
+        self._add_range_filter(conditions, params, "operating_margin", filters.operating_margin)
+        self._add_range_filter(conditions, params, "net_margin", filters.net_margin)
 
         # Growth filters
-        self._add_range_filter(conditions, "revenue_growth_yoy", filters.revenue_growth_yoy)
-        self._add_range_filter(conditions, "profit_growth_yoy", filters.profit_growth_yoy)
-        self._add_range_filter(conditions, "eps_growth_yoy", filters.eps_growth_yoy)
+        self._add_range_filter(conditions, params, "revenue_growth_yoy", filters.revenue_growth_yoy)
+        self._add_range_filter(conditions, params, "profit_growth_yoy", filters.profit_growth_yoy)
+        self._add_range_filter(conditions, params, "eps_growth_yoy", filters.eps_growth_yoy)
 
         # Stability filters
-        self._add_range_filter(conditions, "debt_to_equity", filters.debt_to_equity)
-        self._add_range_filter(conditions, "current_ratio", filters.current_ratio)
-        self._add_range_filter(conditions, "altman_z_score", filters.altman_z_score)
-        self._add_range_filter(conditions, "piotroski_f_score", filters.piotroski_f_score)
+        self._add_range_filter(conditions, params, "debt_to_equity", filters.debt_to_equity)
+        self._add_range_filter(conditions, params, "current_ratio", filters.current_ratio)
+        self._add_range_filter(conditions, params, "altman_z_score", filters.altman_z_score)
+        self._add_range_filter(conditions, params, "piotroski_f_score", filters.piotroski_f_score)
 
         # Price momentum filters
-        self._add_range_filter(conditions, "price_change_1d", filters.price_change_1d)
-        self._add_range_filter(conditions, "price_change_1w", filters.price_change_1w)
-        self._add_range_filter(conditions, "price_change_1m", filters.price_change_1m)
-        self._add_range_filter(conditions, "price_change_3m", filters.price_change_3m)
-        self._add_range_filter(conditions, "price_change_6m", filters.price_change_6m)
-        self._add_range_filter(conditions, "price_change_1y", filters.price_change_1y)
+        self._add_range_filter(conditions, params, "price_change_1d", filters.price_change_1d)
+        self._add_range_filter(conditions, params, "price_change_1w", filters.price_change_1w)
+        self._add_range_filter(conditions, params, "price_change_1m", filters.price_change_1m)
+        self._add_range_filter(conditions, params, "price_change_3m", filters.price_change_3m)
+        self._add_range_filter(conditions, params, "price_change_6m", filters.price_change_6m)
+        self._add_range_filter(conditions, params, "price_change_1y", filters.price_change_1y)
 
         # Volume filter
-        self._add_range_filter(conditions, "volume_surge_pct", filters.volume_surge_pct)
+        self._add_range_filter(conditions, params, "volume_surge_pct", filters.volume_surge_pct)
 
         # Composite score filters
-        self._add_range_filter(conditions, "quality_score", filters.quality_score)
-        self._add_range_filter(conditions, "value_score", filters.value_score)
-        self._add_range_filter(conditions, "growth_score", filters.growth_score)
-        self._add_range_filter(conditions, "momentum_score", filters.momentum_score)
-        self._add_range_filter(conditions, "overall_score", filters.overall_score)
+        self._add_range_filter(conditions, params, "quality_score", filters.quality_score)
+        self._add_range_filter(conditions, params, "value_score", filters.value_score)
+        self._add_range_filter(conditions, params, "growth_score", filters.growth_score)
+        self._add_range_filter(conditions, params, "momentum_score", filters.momentum_score)
+        self._add_range_filter(conditions, params, "overall_score", filters.overall_score)
 
         # Price and market cap filters
-        self._add_range_filter(conditions, "current_price", filters.current_price)
-        self._add_range_filter(conditions, "market_cap", filters.market_cap)
+        self._add_range_filter(conditions, params, "current_price", filters.current_price)
+        self._add_range_filter(conditions, params, "market_cap", filters.market_cap)
 
-        return conditions
+        return conditions, params
 
     def _add_range_filter(
         self,
         conditions: List[str],
+        params: Dict[str, Any],
         field_name: str,
         filter_range: FilterRange | None,
     ) -> None:
         """
-        Add range filter to conditions list
+        Add range filter to conditions list using parameterized queries
+
+        Security:
+            Uses parameterized queries to prevent SQL injection
 
         Args:
             conditions: List to append conditions to
+            params: Dictionary to add parameter values to
             field_name: Database column name
             filter_range: FilterRange object with min/max
         """
@@ -170,13 +247,17 @@ class ScreeningRepository:
         if filter_range.min is None and filter_range.max is None:
             return
 
-        # Add min condition
+        # Add min condition (parameterized)
         if filter_range.min is not None:
-            conditions.append(f"{field_name} >= {filter_range.min}")
+            param_name = f"{field_name}_min"
+            conditions.append(f"{field_name} >= :{param_name}")
+            params[param_name] = filter_range.min
 
-        # Add max condition
+        # Add max condition (parameterized)
         if filter_range.max is not None:
-            conditions.append(f"{field_name} <= {filter_range.max}")
+            param_name = f"{field_name}_max"
+            conditions.append(f"{field_name} <= :{param_name}")
+            params[param_name] = filter_range.max
 
     async def get_screening_templates(self) -> List[Dict[str, Any]]:
         """
