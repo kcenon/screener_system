@@ -470,14 +470,121 @@ time.sleep(1)
 KIS_USE_VIRTUAL_SERVER=true
 ```
 
+## Batch Processing for Large-Scale Operations
+
+For production environments handling 2,400+ stocks, use the optimized batch methods:
+
+### get_current_prices_batch()
+
+Fetch prices for multiple stocks concurrently:
+
+```python
+from data_pipeline.scripts.kis_api_client import create_client
+
+# Define progress callback
+def progress_callback(completed, total, stock_code):
+    print(f"Progress: {completed}/{total} - {stock_code}")
+
+with create_client(use_mock=True) as client:
+    # Fetch prices for 2,400 stocks
+    result = client.get_current_prices_batch(
+        stock_codes=all_stock_codes,
+        max_workers=10,  # Concurrent workers
+        progress_callback=progress_callback
+    )
+
+    print(f"Success: {result['stats']['succeeded']}")
+    print(f"Failed: {result['stats']['failed']}")
+    print(f"Speed: {result['stats']['stocks_per_second']} stocks/sec")
+
+    # Access successful results
+    for code, price in result['success'].items():
+        print(f"{code}: {price.current_price:,.0f} KRW")
+
+    # Handle failures
+    for code, error in result['failed'].items():
+        print(f"{code} failed: {error}")
+```
+
+**Performance:**
+- Expected throughput: 15-20 stocks/second with rate limiting
+- 2,400 stocks: ~2-3 minutes total
+- Automatic retry on transient failures
+- Progress logging every 100 stocks
+
+### get_chart_data_batch()
+
+Fetch historical data for multiple stocks:
+
+```python
+result = client.get_chart_data_batch(
+    stock_codes=['005930', '000660', '035420'],
+    period=PriceType.DAILY,
+    count=30,  # Last 30 days
+    max_workers=10
+)
+
+for code, chart_data in result['success'].items():
+    print(f"{code}: {len(chart_data)} candles")
+    latest = chart_data[0]
+    print(f"  Latest: {latest.close_price:,.0f} KRW")
+```
+
+### Cache Warming Strategy
+
+Pre-load frequently accessed stocks before market open:
+
+```python
+# Get top 100 most traded stocks
+top_100_codes = ['005930', '000660', ...]  # From database
+
+# Warm cache before market open (08:30)
+result = client.warm_cache(
+    stock_codes=top_100_codes,
+    data_types=['price', 'chart', 'info'],  # What to cache
+    max_workers=10
+)
+
+print(f"Cache warming results:")
+print(f"  Prices: {result['price']['succeeded']} cached")
+print(f"  Charts: {result['chart']['succeeded']} cached")
+print(f"  Duration: {result['total_duration_seconds']}s")
+```
+
+**Cache Warming Benefits:**
+- Sub-10ms response time for cached data (vs 200ms API call)
+- Reduced API calls during peak hours
+- Better user experience with instant responses
+- Scheduled via Airflow DAG before market open
+
+**Recommended Schedule:**
+```python
+# Airflow DAG example
+from airflow import DAG
+from datetime import datetime, timedelta
+
+dag = DAG(
+    'cache_warming',
+    schedule_interval='30 8 * * 1-5',  # 08:30 KST, Mon-Fri
+    start_date=datetime(2024, 1, 1),
+)
+
+def warm_cache_task():
+    from data_pipeline.scripts.data_source import create_data_source
+    with create_data_source() as source:
+        top_100 = get_top_100_stocks()  # Your logic
+        source.client.warm_cache(top_100, data_types=['price', 'chart'])
+```
+
 ## Future Enhancements
 
-- [ ] Redis caching integration
+- [x] Redis caching integration ✅
+- [x] Bulk request optimization ✅
+- [x] Performance monitoring and metrics ✅
+- [x] DAG integration for automated data ingestion ✅
 - [ ] WebSocket support for real-time streaming
-- [ ] Bulk request optimization
 - [ ] Historical data backfill utility
-- [ ] Performance monitoring and metrics
-- [ ] DAG integration for automated data ingestion
+- [ ] Automatic cache invalidation on market events
 
 ## References
 

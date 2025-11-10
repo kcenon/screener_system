@@ -1121,6 +1121,384 @@ class KISAPIClient:
         return self.circuit_breaker.call(api_call)
 
     # ========================================================================
+    # Batch Processing Methods
+    # ========================================================================
+
+    def get_current_prices_batch(
+        self,
+        stock_codes: List[str],
+        max_workers: int = 10,
+        progress_callback: callable = None
+    ) -> Dict[str, any]:
+        """
+        Get current prices for multiple stocks in batch using concurrent processing.
+
+        This method is optimized for fetching large numbers of stocks (e.g., 2,400+)
+        while respecting rate limits and handling failures gracefully.
+
+        Args:
+            stock_codes: List of 6-digit stock codes
+            max_workers: Number of concurrent workers (default: 10)
+            progress_callback: Optional callback function(completed, total, stock_code)
+
+        Returns:
+            Dict with 'success', 'failed', and 'stats' keys:
+            {
+                'success': {stock_code: CurrentPrice, ...},
+                'failed': {stock_code: error_message, ...},
+                'stats': {
+                    'total': int,
+                    'succeeded': int,
+                    'failed': int,
+                    'duration_seconds': float,
+                    'stocks_per_second': float
+                }
+            }
+
+        Example:
+            >>> def progress(completed, total, code):
+            ...     print(f"Progress: {completed}/{total} ({code})")
+            >>> result = client.get_current_prices_batch(
+            ...     stock_codes=['005930', '000660', '035420'],
+            ...     progress_callback=progress
+            ... )
+            >>> print(f"Success: {len(result['success'])}")
+            >>> print(f"Failed: {len(result['failed'])}")
+        """
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        import time
+
+        start_time = time.time()
+        success_prices = {}
+        failed_prices = {}
+        completed = 0
+        total = len(stock_codes)
+
+        logger.info(f"Starting batch price fetch for {total} stocks with {max_workers} workers")
+
+        def fetch_price(stock_code: str) -> tuple:
+            """Fetch single stock price and return (stock_code, price, error)"""
+            try:
+                price = self.get_current_price(stock_code)
+                return (stock_code, price, None)
+            except Exception as e:
+                logger.warning(f"Failed to fetch price for {stock_code}: {e}")
+                return (stock_code, None, str(e))
+
+        # Process stocks concurrently
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            future_to_code = {
+                executor.submit(fetch_price, code): code
+                for code in stock_codes
+            }
+
+            # Process completed tasks
+            for future in as_completed(future_to_code):
+                stock_code, price, error = future.result()
+                completed += 1
+
+                if error:
+                    failed_prices[stock_code] = error
+                else:
+                    success_prices[stock_code] = price
+
+                # Call progress callback
+                if progress_callback:
+                    try:
+                        progress_callback(completed, total, stock_code)
+                    except Exception as e:
+                        logger.warning(f"Progress callback error: {e}")
+
+                # Log progress every 100 stocks
+                if completed % 100 == 0 or completed == total:
+                    logger.info(
+                        f"Batch progress: {completed}/{total} "
+                        f"({completed/total*100:.1f}%) - "
+                        f"Success: {len(success_prices)}, Failed: {len(failed_prices)}"
+                    )
+
+        # Calculate stats
+        duration = time.time() - start_time
+        stats = {
+            'total': total,
+            'succeeded': len(success_prices),
+            'failed': len(failed_prices),
+            'duration_seconds': round(duration, 2),
+            'stocks_per_second': round(total / duration, 2) if duration > 0 else 0
+        }
+
+        logger.info(
+            f"Batch fetch completed in {duration:.2f}s: "
+            f"{stats['succeeded']} succeeded, {stats['failed']} failed "
+            f"({stats['stocks_per_second']:.1f} stocks/sec)"
+        )
+
+        return {
+            'success': success_prices,
+            'failed': failed_prices,
+            'stats': stats
+        }
+
+    def get_chart_data_batch(
+        self,
+        stock_codes: List[str],
+        period: PriceType = PriceType.DAILY,
+        count: int = 100,
+        max_workers: int = 10,
+        progress_callback: callable = None
+    ) -> Dict[str, any]:
+        """
+        Get chart data for multiple stocks in batch using concurrent processing.
+
+        Args:
+            stock_codes: List of 6-digit stock codes
+            period: Price type (DAILY, WEEKLY, etc.)
+            count: Number of data points per stock
+            max_workers: Number of concurrent workers (default: 10)
+            progress_callback: Optional callback function(completed, total, stock_code)
+
+        Returns:
+            Dict with 'success', 'failed', and 'stats' keys:
+            {
+                'success': {stock_code: List[ChartData], ...},
+                'failed': {stock_code: error_message, ...},
+                'stats': {...}
+            }
+
+        Example:
+            >>> result = client.get_chart_data_batch(
+            ...     stock_codes=['005930', '000660'],
+            ...     period=PriceType.DAILY,
+            ...     count=30
+            ... )
+            >>> for code, chart_data in result['success'].items():
+            ...     print(f"{code}: {len(chart_data)} candles")
+        """
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        import time
+
+        start_time = time.time()
+        success_charts = {}
+        failed_charts = {}
+        completed = 0
+        total = len(stock_codes)
+
+        logger.info(
+            f"Starting batch chart data fetch for {total} stocks "
+            f"(period={period.value}, count={count}) with {max_workers} workers"
+        )
+
+        def fetch_chart(stock_code: str) -> tuple:
+            """Fetch single stock chart and return (stock_code, chart_data, error)"""
+            try:
+                chart_data = self.get_chart_data(stock_code, period, count)
+                return (stock_code, chart_data, None)
+            except Exception as e:
+                logger.warning(f"Failed to fetch chart for {stock_code}: {e}")
+                return (stock_code, None, str(e))
+
+        # Process stocks concurrently
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all tasks
+            future_to_code = {
+                executor.submit(fetch_chart, code): code
+                for code in stock_codes
+            }
+
+            # Process completed tasks
+            for future in as_completed(future_to_code):
+                stock_code, chart_data, error = future.result()
+                completed += 1
+
+                if error:
+                    failed_charts[stock_code] = error
+                else:
+                    success_charts[stock_code] = chart_data
+
+                # Call progress callback
+                if progress_callback:
+                    try:
+                        progress_callback(completed, total, stock_code)
+                    except Exception as e:
+                        logger.warning(f"Progress callback error: {e}")
+
+                # Log progress every 100 stocks
+                if completed % 100 == 0 or completed == total:
+                    logger.info(
+                        f"Batch progress: {completed}/{total} "
+                        f"({completed/total*100:.1f}%) - "
+                        f"Success: {len(success_charts)}, Failed: {len(failed_charts)}"
+                    )
+
+        # Calculate stats
+        duration = time.time() - start_time
+        stats = {
+            'total': total,
+            'succeeded': len(success_charts),
+            'failed': len(failed_charts),
+            'duration_seconds': round(duration, 2),
+            'stocks_per_second': round(total / duration, 2) if duration > 0 else 0
+        }
+
+        logger.info(
+            f"Batch chart fetch completed in {duration:.2f}s: "
+            f"{stats['succeeded']} succeeded, {stats['failed']} failed "
+            f"({stats['stocks_per_second']:.1f} stocks/sec)"
+        )
+
+        return {
+            'success': success_charts,
+            'failed': failed_charts,
+            'stats': stats
+        }
+
+    def warm_cache(
+        self,
+        stock_codes: List[str],
+        data_types: List[str] = None,
+        max_workers: int = 10
+    ) -> Dict[str, any]:
+        """
+        Warm up the cache by pre-fetching data for specified stocks.
+
+        This method is useful for preparing the cache before market open or
+        for frequently accessed stocks to improve response time.
+
+        Args:
+            stock_codes: List of 6-digit stock codes to warm
+            data_types: Types of data to cache ['price', 'orderbook', 'chart', 'info']
+                       Default: ['price', 'chart']
+            max_workers: Number of concurrent workers (default: 10)
+
+        Returns:
+            Dict with warming results:
+            {
+                'price': {'succeeded': int, 'failed': int},
+                'orderbook': {'succeeded': int, 'failed': int},
+                'chart': {'succeeded': int, 'failed': int},
+                'info': {'succeeded': int, 'failed': int},
+                'total_duration_seconds': float
+            }
+
+        Example:
+            >>> # Warm cache for top 100 stocks
+            >>> result = client.warm_cache(
+            ...     stock_codes=top_100_codes,
+            ...     data_types=['price', 'chart']
+            ... )
+            >>> print(f"Warmed {result['price']['succeeded']} prices")
+        """
+        import time
+
+        if data_types is None:
+            data_types = ['price', 'chart']  # Most commonly accessed
+
+        start_time = time.time()
+        results = {}
+
+        logger.info(
+            f"Starting cache warming for {len(stock_codes)} stocks "
+            f"(types: {data_types})"
+        )
+
+        # Warm price data
+        if 'price' in data_types:
+            logger.info("Warming price data...")
+            price_result = self.get_current_prices_batch(
+                stock_codes,
+                max_workers=max_workers
+            )
+            results['price'] = {
+                'succeeded': price_result['stats']['succeeded'],
+                'failed': price_result['stats']['failed']
+            }
+            logger.info(
+                f"Price warming: {results['price']['succeeded']} succeeded, "
+                f"{results['price']['failed']} failed"
+            )
+
+        # Warm chart data
+        if 'chart' in data_types:
+            logger.info("Warming chart data...")
+            chart_result = self.get_chart_data_batch(
+                stock_codes,
+                period=PriceType.DAILY,
+                count=30,  # Last 30 days
+                max_workers=max_workers
+            )
+            results['chart'] = {
+                'succeeded': chart_result['stats']['succeeded'],
+                'failed': chart_result['stats']['failed']
+            }
+            logger.info(
+                f"Chart warming: {results['chart']['succeeded']} succeeded, "
+                f"{results['chart']['failed']} failed"
+            )
+
+        # Warm order book data (optional, more expensive)
+        if 'orderbook' in data_types:
+            logger.info("Warming order book data...")
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            succeeded = 0
+            failed = 0
+
+            def fetch_orderbook(code):
+                try:
+                    self.get_order_book(code)
+                    return True
+                except Exception:
+                    return False
+
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = [executor.submit(fetch_orderbook, code) for code in stock_codes]
+                for future in as_completed(futures):
+                    if future.result():
+                        succeeded += 1
+                    else:
+                        failed += 1
+
+            results['orderbook'] = {'succeeded': succeeded, 'failed': failed}
+            logger.info(f"Order book warming: {succeeded} succeeded, {failed} failed")
+
+        # Warm stock info (rare updates, good for caching)
+        if 'info' in data_types:
+            logger.info("Warming stock info data...")
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            succeeded = 0
+            failed = 0
+
+            def fetch_info(code):
+                try:
+                    self.get_stock_info(code)
+                    return True
+                except Exception:
+                    return False
+
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = [executor.submit(fetch_info, code) for code in stock_codes]
+                for future in as_completed(futures):
+                    if future.result():
+                        succeeded += 1
+                    else:
+                        failed += 1
+
+            results['info'] = {'succeeded': succeeded, 'failed': failed}
+            logger.info(f"Stock info warming: {succeeded} succeeded, {failed} failed")
+
+        duration = time.time() - start_time
+        results['total_duration_seconds'] = round(duration, 2)
+
+        logger.info(
+            f"Cache warming completed in {duration:.2f}s for "
+            f"{len(stock_codes)} stocks ({len(data_types)} data types)"
+        )
+
+        return results
+
+    # ========================================================================
     # Mock Data Methods
     # ========================================================================
 
