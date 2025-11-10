@@ -44,7 +44,11 @@ class TestWebSocketConnection:
         """Test WebSocket with invalid JWT token"""
         # Should still connect (anonymous connection)
         with client.websocket_connect("/v1/ws?token=invalid_token") as websocket:
-            assert len(connection_manager.active_connections) == 1
+            # Connection successful - invalid token treated as anonymous
+            # Send ping to verify connection is working
+            websocket.send_json({"type": "ping"})
+            response = websocket.receive_json()
+            assert response["type"] == "pong"
 
 
 class TestWebSocketMessages:
