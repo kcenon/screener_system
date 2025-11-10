@@ -161,14 +161,26 @@ These tickets have been fully implemented, tested, and reviewed:
 
 ---
 
+### 🔄 In Progress (1 ticket)
+**Currently being worked on:**
+
+**Backend:**
+- **BE-004**: Stock Screening API Implementation (Critical, 16h actual) 🔄 98% complete
+  - ✅ API implementation complete (3 endpoints)
+  - ✅ 96 tests passing (82 unit + 14 integration)
+  - ✅ PostgreSQL test database configured
+  - ✅ All acceptance criteria met except performance tests
+  - ⚠️ Performance testing blocked by DB-003 (materialized view needed)
+
+---
+
 ### Backlog (Sprint 2+: Week 3+) - Core & Advanced Features
-**11 tickets for future sprints**
+**10 tickets for future sprints**
 
 #### Sprint 2 (Week 3-4) - Core Screening Features
-**7 tickets:**
+**6 tickets:**
 
-**Backend (2):**
-- BE-004: Stock Screening API Implementation (Critical, 16h) - Sprint 2
+**Backend (1):**
 - BE-005: API Rate Limiting and Throttling (High, 6h) - Sprint 2
 
 **Database (1):**
@@ -307,6 +319,18 @@ Each team member answers:
 
 ## Recent Updates
 
+**2025-11-10 (11:45)**:
+- ✅ **BE-004 Stock Screening API** - 98% complete
+  - Fixed PostgreSQL test database configuration (SQLite UUID compatibility issue)
+  - All 14 integration tests passing with PostgreSQL
+  - 96 total tests passing (82 unit + 14 integration)
+  - Test coverage: screening.py 100%, screening_service.py 95%, schemas 99%
+  - All acceptance criteria met except performance tests (blocked by DB-003)
+- 📝 Updated conftest.py to use PostgreSQL for tests
+- 📝 Created screener_test database
+- ⚠️ Performance testing pending (requires materialized view from DB-003)
+- 🔄 **Next**: Complete BE-004 PR and move to review
+
 **2025-11-09 (17:55)**:
 - ✅ Runtime testing completed - All 12 tests passing
 - ✅ Moved INFRA-001, BE-001, DB-001 to done (runtime verified)
@@ -333,4 +357,4 @@ Each team member answers:
 
 ---
 
-Last Updated: 2025-11-09 (17:55)
+Last Updated: 2025-11-10 (11:45)

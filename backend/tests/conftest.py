@@ -1,6 +1,7 @@
 """Pytest configuration and fixtures"""
 
 import asyncio
+import os
 from typing import AsyncGenerator
 
 import pytest
@@ -13,8 +14,12 @@ from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 
-# Test database URL (use in-memory SQLite for testing)
-TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+# Test database URL (use PostgreSQL test database)
+# Use environment variable or default to test database
+TEST_DATABASE_URL = os.getenv(
+    "TEST_DATABASE_URL",
+    "postgresql+asyncpg://screener_user:your_secure_password_here@screener_postgres:5432/screener_test"
+)
 
 
 @pytest.fixture(scope="session")
