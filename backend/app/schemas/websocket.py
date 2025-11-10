@@ -29,6 +29,7 @@ class MessageType(str, Enum):
     TOKEN_REFRESHED = "token_refreshed"  # Phase 3: Token refresh confirmation
     RECONNECTED = "reconnected"  # Phase 3: Reconnection confirmation
     FALLBACK_TO_REST = "fallback_to_rest"  # Phase 3: Suggest REST fallback
+    BATCH = "batch"  # Phase 4: Batched messages
 
 
 class SubscriptionType(str, Enum):
@@ -343,3 +344,41 @@ class ConnectionInfo(BaseModel):
     subscriptions: Dict[SubscriptionType, List[str]] = Field(default_factory=dict)
     message_count: int = 0
     last_activity: datetime
+
+
+# ============================================================================
+# Phase 4: Performance Features
+# ============================================================================
+
+
+class BatchMessage(WebSocketMessage):
+    """Batched messages (Phase 4)"""
+
+    type: MessageType = MessageType.BATCH
+    messages: List[WebSocketMessage]
+    batch_size: int
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "type": "batch",
+                "messages": [
+                    {
+                        "type": "price_update",
+                        "code": "005930",
+                        "price": 73000,
+                        "change_percent": 1.5,
+                        "timestamp": "2025-11-10T12:00:00Z",
+                    },
+                    {
+                        "type": "price_update",
+                        "code": "000660",
+                        "price": 145000,
+                        "change_percent": -0.5,
+                        "timestamp": "2025-11-10T12:00:01Z",
+                    },
+                ],
+                "batch_size": 2,
+                "timestamp": "2025-11-10T12:00:01Z",
+            }
+        }
