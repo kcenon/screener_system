@@ -211,7 +211,7 @@ async def handle_subscribe(connection_id: str, message: dict):
 
         # Subscribe to each target
         for target in request.targets:
-            connection_manager.subscribe(
+            await connection_manager.subscribe(
                 connection_id, request.subscription_type, target
             )
 

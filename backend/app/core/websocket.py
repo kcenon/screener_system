@@ -1,4 +1,4 @@
-"""WebSocket connection manager"""
+"""WebSocket connection manager with Redis Pub/Sub support"""
 
 import asyncio
 import json
@@ -27,8 +27,13 @@ class ConnectionManager:
     - Heartbeat/ping-pong mechanism
     """
 
-    def __init__(self):
-        """Initialize connection manager"""
+    def __init__(self, enable_redis: bool = True):
+        """
+        Initialize connection manager.
+
+        Args:
+            enable_redis: Enable Redis Pub/Sub for multi-instance support
+        """
         # Active connections: connection_id -> WebSocket
         self.active_connections: Dict[str, WebSocket] = {}
 
@@ -55,11 +60,92 @@ class ConnectionManager:
         self._heartbeat_task: Optional[asyncio.Task] = None
         self._heartbeat_interval = 30  # seconds
 
+        # Redis Pub/Sub integration
+        self._enable_redis = enable_redis
+        self._redis_initialized = False
+        self._redis_channels: Set[str] = set()  # Track subscribed Redis channels
+
+    async def initialize_redis(self):
+        """Initialize Redis Pub/Sub connection"""
+        if not self._enable_redis or self._redis_initialized:
+            return
+
+        try:
+            from app.core.redis_pubsub import redis_pubsub
+
+            # Connect to Redis
+            await redis_pubsub.connect()
+            self._redis_initialized = True
+
+            logger.info("Redis Pub/Sub initialized for WebSocket")
+
+        except Exception as e:
+            logger.warning(f"Failed to initialize Redis Pub/Sub: {e}")
+            logger.warning("WebSocket will run in single-instance mode")
+            self._enable_redis = False
+
     async def _next_sequence(self) -> int:
         """Get next message sequence number (thread-safe)"""
         async with self._sequence_lock:
             self._sequence_counter += 1
             return self._sequence_counter
+
+    async def _handle_redis_message(self, channel: str, data: Dict[str, Any]):
+        """
+        Handle incoming message from Redis Pub/Sub.
+
+        This broadcasts Redis messages to subscribed WebSocket connections.
+
+        Args:
+            channel: Redis channel name (e.g., "stock:005930:price")
+            data: Message data
+        """
+        try:
+            # Parse channel to determine subscription type and target
+            # Channel format: {type}:{target}:{subtype}
+            # Examples:
+            #   stock:005930:price -> type=stock, target=005930
+            #   market:KOSPI:status -> type=market, target=KOSPI
+
+            parts = channel.split(":")
+            if len(parts) < 2:
+                logger.warning(f"Invalid channel format: {channel}")
+                return
+
+            channel_type = parts[0]
+            target = parts[1]
+
+            # Map channel type to subscription type
+            type_mapping = {
+                "stock": SubscriptionType.STOCK,
+                "market": SubscriptionType.MARKET,
+                "sector": SubscriptionType.SECTOR,
+                "watchlist": SubscriptionType.WATCHLIST,
+            }
+
+            subscription_type = type_mapping.get(channel_type)
+            if not subscription_type:
+                logger.warning(f"Unknown channel type: {channel_type}")
+                return
+
+            # Create WebSocket message from Redis data
+            # Data should already have correct schema from publisher
+            message = WebSocketMessage(**data)
+
+            # Send to all subscribers
+            await self.send_to_subscribers(
+                subscription_type=subscription_type,
+                target=target,
+                message=message,
+            )
+
+            logger.debug(
+                f"Forwarded Redis message from {channel} to "
+                f"{len(self.get_subscribers(subscription_type, target))} subscribers"
+            )
+
+        except Exception as e:
+            logger.error(f"Error handling Redis message from {channel}: {e}")
 
     async def connect(
         self, websocket: WebSocket, user_id: Optional[str] = None
@@ -245,11 +331,13 @@ class ConnectionManager:
 
         await asyncio.gather(*send_tasks, return_exceptions=True)
 
-    def subscribe(
+    async def subscribe(
         self, connection_id: str, subscription_type: SubscriptionType, target: str
     ):
         """
         Subscribe a connection to updates.
+
+        Also subscribes to Redis channel if enabled and not already subscribed.
 
         Args:
             connection_id: Connection to subscribe
@@ -270,9 +358,57 @@ class ConnectionManager:
             if target not in info.subscriptions[subscription_type]:
                 info.subscriptions[subscription_type].append(target)
 
+        # Subscribe to Redis channel if this is the first subscriber
+        if self._enable_redis and self._redis_initialized:
+            await self._subscribe_redis_channel(subscription_type, target)
+
         logger.debug(
             f"Subscribed {connection_id} to {subscription_type.value}:{target}"
         )
+
+    async def _subscribe_redis_channel(
+        self, subscription_type: SubscriptionType, target: str
+    ):
+        """
+        Subscribe to Redis channel for a subscription type and target.
+
+        Only subscribes if not already subscribed to avoid duplicates.
+
+        Args:
+            subscription_type: Type of subscription
+            target: Subscription target
+        """
+        try:
+            from app.core.redis_pubsub import redis_pubsub
+
+            # Map subscription type to Redis channel pattern
+            channel_patterns = {
+                SubscriptionType.STOCK: f"stock:{target}:*",
+                SubscriptionType.MARKET: f"market:{target}:*",
+                SubscriptionType.SECTOR: f"sector:{target}:*",
+                SubscriptionType.WATCHLIST: f"watchlist:{target}:*",
+            }
+
+            channel_pattern = channel_patterns.get(subscription_type)
+            if not channel_pattern:
+                return
+
+            # Check if already subscribed
+            if channel_pattern in self._redis_channels:
+                return
+
+            # Subscribe to Redis channel
+            await redis_pubsub.subscribe(
+                channel_pattern,
+                self._handle_redis_message,
+            )
+
+            self._redis_channels.add(channel_pattern)
+
+            logger.debug(f"Subscribed to Redis channel: {channel_pattern}")
+
+        except Exception as e:
+            logger.error(f"Error subscribing to Redis channel: {e}")
 
     def unsubscribe(
         self, connection_id: str, subscription_type: SubscriptionType, target: str
