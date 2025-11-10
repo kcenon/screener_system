@@ -1,7 +1,7 @@
 # [INFRA-002] CI/CD Pipeline with GitHub Actions
 
 ## Metadata
-- **Status**: IN_PROGRESS
+- **Status**: DONE
 - **Priority**: High
 - **Assignee**: AI Assistant
 - **Estimated Time**: 10 hours
