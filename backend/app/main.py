@@ -38,10 +38,28 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Failed to connect to Redis: {e}")
 
+    # Initialize WebSocket Redis Pub/Sub
+    try:
+        from app.core.websocket import connection_manager
+
+        await connection_manager.initialize_redis()
+        logger.info("WebSocket Redis Pub/Sub initialized")
+    except Exception as e:
+        logger.warning(f"Failed to initialize WebSocket Redis Pub/Sub: {e}")
+
     yield
 
     # Shutdown
     logger.info("Shutting down Stock Screening Platform API...")
+
+    # Disconnect WebSocket Redis Pub/Sub
+    try:
+        from app.core.redis_pubsub import redis_pubsub
+
+        await redis_pubsub.disconnect()
+        logger.info("WebSocket Redis Pub/Sub disconnected")
+    except Exception as e:
+        logger.warning(f"Error disconnecting WebSocket Redis Pub/Sub: {e}")
 
     # Disconnect from Redis
     try:
