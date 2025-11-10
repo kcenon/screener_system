@@ -20,7 +20,7 @@ services:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/migrations:/docker-entrypoint-initdb.d
+      - ./database/init-test-db.sh:/docker-entrypoint-initdb.d/01-init-test-db.sh:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-screener_user} -d ${DB_NAME:-screener_db}"]
       interval: 10s
@@ -68,6 +68,7 @@ services:
       # Database
       # Use postgresql+asyncpg for async SQLAlchemy
       DATABASE_URL: postgresql+asyncpg://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/${DB_NAME:-screener_db}
+      TEST_DATABASE_URL: postgresql+asyncpg://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/screener_test
 
       # Redis
       REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0

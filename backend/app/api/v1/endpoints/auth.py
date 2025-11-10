@@ -86,18 +86,25 @@ async def login(
     Raises:
         401: Invalid credentials
     """
-    # Extract client info
-    ip_address = request.client.host if request.client else None
-    user_agent = request.headers.get("user-agent")
+    try:
+        # Extract client info
+        ip_address = request.client.host if request.client else None
+        user_agent = request.headers.get("user-agent")
 
-    # Authenticate user
-    token_response = await auth_service.authenticate_user(
-        credentials=credentials,
-        ip_address=ip_address,
-        user_agent=user_agent,
-    )
+        # Authenticate user
+        token_response = await auth_service.authenticate_user(
+            credentials=credentials,
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
 
-    return token_response
+        return token_response
+
+    except UnauthorizedException as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        ) from e
 
 
 @router.post(
