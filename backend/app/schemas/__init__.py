@@ -1,5 +1,15 @@
 """Pydantic schemas package"""
 
+from app.schemas.screening import (
+    FilterRange,
+    ScreenedStock,
+    ScreeningFilters,
+    ScreeningMetadata,
+    ScreeningRequest,
+    ScreeningResponse,
+    ScreeningTemplate,
+    ScreeningTemplateList,
+)
 from app.schemas.stock import (
     CalculatedIndicator,
     DailyPrice,
@@ -52,4 +62,13 @@ __all__ = [
     "StockSearchQuery",
     "StockSearchResult",
     "StockSearchResponse",
+    # Screening schemas
+    "FilterRange",
+    "ScreeningFilters",
+    "ScreeningRequest",
+    "ScreenedStock",
+    "ScreeningMetadata",
+    "ScreeningResponse",
+    "ScreeningTemplate",
+    "ScreeningTemplateList",
 ]
