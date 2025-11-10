@@ -34,22 +34,22 @@ interface Column {
   label: string
   sortable: boolean
   align?: 'left' | 'right' | 'center'
-  format?: (value: number | null | undefined) => string
+  format?: (value: string | number | null | undefined) => string
 }
 
 /**
  * Format number with null handling
  */
-const formatNumber = (value: number | null | undefined, decimals = 2): string => {
-  if (value === null || value === undefined) return '-'
+const formatNumber = (value: string | number | null | undefined, decimals = 2): string => {
+  if (value === null || value === undefined || typeof value === 'string') return '-'
   return value.toFixed(decimals)
 }
 
 /**
  * Format percentage with null handling
  */
-const formatPercent = (value: number | null | undefined): string => {
-  if (value === null || value === undefined) return '-'
+const formatPercent = (value: string | number | null | undefined): string => {
+  if (value === null || value === undefined || typeof value === 'string') return '-'
   const formatted = value.toFixed(2)
   return value > 0 ? `+${formatted}%` : `${formatted}%`
 }
@@ -57,8 +57,8 @@ const formatPercent = (value: number | null | undefined): string => {
 /**
  * Format large numbers (market cap, price)
  */
-const formatPrice = (value: number | null | undefined): string => {
-  if (value === null || value === undefined) return '-'
+const formatPrice = (value: string | number | null | undefined): string => {
+  if (value === null || value === undefined || typeof value === 'string') return '-'
   return value.toLocaleString('ko-KR')
 }
 
