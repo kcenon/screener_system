@@ -65,7 +65,7 @@ class TestScreeningService:
         # Should contain API version, filter hash (16 chars), and pagination params
         assert cache_key.startswith("screening:v1:")
         parts = cache_key.split(":")
-        assert len(parts) == 6  # screening:v1:hash:sort:order:page:per_page
+        assert len(parts) == 7  # screening:v1:hash:sort:order:page:per_page
         assert len(parts[2]) == 16  # SHA-256 truncated to 16 chars
         assert ":per:asc:1:50" in cache_key
 
