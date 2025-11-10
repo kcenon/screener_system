@@ -1,7 +1,7 @@
 # [SECURITY-001] Fix SQL Injection Vulnerabilities in Screening API
 
 ## Metadata
-- **Status**: TODO
+- **Status**: DONE
 - **Priority**: Critical
 - **Assignee**: Development Team
 - **Estimated Time**: 4 hours

@@ -1,7 +1,7 @@
 # [BUGFIX-002] Optimize Screening Query Performance (Double Query Issue)
 
 ## Metadata
-- **Status**: TODO
+- **Status**: DONE
 - **Priority**: High
 - **Assignee**: Development Team
 - **Estimated Time**: 3 hours
