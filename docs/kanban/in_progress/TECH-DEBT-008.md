@@ -5,7 +5,7 @@
 - **Priority**: Medium
 - **Assignee**: kcenon
 - **Estimated Time**: 16 hours
-- **Actual Time**: 4 hours (Phase 1 complete)
+- **Actual Time**: 10 hours (Phase 1 & 2 complete)
 - **Sprint**: Sprint 3 (Week 5-6)
 - **Tags**: #testing #coverage #quality
 - **Created**: 2025-11-10
@@ -34,35 +34,31 @@ TECH-DEBT-005 fixed the test infrastructure and all authentication tests are pas
 
 ## Subtasks
 
-### Phase 1: Repository Tests (8h)
-- [ ] Add tests for screening_repository
-  - [ ] Test get_filtered_stocks with various filters
-  - [ ] Test build_query_filters
-  - [ ] Test apply_sorting
-  - [ ] Test pagination
-- [ ] Add tests for stock_repository
-  - [ ] Test get_all, get_by_id, get_by_code
-  - [ ] Test search functionality
-  - [ ] Test get_by_sector
-  - [ ] Test get_top_by_market_cap
-- [ ] Add tests for user_session_repository
-  - [ ] Test create, get_by_id, get_by_refresh_token
-  - [ ] Test get_active_sessions_for_user
-  - [ ] Test revoke_session, revoke_all_for_user
+### Phase 1: Repository Tests (8h) ✅
+- [x] Add tests for stock_repository (14 test cases)
+  - [x] Test get_by_code, get_by_code_with_latest
+  - [x] Test list_stocks with pagination and filters
+  - [x] Test search_stocks functionality
+  - [x] Test get_latest_price
+- [x] Add tests for user_session_repository (18 test cases)
+  - [x] Test create, get_by_id, get_by_refresh_token
+  - [x] Test get_active_sessions_by_user_id
+  - [x] Test revoke, revoke_by_refresh_token, revoke_all
+  - [x] Test delete_expired_sessions
+- [x] screening_repository already has comprehensive tests
 
-### Phase 2: Service Tests (6h)
-- [ ] Add tests for screening_service
-  - [ ] Test screen_stocks with different filters
-  - [ ] Test cache key generation
-  - [ ] Test predefined templates
-- [ ] Add tests for stock_service
-  - [ ] Test get_stocks, get_stock_by_code
-  - [ ] Test search_stocks
-  - [ ] Test get_stock_prices
-- [ ] Add tests for auth_service
-  - [ ] Test refresh_access_token
-  - [ ] Test logout, logout_all_sessions
-  - [ ] Test session management
+### Phase 2: Service Tests (6h) ✅
+- [x] Add tests for stock_service (18 test cases)
+  - [x] Test list_stocks with caching and pagination
+  - [x] Test get_stock_by_code with cache behavior
+  - [x] Test search_stocks with filters
+  - [x] Cache integration tests with TTL validation
+- [x] Add tests for auth_service (20 test cases)
+  - [x] Test register_user and authenticate_user
+  - [x] Test refresh_access_token and verify_access_token
+  - [x] Test logout and logout_all_sessions
+  - [x] Comprehensive error handling tests
+- [x] screening_service already has comprehensive tests
 
 ### Phase 3: Integration & Edge Cases (2h)
 - [ ] Add tests for cache.py
