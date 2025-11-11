@@ -5,12 +5,14 @@ import OverviewTab from './OverviewTab'
 import FinancialsTab from './FinancialsTab'
 import ValuationTab from './ValuationTab'
 import TechnicalTab from './TechnicalTab'
+import OrderBook from './OrderBook'
+import { useOrderBook } from '@/hooks/useOrderBook'
 
 interface StockTabsProps {
   stock: StockDetail
 }
 
-type TabValue = 'overview' | 'financials' | 'valuation' | 'technical'
+type TabValue = 'overview' | 'financials' | 'valuation' | 'technical' | 'orderbook'
 
 /**
  * Stock Tabs Component
@@ -20,6 +22,7 @@ type TabValue = 'overview' | 'financials' | 'valuation' | 'technical'
  * - Financials: Income statement, balance sheet, cash flow
  * - Valuation: Valuation ratios and historical trends
  * - Technical: Price momentum, volume analysis, moving averages
+ * - OrderBook: Real-time 10-level order book (FE-005)
  *
  * @example
  * ```tsx
@@ -29,11 +32,22 @@ type TabValue = 'overview' | 'financials' | 'valuation' | 'technical'
 export default function StockTabs({ stock }: StockTabsProps) {
   const [activeTab, setActiveTab] = useState<TabValue>('overview')
 
+  // OrderBook data (only fetch when orderbook tab is active)
+  const {
+    orderBook,
+    imbalance,
+    isLoading: orderBookLoading,
+    error: orderBookError,
+    frozen,
+    toggleFreeze,
+  } = useOrderBook(stock.code, activeTab === 'orderbook')
+
   const tabs: Array<{ value: TabValue; label: string }> = [
     { value: 'overview', label: '개요' },
     { value: 'financials', label: '재무' },
     { value: 'valuation', label: '밸류에이션' },
     { value: 'technical', label: '기술적 지표' },
+    { value: 'orderbook', label: '호가' },
   ]
 
   return (
@@ -77,6 +91,33 @@ export default function StockTabs({ stock }: StockTabsProps) {
 
       <Tabs.Content value="technical" className="outline-none">
         <TechnicalTab stock={stock} />
+      </Tabs.Content>
+
+      <Tabs.Content value="orderbook" className="outline-none">
+        {orderBookError ? (
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+            <div className="text-red-600 mb-2">
+              <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">{orderBookError}</p>
+            <p className="text-xs text-gray-500">실시간 호가 데이터를 사용하려면 로그인이 필요합니다.</p>
+          </div>
+        ) : (
+          <OrderBook
+            data={orderBook}
+            imbalance={imbalance}
+            isLoading={orderBookLoading}
+            frozen={frozen}
+            onToggleFreeze={toggleFreeze}
+          />
+        )}
       </Tabs.Content>
     </Tabs.Root>
   )

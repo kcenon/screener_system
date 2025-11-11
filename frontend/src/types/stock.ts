@@ -210,3 +210,71 @@ export interface PriceChange {
   /** Is positive change */
   is_positive: boolean
 }
+
+/**
+ * Order Book Types (FE-005)
+ */
+
+/**
+ * Single order book level (bid or ask)
+ */
+export interface OrderBookLevel {
+  /** Price at this level */
+  price: number
+  /** Volume at this price */
+  volume: number
+  /** Total (cumulative) volume up to this level */
+  total: number
+  /** Number of orders at this level (optional) */
+  order_count?: number
+}
+
+/**
+ * Complete order book data
+ */
+export interface OrderBookData {
+  /** Stock code */
+  stock_code: string
+  /** Timestamp of the order book snapshot (ISO 8601) */
+  timestamp: string
+  /** Sequence number for ordering updates */
+  sequence?: number
+  /** Array of ask levels (매도, sell orders) - sorted from lowest to highest */
+  asks: OrderBookLevel[]
+  /** Array of bid levels (매수, buy orders) - sorted from highest to lowest */
+  bids: OrderBookLevel[]
+  /** Best ask price (lowest sell price) */
+  best_ask?: number
+  /** Best bid price (highest buy price) */
+  best_bid?: number
+  /** Spread (best_ask - best_bid) */
+  spread?: number
+  /** Spread percentage ((spread / mid_price) * 100) */
+  spread_pct?: number
+  /** Mid price ((best_ask + best_bid) / 2) */
+  mid_price?: number
+}
+
+/**
+ * Order book update message from WebSocket
+ */
+export interface OrderBookUpdate {
+  /** Message type */
+  type: 'orderbook_update'
+  /** Order book data */
+  data: OrderBookData
+}
+
+/**
+ * Order imbalance indicator
+ */
+export interface OrderImbalance {
+  /** Total bid volume */
+  total_bid_volume: number
+  /** Total ask volume */
+  total_ask_volume: number
+  /** Imbalance ratio (bid / (bid + ask)) */
+  imbalance_ratio: number
+  /** Direction ('buy' if more bids, 'sell' if more asks, 'neutral' if balanced) */
+  direction: 'buy' | 'sell' | 'neutral'
+}
