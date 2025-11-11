@@ -1,8 +1,9 @@
 """Health check endpoints"""
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Response
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from app.core.cache import CacheManager, get_cache
 from app.db.session import get_db
@@ -93,3 +94,25 @@ async def health_check_redis(cache: CacheManager = Depends(get_cache)):
             "redis": "disconnected",
             "error": str(e),
         }
+
+
+@router.get(
+    "/metrics",
+    status_code=status.HTTP_200_OK,
+    summary="Prometheus metrics endpoint",
+    response_class=Response,
+)
+async def metrics():
+    """
+    Expose Prometheus metrics in text format.
+
+    This endpoint is scraped by Prometheus to collect application metrics.
+    Returns metrics in Prometheus text exposition format.
+
+    Returns:
+        Response: Prometheus metrics in text format
+    """
+    return Response(
+        content=generate_latest(),
+        media_type=CONTENT_TYPE_LATEST
+    )

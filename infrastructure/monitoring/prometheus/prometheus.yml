@@ -9,6 +9,10 @@ global:
     environment: 'development'
     cluster: 'screener-local'
 
+# Storage configuration
+# Retain data for 15 days (default is 15d anyway)
+# --storage.tsdb.retention.time=15d (set in docker-compose)
+
 # Alertmanager configuration (optional)
 # alerting:
 #   alertmanagers:

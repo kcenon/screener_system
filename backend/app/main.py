@@ -19,6 +19,7 @@ from app.core.exceptions import AppException
 from app.core.logging import logger
 from app.middleware.logging import LoggingMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
+from app.middleware.metrics import PrometheusMetricsMiddleware
 
 
 @asynccontextmanager
@@ -118,6 +119,9 @@ app.add_middleware(
 
 # GZip compression middleware
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+# Prometheus metrics middleware (before logging to track all requests)
+app.add_middleware(PrometheusMetricsMiddleware)
 
 # Request logging middleware
 app.add_middleware(LoggingMiddleware)

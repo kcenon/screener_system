@@ -1,0 +1,193 @@
+{
+  "dashboard": {
+    "title": "Cache Performance",
+    "tags": ["cache", "redis"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "type": "graph",
+        "title": "Cache Hit Rate",
+        "targets": [
+          {
+            "expr": "cache_hit_ratio",
+            "legendFormat": "Hit Rate",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "percentunit",
+            "label": "Hit Rate",
+            "min": 0,
+            "max": 1
+          }
+        ],
+        "alert": {
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [0.8],
+                "type": "lt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": ["A", "5m", "now"]
+              },
+              "reducer": {
+                "params": [],
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "name": "Low Cache Hit Rate",
+          "message": "Cache hit rate dropped below 80%"
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "type": "graph",
+        "title": "Cache Operations",
+        "targets": [
+          {
+            "expr": "rate(cache_operations_total{result='hit'}[1m])",
+            "legendFormat": "Hits",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(cache_operations_total{result='miss'}[1m])",
+            "legendFormat": "Misses",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ops",
+            "label": "Operations/sec"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "type": "graph",
+        "title": "Cache Operation Duration",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(cache_operation_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95 - {{operation}}",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(cache_operation_duration_seconds_bucket[5m]))",
+            "legendFormat": "p99 - {{operation}}",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "s",
+            "label": "Duration"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "type": "graph",
+        "title": "Redis Memory Usage",
+        "targets": [
+          {
+            "expr": "cache_memory_usage_bytes",
+            "legendFormat": "Memory Used",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "bytes",
+            "label": "Memory"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": {"h": 6, "w": 8, "x": 0, "y": 16},
+        "type": "stat",
+        "title": "Cache Hit Rate",
+        "targets": [
+          {
+            "expr": "cache_hit_ratio",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit"
+          }
+        },
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            {"value": 0, "color": "red"},
+            {"value": 0.6, "color": "yellow"},
+            {"value": 0.8, "color": "green"}
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": {"h": 6, "w": 8, "x": 8, "y": 16},
+        "type": "stat",
+        "title": "Cache Operations (1h)",
+        "targets": [
+          {
+            "expr": "sum(increase(cache_operations_total[1h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": {"h": 6, "w": 8, "x": 16, "y": 16},
+        "type": "stat",
+        "title": "Memory Usage",
+        "targets": [
+          {
+            "expr": "cache_memory_usage_bytes",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes"
+          }
+        }
+      }
+    ],
+    "schemaVersion": 27,
+    "version": 1
+  }
+}
