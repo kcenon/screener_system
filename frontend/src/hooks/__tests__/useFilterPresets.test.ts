@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { renderHook, act } from '@testing-library/react'
 import { useFilterPresets } from '../useFilterPresets'
 import type { ScreeningFilters } from '@/types/screening'
 

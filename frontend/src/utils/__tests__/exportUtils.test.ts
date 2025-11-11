@@ -82,11 +82,11 @@ describe('exportUtils', () => {
     } as StockScreeningResult,
   ]
 
-  let createElementSpy: ReturnType<typeof vi.spyOn>
-  let appendChildSpy: ReturnType<typeof vi.spyOn>
-  let removeChildSpy: ReturnType<typeof vi.spyOn>
+  let createElementSpy: any
+  let appendChildSpy: any
+  let removeChildSpy: any
   let clickSpy: ReturnType<typeof vi.fn>
-  let revokeObjectURLSpy: ReturnType<typeof vi.spyOn>
+  let revokeObjectURLSpy: any
 
   beforeEach(() => {
     // Mock document.createElement and related DOM methods
@@ -152,7 +152,6 @@ describe('exportUtils', () => {
     it('generates CSV with header row', () => {
       exportToCSV(mockStocks)
 
-      const blobSpy = vi.mocked(Blob)
       // Blob constructor should be called with CSV content
       expect(createElementSpy).toHaveBeenCalledWith('a')
     })
