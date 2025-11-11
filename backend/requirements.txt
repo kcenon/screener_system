@@ -37,7 +37,7 @@ httpx==0.25.2
 aiohttp==3.12.14  # Security: Fixed request smuggling in chunked trailer parsing (GHSA-9548-qrrj-x5pj, CVE-2025-53643)
 
 # Monitoring & Logging
-prometheus-client==0.19.0
+prometheus-client==0.23.1
 sentry-sdk[fastapi]==2.44.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
 
 # Testing
