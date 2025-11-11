@@ -1,8 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { useScreening } from '@/hooks/useScreening'
+import { useFilterPresets } from '@/hooks/useFilterPresets'
+import { useURLSync } from '@/hooks/useURLSync'
 import FilterPanel from '@/components/screener/FilterPanel'
 import ResultsTable from '@/components/screener/ResultsTable'
 import Pagination from '@/components/common/Pagination'
+import ExportButton from '@/components/screener/ExportButton'
 import type { ScreeningSortField, StockScreeningResult } from '@/types/screening'
 
 /**
@@ -30,6 +33,11 @@ export default function ScreenerPage() {
     setSort,
     setPagination,
   } = useScreening()
+
+  const { presets, savePreset, deletePreset } = useFilterPresets()
+
+  // Sync filters/sort/pagination with URL
+  useURLSync(filters, setFilters, sort, setSort, pagination, setPagination)
 
   // Handle sort column click
   const handleSort = (field: ScreeningSortField) => {
@@ -110,13 +118,16 @@ export default function ScreenerPage() {
                 filters={filters}
                 onFiltersChange={setFilters}
                 onClearFilters={handleClearFilters}
+                presets={presets}
+                onSavePreset={(name, description) => savePreset(name, filters, description)}
+                onDeletePreset={deletePreset}
               />
             </div>
           </div>
 
           {/* Right column - Results (3/4 width on large screens) */}
           <div className="lg:col-span-3 space-y-4">
-            {/* Results count */}
+            {/* Results count and export */}
             {!isLoading && data && (
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-700">
@@ -127,6 +138,7 @@ export default function ScreenerPage() {
                     </span>
                   )}
                 </p>
+                <ExportButton data={data.stocks} />
               </div>
             )}
 

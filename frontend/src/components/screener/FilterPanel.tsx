@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import * as Accordion from '@radix-ui/react-accordion'
 import type { ScreeningFilters } from '@/types/screening'
+import type { FilterPreset } from '@/hooks/useFilterPresets'
 import RangeFilter from './RangeFilter'
+import SearchBar from './SearchBar'
+import FilterPresetManager from './FilterPresetManager'
 
 /**
  * Props for FilterPanel component
@@ -13,6 +16,12 @@ interface FilterPanelProps {
   onFiltersChange: (filters: ScreeningFilters) => void
   /** Callback when clear all button is clicked */
   onClearFilters: () => void
+  /** List of saved filter presets */
+  presets?: FilterPreset[]
+  /** Callback when a preset is saved */
+  onSavePreset?: (name: string, description?: string) => void
+  /** Callback when a preset is deleted */
+  onDeletePreset?: (id: string) => void
 }
 
 /**
@@ -29,6 +38,9 @@ export default function FilterPanel({
   filters,
   onFiltersChange,
   onClearFilters,
+  presets = [],
+  onSavePreset,
+  onDeletePreset,
 }: FilterPanelProps) {
   const [openSections, setOpenSections] = useState<string[]>(['basic'])
 
@@ -50,6 +62,29 @@ export default function FilterPanel({
         >
           Clear All
         </button>
+      </div>
+
+      {/* Filter Presets */}
+      {onSavePreset && onDeletePreset && (
+        <FilterPresetManager
+          presets={presets}
+          onLoadPreset={onFiltersChange}
+          onSavePreset={onSavePreset}
+          onDeletePreset={onDeletePreset}
+        />
+      )}
+
+      {/* Divider */}
+      {onSavePreset && onDeletePreset && <div className="border-t border-gray-200" />}
+
+      {/* Search Bar */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">Search</label>
+        <SearchBar
+          value={filters.search || ''}
+          onChange={(value) => updateFilter('search', value || null)}
+          enableShortcut={true}
+        />
       </div>
 
       {/* Market Selector */}

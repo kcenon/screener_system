@@ -16,6 +16,10 @@ export interface FilterRange {
  * All available screening filters
  */
 export interface ScreeningFilters {
+  // Search filter
+  /** Search by stock code or name */
+  search?: string | null
+
   // Market filters
   /** Market filter */
   market?: 'KOSPI' | 'KOSDAQ' | 'ALL'
