@@ -339,21 +339,53 @@ No tickets currently in review.
 
 ---
 
-### Backlog (Post-MVP: Future Sprints)
-**0 tickets - All MVP work complete!**
+### Backlog (Post-MVP: Sprint 4)
+**5 tickets - Runtime Validation and Quality Assurance**
 
-🎊 **All Sprint 1, 2 & 3 tickets have been completed!**
+⚠️ **Important**: Ticket review completed on 2025-11-11 identified incomplete runtime testing and validation items in completed tickets. New BUGFIX tickets created to address these gaps before production deployment.
 
-The MVP is production-ready with all planned features delivered:
-- ✅ **Sprint 3 Goals - ALL ACHIEVED**:
-  - ✅ Real-time WebSocket streaming operational (BE-006)
-  - ✅ Order book (호가) visualization for traders (FE-005, DB-005)
-  - ✅ Production monitoring and alerting (INFRA-003)
-  - ✅ KIS API integration complete (DP-004)
-  - ✅ Full screener and detail pages (FE-003, FE-004)
-  - ✅ MVP ready for beta launch
+**Priority: Critical** (1 ticket):
+- **BUGFIX-006**: Fix Ticket Status Inconsistency and Documentation Gaps (2 hours)
+  - Fix TECH-DEBT-005 status inconsistency (TODO in done folder)
+  - Complete FE-004 acceptance criteria validation
+  - Audit all tickets for similar documentation gaps
+  - Update ticket completion guidelines
 
-**Potential Future Enhancements** (not yet ticketed):
+**Priority: High** (4 tickets):
+- **BUGFIX-007**: Complete Docker Environment Runtime Testing (4 hours)
+  - Validate all Docker Compose services (BUGFIX-001)
+  - Test middleware integration end-to-end (FEATURE-001)
+  - Verify CORS, rate limiting, request logging
+  - Document performance baseline
+
+- **BUGFIX-008**: Complete Performance Testing and Validation (6 hours)
+  - Performance testing with materialized views (BE-004)
+  - Rate limiting monitoring dashboard (BE-005)
+  - WebSocket scalability testing (BE-006)
+  - Production-scale load testing (1,000-10,000 users)
+
+- **BUGFIX-009**: Complete CI/CD Pipeline Validation (8 hours)
+  - Configure GitHub Actions secrets (INFRA-002)
+  - Validate all CI/CD workflows
+  - Test PR checks and automated deployment
+  - Add status badges to README
+
+- **BUGFIX-010**: Complete Airflow DAG Runtime Testing (6 hours)
+  - Validate Airflow environment setup (DP-001)
+  - Test daily price ingestion DAG (DP-002)
+  - Test indicator calculation DAG (DP-003)
+  - Verify scheduling and email notifications
+
+**Total Estimated Effort**: 26 hours (Sprint 4)
+
+**Sprint 4 Goals**:
+- ✅ Close all documentation and validation gaps
+- ✅ Achieve 100% runtime testing coverage
+- ✅ Validate production-readiness with real environments
+- ✅ Establish performance baselines
+- ✅ Enable full CI/CD automation
+
+**Future Enhancements** (Post-Sprint 4):
 - **Performance**: Market depth charts, advanced charting widgets
 - **Features**: Portfolio management, watchlist alerts, news integration
 - **Mobile**: React Native mobile app
