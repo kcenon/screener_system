@@ -315,3 +315,84 @@ class TestStockRepository:
 
         # Assert
         assert result is None
+
+    @pytest.mark.asyncio
+    async def test_get_price_history(self, repository, mock_session, sample_price):
+        """Test get_price_history with date range"""
+        # Setup mock
+        mock_result = Mock()
+        mock_result.scalars.return_value.all.return_value = [sample_price]
+        mock_session.execute.return_value = mock_result
+
+        # Execute
+        from_date = date(2025, 11, 1)
+        to_date = date(2025, 11, 30)
+        result = await repository.get_price_history(
+            "005930", from_date=from_date, to_date=to_date, limit=30
+        )
+
+        # Assert
+        assert len(result) == 1
+        assert result[0] == sample_price
+        assert mock_session.execute.called
+
+    @pytest.mark.asyncio
+    async def test_get_price_history_no_dates(self, repository, mock_session, sample_price):
+        """Test get_price_history without date filters"""
+        # Setup mock
+        mock_result = Mock()
+        mock_result.scalars.return_value.all.return_value = [sample_price]
+        mock_session.execute.return_value = mock_result
+
+        # Execute
+        result = await repository.get_price_history("005930")
+
+        # Assert
+        assert len(result) == 1
+        assert result[0] == sample_price
+
+
+    @pytest.mark.asyncio
+    async def test_get_financials(self, repository, mock_session):
+        """Test get_financials retrieves financial statements"""
+        # Setup mock
+        from app.db.models import FinancialStatement
+        mock_financial = FinancialStatement(
+            stock_code="005930",
+            fiscal_year=2024,
+            fiscal_quarter=3,
+            period_type="quarterly",
+            report_date=date(2024, 9, 30),
+            revenue=75000000000,
+            operating_profit=10000000000,
+            net_profit=8000000000,
+        )
+
+        mock_result = Mock()
+        mock_result.scalars.return_value.all.return_value = [mock_financial]
+        mock_session.execute.return_value = mock_result
+
+        # Execute
+        result = await repository.get_financials(
+            "005930", period_type="quarterly", years=5
+        )
+
+        # Assert
+        assert len(result) == 1
+        assert result[0] == mock_financial
+        assert mock_session.execute.called
+
+    @pytest.mark.asyncio
+    async def test_get_financials_no_period_filter(self, repository, mock_session):
+        """Test get_financials without period type filter"""
+        # Setup mock
+        mock_result = Mock()
+        mock_result.scalars.return_value.all.return_value = []
+        mock_session.execute.return_value = mock_result
+
+        # Execute
+        result = await repository.get_financials("005930", years=3)
+
+        # Assert
+        assert len(result) == 0
+        assert mock_session.execute.called
