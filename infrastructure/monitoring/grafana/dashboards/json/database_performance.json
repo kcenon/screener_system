@@ -1,0 +1,163 @@
+{
+  "dashboard": {
+    "title": "Database Performance",
+    "tags": ["database", "postgres", "timescaledb"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "type": "graph",
+        "title": "Query Duration (p95, p99)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95 - {{operation}} {{table}}",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(db_query_duration_seconds_bucket[5m]))",
+            "legendFormat": "p99 - {{operation}} {{table}}",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "s",
+            "label": "Duration"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "type": "graph",
+        "title": "Database Connections",
+        "targets": [
+          {
+            "expr": "db_connections_active",
+            "legendFormat": "Active",
+            "refId": "A"
+          },
+          {
+            "expr": "db_connections_idle",
+            "legendFormat": "Idle",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "short",
+            "label": "Connections"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "type": "graph",
+        "title": "Slow Queries (> 1s)",
+        "targets": [
+          {
+            "expr": "rate(db_slow_queries_total[1m])",
+            "legendFormat": "{{operation}} - {{table}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ops",
+            "label": "Slow Queries/sec"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "type": "graph",
+        "title": "Query Errors",
+        "targets": [
+          {
+            "expr": "rate(db_query_errors_total[1m])",
+            "legendFormat": "{{operation}} - {{error_type}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ops",
+            "label": "Errors/sec"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": {"h": 6, "w": 8, "x": 0, "y": 16},
+        "type": "stat",
+        "title": "Active Connections",
+        "targets": [
+          {
+            "expr": "db_connections_active",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": {"h": 6, "w": 8, "x": 8, "y": 16},
+        "type": "stat",
+        "title": "Avg Query Time (p95)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": {"h": 6, "w": 8, "x": 16, "y": 16},
+        "type": "stat",
+        "title": "Slow Queries (1h)",
+        "targets": [
+          {
+            "expr": "sum(increase(db_slow_queries_total[1h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        },
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            {"value": 0, "color": "green"},
+            {"value": 10, "color": "yellow"},
+            {"value": 100, "color": "red"}
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 27,
+    "version": 1
+  }
+}

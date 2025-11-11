@@ -1,0 +1,184 @@
+{
+  "dashboard": {
+    "title": "Business Metrics",
+    "tags": ["business", "users", "screening"],
+    "timezone": "browser",
+    "refresh": "1m",
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "type": "graph",
+        "title": "Active Users",
+        "targets": [
+          {
+            "expr": "active_users_current",
+            "legendFormat": "Active Users",
+            "refId": "A"
+          },
+          {
+            "expr": "websocket_connections_active",
+            "legendFormat": "WebSocket Connections",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "short",
+            "label": "Users"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "type": "graph",
+        "title": "User Activity",
+        "targets": [
+          {
+            "expr": "rate(user_logins_total{result='success'}[5m])",
+            "legendFormat": "Logins",
+            "refId": "A"
+          },
+          {
+            "expr": "rate(user_registrations_total[5m])",
+            "legendFormat": "Registrations",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ops",
+            "label": "Events/sec"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "type": "graph",
+        "title": "Screening Requests",
+        "targets": [
+          {
+            "expr": "rate(screening_requests_total[5m])",
+            "legendFormat": "{{template}}",
+            "refId": "A"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "ops",
+            "label": "Requests/sec"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "type": "graph",
+        "title": "Screening Results Distribution",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(screening_results_count_bucket[5m]))",
+            "legendFormat": "p50 Results",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(screening_results_count_bucket[5m]))",
+            "legendFormat": "p95 Results",
+            "refId": "B"
+          }
+        ],
+        "yaxes": [
+          {
+            "format": "short",
+            "label": "Stock Count"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": {"h": 6, "w": 6, "x": 0, "y": 16},
+        "type": "stat",
+        "title": "Active Users Now",
+        "targets": [
+          {
+            "expr": "active_users_current",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": {"h": 6, "w": 6, "x": 6, "y": 16},
+        "type": "stat",
+        "title": "New Users (24h)",
+        "targets": [
+          {
+            "expr": "sum(increase(user_registrations_total[24h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": {"h": 6, "w": 6, "x": 12, "y": 16},
+        "type": "stat",
+        "title": "Screenings (24h)",
+        "targets": [
+          {
+            "expr": "sum(increase(screening_requests_total[24h]))",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 8,
+        "gridPos": {"h": 6, "w": 6, "x": 18, "y": 16},
+        "type": "stat",
+        "title": "Login Success Rate",
+        "targets": [
+          {
+            "expr": "(sum(rate(user_logins_total{result='success'}[5m])) / sum(rate(user_logins_total[5m]))) * 100",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          }
+        },
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            {"value": 0, "color": "red"},
+            {"value": 90, "color": "yellow"},
+            {"value": 95, "color": "green"}
+          ]
+        }
+      }
+    ],
+    "schemaVersion": 27,
+    "version": 1
+  }
+}
