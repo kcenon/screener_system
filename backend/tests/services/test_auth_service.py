@@ -32,12 +32,16 @@ class TestAuthService:
     @pytest.fixture
     def sample_user(self):
         """Create sample user object"""
+        now = datetime.now(timezone.utc)
         user = User(
             id=1,
             email="test@example.com",
             password_hash="$2b$12$abcdefghijklmnopqrstuv",  # bcrypt hash format
             name="Test User",
             subscription_tier="free",
+            email_verified=False,
+            created_at=now,
+            updated_at=now,
         )
         return user
 
@@ -72,9 +76,18 @@ class TestAuthService:
             name="New User",
         )
 
+        # Mock to simulate database setting the ID on flush
+        async def mock_create_user(user):
+            now = datetime.now(timezone.utc)
+            user.id = 2
+            user.email_verified = False
+            user.created_at = now
+            user.updated_at = now
+            return user
+
         # Mock repository methods
         service.user_repo.get_by_email = AsyncMock(return_value=None)
-        service.user_repo.create = AsyncMock()
+        service.user_repo.create = AsyncMock(side_effect=mock_create_user)
 
         with patch("app.services.auth_service.get_password_hash") as mock_hash, \
              patch("app.services.auth_service.create_access_token") as mock_access, \

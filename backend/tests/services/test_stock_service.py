@@ -38,6 +38,8 @@ class TestStockService:
     @pytest.fixture
     def sample_stock(self):
         """Create sample stock object"""
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
         return Stock(
             code="005930",
             name="삼성전자",
@@ -47,6 +49,8 @@ class TestStockService:
             industry="반도체",
             listing_date=date(1975, 6, 11),
             shares_outstanding=5969782550,
+            created_at=now,
+            updated_at=now,
         )
 
     @pytest.fixture
@@ -54,7 +58,7 @@ class TestStockService:
         """Create sample daily price object"""
         return DailyPrice(
             stock_code="005930",
-            date=date(2025, 11, 11),
+            trade_date=date(2025, 11, 11),
             open_price=70000,
             high_price=71000,
             low_price=69500,
@@ -66,13 +70,17 @@ class TestStockService:
     @pytest.fixture
     def sample_indicators(self):
         """Create sample calculated indicators object"""
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
         return CalculatedIndicator(
             stock_code="005930",
-            date=date(2025, 11, 11),
+            calculation_date=date(2025, 11, 11),
             per=15.5,
             pbr=1.2,
             roe=12.5,
             price_change_1d=1.5,
+            created_at=now,
+            updated_at=now,
         )
 
     # ========================================================================
@@ -89,6 +97,9 @@ class TestStockService:
         }
         mock_cache.get.return_value = cached_response
 
+        # Mock repository to verify it's not called
+        service.stock_repo.list_stocks_with_latest_price = AsyncMock()
+
         # Execute
         result = await service.list_stocks()
 
@@ -96,7 +107,7 @@ class TestStockService:
         assert isinstance(result, StockListResponse)
         mock_cache.get.assert_called_once()
         # Repository should not be called if cache hit
-        assert not hasattr(service.stock_repo, "list_stocks_with_latest_price")
+        service.stock_repo.list_stocks_with_latest_price.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_list_stocks_cache_miss(
@@ -179,8 +190,13 @@ class TestStockService:
             "shares_outstanding": 5969782550,
             "latest_price": None,
             "latest_indicators": None,
+            "created_at": "2025-11-11T00:00:00",
+            "updated_at": "2025-11-11T00:00:00",
         }
         mock_cache.get.return_value = cached_detail
+
+        # Mock repository to verify it's not called
+        service.stock_repo.get_by_code_with_latest = AsyncMock()
 
         # Execute
         result = await service.get_stock_by_code("005930")
@@ -189,6 +205,7 @@ class TestStockService:
         assert isinstance(result, StockDetail)
         assert result.code == "005930"
         mock_cache.get.assert_called_once()
+        service.stock_repo.get_by_code_with_latest.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_get_stock_by_code_cache_miss(
@@ -235,8 +252,11 @@ class TestStockService:
     async def test_search_stocks_cache_hit(self, service, mock_cache):
         """Test search_stocks returns cached result if available"""
         # Setup cached response
-        cached_search = {"items": [], "total": 0}
+        cached_search = {"items": [], "total": 0, "query": "삼성"}
         mock_cache.get.return_value = cached_search
+
+        # Mock repository to verify it's not called
+        service.stock_repo.search_stocks = AsyncMock()
 
         # Execute
         result = await service.search_stocks("삼성")
@@ -244,6 +264,7 @@ class TestStockService:
         # Assert
         assert isinstance(result, StockSearchResponse)
         mock_cache.get.assert_called_once()
+        service.stock_repo.search_stocks.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_search_stocks_cache_miss(

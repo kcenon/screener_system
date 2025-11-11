@@ -44,7 +44,7 @@ class TestStockRepository:
         """Create sample daily price object"""
         return DailyPrice(
             stock_code="005930",
-            date=date(2025, 11, 11),
+            trade_date=date(2025, 11, 11),
             open_price=70000,
             high_price=71000,
             low_price=69500,
@@ -58,7 +58,7 @@ class TestStockRepository:
         """Create sample calculated indicators object"""
         return CalculatedIndicator(
             stock_code="005930",
-            date=date(2025, 11, 11),
+            calculation_date=date(2025, 11, 11),
             per=15.5,
             pbr=1.2,
             roe=12.5,
