@@ -3,7 +3,7 @@
 # ============================================================================
 
 # Web Framework
-fastapi==0.115.6  # Security: Fixed ReDoS in python-multipart (PYSEC-2024-38)
+fastapi==0.121.1  # Security: Latest stable, supports starlette 0.47.2
 starlette==0.47.2  # Security: Fixed DoS vulnerabilities (GHSA-2c2j-9gv5-cj73, GHSA-7f5h-v6xp-fcq8)
 uvicorn[standard]==0.24.0
 gunicorn==22.0.0  # Security: Fixed request smuggling (GHSA-w3h3-4rj7-4ph4, GHSA-hc5x-x2vx-497g)
