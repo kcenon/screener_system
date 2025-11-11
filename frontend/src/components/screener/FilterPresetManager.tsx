@@ -131,7 +131,7 @@ export default function FilterPresetManager({
           <p className="text-sm text-gray-500 text-center py-4">
             No saved presets yet.
             <br />
-            Click "Save Current" to save your filters.
+            Click &ldquo;Save Current&rdquo; to save your filters.
           </p>
         ) : (
           presets.map((preset) => (

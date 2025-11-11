@@ -84,7 +84,7 @@ describe('FilterPresetManager', () => {
       )
 
       expect(screen.getByText(/no saved presets yet/i)).toBeInTheDocument()
-      expect(screen.getByText(/click "save current" to save your filters/i)).toBeInTheDocument()
+      expect(screen.getByText(/click.*save current.*to save your filters/i)).toBeInTheDocument()
     })
 
     it('renders list of presets', () => {
