@@ -3,10 +3,11 @@
 ## Metadata
 - **Status**: TODO
 - **Priority**: Medium
-- **Assignee**: TBD
+- **Assignee**: kcenon
 - **Estimated Time**: 12 hours
 - **Sprint**: Sprint 3 (Week 5-6)
 - **Tags**: #infrastructure #monitoring #observability
+- **Moved to Todo**: 2025-11-11
 
 ## Description
 Set up comprehensive monitoring and observability stack using Prometheus, Grafana, and logging infrastructure to track system health and performance.
