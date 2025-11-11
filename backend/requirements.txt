@@ -10,7 +10,7 @@ gunicorn==22.0.0  # Security: Fixed request smuggling (GHSA-w3h3-4rj7-4ph4, GHSA
 
 # Database
 sqlalchemy[asyncio]==2.0.23
-asyncpg==0.29.0
+asyncpg==0.30.0
 alembic==1.12.1
 psycopg2-binary==2.9.9
 
