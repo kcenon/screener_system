@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import SearchBar from '../SearchBar'
 
 describe('SearchBar', () => {
-  let onChangeMock: ReturnType<typeof vi.fn>
+  let onChangeMock: (value: string) => void
 
   beforeEach(() => {
     onChangeMock = vi.fn()

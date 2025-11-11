@@ -119,16 +119,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 18
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci
 
       - name: Run type check
         working-directory: frontend
@@ -153,16 +153,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 18
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci
 
       - name: Run ESLint
         working-directory: frontend

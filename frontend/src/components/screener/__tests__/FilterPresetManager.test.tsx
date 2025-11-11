@@ -36,9 +36,9 @@ describe('FilterPresetManager', () => {
     },
   ]
 
-  let onLoadPresetMock: ReturnType<typeof vi.fn>
-  let onSavePresetMock: ReturnType<typeof vi.fn>
-  let onDeletePresetMock: ReturnType<typeof vi.fn>
+  let onLoadPresetMock: (filters: ScreeningFilters) => void
+  let onSavePresetMock: (name: string, description?: string) => void
+  let onDeletePresetMock: (id: string) => void
 
   beforeEach(() => {
     onLoadPresetMock = vi.fn()
