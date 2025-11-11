@@ -2,11 +2,8 @@
 # =============================================================================
 
 # Core Airflow with constraints for Python 3.11
-apache-airflow[postgres,celery]==2.11.0  # Security: Updated to latest stable with vulnerability fixes
-
-# Airflow Providers
-apache-airflow-providers-postgres==5.10.0
-apache-airflow-providers-celery==3.6.0
+# Airflow 3.1.2 fixes werkzeug and flask-appbuilder vulnerabilities
+apache-airflow[postgres,celery]==3.1.2  # Security: Latest stable, fixes werkzeug & flask-appbuilder CVEs
 
 # Database Drivers
 # =============================================================================
