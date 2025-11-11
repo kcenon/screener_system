@@ -1,4 +1,4 @@
-import { afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
@@ -6,3 +6,7 @@ import '@testing-library/jest-dom';
 afterEach(() => {
   cleanup();
 });
+
+// Mock URL.createObjectURL and URL.revokeObjectURL (not available in jsdom)
+global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
+global.URL.revokeObjectURL = vi.fn();
