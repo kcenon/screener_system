@@ -7,8 +7,6 @@ import type { ScreeningFilters } from '@/types/screening'
  * Props for FilterPresetManager component
  */
 interface FilterPresetManagerProps {
-  /** Current filter values */
-  currentFilters: ScreeningFilters
   /** List of saved presets */
   presets: FilterPreset[]
   /** Callback when a preset is loaded */
@@ -30,7 +28,6 @@ interface FilterPresetManagerProps {
  * - Modal dialog for save preset
  */
 export default function FilterPresetManager({
-  currentFilters,
   presets,
   onLoadPreset,
   onSavePreset,

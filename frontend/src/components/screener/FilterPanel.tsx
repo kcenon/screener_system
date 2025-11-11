@@ -67,7 +67,6 @@ export default function FilterPanel({
       {/* Filter Presets */}
       {onSavePreset && onDeletePreset && (
         <FilterPresetManager
-          currentFilters={filters}
           presets={presets}
           onLoadPreset={onFiltersChange}
           onSavePreset={onSavePreset}
