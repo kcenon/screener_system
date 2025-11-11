@@ -1,8 +1,10 @@
 # Stock Screening Platform
 
-[![CI Pipeline](https://github.com/USERNAME/screener_system/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/screener_system/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/USERNAME/screener_system/branch/main/graph/badge.svg)](https://codecov.io/gh/USERNAME/screener_system)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI Pipeline](https://github.com/kcenon/screener_system/actions/workflows/ci.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/ci.yml)
+[![CD Pipeline](https://github.com/kcenon/screener_system/actions/workflows/cd.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/cd.yml)
+[![PR Checks](https://github.com/kcenon/screener_system/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/pr-checks.yml)
+[![codecov](https://codecov.io/gh/kcenon/screener_system/branch/main/graph/badge.svg)](https://codecov.io/gh/kcenon/screener_system)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 A comprehensive stock analysis and screening platform for Korean markets (KOSPI/KOSDAQ) with 200+ financial and technical indicators.
 
