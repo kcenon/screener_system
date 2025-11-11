@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { useURLSync } from '../useURLSync'
@@ -17,9 +17,9 @@ describe('useURLSync', () => {
   const defaultSort = { sortBy: 'overall_score' as ScreeningSortField, order: 'desc' as SortOrder }
   const defaultPagination = { offset: 0, limit: 50 }
 
-  let setFiltersMock: ReturnType<typeof vi.fn>
-  let setSortMock: ReturnType<typeof vi.fn>
-  let setPaginationMock: ReturnType<typeof vi.fn>
+  let setFiltersMock: Mock<(filters: ScreeningFilters) => void>
+  let setSortMock: Mock<(sort: { sortBy: ScreeningSortField; order: SortOrder }) => void>
+  let setPaginationMock: Mock<(pagination: { offset: number; limit: number }) => void>
 
   beforeEach(() => {
     setFiltersMock = vi.fn()

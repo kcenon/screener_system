@@ -85,7 +85,7 @@ describe('exportUtils', () => {
   let createElementSpy: any
   let appendChildSpy: any
   let removeChildSpy: any
-  let clickSpy: ReturnType<typeof vi.fn>
+  let clickSpy: () => void
   let revokeObjectURLSpy: any
 
   beforeEach(() => {

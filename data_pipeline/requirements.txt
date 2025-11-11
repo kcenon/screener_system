@@ -2,7 +2,7 @@
 # =============================================================================
 
 # Core Airflow with constraints for Python 3.11
-apache-airflow[postgres,celery]==2.8.0
+apache-airflow[postgres,celery]==2.11.0  # Security: Updated to latest stable with vulnerability fixes
 
 # Airflow Providers
 apache-airflow-providers-postgres==5.10.0
