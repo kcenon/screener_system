@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, act } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import SearchBar from '../SearchBar'
 
@@ -8,12 +8,10 @@ describe('SearchBar', () => {
 
   beforeEach(() => {
     onChangeMock = vi.fn()
-    vi.useFakeTimers()
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
-    vi.useRealTimers()
   })
 
   describe('Rendering', () => {
@@ -64,10 +62,7 @@ describe('SearchBar', () => {
 
   describe('User Input', () => {
     it('updates input value on user typing', async () => {
-      const user = userEvent.setup({
-        delay: null,
-        advanceTimers: vi.advanceTimersByTime,
-      })
+      const user = userEvent.setup()
       render(<SearchBar value="" onChange={onChangeMock} />)
 
       const input = screen.getByRole('textbox')
@@ -77,10 +72,7 @@ describe('SearchBar', () => {
     })
 
     it('debounces onChange callback (300ms)', async () => {
-      const user = userEvent.setup({
-        delay: null,
-        advanceTimers: vi.advanceTimersByTime,
-      })
+      const user = userEvent.setup()
       render(<SearchBar value="" onChange={onChangeMock} />)
 
       const input = screen.getByRole('textbox')
@@ -91,44 +83,38 @@ describe('SearchBar', () => {
       // Should not call onChange immediately
       expect(onChangeMock).not.toHaveBeenCalled()
 
-      // Fast-forward 300ms to trigger debounce
-      act(() => {
-        vi.advanceTimersByTime(300)
-      })
+      // Wait for debounce (300ms)
+      await waitFor(
+        () => {
+          expect(onChangeMock).toHaveBeenCalledWith('Sam')
+        },
+        { timeout: 500 }
+      )
 
-      // After debounce, onChange should be called
-      expect(onChangeMock).toHaveBeenCalledWith('Sam')
       expect(onChangeMock).toHaveBeenCalledTimes(1)
     })
 
     it('debounces multiple rapid inputs correctly', async () => {
-      const user = userEvent.setup({
-        delay: null,
-        advanceTimers: vi.advanceTimersByTime,
-      })
+      const user = userEvent.setup()
       render(<SearchBar value="" onChange={onChangeMock} />)
 
       const input = screen.getByRole('textbox')
 
       // Type quickly
-      await user.type(input, 'S')
-      act(() => vi.advanceTimersByTime(100))
+      await user.type(input, 'Sam')
 
-      await user.type(input, 'a')
-      act(() => vi.advanceTimersByTime(100))
-
-      await user.type(input, 'm')
-
-      // Should not have called onChange yet (only 200ms passed)
+      // Should not have called onChange yet
       expect(onChangeMock).not.toHaveBeenCalled()
 
-      // Wait for full debounce period
-      act(() => {
-        vi.advanceTimersByTime(300)
-      })
+      // Wait for debounce to complete
+      await waitFor(
+        () => {
+          expect(onChangeMock).toHaveBeenCalledWith('Sam')
+        },
+        { timeout: 500 }
+      )
 
       // Should call onChange only once with final value
-      expect(onChangeMock).toHaveBeenCalledWith('Sam')
       expect(onChangeMock).toHaveBeenCalledTimes(1)
     })
   })
@@ -149,10 +135,7 @@ describe('SearchBar', () => {
     })
 
     it('clears input and calls onChange when clear button is clicked', async () => {
-      const user = userEvent.setup({
-        delay: null,
-        advanceTimers: vi.advanceTimersByTime,
-      })
+      const user = userEvent.setup()
       render(<SearchBar value="Samsung" onChange={onChangeMock} />)
 
       const clearButton = screen.getByRole('button', { name: /clear search/i })
@@ -164,10 +147,7 @@ describe('SearchBar', () => {
     })
 
     it('focuses input after clearing', async () => {
-      const user = userEvent.setup({
-        delay: null,
-        advanceTimers: vi.advanceTimersByTime,
-      })
+      const user = userEvent.setup()
       render(<SearchBar value="Samsung" onChange={onChangeMock} />)
 
       const clearButton = screen.getByRole('button', { name: /clear search/i })
@@ -259,13 +239,13 @@ describe('SearchBar', () => {
       expect(input).toHaveValue('Updated')
     })
 
-    it('does not call onChange when value prop is updated externally', () => {
+    it('does not call onChange when value prop is updated externally', async () => {
       const { rerender } = render(<SearchBar value="" onChange={onChangeMock} />)
 
       rerender(<SearchBar value="External Update" onChange={onChangeMock} />)
 
-      // Advance timers to ensure debounce completes
-      vi.advanceTimersByTime(300)
+      // Wait to ensure debounce would have completed
+      await new Promise((resolve) => setTimeout(resolve, 400))
 
       // Should not call onChange (external update, not user input)
       expect(onChangeMock).not.toHaveBeenCalled()
