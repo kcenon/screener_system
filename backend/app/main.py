@@ -1,4 +1,28 @@
-"""Main FastAPI application"""
+"""Main FastAPI application entry point.
+
+This module initializes and configures the Stock Screening Platform FastAPI application,
+including middleware, exception handlers, and API route registration.
+
+The application provides REST API endpoints for:
+    - Stock screening with 200+ indicators
+    - Real-time price data via WebSocket
+    - User authentication and authorization
+    - Portfolio management and price alerts
+
+Example:
+    Start the development server::
+
+        $ uvicorn app.main:app --reload
+
+    Or run directly::
+
+        $ python -m app.main
+
+    The API documentation will be available at http://localhost:8000/docs
+
+Attributes:
+    app: Main FastAPI application instance with all routes and middleware configured.
+"""
 
 from contextlib import asynccontextmanager
 
@@ -24,10 +48,36 @@ from app.middleware.metrics import PrometheusMetricsMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Application lifespan events
+    """Application lifespan context manager for startup and shutdown events.
 
-    Handles startup and shutdown events for the application.
+    Manages the application lifecycle, handling resource initialization on startup
+    and cleanup on shutdown. This includes Redis connections, WebSocket pub/sub,
+    and background cleanup tasks.
+
+    Args:
+        app: FastAPI application instance.
+
+    Yields:
+        None: Control to the application during its lifecycle.
+
+    Note:
+        This function uses FastAPI's lifespan context manager pattern (recommended
+        over deprecated startup/shutdown events).
+
+    Startup tasks:
+        - Connect to Redis cache
+        - Initialize WebSocket Redis pub/sub
+        - Start WebSocket session cleanup background task
+
+    Shutdown tasks:
+        - Stop WebSocket session cleanup task
+        - Disconnect WebSocket Redis pub/sub
+        - Disconnect from Redis cache
+
+    Example:
+        This function is automatically called by FastAPI when the application starts::
+
+            app = FastAPI(lifespan=lifespan)
     """
     # Startup
     logger.info("Starting Stock Screening Platform API...")
@@ -164,7 +214,25 @@ app.include_router(websocket.router, prefix="/v1")
 
 @app.get("/", tags=["root"])
 async def root():
-    """Root endpoint"""
+    """Root API endpoint providing basic information and navigation links.
+
+    Returns a welcome message and links to important API endpoints including
+    documentation, health check, and version information.
+
+    Returns:
+        dict: API information containing:
+            - message (str): Welcome message
+            - version (str): Current API version
+            - docs (str): URL path to Swagger UI documentation
+            - health (str): URL path to health check endpoint
+
+    Example:
+        >>> response = await root()
+        >>> print(response["message"])
+        Welcome to Stock Screening Platform API
+        >>> print(response["docs"])
+        /docs
+    """
     return {
         "message": "Welcome to Stock Screening Platform API",
         "version": settings.VERSION,
