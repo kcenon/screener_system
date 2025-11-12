@@ -45,7 +45,7 @@ Content-Type: application/json
 Response:
 ```json
 {
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "access_token": "<your-jwt-token-here>",
   "token_type": "bearer",
   "expires_in": 3600
 }
@@ -57,7 +57,7 @@ Include the token in the Authorization header:
 
 ```bash
 GET /api/v1/stocks
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
+Authorization: Bearer <your-jwt-token-here>
 ```
 
 ## Rate Limiting
