@@ -1,0 +1,94 @@
+---
+id: python-api
+title: Python Backend API
+sidebar_label: Python API
+sidebar_position: 2
+description: Auto-generated Python backend API documentation from Sphinx
+---
+
+# Python Backend API Documentation
+
+This section contains comprehensive API documentation for the Python backend, automatically generated from source code docstrings using Sphinx.
+
+## Quick Links
+
+- [API Endpoints](/api/python/backend/api.html) - FastAPI route handlers
+- [Service Layer](/api/python/backend/services.html) - Business logic services
+- [Repository Layer](/api/python/backend/repositories.html) - Database operations
+- [Database Models](/api/python/backend/models.html) - SQLAlchemy ORM models
+- [Core Utilities](/api/python/backend/core.html) - Configuration and utilities
+- [Middleware](/api/python/backend/middleware.html) - Request/response processors
+- [Data Pipeline](/api/python/data_pipeline/index.html) - Airflow DAGs and clients
+
+## Browse Full Documentation
+
+<div style={{border: "1px solid #e0e0e0", borderRadius: "8px", overflow: "hidden", marginTop: "20px"}}>
+  <iframe
+    src="/api/python/index.html"
+    style={{width: "100%", height: "800px", border: "none"}}
+    title="Python API Documentation"
+  />
+</div>
+
+:::tip View in separate window
+For the best experience, you can [open the Python API documentation in a new window](/api/python/index.html).
+:::
+
+## Documentation Features
+
+The Python API documentation includes:
+
+- **Auto-generated from source code** - Always up-to-date with the latest code
+- **Google-style docstrings** - Clear Args, Returns, Raises, Examples sections
+- **Type hints** - Full type information for all parameters and returns
+- **Cross-references** - Links between related classes and methods
+- **Source code links** - Jump directly to implementation
+- **Search functionality** - Find any class, method, or function
+
+## Key Components
+
+### API Layer
+FastAPI route handlers for:
+- Authentication (JWT, OAuth)
+- Stock data (list, detail, search)
+- Stock screening (200+ indicators)
+- WebSocket streaming (real-time prices)
+
+### Service Layer
+Business logic including:
+- Caching strategies (Redis)
+- Data transformation
+- Business rule validation
+- External API integration
+
+### Repository Layer
+Database access with:
+- CRUD operations
+- Complex queries
+- Pagination
+- Filtering and sorting
+
+### Data Pipeline
+Airflow workflows for:
+- Daily price ingestion
+- Indicator calculations
+- Data quality checks
+- KIS API integration
+
+## Building Documentation Locally
+
+To build the Python API documentation yourself:
+
+```bash
+# Install documentation dependencies
+pip install -r requirements-docs.txt
+
+# Build Sphinx documentation
+cd docs/api/python
+make html
+
+# Or use the automated build script
+./scripts/build_api_docs.sh
+```
+
+The generated HTML will be available at `docs/api/python/_build/html/index.html`.
