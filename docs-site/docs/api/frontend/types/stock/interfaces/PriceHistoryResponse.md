@@ -6,7 +6,7 @@
 
 # Interface: PriceHistoryResponse
 
-Defined in: [src/types/stock.ts:35](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L35)
+Defined in: [src/types/stock.ts:35](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L35)
 
 Price history response
 
@@ -16,7 +16,7 @@ Price history response
 
 > **stock\_code**: `string`
 
-Defined in: [src/types/stock.ts:37](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L37)
+Defined in: [src/types/stock.ts:37](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L37)
 
 Stock code
 
@@ -26,7 +26,7 @@ Stock code
 
 > **candles**: [`PriceCandle`](PriceCandle.md)[]
 
-Defined in: [src/types/stock.ts:39](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L39)
+Defined in: [src/types/stock.ts:39](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L39)
 
 Array of price candles
 
@@ -36,7 +36,7 @@ Array of price candles
 
 > **from\_date**: `string`
 
-Defined in: [src/types/stock.ts:41](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L41)
+Defined in: [src/types/stock.ts:41](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L41)
 
 Start date
 
@@ -46,7 +46,7 @@ Start date
 
 > **to\_date**: `string`
 
-Defined in: [src/types/stock.ts:43](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L43)
+Defined in: [src/types/stock.ts:43](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L43)
 
 End date
 
@@ -56,7 +56,7 @@ End date
 
 > **interval**: `string`
 
-Defined in: [src/types/stock.ts:45](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L45)
+Defined in: [src/types/stock.ts:45](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L45)
 
 Interval type
 
@@ -66,6 +66,6 @@ Interval type
 
 > **count**: `number`
 
-Defined in: [src/types/stock.ts:47](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L47)
+Defined in: [src/types/stock.ts:47](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L47)
 
 Number of candles

@@ -8,7 +8,7 @@
 
 > **default**(`props`): `Element`
 
-Defined in: [src/components/screener/FilterPanel.tsx:165](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/screener/FilterPanel.tsx#L165)
+Defined in: [src/components/screener/FilterPanel.tsx:165](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/components/screener/FilterPanel.tsx#L165)
 
 Comprehensive stock screening filter panel with collapsible sections.
 

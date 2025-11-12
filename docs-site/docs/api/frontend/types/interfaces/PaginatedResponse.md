@@ -6,7 +6,7 @@
 
 # Interface: PaginatedResponse\<T\>
 
-Defined in: [src/types/index.ts:61](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L61)
+Defined in: [src/types/index.ts:61](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L61)
 
 ## Type Parameters
 
@@ -20,7 +20,7 @@ Defined in: [src/types/index.ts:61](https://github.com/kcenon/screener_system/bl
 
 > **data**: `T`[]
 
-Defined in: [src/types/index.ts:62](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L62)
+Defined in: [src/types/index.ts:62](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L62)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [src/types/index.ts:62](https://github.com/kcenon/screener_system/bl
 
 > **total**: `number`
 
-Defined in: [src/types/index.ts:63](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L63)
+Defined in: [src/types/index.ts:63](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L63)
 
 ***
 
@@ -36,7 +36,7 @@ Defined in: [src/types/index.ts:63](https://github.com/kcenon/screener_system/bl
 
 > **page**: `number`
 
-Defined in: [src/types/index.ts:64](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L64)
+Defined in: [src/types/index.ts:64](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L64)
 
 ***
 
@@ -44,7 +44,7 @@ Defined in: [src/types/index.ts:64](https://github.com/kcenon/screener_system/bl
 
 > **per\_page**: `number`
 
-Defined in: [src/types/index.ts:65](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L65)
+Defined in: [src/types/index.ts:65](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L65)
 
 ***
 
@@ -52,4 +52,4 @@ Defined in: [src/types/index.ts:65](https://github.com/kcenon/screener_system/bl
 
 > **pages**: `number`
 
-Defined in: [src/types/index.ts:66](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L66)
+Defined in: [src/types/index.ts:66](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L66)

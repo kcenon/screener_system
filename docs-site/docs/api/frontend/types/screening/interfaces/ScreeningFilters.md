@@ -6,7 +6,7 @@
 
 # Interface: ScreeningFilters
 
-Defined in: [src/types/screening.ts:18](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L18)
+Defined in: [src/types/screening.ts:18](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L18)
 
 All available screening filters
 
@@ -16,7 +16,7 @@ All available screening filters
 
 > `optional` **search**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:21](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L21)
+Defined in: [src/types/screening.ts:21](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L21)
 
 Search by stock code or name
 
@@ -26,7 +26,7 @@ Search by stock code or name
 
 > `optional` **market**: `"KOSPI"` \| `"KOSDAQ"` \| `"ALL"`
 
-Defined in: [src/types/screening.ts:25](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L25)
+Defined in: [src/types/screening.ts:25](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L25)
 
 Market filter
 
@@ -36,7 +36,7 @@ Market filter
 
 > `optional` **sector**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:27](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L27)
+Defined in: [src/types/screening.ts:27](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L27)
 
 Sector filter
 
@@ -46,7 +46,7 @@ Sector filter
 
 > `optional` **industry**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:29](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L29)
+Defined in: [src/types/screening.ts:29](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L29)
 
 Industry filter
 
@@ -56,7 +56,7 @@ Industry filter
 
 > `optional` **per**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:33](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L33)
+Defined in: [src/types/screening.ts:33](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L33)
 
 Price-to-Earnings Ratio
 
@@ -66,7 +66,7 @@ Price-to-Earnings Ratio
 
 > `optional` **pbr**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:35](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L35)
+Defined in: [src/types/screening.ts:35](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L35)
 
 Price-to-Book Ratio
 
@@ -76,7 +76,7 @@ Price-to-Book Ratio
 
 > `optional` **psr**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:37](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L37)
+Defined in: [src/types/screening.ts:37](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L37)
 
 Price-to-Sales Ratio
 
@@ -86,7 +86,7 @@ Price-to-Sales Ratio
 
 > `optional` **pcr**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:39](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L39)
+Defined in: [src/types/screening.ts:39](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L39)
 
 Price-to-Cash Flow Ratio
 
@@ -96,7 +96,7 @@ Price-to-Cash Flow Ratio
 
 > `optional` **dividend\_yield**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:41](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L41)
+Defined in: [src/types/screening.ts:41](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L41)
 
 Dividend Yield (%)
 
@@ -106,7 +106,7 @@ Dividend Yield (%)
 
 > `optional` **roe**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:45](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L45)
+Defined in: [src/types/screening.ts:45](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L45)
 
 Return on Equity (%)
 
@@ -116,7 +116,7 @@ Return on Equity (%)
 
 > `optional` **roa**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:47](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L47)
+Defined in: [src/types/screening.ts:47](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L47)
 
 Return on Assets (%)
 
@@ -126,7 +126,7 @@ Return on Assets (%)
 
 > `optional` **roic**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:49](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L49)
+Defined in: [src/types/screening.ts:49](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L49)
 
 Return on Invested Capital (%)
 
@@ -136,7 +136,7 @@ Return on Invested Capital (%)
 
 > `optional` **gross\_margin**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:51](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L51)
+Defined in: [src/types/screening.ts:51](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L51)
 
 Gross Margin (%)
 
@@ -146,7 +146,7 @@ Gross Margin (%)
 
 > `optional` **operating\_margin**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:53](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L53)
+Defined in: [src/types/screening.ts:53](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L53)
 
 Operating Margin (%)
 
@@ -156,7 +156,7 @@ Operating Margin (%)
 
 > `optional` **net\_margin**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:55](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L55)
+Defined in: [src/types/screening.ts:55](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L55)
 
 Net Margin (%)
 
@@ -166,7 +166,7 @@ Net Margin (%)
 
 > `optional` **revenue\_growth\_yoy**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:59](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L59)
+Defined in: [src/types/screening.ts:59](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L59)
 
 Revenue Growth YoY (%)
 
@@ -176,7 +176,7 @@ Revenue Growth YoY (%)
 
 > `optional` **profit\_growth\_yoy**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:61](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L61)
+Defined in: [src/types/screening.ts:61](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L61)
 
 Profit Growth YoY (%)
 
@@ -186,7 +186,7 @@ Profit Growth YoY (%)
 
 > `optional` **eps\_growth\_yoy**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:63](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L63)
+Defined in: [src/types/screening.ts:63](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L63)
 
 EPS Growth YoY (%)
 
@@ -196,7 +196,7 @@ EPS Growth YoY (%)
 
 > `optional` **debt\_to\_equity**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:67](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L67)
+Defined in: [src/types/screening.ts:67](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L67)
 
 Debt-to-Equity Ratio
 
@@ -206,7 +206,7 @@ Debt-to-Equity Ratio
 
 > `optional` **current\_ratio**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:69](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L69)
+Defined in: [src/types/screening.ts:69](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L69)
 
 Current Ratio
 
@@ -216,7 +216,7 @@ Current Ratio
 
 > `optional` **altman\_z\_score**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:71](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L71)
+Defined in: [src/types/screening.ts:71](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L71)
 
 Altman Z-Score (bankruptcy risk)
 
@@ -226,7 +226,7 @@ Altman Z-Score (bankruptcy risk)
 
 > `optional` **piotroski\_f\_score**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:73](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L73)
+Defined in: [src/types/screening.ts:73](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L73)
 
 Piotroski F-Score (0-9)
 
@@ -236,7 +236,7 @@ Piotroski F-Score (0-9)
 
 > `optional` **price\_change\_1d**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:77](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L77)
+Defined in: [src/types/screening.ts:77](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L77)
 
 1-Day Price Change (%)
 
@@ -246,7 +246,7 @@ Defined in: [src/types/screening.ts:77](https://github.com/kcenon/screener_syste
 
 > `optional` **price\_change\_1w**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:79](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L79)
+Defined in: [src/types/screening.ts:79](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L79)
 
 1-Week Price Change (%)
 
@@ -256,7 +256,7 @@ Defined in: [src/types/screening.ts:79](https://github.com/kcenon/screener_syste
 
 > `optional` **price\_change\_1m**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:81](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L81)
+Defined in: [src/types/screening.ts:81](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L81)
 
 1-Month Price Change (%)
 
@@ -266,7 +266,7 @@ Defined in: [src/types/screening.ts:81](https://github.com/kcenon/screener_syste
 
 > `optional` **price\_change\_3m**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:83](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L83)
+Defined in: [src/types/screening.ts:83](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L83)
 
 3-Month Price Change (%)
 
@@ -276,7 +276,7 @@ Defined in: [src/types/screening.ts:83](https://github.com/kcenon/screener_syste
 
 > `optional` **price\_change\_6m**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:85](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L85)
+Defined in: [src/types/screening.ts:85](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L85)
 
 6-Month Price Change (%)
 
@@ -286,7 +286,7 @@ Defined in: [src/types/screening.ts:85](https://github.com/kcenon/screener_syste
 
 > `optional` **price\_change\_1y**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:87](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L87)
+Defined in: [src/types/screening.ts:87](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L87)
 
 1-Year Price Change (%)
 
@@ -296,7 +296,7 @@ Defined in: [src/types/screening.ts:87](https://github.com/kcenon/screener_syste
 
 > `optional` **volume\_surge\_pct**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:91](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L91)
+Defined in: [src/types/screening.ts:91](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L91)
 
 Volume Surge (%)
 
@@ -306,7 +306,7 @@ Volume Surge (%)
 
 > `optional` **quality\_score**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:95](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L95)
+Defined in: [src/types/screening.ts:95](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L95)
 
 Quality Score (0-100)
 
@@ -316,7 +316,7 @@ Quality Score (0-100)
 
 > `optional` **value\_score**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:97](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L97)
+Defined in: [src/types/screening.ts:97](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L97)
 
 Value Score (0-100)
 
@@ -326,7 +326,7 @@ Value Score (0-100)
 
 > `optional` **growth\_score**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:99](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L99)
+Defined in: [src/types/screening.ts:99](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L99)
 
 Growth Score (0-100)
 
@@ -336,7 +336,7 @@ Growth Score (0-100)
 
 > `optional` **momentum\_score**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:101](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L101)
+Defined in: [src/types/screening.ts:101](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L101)
 
 Momentum Score (0-100)
 
@@ -346,7 +346,7 @@ Momentum Score (0-100)
 
 > `optional` **overall\_score**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:103](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L103)
+Defined in: [src/types/screening.ts:103](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L103)
 
 Overall Score (0-100)
 
@@ -356,7 +356,7 @@ Overall Score (0-100)
 
 > `optional` **current\_price**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:107](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L107)
+Defined in: [src/types/screening.ts:107](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L107)
 
 Current Price (KRW)
 
@@ -366,6 +366,6 @@ Current Price (KRW)
 
 > `optional` **market\_cap**: [`FilterRange`](FilterRange.md) \| `null`
 
-Defined in: [src/types/screening.ts:109](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L109)
+Defined in: [src/types/screening.ts:109](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L109)
 
 Market Capitalization (KRW billion)

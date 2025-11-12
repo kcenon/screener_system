@@ -6,7 +6,7 @@
 
 # Interface: MovingAverage
 
-Defined in: [src/types/stock.ts:53](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L53)
+Defined in: [src/types/stock.ts:53](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L53)
 
 Moving average data point
 
@@ -16,7 +16,7 @@ Moving average data point
 
 > **date**: `string`
 
-Defined in: [src/types/stock.ts:55](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L55)
+Defined in: [src/types/stock.ts:55](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L55)
 
 Date
 
@@ -26,6 +26,6 @@ Date
 
 > **value**: `number`
 
-Defined in: [src/types/stock.ts:57](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L57)
+Defined in: [src/types/stock.ts:57](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L57)
 
 MA value

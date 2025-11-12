@@ -6,7 +6,7 @@
 
 # Interface: OrderBookLevel
 
-Defined in: [src/types/stock.ts:221](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L221)
+Defined in: [src/types/stock.ts:221](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L221)
 
 Single order book level (bid or ask)
 
@@ -16,7 +16,7 @@ Single order book level (bid or ask)
 
 > **price**: `number`
 
-Defined in: [src/types/stock.ts:223](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L223)
+Defined in: [src/types/stock.ts:223](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L223)
 
 Price at this level
 
@@ -26,7 +26,7 @@ Price at this level
 
 > **volume**: `number`
 
-Defined in: [src/types/stock.ts:225](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L225)
+Defined in: [src/types/stock.ts:225](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L225)
 
 Volume at this price
 
@@ -36,7 +36,7 @@ Volume at this price
 
 > **total**: `number`
 
-Defined in: [src/types/stock.ts:227](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L227)
+Defined in: [src/types/stock.ts:227](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L227)
 
 Total (cumulative) volume up to this level
 
@@ -46,6 +46,6 @@ Total (cumulative) volume up to this level
 
 > `optional` **order\_count**: `number`
 
-Defined in: [src/types/stock.ts:229](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L229)
+Defined in: [src/types/stock.ts:229](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L229)
 
 Number of orders at this level (optional)

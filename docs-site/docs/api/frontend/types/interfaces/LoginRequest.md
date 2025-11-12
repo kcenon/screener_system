@@ -6,7 +6,7 @@
 
 # Interface: LoginRequest
 
-Defined in: [src/types/index.ts:12](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L12)
+Defined in: [src/types/index.ts:12](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L12)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/types/index.ts:12](https://github.com/kcenon/screener_system/bl
 
 > **email**: `string`
 
-Defined in: [src/types/index.ts:13](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L13)
+Defined in: [src/types/index.ts:13](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L13)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/types/index.ts:13](https://github.com/kcenon/screener_system/bl
 
 > **password**: `string`
 
-Defined in: [src/types/index.ts:14](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L14)
+Defined in: [src/types/index.ts:14](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L14)

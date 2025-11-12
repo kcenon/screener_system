@@ -6,7 +6,7 @@
 
 # Interface: ScreeningTemplateList
 
-Defined in: [src/types/screening.ts:274](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L274)
+Defined in: [src/types/screening.ts:274](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L274)
 
 List of available screening templates
 
@@ -16,6 +16,6 @@ List of available screening templates
 
 > **templates**: [`ScreeningTemplate`](ScreeningTemplate.md)[]
 
-Defined in: [src/types/screening.ts:276](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L276)
+Defined in: [src/types/screening.ts:276](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/screening.ts#L276)
 
 Available templates
