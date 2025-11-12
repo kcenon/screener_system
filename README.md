@@ -153,6 +153,30 @@ Access the application:
 - **API Docs**: http://localhost:8000/docs
 - **Airflow UI**: http://localhost:8080
 
+### Loading Sample Data
+
+After starting the services, load sample stock data for testing:
+
+```bash
+# Load pre-generated seed data (150 stocks, 252 days of prices)
+docker exec -i screener_postgres psql -U screener_user -d screener_db \
+  < database/seeds/seed_data.sql
+
+# Verify data loaded
+docker exec screener_postgres psql -U screener_user -d screener_db \
+  -c "SELECT COUNT(*) FROM stocks; SELECT COUNT(*) FROM daily_prices;"
+```
+
+**Sample Data Includes:**
+- 150 stocks (100 KOSPI + 50 KOSDAQ)
+- 27,000 daily prices (~252 trading days per stock)
+- 600 financial statements (4 quarters per stock)
+- 150 calculated indicators
+
+> **Note:** This is test data for development only. For production, use real KRX API data via Airflow DAGs.
+
+See [Data Loading Guide](docs/DATA_LOADING.md) for detailed instructions and customization options.
+
 ## 📁 Project Structure
 
 ```
