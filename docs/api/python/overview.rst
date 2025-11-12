@@ -37,7 +37,7 @@ Secure JWT-based authentication:
 * Rate limiting by user tier
 
 Performance
-----------
+-----------
 
 The API is optimized for high performance:
 
@@ -47,7 +47,7 @@ The API is optimized for high performance:
 * **Concurrent Users**: Supports 1,000+ simultaneous connections
 
 Rate Limiting
------------
+-------------
 
 API requests are rate-limited based on subscription tier:
 
@@ -60,7 +60,7 @@ Premium       2000           100 connections
 ============= ============== =================
 
 Data Sources
------------
+------------
 
 Stock data is sourced from:
 
@@ -76,7 +76,7 @@ The data pipeline runs daily to update:
 * Corporate actions
 
 API Structure
-------------
+-------------
 
 The backend codebase is organized as follows:
 

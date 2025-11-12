@@ -2,9 +2,11 @@
 
 [![CI Pipeline](https://github.com/kcenon/screener_system/actions/workflows/ci.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/ci.yml)
 [![CD Pipeline](https://github.com/kcenon/screener_system/actions/workflows/cd.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/cd.yml)
+[![Documentation](https://github.com/kcenon/screener_system/actions/workflows/docs.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/docs.yml)
 [![PR Checks](https://github.com/kcenon/screener_system/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/pr-checks.yml)
 [![codecov](https://codecov.io/gh/kcenon/screener_system/branch/main/graph/badge.svg)](https://codecov.io/gh/kcenon/screener_system)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Docs Status](https://img.shields.io/badge/docs-live-success)](https://docs.screener.kr)
 
 A comprehensive stock analysis and screening platform for Korean markets (KOSPI/KOSDAQ) with 200+ financial and technical indicators.
 
@@ -19,22 +21,41 @@ A comprehensive stock analysis and screening platform for Korean markets (KOSPI/
 
 ## 📖 Documentation
 
-Comprehensive documentation is available at **[docs.screener.kr](https://docs.screener.kr)** (coming soon)
+Comprehensive documentation is automatically built and deployed at **[docs.screener.kr](https://docs.screener.kr)**
 
-For now, you can build and view the documentation locally:
-
-```bash
-cd docs-site
-npm install
-npm start  # Opens http://localhost:3000
-```
-
-Documentation includes:
+The documentation site includes:
 - **Getting Started Guide** - Setup and installation
-- **API Reference** - Backend and Frontend APIs
+- **API Reference** - Backend (Python) and Frontend (TypeScript) APIs
 - **User Guides** - Feature documentation
 - **Architecture** - System design and components
 - **Contributing** - Development guidelines
+
+### Building Documentation Locally
+
+```bash
+# Build all documentation
+cd docs-site
+npm install
+npm start  # Opens http://localhost:3000
+
+# Build Python API docs (Sphinx)
+cd docs/api/python
+sphinx-build -b html . _build/html
+
+# Build Frontend API docs (TypeDoc)
+cd frontend
+npm run docs:generate
+```
+
+### Documentation Pipeline
+
+Documentation is automatically built and deployed on every push to `main`:
+- **Sphinx** generates Python API documentation
+- **TypeDoc** generates TypeScript API documentation
+- **Docusaurus** builds the main documentation site
+- **GitHub Pages** hosts at docs.screener.kr
+
+See [CI/CD Setup Guide](docs/CI_CD_SETUP.md) for details.
 
 ## 📊 Tech Stack
 
