@@ -17,6 +17,25 @@ A comprehensive stock analysis and screening platform for Korean markets (KOSPI/
 - **Financial Analysis**: Detailed financial statements and ratio analysis
 - **Technical Analysis**: Charts with indicators (MA, RSI, MACD, etc.)
 
+## 📖 Documentation
+
+Comprehensive documentation is available at **[docs.screener.kr](https://docs.screener.kr)** (coming soon)
+
+For now, you can build and view the documentation locally:
+
+```bash
+cd docs-site
+npm install
+npm start  # Opens http://localhost:3000
+```
+
+Documentation includes:
+- **Getting Started Guide** - Setup and installation
+- **API Reference** - Backend and Frontend APIs
+- **User Guides** - Feature documentation
+- **Architecture** - System design and components
+- **Contributing** - Development guidelines
+
 ## 📊 Tech Stack
 
 ### Frontend
