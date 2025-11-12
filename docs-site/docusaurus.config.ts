@@ -24,6 +24,8 @@ const config: Config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'kcenon', // Usually your GitHub org/user name.
   projectName: 'screener_system', // Usually your repo name.
+  deploymentBranch: 'gh-pages', // The branch GitHub Pages will serve from
+  trailingSlash: false, // Remove trailing slashes for cleaner URLs
 
   onBrokenLinks: 'warn', // Allow broken links during initial setup
 
