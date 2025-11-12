@@ -8,7 +8,7 @@
 
 > **formatMarketCap**(`value`): `string`
 
-Defined in: [src/utils/format.ts:129](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/utils/format.ts#L129)
+Defined in: [src/utils/format.ts:129](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/utils/format.ts#L129)
 
 Format market cap in Korean units (억원, 조원)
 

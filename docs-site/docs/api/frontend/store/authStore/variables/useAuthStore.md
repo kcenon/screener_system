@@ -8,7 +8,7 @@
 
 > `const` **useAuthStore**: `UseBoundStore`\<`WithPersist`\<`StoreApi`\<`AuthState`\>, `AuthState`\>\>
 
-Defined in: [src/store/authStore.ts:159](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/store/authStore.ts#L159)
+Defined in: [src/store/authStore.ts:159](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/store/authStore.ts#L159)
 
 Global authentication store hook.
 

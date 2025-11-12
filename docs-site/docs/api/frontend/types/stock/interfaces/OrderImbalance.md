@@ -6,7 +6,7 @@
 
 # Interface: OrderImbalance
 
-Defined in: [src/types/stock.ts:271](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L271)
+Defined in: [src/types/stock.ts:271](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L271)
 
 Order imbalance indicator
 
@@ -16,7 +16,7 @@ Order imbalance indicator
 
 > **total\_bid\_volume**: `number`
 
-Defined in: [src/types/stock.ts:273](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L273)
+Defined in: [src/types/stock.ts:273](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L273)
 
 Total bid volume
 
@@ -26,7 +26,7 @@ Total bid volume
 
 > **total\_ask\_volume**: `number`
 
-Defined in: [src/types/stock.ts:275](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L275)
+Defined in: [src/types/stock.ts:275](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L275)
 
 Total ask volume
 
@@ -36,7 +36,7 @@ Total ask volume
 
 > **imbalance\_ratio**: `number`
 
-Defined in: [src/types/stock.ts:277](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L277)
+Defined in: [src/types/stock.ts:277](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L277)
 
 Imbalance ratio (bid / (bid + ask))
 
@@ -46,6 +46,6 @@ Imbalance ratio (bid / (bid + ask))
 
 > **direction**: `"buy"` \| `"sell"` \| `"neutral"`
 
-Defined in: [src/types/stock.ts:279](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L279)
+Defined in: [src/types/stock.ts:279](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L279)
 
 Direction ('buy' if more bids, 'sell' if more asks, 'neutral' if balanced)

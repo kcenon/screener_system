@@ -24,7 +24,7 @@ interface RangeFilterProps {
  *
  * Features:
  * - Side-by-side min/max inputs
- * - Validation: min <= max
+ * - Validation: `min <= max`
  * - Clears filter when both inputs are empty
  * - Shows validation error for invalid ranges
  */

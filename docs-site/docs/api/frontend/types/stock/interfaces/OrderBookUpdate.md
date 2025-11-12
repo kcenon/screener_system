@@ -6,7 +6,7 @@
 
 # Interface: OrderBookUpdate
 
-Defined in: [src/types/stock.ts:261](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L261)
+Defined in: [src/types/stock.ts:261](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L261)
 
 Order book update message from WebSocket
 
@@ -16,7 +16,7 @@ Order book update message from WebSocket
 
 > **type**: `"orderbook_update"`
 
-Defined in: [src/types/stock.ts:263](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L263)
+Defined in: [src/types/stock.ts:263](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L263)
 
 Message type
 
@@ -26,6 +26,6 @@ Message type
 
 > **data**: [`OrderBookData`](OrderBookData.md)
 
-Defined in: [src/types/stock.ts:265](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L265)
+Defined in: [src/types/stock.ts:265](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L265)
 
 Order book data

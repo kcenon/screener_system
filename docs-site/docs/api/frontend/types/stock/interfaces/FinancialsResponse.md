@@ -6,7 +6,7 @@
 
 # Interface: FinancialsResponse
 
-Defined in: [src/types/stock.ts:130](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L130)
+Defined in: [src/types/stock.ts:130](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L130)
 
 Financial statements response
 
@@ -16,7 +16,7 @@ Financial statements response
 
 > **stock\_code**: `string`
 
-Defined in: [src/types/stock.ts:132](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L132)
+Defined in: [src/types/stock.ts:132](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L132)
 
 Stock code
 
@@ -26,7 +26,7 @@ Stock code
 
 > **period\_type**: [`FinancialPeriod`](../type-aliases/FinancialPeriod.md)
 
-Defined in: [src/types/stock.ts:134](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L134)
+Defined in: [src/types/stock.ts:134](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L134)
 
 Period type (Q or Y)
 
@@ -36,7 +36,7 @@ Period type (Q or Y)
 
 > **years**: `number`
 
-Defined in: [src/types/stock.ts:136](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L136)
+Defined in: [src/types/stock.ts:136](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L136)
 
 Number of periods
 
@@ -46,6 +46,6 @@ Number of periods
 
 > **statements**: [`FinancialStatement`](FinancialStatement.md)[]
 
-Defined in: [src/types/stock.ts:138](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L138)
+Defined in: [src/types/stock.ts:138](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/stock.ts#L138)
 
 Array of financial statements

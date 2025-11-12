@@ -6,7 +6,7 @@
 
 # Interface: Stock
 
-Defined in: [src/types/index.ts:34](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L34)
+Defined in: [src/types/index.ts:34](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L34)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/types/index.ts:34](https://github.com/kcenon/screener_system/bl
 
 > **code**: `string`
 
-Defined in: [src/types/index.ts:35](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L35)
+Defined in: [src/types/index.ts:35](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L35)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/types/index.ts:35](https://github.com/kcenon/screener_system/bl
 
 > **name**: `string`
 
-Defined in: [src/types/index.ts:36](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L36)
+Defined in: [src/types/index.ts:36](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L36)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/types/index.ts:36](https://github.com/kcenon/screener_system/bl
 
 > **market**: `"KOSPI"` \| `"KOSDAQ"`
 
-Defined in: [src/types/index.ts:37](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L37)
+Defined in: [src/types/index.ts:37](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L37)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [src/types/index.ts:37](https://github.com/kcenon/screener_system/bl
 
 > **sector**: `string`
 
-Defined in: [src/types/index.ts:38](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L38)
+Defined in: [src/types/index.ts:38](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L38)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [src/types/index.ts:38](https://github.com/kcenon/screener_system/bl
 
 > **listing\_date**: `string`
 
-Defined in: [src/types/index.ts:39](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L39)
+Defined in: [src/types/index.ts:39](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L39)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [src/types/index.ts:39](https://github.com/kcenon/screener_system/bl
 
 > **delisting\_date**: `string` \| `null`
 
-Defined in: [src/types/index.ts:40](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L40)
+Defined in: [src/types/index.ts:40](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L40)
 
 ***
 
@@ -62,4 +62,4 @@ Defined in: [src/types/index.ts:40](https://github.com/kcenon/screener_system/bl
 
 > **is\_active**: `boolean`
 
-Defined in: [src/types/index.ts:41](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L41)
+Defined in: [src/types/index.ts:41](https://github.com/kcenon/screener_system/blob/643ae632cbed4964dedc9f484332c05bc48a6285/frontend/src/types/index.ts#L41)
