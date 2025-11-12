@@ -1,7 +1,9 @@
 # Gitleaks ignore file
 # Ignore false positives in documentation examples
 
-# API documentation examples with placeholder tokens
+# API documentation examples with placeholder tokens (including git history)
+# Original commit 38917bacf06157619ed0e6518060e5aaedc44af6 contained JWT example
+38917bacf06157619ed0e6518060e5aaedc44af6:docs-site/docs/api/intro.md:generic-api-key:48
 docs-site/docs/api/intro.md:48
 docs-site/docs/api/intro.md:60
 
