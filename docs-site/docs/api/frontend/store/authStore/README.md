@@ -6,6 +6,14 @@
 
 # store/authStore
 
+Authentication State Management Store.
+
+Zustand-based store managing user authentication state including user profile,
+JWT tokens, and authentication status. Includes automatic persistence to
+localStorage for maintaining login state across sessions.
+
 ## Variables
+
+### Store
 
 - [useAuthStore](variables/useAuthStore.md)

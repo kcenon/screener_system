@@ -6,7 +6,7 @@
 
 # Interface: StockMetadata
 
-Defined in: [src/types/stock.ts:144](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L144)
+Defined in: [src/types/stock.ts:144](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L144)
 
 Stock detail metadata
 
@@ -16,7 +16,7 @@ Stock detail metadata
 
 > `optional` **company\_name**: `string`
 
-Defined in: [src/types/stock.ts:146](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L146)
+Defined in: [src/types/stock.ts:146](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L146)
 
 Company full name
 
@@ -26,7 +26,7 @@ Company full name
 
 > `optional` **name\_english**: `string` \| `null`
 
-Defined in: [src/types/stock.ts:148](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L148)
+Defined in: [src/types/stock.ts:148](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L148)
 
 English name
 
@@ -36,7 +36,7 @@ English name
 
 > `optional` **website**: `string` \| `null`
 
-Defined in: [src/types/stock.ts:150](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L150)
+Defined in: [src/types/stock.ts:150](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L150)
 
 Website URL
 
@@ -46,7 +46,7 @@ Website URL
 
 > `optional` **listing\_date**: `string` \| `null`
 
-Defined in: [src/types/stock.ts:152](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L152)
+Defined in: [src/types/stock.ts:152](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L152)
 
 Listing date (ISO 8601)
 
@@ -56,7 +56,7 @@ Listing date (ISO 8601)
 
 > `optional` **ceo**: `string` \| `null`
 
-Defined in: [src/types/stock.ts:154](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L154)
+Defined in: [src/types/stock.ts:154](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L154)
 
 CEO name
 
@@ -66,7 +66,7 @@ CEO name
 
 > `optional` **employees**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:156](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L156)
+Defined in: [src/types/stock.ts:156](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L156)
 
 Employee count
 
@@ -76,6 +76,6 @@ Employee count
 
 > `optional` **description**: `string` \| `null`
 
-Defined in: [src/types/stock.ts:158](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L158)
+Defined in: [src/types/stock.ts:158](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L158)
 
 Description/business summary

@@ -8,4 +8,6 @@
 
 ## Functions
 
+### Components
+
 - [default](functions/default.md)

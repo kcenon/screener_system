@@ -8,6 +8,6 @@
 
 > **StockTab** = `"overview"` \| `"financials"` \| `"valuation"` \| `"technical"`
 
-Defined in: [src/types/stock.ts:173](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L173)
+Defined in: [src/types/stock.ts:173](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L173)
 
 Tab identifiers for stock detail page

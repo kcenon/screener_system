@@ -6,7 +6,7 @@
 
 # Interface: TokenResponse
 
-Defined in: [src/types/index.ts:23](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L23)
+Defined in: [src/types/index.ts:23](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L23)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/types/index.ts:23](https://github.com/kcenon/screener_system/bl
 
 > **access\_token**: `string`
 
-Defined in: [src/types/index.ts:24](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L24)
+Defined in: [src/types/index.ts:24](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L24)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/types/index.ts:24](https://github.com/kcenon/screener_system/bl
 
 > **refresh\_token**: `string`
 
-Defined in: [src/types/index.ts:25](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L25)
+Defined in: [src/types/index.ts:25](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L25)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/types/index.ts:25](https://github.com/kcenon/screener_system/bl
 
 > **token\_type**: `string`
 
-Defined in: [src/types/index.ts:26](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L26)
+Defined in: [src/types/index.ts:26](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L26)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [src/types/index.ts:26](https://github.com/kcenon/screener_system/bl
 
 > **user**: [`User`](User.md)
 
-Defined in: [src/types/index.ts:27](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L27)
+Defined in: [src/types/index.ts:27](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L27)

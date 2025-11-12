@@ -7,32 +7,160 @@ import SearchBar from './SearchBar'
 import FilterPresetManager from './FilterPresetManager'
 
 /**
- * Props for FilterPanel component
+ * Props for FilterPanel component.
+ *
+ * Controls the filter panel's behavior including current filter state,
+ * filter change handlers, and preset management.
+ *
+ * @interface
+ * @category Types
  */
 interface FilterPanelProps {
-  /** Current filter values */
+  /**
+   * Current filter values applied to the stock screening.
+   * Contains all active filters including market, sector, valuations, etc.
+   *
+   * @see {@link ScreeningFilters} for complete filter structure
+   */
   filters: ScreeningFilters
-  /** Callback when filters change */
+
+  /**
+   * Callback invoked when any filter value changes.
+   * Should update the parent component's filter state.
+   *
+   * @param filters - Updated filter object with new values
+   *
+   * @example
+   * ```tsx
+   * onFiltersChange({ ...currentFilters, market: 'KOSPI' })
+   * ```
+   */
   onFiltersChange: (filters: ScreeningFilters) => void
-  /** Callback when clear all button is clicked */
+
+  /**
+   * Callback invoked when "Clear All" button is clicked.
+   * Should reset all filters to their default values.
+   */
   onClearFilters: () => void
-  /** List of saved filter presets */
+
+  /**
+   * List of saved filter presets available to the user.
+   * If provided, enables preset management functionality.
+   *
+   * @defaultValue []
+   */
   presets?: FilterPreset[]
-  /** Callback when a preset is saved */
+
+  /**
+   * Callback invoked when user saves current filters as a new preset.
+   *
+   * @param name - User-provided name for the preset
+   * @param description - Optional description of the preset
+   */
   onSavePreset?: (name: string, description?: string) => void
-  /** Callback when a preset is deleted */
+
+  /**
+   * Callback invoked when user deletes a saved preset.
+   *
+   * @param id - Unique identifier of the preset to delete
+   */
   onDeletePreset?: (id: string) => void
 }
 
 /**
- * FilterPanel component with collapsible filter sections
+ * Comprehensive stock screening filter panel with collapsible sections.
  *
- * Features:
- * - Market selector (KOSPI/KOSDAQ/ALL)
- * - Sector/Industry text inputs
- * - Collapsible filter sections using Radix Accordion
- * - Clear all button
- * - Responsive design
+ * Provides an intuitive interface for filtering stocks by multiple criteria including
+ * market, sector, valuation metrics, profitability ratios, growth indicators, and
+ * technical signals. Uses Radix UI Accordion for organized, collapsible filter groups.
+ *
+ * ## Features
+ *
+ * - **Market Selection**: Filter by KOSPI, KOSDAQ, or all markets
+ * - **Sector/Industry**: Text-based filtering for sector and industry
+ * - **Search**: Real-time stock name/code search with keyboard shortcuts
+ * - **Preset Management**: Save, load, and delete custom filter combinations
+ * - **Collapsible Sections**: Organized filter groups for better UX
+ *   - Valuation (PER, PBR, PSR, Dividend Yield)
+ *   - Profitability (ROE, ROA, ROIC, Margins)
+ *   - Growth (Revenue, Earnings, EPS growth)
+ *   - Technical (RSI, MACD, Moving Averages)
+ *   - Size & Volume (Market Cap, Trading Volume)
+ * - **Clear All**: One-click filter reset functionality
+ * - **Responsive Design**: Mobile-friendly interface
+ *
+ * ## Filter Organization
+ *
+ * Filters are organized into logical groups using Radix Accordion:
+ * - Basic filters (Search, Market, Sector/Industry) always visible
+ * - Advanced filters grouped by category in collapsible sections
+ * - Default expanded sections for common use cases
+ *
+ * @component
+ * @example
+ * Basic usage with required props
+ * ```tsx
+ * const [filters, setFilters] = useState<ScreeningFilters>({ market: 'ALL' });
+ *
+ * <FilterPanel
+ *   filters={filters}
+ *   onFiltersChange={setFilters}
+ *   onClearFilters={() => setFilters({ market: 'ALL' })}
+ * />
+ * ```
+ *
+ * @example
+ * Advanced usage with preset management
+ * ```tsx
+ * const { filters, setFilters } = useScreening();
+ * const { presets, savePreset, deletePreset } = useFilterPresets();
+ *
+ * <FilterPanel
+ *   filters={filters}
+ *   onFiltersChange={setFilters}
+ *   onClearFilters={() => setFilters({ market: 'ALL' })}
+ *   presets={presets}
+ *   onSavePreset={(name, desc) => savePreset({ name, description: desc, filters })}
+ *   onDeletePreset={deletePreset}
+ * />
+ * ```
+ *
+ * @example
+ * Handling filter changes
+ * ```tsx
+ * const handleFiltersChange = (newFilters: ScreeningFilters) => {
+ *   // Validate filters
+ *   if (newFilters.per?.min < 0) {
+ *     toast.error('PER minimum cannot be negative');
+ *     return;
+ *   }
+ *
+ *   // Update state (triggers screening query)
+ *   setFilters(newFilters);
+ *
+ *   // Track analytics
+ *   analytics.track('filters_changed', { filters: newFilters });
+ * };
+ * ```
+ *
+ * @param props - Component props
+ * @param props.filters - Current filter state
+ * @param props.onFiltersChange - Filter change handler
+ * @param props.onClearFilters - Clear all handler
+ * @param props.presets - Saved filter presets
+ * @param props.onSavePreset - Save preset handler
+ * @param props.onDeletePreset - Delete preset handler
+ *
+ * @returns React component rendering the complete filter panel
+ *
+ * @see {@link ScreeningFilters} for filter data structure
+ * @see {@link FilterPreset} for preset data structure
+ * @see {@link RangeFilter} for individual range filter component
+ * @see {@link FilterPresetManager} for preset management UI
+ * @see {@link SearchBar} for search functionality
+ *
+ * @category Components
+ * @subcategory Screening
  */
 export default function FilterPanel({
   filters,

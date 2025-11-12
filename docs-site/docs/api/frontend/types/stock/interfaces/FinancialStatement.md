@@ -6,7 +6,7 @@
 
 # Interface: FinancialStatement
 
-Defined in: [src/types/stock.ts:68](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L68)
+Defined in: [src/types/stock.ts:68](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L68)
 
 Single financial statement entry
 
@@ -16,7 +16,7 @@ Single financial statement entry
 
 > **period**: `string`
 
-Defined in: [src/types/stock.ts:70](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L70)
+Defined in: [src/types/stock.ts:70](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L70)
 
 Period (e.g., '2023-Q4', '2023-Y')
 
@@ -26,7 +26,7 @@ Period (e.g., '2023-Q4', '2023-Y')
 
 > **period\_type**: [`FinancialPeriod`](../type-aliases/FinancialPeriod.md)
 
-Defined in: [src/types/stock.ts:72](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L72)
+Defined in: [src/types/stock.ts:72](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L72)
 
 Period type (quarterly or yearly)
 
@@ -36,7 +36,7 @@ Period type (quarterly or yearly)
 
 > **fiscal\_year**: `number`
 
-Defined in: [src/types/stock.ts:74](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L74)
+Defined in: [src/types/stock.ts:74](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L74)
 
 Fiscal year
 
@@ -46,7 +46,7 @@ Fiscal year
 
 > `optional` **fiscal\_quarter**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:76](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L76)
+Defined in: [src/types/stock.ts:76](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L76)
 
 Fiscal quarter (1-4, null for yearly)
 
@@ -56,7 +56,7 @@ Fiscal quarter (1-4, null for yearly)
 
 > `optional` **revenue**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:80](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L80)
+Defined in: [src/types/stock.ts:80](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L80)
 
 Total revenue (KRW)
 
@@ -66,7 +66,7 @@ Total revenue (KRW)
 
 > `optional` **operating\_profit**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:82](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L82)
+Defined in: [src/types/stock.ts:82](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L82)
 
 Operating profit (KRW)
 
@@ -76,7 +76,7 @@ Operating profit (KRW)
 
 > `optional` **net\_profit**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:84](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L84)
+Defined in: [src/types/stock.ts:84](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L84)
 
 Net profit (KRW)
 
@@ -86,7 +86,7 @@ Net profit (KRW)
 
 > `optional` **gross\_margin**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:86](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L86)
+Defined in: [src/types/stock.ts:86](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L86)
 
 Gross margin (%)
 
@@ -96,7 +96,7 @@ Gross margin (%)
 
 > `optional` **operating\_margin**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:88](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L88)
+Defined in: [src/types/stock.ts:88](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L88)
 
 Operating margin (%)
 
@@ -106,7 +106,7 @@ Operating margin (%)
 
 > `optional` **net\_margin**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:90](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L90)
+Defined in: [src/types/stock.ts:90](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L90)
 
 Net margin (%)
 
@@ -116,7 +116,7 @@ Net margin (%)
 
 > `optional` **total\_assets**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:94](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L94)
+Defined in: [src/types/stock.ts:94](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L94)
 
 Total assets (KRW)
 
@@ -126,7 +126,7 @@ Total assets (KRW)
 
 > `optional` **total\_liabilities**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:96](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L96)
+Defined in: [src/types/stock.ts:96](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L96)
 
 Total liabilities (KRW)
 
@@ -136,7 +136,7 @@ Total liabilities (KRW)
 
 > `optional` **total\_equity**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:98](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L98)
+Defined in: [src/types/stock.ts:98](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L98)
 
 Total equity (KRW)
 
@@ -146,7 +146,7 @@ Total equity (KRW)
 
 > `optional` **current\_assets**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:100](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L100)
+Defined in: [src/types/stock.ts:100](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L100)
 
 Current assets (KRW)
 
@@ -156,7 +156,7 @@ Current assets (KRW)
 
 > `optional` **current\_liabilities**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:102](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L102)
+Defined in: [src/types/stock.ts:102](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L102)
 
 Current liabilities (KRW)
 
@@ -166,7 +166,7 @@ Current liabilities (KRW)
 
 > `optional` **operating\_cash\_flow**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:106](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L106)
+Defined in: [src/types/stock.ts:106](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L106)
 
 Operating cash flow (KRW)
 
@@ -176,7 +176,7 @@ Operating cash flow (KRW)
 
 > `optional` **investing\_cash\_flow**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:108](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L108)
+Defined in: [src/types/stock.ts:108](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L108)
 
 Investing cash flow (KRW)
 
@@ -186,7 +186,7 @@ Investing cash flow (KRW)
 
 > `optional` **financing\_cash\_flow**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:110](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L110)
+Defined in: [src/types/stock.ts:110](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L110)
 
 Financing cash flow (KRW)
 
@@ -196,7 +196,7 @@ Financing cash flow (KRW)
 
 > `optional` **free\_cash\_flow**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:112](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L112)
+Defined in: [src/types/stock.ts:112](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L112)
 
 Free cash flow (KRW)
 
@@ -206,7 +206,7 @@ Free cash flow (KRW)
 
 > `optional` **eps**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:116](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L116)
+Defined in: [src/types/stock.ts:116](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L116)
 
 Earnings per share (KRW)
 
@@ -216,7 +216,7 @@ Earnings per share (KRW)
 
 > `optional` **bps**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:118](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L118)
+Defined in: [src/types/stock.ts:118](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L118)
 
 Book value per share (KRW)
 
@@ -226,7 +226,7 @@ Book value per share (KRW)
 
 > `optional` **dps**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:120](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L120)
+Defined in: [src/types/stock.ts:120](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L120)
 
 Dividend per share (KRW)
 
@@ -236,6 +236,6 @@ Dividend per share (KRW)
 
 > `optional` **shares\_outstanding**: `number` \| `null`
 
-Defined in: [src/types/stock.ts:124](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L124)
+Defined in: [src/types/stock.ts:124](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L124)
 
 Outstanding shares

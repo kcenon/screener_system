@@ -6,7 +6,7 @@
 
 # Interface: DailyPrice
 
-Defined in: [src/types/index.ts:44](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L44)
+Defined in: [src/types/index.ts:44](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L44)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/types/index.ts:44](https://github.com/kcenon/screener_system/bl
 
 > **stock\_code**: `string`
 
-Defined in: [src/types/index.ts:45](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L45)
+Defined in: [src/types/index.ts:45](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L45)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/types/index.ts:45](https://github.com/kcenon/screener_system/bl
 
 > **trade\_date**: `string`
 
-Defined in: [src/types/index.ts:46](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L46)
+Defined in: [src/types/index.ts:46](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L46)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [src/types/index.ts:46](https://github.com/kcenon/screener_system/bl
 
 > **open\_price**: `number`
 
-Defined in: [src/types/index.ts:47](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L47)
+Defined in: [src/types/index.ts:47](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L47)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [src/types/index.ts:47](https://github.com/kcenon/screener_system/bl
 
 > **high\_price**: `number`
 
-Defined in: [src/types/index.ts:48](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L48)
+Defined in: [src/types/index.ts:48](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L48)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [src/types/index.ts:48](https://github.com/kcenon/screener_system/bl
 
 > **low\_price**: `number`
 
-Defined in: [src/types/index.ts:49](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L49)
+Defined in: [src/types/index.ts:49](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L49)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [src/types/index.ts:49](https://github.com/kcenon/screener_system/bl
 
 > **close\_price**: `number`
 
-Defined in: [src/types/index.ts:50](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L50)
+Defined in: [src/types/index.ts:50](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L50)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [src/types/index.ts:50](https://github.com/kcenon/screener_system/bl
 
 > **volume**: `number`
 
-Defined in: [src/types/index.ts:51](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L51)
+Defined in: [src/types/index.ts:51](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L51)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [src/types/index.ts:51](https://github.com/kcenon/screener_system/bl
 
 > **trading\_value**: `number`
 
-Defined in: [src/types/index.ts:52](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L52)
+Defined in: [src/types/index.ts:52](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L52)
 
 ***
 
@@ -78,4 +78,4 @@ Defined in: [src/types/index.ts:52](https://github.com/kcenon/screener_system/bl
 
 > **market\_cap**: `number` \| `null`
 
-Defined in: [src/types/index.ts:53](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L53)
+Defined in: [src/types/index.ts:53](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/index.ts#L53)

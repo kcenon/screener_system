@@ -6,6 +6,14 @@
 
 # services/api
 
+HTTP Client Configuration and Interceptors.
+
+Provides a pre-configured Axios instance with automatic JWT token management,
+request/response interceptors, and token refresh logic. Handles authentication
+errors gracefully with automatic retry and request queueing.
+
 ## Variables
+
+### Services
 
 - [api](variables/api.md)

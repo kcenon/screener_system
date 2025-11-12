@@ -8,7 +8,7 @@
 
 > **useRefreshToken**(): `UseMutationResult`\<[`TokenResponse`](../../../types/interfaces/TokenResponse.md), `Error`, `void`, `unknown`\>
 
-Defined in: [src/hooks/useAuth.ts:97](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useAuth.ts#L97)
+Defined in: [src/hooks/useAuth.ts:97](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/hooks/useAuth.ts#L97)
 
 Hook for refreshing access token
 

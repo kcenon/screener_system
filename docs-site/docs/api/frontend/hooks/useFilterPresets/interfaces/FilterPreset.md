@@ -6,7 +6,7 @@
 
 # Interface: FilterPreset
 
-Defined in: [src/hooks/useFilterPresets.ts:7](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useFilterPresets.ts#L7)
+Defined in: [src/hooks/useFilterPresets.ts:7](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/hooks/useFilterPresets.ts#L7)
 
 Filter preset interface
 
@@ -16,7 +16,7 @@ Filter preset interface
 
 > **id**: `string`
 
-Defined in: [src/hooks/useFilterPresets.ts:8](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useFilterPresets.ts#L8)
+Defined in: [src/hooks/useFilterPresets.ts:8](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/hooks/useFilterPresets.ts#L8)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [src/hooks/useFilterPresets.ts:8](https://github.com/kcenon/screener
 
 > **name**: `string`
 
-Defined in: [src/hooks/useFilterPresets.ts:9](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useFilterPresets.ts#L9)
+Defined in: [src/hooks/useFilterPresets.ts:9](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/hooks/useFilterPresets.ts#L9)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [src/hooks/useFilterPresets.ts:9](https://github.com/kcenon/screener
 
 > `optional` **description**: `string`
 
-Defined in: [src/hooks/useFilterPresets.ts:10](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useFilterPresets.ts#L10)
+Defined in: [src/hooks/useFilterPresets.ts:10](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/hooks/useFilterPresets.ts#L10)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [src/hooks/useFilterPresets.ts:10](https://github.com/kcenon/screene
 
 > **filters**: [`ScreeningFilters`](../../../types/screening/interfaces/ScreeningFilters.md)
 
-Defined in: [src/hooks/useFilterPresets.ts:11](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useFilterPresets.ts#L11)
+Defined in: [src/hooks/useFilterPresets.ts:11](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/hooks/useFilterPresets.ts#L11)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [src/hooks/useFilterPresets.ts:11](https://github.com/kcenon/screene
 
 > **createdAt**: `string`
 
-Defined in: [src/hooks/useFilterPresets.ts:12](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useFilterPresets.ts#L12)
+Defined in: [src/hooks/useFilterPresets.ts:12](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/hooks/useFilterPresets.ts#L12)

@@ -1,7 +1,59 @@
+/**
+ * HTTP Client Configuration and Interceptors.
+ *
+ * Provides a pre-configured Axios instance with automatic JWT token management,
+ * request/response interceptors, and token refresh logic. Handles authentication
+ * errors gracefully with automatic retry and request queueing.
+ *
+ * @module services/api
+ * @category Services
+ */
+
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 
+/**
+ * Base URL for all API requests.
+ *
+ * Determined by VITE_API_BASE_URL environment variable or falls back
+ * to localhost development server.
+ *
+ * @constant
+ * @defaultValue 'http://localhost:8000/api/v1'
+ */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
 
+/**
+ * Pre-configured Axios instance for API communication.
+ *
+ * Features:
+ * - Automatic JWT token injection via request interceptor
+ * - Automatic token refresh on 401 responses
+ * - Request queueing during token refresh
+ * - 10-second timeout for all requests
+ * - JSON content type by default
+ *
+ * @example
+ * Basic GET request
+ * ```typescript
+ * import { api } from '@/services/api';
+ *
+ * const response = await api.get('/stocks');
+ * console.log(response.data);
+ * ```
+ *
+ * @example
+ * POST request with data
+ * ```typescript
+ * const response = await api.post('/auth/login', {
+ *   username: 'user',
+ *   password: 'pass'
+ * });
+ * ```
+ *
+ * @see {@link https://axios-http.com/docs/instance} Axios Instance Documentation
+ *
+ * @category Services
+ */
 export const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
@@ -10,13 +62,41 @@ export const api = axios.create({
   },
 })
 
-// Track if we're currently refreshing the token
+/**
+ * Flag indicating if token refresh is currently in progress.
+ *
+ * Prevents multiple concurrent token refresh attempts when
+ * multiple requests receive 401 responses simultaneously.
+ *
+ * @internal
+ */
 let isRefreshing = false
+
+/**
+ * Queue of pending requests waiting for token refresh to complete.
+ *
+ * When a 401 response triggers token refresh, subsequent failing requests
+ * are queued here and retried once new tokens are obtained.
+ *
+ * @internal
+ */
 let failedQueue: Array<{
   resolve: (value?: unknown) => void
   reject: (reason?: unknown) => void
 }> = []
 
+/**
+ * Processes queued requests after token refresh completes.
+ *
+ * Resolves or rejects all queued requests based on token refresh outcome.
+ * On success, queued requests are retried with new token. On failure, all
+ * are rejected and user is logged out.
+ *
+ * @param error - Error from token refresh attempt, null if successful
+ * @param token - New access token if refresh succeeded, null otherwise
+ *
+ * @internal
+ */
 const processQueue = (error: Error | null, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {

@@ -6,7 +6,7 @@
 
 # Interface: ScreeningRequest
 
-Defined in: [src/types/screening.ts:240](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L240)
+Defined in: [src/types/screening.ts:240](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L240)
 
 Screening request parameters
 
@@ -16,7 +16,7 @@ Screening request parameters
 
 > `optional` **filters**: [`ScreeningFilters`](ScreeningFilters.md)
 
-Defined in: [src/types/screening.ts:242](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L242)
+Defined in: [src/types/screening.ts:242](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L242)
 
 Screening filters
 
@@ -26,7 +26,7 @@ Screening filters
 
 > `optional` **sort\_by**: [`ScreeningSortField`](../type-aliases/ScreeningSortField.md)
 
-Defined in: [src/types/screening.ts:244](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L244)
+Defined in: [src/types/screening.ts:244](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L244)
 
 Field to sort by
 
@@ -36,7 +36,7 @@ Field to sort by
 
 > `optional` **order**: [`SortOrder`](../type-aliases/SortOrder.md)
 
-Defined in: [src/types/screening.ts:246](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L246)
+Defined in: [src/types/screening.ts:246](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L246)
 
 Sort order
 
@@ -46,7 +46,7 @@ Sort order
 
 > `optional` **page**: `number`
 
-Defined in: [src/types/screening.ts:248](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L248)
+Defined in: [src/types/screening.ts:248](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L248)
 
 Page number (1-indexed)
 
@@ -56,6 +56,6 @@ Page number (1-indexed)
 
 > `optional` **per\_page**: `number`
 
-Defined in: [src/types/screening.ts:250](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L250)
+Defined in: [src/types/screening.ts:250](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L250)
 
 Results per page

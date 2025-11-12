@@ -6,7 +6,7 @@
 
 # Interface: OrderBookProps
 
-Defined in: [src/components/stock/OrderBook.tsx:25](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L25)
+Defined in: [src/components/stock/OrderBook.tsx:25](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L25)
 
 OrderBook Component Props
 
@@ -16,7 +16,7 @@ OrderBook Component Props
 
 > **data**: [`OrderBookData`](../../../../types/stock/interfaces/OrderBookData.md) \| `null`
 
-Defined in: [src/components/stock/OrderBook.tsx:27](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L27)
+Defined in: [src/components/stock/OrderBook.tsx:27](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L27)
 
 Order book data
 
@@ -26,7 +26,7 @@ Order book data
 
 > **imbalance**: [`OrderImbalance`](../../../../types/stock/interfaces/OrderImbalance.md) \| `null`
 
-Defined in: [src/components/stock/OrderBook.tsx:29](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L29)
+Defined in: [src/components/stock/OrderBook.tsx:29](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L29)
 
 Order imbalance indicator
 
@@ -36,7 +36,7 @@ Order imbalance indicator
 
 > `optional` **isLoading**: `boolean`
 
-Defined in: [src/components/stock/OrderBook.tsx:31](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L31)
+Defined in: [src/components/stock/OrderBook.tsx:31](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L31)
 
 Loading state
 
@@ -46,7 +46,7 @@ Loading state
 
 > `optional` **frozen**: `boolean`
 
-Defined in: [src/components/stock/OrderBook.tsx:33](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L33)
+Defined in: [src/components/stock/OrderBook.tsx:33](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L33)
 
 Frozen state (no updates)
 
@@ -56,7 +56,7 @@ Frozen state (no updates)
 
 > `optional` **onToggleFreeze**: () => `void`
 
-Defined in: [src/components/stock/OrderBook.tsx:35](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L35)
+Defined in: [src/components/stock/OrderBook.tsx:35](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L35)
 
 Freeze toggle callback
 
@@ -70,7 +70,7 @@ Freeze toggle callback
 
 > `optional` **levels**: `number`
 
-Defined in: [src/components/stock/OrderBook.tsx:37](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L37)
+Defined in: [src/components/stock/OrderBook.tsx:37](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L37)
 
 Number of levels to display (default: 10)
 
@@ -80,7 +80,7 @@ Number of levels to display (default: 10)
 
 > `optional` **detailed**: `boolean`
 
-Defined in: [src/components/stock/OrderBook.tsx:39](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L39)
+Defined in: [src/components/stock/OrderBook.tsx:39](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L39)
 
 Show detailed view
 
@@ -90,6 +90,6 @@ Show detailed view
 
 > `optional` **mobile**: `boolean`
 
-Defined in: [src/components/stock/OrderBook.tsx:41](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/OrderBook.tsx#L41)
+Defined in: [src/components/stock/OrderBook.tsx:41](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/components/stock/OrderBook.tsx#L41)
 
 Mobile view

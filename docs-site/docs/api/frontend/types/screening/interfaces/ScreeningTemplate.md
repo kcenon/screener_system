@@ -6,7 +6,7 @@
 
 # Interface: ScreeningTemplate
 
-Defined in: [src/types/screening.ts:256](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L256)
+Defined in: [src/types/screening.ts:256](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L256)
 
 Predefined screening template
 
@@ -16,7 +16,7 @@ Predefined screening template
 
 > **id**: `string`
 
-Defined in: [src/types/screening.ts:258](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L258)
+Defined in: [src/types/screening.ts:258](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L258)
 
 Template ID
 
@@ -26,7 +26,7 @@ Template ID
 
 > **name**: `string`
 
-Defined in: [src/types/screening.ts:260](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L260)
+Defined in: [src/types/screening.ts:260](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L260)
 
 Template display name
 
@@ -36,7 +36,7 @@ Template display name
 
 > **description**: `string`
 
-Defined in: [src/types/screening.ts:262](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L262)
+Defined in: [src/types/screening.ts:262](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L262)
 
 Template description
 
@@ -46,7 +46,7 @@ Template description
 
 > **filters**: [`ScreeningFilters`](ScreeningFilters.md)
 
-Defined in: [src/types/screening.ts:264](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L264)
+Defined in: [src/types/screening.ts:264](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L264)
 
 Predefined filters
 
@@ -56,7 +56,7 @@ Predefined filters
 
 > **sort\_by**: [`ScreeningSortField`](../type-aliases/ScreeningSortField.md)
 
-Defined in: [src/types/screening.ts:266](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L266)
+Defined in: [src/types/screening.ts:266](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L266)
 
 Default sort field
 
@@ -66,6 +66,6 @@ Default sort field
 
 > **order**: [`SortOrder`](../type-aliases/SortOrder.md)
 
-Defined in: [src/types/screening.ts:268](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L268)
+Defined in: [src/types/screening.ts:268](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L268)
 
 Default sort order

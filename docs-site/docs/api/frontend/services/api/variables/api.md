@@ -8,4 +8,35 @@
 
 > `const` **api**: `AxiosInstance`
 
-Defined in: [src/services/api.ts:5](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/api.ts#L5)
+Defined in: [src/services/api.ts:57](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/services/api.ts#L57)
+
+Pre-configured Axios instance for API communication.
+
+Features:
+- Automatic JWT token injection via request interceptor
+- Automatic token refresh on 401 responses
+- Request queueing during token refresh
+- 10-second timeout for all requests
+- JSON content type by default
+
+## Examples
+
+Basic GET request
+```typescript
+import { api } from '@/services/api';
+
+const response = await api.get('/stocks');
+console.log(response.data);
+```
+
+POST request with data
+```typescript
+const response = await api.post('/auth/login', {
+  username: 'user',
+  password: 'pass'
+});
+```
+
+## See
+
+[https://axios-http.com/docs/instance](https://axios-http.com/docs/instance) Axios Instance Documentation

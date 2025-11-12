@@ -6,7 +6,7 @@
 
 # Interface: StockDetail
 
-Defined in: [src/types/stock.ts:165](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L165)
+Defined in: [src/types/stock.ts:165](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L165)
 
 Extended stock detail
 Combines screening result with metadata
@@ -21,7 +21,7 @@ Combines screening result with metadata
 
 > **code**: `string`
 
-Defined in: [src/types/screening.ts:162](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L162)
+Defined in: [src/types/screening.ts:162](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L162)
 
 #### Inherited from
 
@@ -33,7 +33,7 @@ Defined in: [src/types/screening.ts:162](https://github.com/kcenon/screener_syst
 
 > **name**: `string`
 
-Defined in: [src/types/screening.ts:163](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L163)
+Defined in: [src/types/screening.ts:163](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L163)
 
 #### Inherited from
 
@@ -45,7 +45,7 @@ Defined in: [src/types/screening.ts:163](https://github.com/kcenon/screener_syst
 
 > `optional` **name\_english**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:164](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L164)
+Defined in: [src/types/screening.ts:164](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L164)
 
 #### Inherited from
 
@@ -57,7 +57,7 @@ Defined in: [src/types/screening.ts:164](https://github.com/kcenon/screener_syst
 
 > **market**: `string`
 
-Defined in: [src/types/screening.ts:165](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L165)
+Defined in: [src/types/screening.ts:165](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L165)
 
 #### Inherited from
 
@@ -69,7 +69,7 @@ Defined in: [src/types/screening.ts:165](https://github.com/kcenon/screener_syst
 
 > `optional` **sector**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:166](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L166)
+Defined in: [src/types/screening.ts:166](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L166)
 
 #### Inherited from
 
@@ -81,7 +81,7 @@ Defined in: [src/types/screening.ts:166](https://github.com/kcenon/screener_syst
 
 > `optional` **industry**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:167](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L167)
+Defined in: [src/types/screening.ts:167](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L167)
 
 #### Inherited from
 
@@ -93,7 +93,7 @@ Defined in: [src/types/screening.ts:167](https://github.com/kcenon/screener_syst
 
 > `optional` **last\_trade\_date**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:170](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L170)
+Defined in: [src/types/screening.ts:170](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L170)
 
 #### Inherited from
 
@@ -105,7 +105,7 @@ Defined in: [src/types/screening.ts:170](https://github.com/kcenon/screener_syst
 
 > `optional` **current\_price**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:171](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L171)
+Defined in: [src/types/screening.ts:171](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L171)
 
 #### Inherited from
 
@@ -117,7 +117,7 @@ Defined in: [src/types/screening.ts:171](https://github.com/kcenon/screener_syst
 
 > `optional` **current\_volume**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:172](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L172)
+Defined in: [src/types/screening.ts:172](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L172)
 
 #### Inherited from
 
@@ -129,7 +129,7 @@ Defined in: [src/types/screening.ts:172](https://github.com/kcenon/screener_syst
 
 > `optional` **market\_cap**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:173](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L173)
+Defined in: [src/types/screening.ts:173](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L173)
 
 #### Inherited from
 
@@ -141,7 +141,7 @@ Defined in: [src/types/screening.ts:173](https://github.com/kcenon/screener_syst
 
 > `optional` **indicators\_date**: `string` \| `null`
 
-Defined in: [src/types/screening.ts:176](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L176)
+Defined in: [src/types/screening.ts:176](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L176)
 
 #### Inherited from
 
@@ -153,7 +153,7 @@ Defined in: [src/types/screening.ts:176](https://github.com/kcenon/screener_syst
 
 > `optional` **per**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:177](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L177)
+Defined in: [src/types/screening.ts:177](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L177)
 
 #### Inherited from
 
@@ -165,7 +165,7 @@ Defined in: [src/types/screening.ts:177](https://github.com/kcenon/screener_syst
 
 > `optional` **pbr**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:178](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L178)
+Defined in: [src/types/screening.ts:178](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L178)
 
 #### Inherited from
 
@@ -177,7 +177,7 @@ Defined in: [src/types/screening.ts:178](https://github.com/kcenon/screener_syst
 
 > `optional` **psr**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:179](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L179)
+Defined in: [src/types/screening.ts:179](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L179)
 
 #### Inherited from
 
@@ -189,7 +189,7 @@ Defined in: [src/types/screening.ts:179](https://github.com/kcenon/screener_syst
 
 > `optional` **pcr**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:180](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L180)
+Defined in: [src/types/screening.ts:180](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L180)
 
 #### Inherited from
 
@@ -201,7 +201,7 @@ Defined in: [src/types/screening.ts:180](https://github.com/kcenon/screener_syst
 
 > `optional` **dividend\_yield**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:181](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L181)
+Defined in: [src/types/screening.ts:181](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L181)
 
 #### Inherited from
 
@@ -213,7 +213,7 @@ Defined in: [src/types/screening.ts:181](https://github.com/kcenon/screener_syst
 
 > `optional` **roe**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:182](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L182)
+Defined in: [src/types/screening.ts:182](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L182)
 
 #### Inherited from
 
@@ -225,7 +225,7 @@ Defined in: [src/types/screening.ts:182](https://github.com/kcenon/screener_syst
 
 > `optional` **roa**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:183](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L183)
+Defined in: [src/types/screening.ts:183](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L183)
 
 #### Inherited from
 
@@ -237,7 +237,7 @@ Defined in: [src/types/screening.ts:183](https://github.com/kcenon/screener_syst
 
 > `optional` **roic**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:184](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L184)
+Defined in: [src/types/screening.ts:184](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L184)
 
 #### Inherited from
 
@@ -249,7 +249,7 @@ Defined in: [src/types/screening.ts:184](https://github.com/kcenon/screener_syst
 
 > `optional` **gross\_margin**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:185](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L185)
+Defined in: [src/types/screening.ts:185](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L185)
 
 #### Inherited from
 
@@ -261,7 +261,7 @@ Defined in: [src/types/screening.ts:185](https://github.com/kcenon/screener_syst
 
 > `optional` **operating\_margin**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:186](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L186)
+Defined in: [src/types/screening.ts:186](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L186)
 
 #### Inherited from
 
@@ -273,7 +273,7 @@ Defined in: [src/types/screening.ts:186](https://github.com/kcenon/screener_syst
 
 > `optional` **net\_margin**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:187](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L187)
+Defined in: [src/types/screening.ts:187](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L187)
 
 #### Inherited from
 
@@ -285,7 +285,7 @@ Defined in: [src/types/screening.ts:187](https://github.com/kcenon/screener_syst
 
 > `optional` **revenue\_growth\_yoy**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:188](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L188)
+Defined in: [src/types/screening.ts:188](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L188)
 
 #### Inherited from
 
@@ -297,7 +297,7 @@ Defined in: [src/types/screening.ts:188](https://github.com/kcenon/screener_syst
 
 > `optional` **profit\_growth\_yoy**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:189](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L189)
+Defined in: [src/types/screening.ts:189](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L189)
 
 #### Inherited from
 
@@ -309,7 +309,7 @@ Defined in: [src/types/screening.ts:189](https://github.com/kcenon/screener_syst
 
 > `optional` **eps\_growth\_yoy**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:190](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L190)
+Defined in: [src/types/screening.ts:190](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L190)
 
 #### Inherited from
 
@@ -321,7 +321,7 @@ Defined in: [src/types/screening.ts:190](https://github.com/kcenon/screener_syst
 
 > `optional` **debt\_to\_equity**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:191](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L191)
+Defined in: [src/types/screening.ts:191](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L191)
 
 #### Inherited from
 
@@ -333,7 +333,7 @@ Defined in: [src/types/screening.ts:191](https://github.com/kcenon/screener_syst
 
 > `optional` **current\_ratio**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:192](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L192)
+Defined in: [src/types/screening.ts:192](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L192)
 
 #### Inherited from
 
@@ -345,7 +345,7 @@ Defined in: [src/types/screening.ts:192](https://github.com/kcenon/screener_syst
 
 > `optional` **altman\_z\_score**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:193](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L193)
+Defined in: [src/types/screening.ts:193](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L193)
 
 #### Inherited from
 
@@ -357,7 +357,7 @@ Defined in: [src/types/screening.ts:193](https://github.com/kcenon/screener_syst
 
 > `optional` **piotroski\_f\_score**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:194](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L194)
+Defined in: [src/types/screening.ts:194](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L194)
 
 #### Inherited from
 
@@ -369,7 +369,7 @@ Defined in: [src/types/screening.ts:194](https://github.com/kcenon/screener_syst
 
 > `optional` **price\_change\_1d**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:195](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L195)
+Defined in: [src/types/screening.ts:195](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L195)
 
 #### Inherited from
 
@@ -381,7 +381,7 @@ Defined in: [src/types/screening.ts:195](https://github.com/kcenon/screener_syst
 
 > `optional` **price\_change\_1w**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:196](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L196)
+Defined in: [src/types/screening.ts:196](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L196)
 
 #### Inherited from
 
@@ -393,7 +393,7 @@ Defined in: [src/types/screening.ts:196](https://github.com/kcenon/screener_syst
 
 > `optional` **price\_change\_1m**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:197](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L197)
+Defined in: [src/types/screening.ts:197](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L197)
 
 #### Inherited from
 
@@ -405,7 +405,7 @@ Defined in: [src/types/screening.ts:197](https://github.com/kcenon/screener_syst
 
 > `optional` **price\_change\_3m**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:198](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L198)
+Defined in: [src/types/screening.ts:198](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L198)
 
 #### Inherited from
 
@@ -417,7 +417,7 @@ Defined in: [src/types/screening.ts:198](https://github.com/kcenon/screener_syst
 
 > `optional` **price\_change\_6m**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:199](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L199)
+Defined in: [src/types/screening.ts:199](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L199)
 
 #### Inherited from
 
@@ -429,7 +429,7 @@ Defined in: [src/types/screening.ts:199](https://github.com/kcenon/screener_syst
 
 > `optional` **price\_change\_1y**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:200](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L200)
+Defined in: [src/types/screening.ts:200](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L200)
 
 #### Inherited from
 
@@ -441,7 +441,7 @@ Defined in: [src/types/screening.ts:200](https://github.com/kcenon/screener_syst
 
 > `optional` **volume\_surge\_pct**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:201](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L201)
+Defined in: [src/types/screening.ts:201](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L201)
 
 #### Inherited from
 
@@ -453,7 +453,7 @@ Defined in: [src/types/screening.ts:201](https://github.com/kcenon/screener_syst
 
 > `optional` **quality\_score**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:202](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L202)
+Defined in: [src/types/screening.ts:202](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L202)
 
 #### Inherited from
 
@@ -465,7 +465,7 @@ Defined in: [src/types/screening.ts:202](https://github.com/kcenon/screener_syst
 
 > `optional` **value\_score**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:203](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L203)
+Defined in: [src/types/screening.ts:203](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L203)
 
 #### Inherited from
 
@@ -477,7 +477,7 @@ Defined in: [src/types/screening.ts:203](https://github.com/kcenon/screener_syst
 
 > `optional` **growth\_score**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:204](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L204)
+Defined in: [src/types/screening.ts:204](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L204)
 
 #### Inherited from
 
@@ -489,7 +489,7 @@ Defined in: [src/types/screening.ts:204](https://github.com/kcenon/screener_syst
 
 > `optional` **momentum\_score**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:205](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L205)
+Defined in: [src/types/screening.ts:205](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L205)
 
 #### Inherited from
 
@@ -501,7 +501,7 @@ Defined in: [src/types/screening.ts:205](https://github.com/kcenon/screener_syst
 
 > `optional` **overall\_score**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:206](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L206)
+Defined in: [src/types/screening.ts:206](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/screening.ts#L206)
 
 #### Inherited from
 
@@ -513,6 +513,6 @@ Defined in: [src/types/screening.ts:206](https://github.com/kcenon/screener_syst
 
 > `optional` **metadata**: [`StockMetadata`](StockMetadata.md)
 
-Defined in: [src/types/stock.ts:167](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L167)
+Defined in: [src/types/stock.ts:167](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/types/stock.ts#L167)
 
 Additional metadata

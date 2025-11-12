@@ -8,7 +8,7 @@
 
 > **default**(): `Element`
 
-Defined in: [src/App.tsx:3](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/App.tsx#L3)
+Defined in: [src/App.tsx:3](https://github.com/kcenon/screener_system/blob/4c55f6de748e382859e70b16429f6387e4cb3ab4/frontend/src/App.tsx#L3)
 
 ## Returns
 

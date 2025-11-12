@@ -6,6 +6,16 @@
 
 ## Modules
 
+### Services
+
+- [services/api](services/api/README.md)
+
+### Store
+
+- [store/authStore](store/authStore/README.md)
+
+### Other
+
 - [App](App/README.md)
 - [components/ProtectedRoute](components/ProtectedRoute/README.md)
 - [components/common/Pagination](components/common/Pagination/README.md)
@@ -39,11 +49,9 @@
 - [pages/ScreenerPage](pages/ScreenerPage/README.md)
 - [pages/StockDetailPage](pages/StockDetailPage/README.md)
 - [router](router/README.md)
-- [services/api](services/api/README.md)
 - [services/authService](services/authService/README.md)
 - [services/stockService](services/stockService/README.md)
 - [services/websocketService](services/websocketService/README.md)
-- [store/authStore](store/authStore/README.md)
 - [types](types/README.md)
 - [types/screening](types/screening/README.md)
 - [types/stock](types/stock/README.md)
