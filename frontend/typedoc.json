@@ -1,0 +1,78 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "../docs-site/docs/api/frontend",
+  "plugin": ["typedoc-plugin-markdown"],
+  "exclude": [
+    "**/node_modules/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/test/**",
+    "**/vite-env.d.ts"
+  ],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "excludeExternals": true,
+  "categorizeByGroup": true,
+  "categoryOrder": [
+    "Components",
+    "Hooks",
+    "Services",
+    "Store",
+    "Types",
+    "Utilities",
+    "*"
+  ],
+  "groupOrder": [
+    "Components",
+    "Hooks",
+    "Services",
+    "Store",
+    "Types",
+    "Utilities",
+    "*"
+  ],
+  "sort": [
+    "kind",
+    "source-order"
+  ],
+  "kindSortOrder": [
+    "Project",
+    "Module",
+    "Namespace",
+    "Enum",
+    "EnumMember",
+    "Class",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method",
+    "Parameter",
+    "TypeParameter",
+    "TypeAlias",
+    "Interface",
+    "Reference"
+  ],
+  "includeVersion": true,
+  "readme": "README.md",
+  "name": "Stock Screening Platform - Frontend API",
+  "navigationLinks": {
+    "Main Documentation": "../",
+    "GitHub": "https://github.com/kcenon/screener_system"
+  },
+  "searchInComments": true,
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": false
+  },
+  "treatWarningsAsErrors": false,
+  "skipErrorChecking": false,
+  "logLevel": "Info"
+}
