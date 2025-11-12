@@ -1,0 +1,10 @@
+# Gitleaks ignore file
+# Ignore false positives in documentation examples
+
+# API documentation examples with placeholder tokens
+docs-site/docs/api/intro.md:48
+docs-site/docs/api/intro.md:60
+
+# Tutorial and example files may contain fake credentials
+docs-site/docs/tutorial-*/**
+docs-site/blog/**
