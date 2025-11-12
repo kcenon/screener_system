@@ -166,6 +166,7 @@ services:
       - ./data_pipeline/dags:/opt/airflow/dags
       - ./data_pipeline/plugins:/opt/airflow/plugins
       - ./data_pipeline/config:/opt/airflow/config
+      - ./data_pipeline/scripts:/opt/airflow/scripts
       - airflow_logs:/opt/airflow/logs
     command: webserver
     healthcheck:
@@ -198,6 +199,7 @@ services:
       - ./data_pipeline/dags:/opt/airflow/dags
       - ./data_pipeline/plugins:/opt/airflow/plugins
       - ./data_pipeline/config:/opt/airflow/config
+      - ./data_pipeline/scripts:/opt/airflow/scripts
       - airflow_logs:/opt/airflow/logs
     command: scheduler
     networks:

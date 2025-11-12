@@ -1,9 +1,10 @@
 # BUGFIX-011: Resolve Airflow DAG Import Error (krx_api_client)
 
-**Status**: TODO
+**Status**: DONE
 **Priority**: High
-**Assignee**: TBD
+**Assignee**: Development Team
 **Estimated Time**: 3 hours
+**Actual Time**: 2 hours
 **Sprint**: Post-MVP Data Pipeline
 **Tags**: airflow, dag, import-error, data-pipeline, bugfix
 
@@ -367,8 +368,41 @@ docker exec screener_airflow_webserver \
 
 ## Progress
 
-- **Current**: 0%
-- **Updated**: 2024-11-11
+- **Current**: 100%
+- **Updated**: 2025-11-12
+- **Completed**: 2025-11-12
+
+## Solution Implemented
+
+### Changes Made
+1. **Created `data_pipeline/scripts/__init__.py`**
+   - Made scripts directory a proper Python package
+   - Exported commonly used classes and functions
+   - Added package-level documentation
+
+2. **Updated `docker-compose.yml`**
+   - Added scripts volume mount to airflow_webserver
+   - Added scripts volume mount to airflow_scheduler
+   - Volume mapping: `./data_pipeline/scripts:/opt/airflow/scripts`
+
+3. **Updated `data_pipeline/dags/daily_price_ingestion_dag.py`**
+   - Enhanced import path handling for Docker environment
+   - Added absolute path `/opt/airflow/scripts` to sys.path
+   - Fixed missing `Optional` import from typing module
+
+### Verification
+```bash
+$ docker exec screener_airflow_webserver airflow dags list-import-errors
+No data found
+
+$ docker exec screener_airflow_webserver airflow dags list
+dag_id                | filepath                     | owner     | paused
+======================+==============================+===========+=======
+daily_price_ingestion | daily_price_ingestion_dag.py | data-team | True
+indicator_calculation | indicator_calculation_dag.py | data-team | True
+```
+
+Both DAGs now recognized successfully (2/2)!
 
 ## Notes
 
