@@ -10,3 +10,6 @@ docs-site/docs/api/intro.md:60
 # Tutorial and example files may contain fake credentials
 docs-site/docs/tutorial-*/**
 docs-site/blog/**
+
+# Documentation templates contain example API tokens and credentials
+docs-site/docs/08-contributing/templates/**
