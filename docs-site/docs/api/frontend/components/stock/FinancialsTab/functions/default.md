@@ -8,7 +8,7 @@
 
 > **default**(`__namedParameters`): `Element`
 
-Defined in: [src/components/stock/FinancialsTab.tsx:22](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/components/stock/FinancialsTab.tsx#L22)
+Defined in: [src/components/stock/FinancialsTab.tsx:22](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/components/stock/FinancialsTab.tsx#L22)
 
 Financials Tab Component
 

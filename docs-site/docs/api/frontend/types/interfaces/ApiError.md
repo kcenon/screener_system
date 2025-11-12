@@ -6,7 +6,7 @@
 
 # Interface: ApiError
 
-Defined in: [src/types/index.ts:69](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L69)
+Defined in: [src/types/index.ts:69](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L69)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/types/index.ts:69](https://github.com/kcenon/screener_system/bl
 
 > **detail**: `string`
 
-Defined in: [src/types/index.ts:70](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L70)
+Defined in: [src/types/index.ts:70](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L70)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [src/types/index.ts:70](https://github.com/kcenon/screener_system/bl
 
 > `optional` **status\_code**: `number`
 
-Defined in: [src/types/index.ts:71](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L71)
+Defined in: [src/types/index.ts:71](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L71)

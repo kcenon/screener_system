@@ -6,7 +6,7 @@
 
 # Interface: FilterRange
 
-Defined in: [src/types/screening.ts:8](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L8)
+Defined in: [src/types/screening.ts:8](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L8)
 
 Range filter with min/max values
 
@@ -16,7 +16,7 @@ Range filter with min/max values
 
 > `optional` **min**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:10](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L10)
+Defined in: [src/types/screening.ts:10](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L10)
 
 Minimum value (inclusive)
 
@@ -26,6 +26,6 @@ Minimum value (inclusive)
 
 > `optional` **max**: `number` \| `null`
 
-Defined in: [src/types/screening.ts:12](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L12)
+Defined in: [src/types/screening.ts:12](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L12)
 
 Maximum value (inclusive)

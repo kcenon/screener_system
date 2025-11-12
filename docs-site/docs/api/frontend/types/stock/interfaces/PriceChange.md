@@ -6,7 +6,7 @@
 
 # Interface: PriceChange
 
-Defined in: [src/types/stock.ts:205](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L205)
+Defined in: [src/types/stock.ts:205](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L205)
 
 Price change statistics
 
@@ -16,7 +16,7 @@ Price change statistics
 
 > **value**: `number`
 
-Defined in: [src/types/stock.ts:207](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L207)
+Defined in: [src/types/stock.ts:207](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L207)
 
 Change value (absolute)
 
@@ -26,7 +26,7 @@ Change value (absolute)
 
 > **percentage**: `number`
 
-Defined in: [src/types/stock.ts:209](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L209)
+Defined in: [src/types/stock.ts:209](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L209)
 
 Change percentage
 
@@ -36,6 +36,6 @@ Change percentage
 
 > **is\_positive**: `boolean`
 
-Defined in: [src/types/stock.ts:211](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L211)
+Defined in: [src/types/stock.ts:211](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L211)
 
 Is positive change

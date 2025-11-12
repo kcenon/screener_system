@@ -6,7 +6,7 @@
 
 # Interface: ScreeningMetadata
 
-Defined in: [src/types/screening.ts:212](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L212)
+Defined in: [src/types/screening.ts:212](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L212)
 
 Screening response metadata
 
@@ -16,7 +16,7 @@ Screening response metadata
 
 > **total**: `number`
 
-Defined in: [src/types/screening.ts:214](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L214)
+Defined in: [src/types/screening.ts:214](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L214)
 
 Total number of matching stocks
 
@@ -26,7 +26,7 @@ Total number of matching stocks
 
 > **page**: `number`
 
-Defined in: [src/types/screening.ts:216](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L216)
+Defined in: [src/types/screening.ts:216](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L216)
 
 Current page number
 
@@ -36,7 +36,7 @@ Current page number
 
 > **per\_page**: `number`
 
-Defined in: [src/types/screening.ts:218](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L218)
+Defined in: [src/types/screening.ts:218](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L218)
 
 Results per page
 
@@ -46,6 +46,6 @@ Results per page
 
 > **total\_pages**: `number`
 
-Defined in: [src/types/screening.ts:220](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/screening.ts#L220)
+Defined in: [src/types/screening.ts:220](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/screening.ts#L220)
 
 Total number of pages

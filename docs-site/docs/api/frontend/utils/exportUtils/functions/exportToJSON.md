@@ -8,7 +8,7 @@
 
 > **exportToJSON**(`stocks`, `filename?`): `void`
 
-Defined in: [src/utils/exportUtils.ts:116](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/utils/exportUtils.ts#L116)
+Defined in: [src/utils/exportUtils.ts:116](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/utils/exportUtils.ts#L116)
 
 Export stock screening results to JSON
 

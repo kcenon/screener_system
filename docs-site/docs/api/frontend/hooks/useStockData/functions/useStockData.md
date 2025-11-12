@@ -8,7 +8,7 @@
 
 > **useStockData**(`code`): `UseQueryResult`\<[`StockDetail`](../../../types/stock/interfaces/StockDetail.md), `Error`\>
 
-Defined in: [src/hooks/useStockData.ts:26](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/hooks/useStockData.ts#L26)
+Defined in: [src/hooks/useStockData.ts:26](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useStockData.ts#L26)
 
 Hook for fetching and caching stock detail data
 

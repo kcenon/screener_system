@@ -6,7 +6,7 @@
 
 # Interface: ChartTimeframe
 
-Defined in: [src/types/stock.ts:178](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L178)
+Defined in: [src/types/stock.ts:178](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L178)
 
 Chart timeframe for price chart
 
@@ -16,7 +16,7 @@ Chart timeframe for price chart
 
 > **label**: `string`
 
-Defined in: [src/types/stock.ts:180](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L180)
+Defined in: [src/types/stock.ts:180](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L180)
 
 Display label
 
@@ -26,7 +26,7 @@ Display label
 
 > **value**: [`PriceInterval`](../type-aliases/PriceInterval.md)
 
-Defined in: [src/types/stock.ts:182](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L182)
+Defined in: [src/types/stock.ts:182](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L182)
 
 Value for API
 
@@ -36,6 +36,6 @@ Value for API
 
 > `optional` **days**: `number`
 
-Defined in: [src/types/stock.ts:184](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L184)
+Defined in: [src/types/stock.ts:184](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L184)
 
 Number of days to fetch

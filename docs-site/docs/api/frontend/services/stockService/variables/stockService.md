@@ -8,4 +8,4 @@
 
 > `const` **stockService**: `StockService`
 
-Defined in: [src/services/stockService.ts:159](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/stockService.ts#L159)
+Defined in: [src/services/stockService.ts:159](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/stockService.ts#L159)

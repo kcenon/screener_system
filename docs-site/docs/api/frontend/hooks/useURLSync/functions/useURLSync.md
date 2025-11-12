@@ -8,7 +8,7 @@
 
 > **useURLSync**(`filters`, `setFilters`, `sort`, `setSort`, `pagination`, `setPagination`): `void`
 
-Defined in: [src/hooks/useURLSync.ts:96](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/hooks/useURLSync.ts#L96)
+Defined in: [src/hooks/useURLSync.ts:96](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useURLSync.ts#L96)
 
 Hook for synchronizing filters, sort, and pagination with URL
 

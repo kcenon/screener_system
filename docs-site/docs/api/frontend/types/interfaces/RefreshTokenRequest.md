@@ -6,7 +6,7 @@
 
 # Interface: RefreshTokenRequest
 
-Defined in: [src/types/index.ts:30](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L30)
+Defined in: [src/types/index.ts:30](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L30)
 
 ## Properties
 
@@ -14,4 +14,4 @@ Defined in: [src/types/index.ts:30](https://github.com/kcenon/screener_system/bl
 
 > **refresh\_token**: `string`
 
-Defined in: [src/types/index.ts:31](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L31)
+Defined in: [src/types/index.ts:31](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L31)

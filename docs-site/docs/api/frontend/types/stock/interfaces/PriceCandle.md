@@ -6,7 +6,7 @@
 
 # Interface: PriceCandle
 
-Defined in: [src/types/stock.ts:15](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L15)
+Defined in: [src/types/stock.ts:15](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L15)
 
 Single candle in price history
 
@@ -16,7 +16,7 @@ Single candle in price history
 
 > **date**: `string`
 
-Defined in: [src/types/stock.ts:17](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L17)
+Defined in: [src/types/stock.ts:17](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L17)
 
 Trading date (ISO 8601)
 
@@ -26,7 +26,7 @@ Trading date (ISO 8601)
 
 > **open**: `number`
 
-Defined in: [src/types/stock.ts:19](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L19)
+Defined in: [src/types/stock.ts:19](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L19)
 
 Opening price
 
@@ -36,7 +36,7 @@ Opening price
 
 > **high**: `number`
 
-Defined in: [src/types/stock.ts:21](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L21)
+Defined in: [src/types/stock.ts:21](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L21)
 
 Highest price
 
@@ -46,7 +46,7 @@ Highest price
 
 > **low**: `number`
 
-Defined in: [src/types/stock.ts:23](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L23)
+Defined in: [src/types/stock.ts:23](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L23)
 
 Lowest price
 
@@ -56,7 +56,7 @@ Lowest price
 
 > **close**: `number`
 
-Defined in: [src/types/stock.ts:25](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L25)
+Defined in: [src/types/stock.ts:25](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L25)
 
 Closing price
 
@@ -66,7 +66,7 @@ Closing price
 
 > **volume**: `number`
 
-Defined in: [src/types/stock.ts:27](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L27)
+Defined in: [src/types/stock.ts:27](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L27)
 
 Trading volume
 
@@ -76,6 +76,6 @@ Trading volume
 
 > `optional` **change\_pct**: `number`
 
-Defined in: [src/types/stock.ts:29](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L29)
+Defined in: [src/types/stock.ts:29](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L29)
 
 Price change from previous close (%)

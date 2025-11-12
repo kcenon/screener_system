@@ -8,4 +8,4 @@
 
 > `const` **useAuthStore**: `UseBoundStore`\<`WithPersist`\<`StoreApi`\<`AuthState`\>, `AuthState`\>\>
 
-Defined in: [src/store/authStore.ts:17](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/store/authStore.ts#L17)
+Defined in: [src/store/authStore.ts:17](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/store/authStore.ts#L17)

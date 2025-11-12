@@ -6,7 +6,7 @@
 
 # Class: WebSocketService
 
-Defined in: [src/services/websocketService.ts:125](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L125)
+Defined in: [src/services/websocketService.ts:125](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L125)
 
 WebSocket Service Class
 
@@ -18,7 +18,7 @@ Manages WebSocket connection lifecycle and subscriptions
 
 > **new WebSocketService**(`config`): `WebSocketService`
 
-Defined in: [src/services/websocketService.ts:137](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L137)
+Defined in: [src/services/websocketService.ts:137](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L137)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [src/services/websocketService.ts:137](https://github.com/kcenon/scr
 
 > **connect**(): `void`
 
-Defined in: [src/services/websocketService.ts:151](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L151)
+Defined in: [src/services/websocketService.ts:151](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L151)
 
 Connect to WebSocket server
 
@@ -50,7 +50,7 @@ Connect to WebSocket server
 
 > **disconnect**(): `void`
 
-Defined in: [src/services/websocketService.ts:185](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L185)
+Defined in: [src/services/websocketService.ts:185](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L185)
 
 Disconnect from WebSocket server
 
@@ -64,7 +64,7 @@ Disconnect from WebSocket server
 
 > **subscribe**(`type`, `identifier`): `void`
 
-Defined in: [src/services/websocketService.ts:201](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L201)
+Defined in: [src/services/websocketService.ts:201](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L201)
 
 Subscribe to stock updates
 
@@ -88,7 +88,7 @@ Subscribe to stock updates
 
 > **unsubscribe**(`type`, `identifier`): `void`
 
-Defined in: [src/services/websocketService.ts:223](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L223)
+Defined in: [src/services/websocketService.ts:223](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L223)
 
 Unsubscribe from stock updates
 
@@ -112,7 +112,7 @@ Unsubscribe from stock updates
 
 > **onMessage**(`handler`): () => `void`
 
-Defined in: [src/services/websocketService.ts:245](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L245)
+Defined in: [src/services/websocketService.ts:245](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L245)
 
 Add message handler
 
@@ -136,7 +136,7 @@ Add message handler
 
 > **onStateChange**(`handler`): () => `void`
 
-Defined in: [src/services/websocketService.ts:257](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L257)
+Defined in: [src/services/websocketService.ts:257](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L257)
 
 Add state change handler
 
@@ -160,7 +160,7 @@ Add state change handler
 
 > **getState**(): [`WSConnectionState`](../type-aliases/WSConnectionState.md)
 
-Defined in: [src/services/websocketService.ts:269](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L269)
+Defined in: [src/services/websocketService.ts:269](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L269)
 
 Get current connection state
 
@@ -174,7 +174,7 @@ Get current connection state
 
 > **isConnected**(): `boolean`
 
-Defined in: [src/services/websocketService.ts:276](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/services/websocketService.ts#L276)
+Defined in: [src/services/websocketService.ts:276](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/services/websocketService.ts#L276)
 
 Check if connected
 

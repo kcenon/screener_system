@@ -8,7 +8,7 @@
 
 > **useCurrentUser**(): `UseQueryResult`\<[`User`](../../../types/interfaces/User.md), `Error`\>
 
-Defined in: [src/hooks/useAuth.ts:78](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/hooks/useAuth.ts#L78)
+Defined in: [src/hooks/useAuth.ts:78](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useAuth.ts#L78)
 
 Hook for fetching current user
 

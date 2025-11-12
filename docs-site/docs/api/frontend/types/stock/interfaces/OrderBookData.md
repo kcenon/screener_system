@@ -6,7 +6,7 @@
 
 # Interface: OrderBookData
 
-Defined in: [src/types/stock.ts:235](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L235)
+Defined in: [src/types/stock.ts:235](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L235)
 
 Complete order book data
 
@@ -16,7 +16,7 @@ Complete order book data
 
 > **stock\_code**: `string`
 
-Defined in: [src/types/stock.ts:237](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L237)
+Defined in: [src/types/stock.ts:237](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L237)
 
 Stock code
 
@@ -26,7 +26,7 @@ Stock code
 
 > **timestamp**: `string`
 
-Defined in: [src/types/stock.ts:239](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L239)
+Defined in: [src/types/stock.ts:239](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L239)
 
 Timestamp of the order book snapshot (ISO 8601)
 
@@ -36,7 +36,7 @@ Timestamp of the order book snapshot (ISO 8601)
 
 > `optional` **sequence**: `number`
 
-Defined in: [src/types/stock.ts:241](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L241)
+Defined in: [src/types/stock.ts:241](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L241)
 
 Sequence number for ordering updates
 
@@ -46,7 +46,7 @@ Sequence number for ordering updates
 
 > **asks**: [`OrderBookLevel`](OrderBookLevel.md)[]
 
-Defined in: [src/types/stock.ts:243](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L243)
+Defined in: [src/types/stock.ts:243](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L243)
 
 Array of ask levels (매도, sell orders) - sorted from lowest to highest
 
@@ -56,7 +56,7 @@ Array of ask levels (매도, sell orders) - sorted from lowest to highest
 
 > **bids**: [`OrderBookLevel`](OrderBookLevel.md)[]
 
-Defined in: [src/types/stock.ts:245](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L245)
+Defined in: [src/types/stock.ts:245](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L245)
 
 Array of bid levels (매수, buy orders) - sorted from highest to lowest
 
@@ -66,7 +66,7 @@ Array of bid levels (매수, buy orders) - sorted from highest to lowest
 
 > `optional` **best\_ask**: `number`
 
-Defined in: [src/types/stock.ts:247](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L247)
+Defined in: [src/types/stock.ts:247](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L247)
 
 Best ask price (lowest sell price)
 
@@ -76,7 +76,7 @@ Best ask price (lowest sell price)
 
 > `optional` **best\_bid**: `number`
 
-Defined in: [src/types/stock.ts:249](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L249)
+Defined in: [src/types/stock.ts:249](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L249)
 
 Best bid price (highest buy price)
 
@@ -86,7 +86,7 @@ Best bid price (highest buy price)
 
 > `optional` **spread**: `number`
 
-Defined in: [src/types/stock.ts:251](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L251)
+Defined in: [src/types/stock.ts:251](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L251)
 
 Spread (best_ask - best_bid)
 
@@ -96,7 +96,7 @@ Spread (best_ask - best_bid)
 
 > `optional` **spread\_pct**: `number`
 
-Defined in: [src/types/stock.ts:253](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L253)
+Defined in: [src/types/stock.ts:253](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L253)
 
 Spread percentage ((spread / mid_price) * 100)
 
@@ -106,6 +106,6 @@ Spread percentage ((spread / mid_price) * 100)
 
 > `optional` **mid\_price**: `number`
 
-Defined in: [src/types/stock.ts:255](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/stock.ts#L255)
+Defined in: [src/types/stock.ts:255](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/stock.ts#L255)
 
 Mid price ((best_ask + best_bid) / 2)

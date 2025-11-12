@@ -8,7 +8,7 @@
 
 > **useLogoutAll**(): `UseMutationResult`\<`void`, `Error`, `void`, `unknown`\>
 
-Defined in: [src/hooks/useAuth.ts:60](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/hooks/useAuth.ts#L60)
+Defined in: [src/hooks/useAuth.ts:60](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/hooks/useAuth.ts#L60)
 
 Hook for logout from all sessions
 

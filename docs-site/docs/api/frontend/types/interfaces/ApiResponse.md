@@ -6,7 +6,7 @@
 
 # Interface: ApiResponse\<T\>
 
-Defined in: [src/types/index.ts:56](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L56)
+Defined in: [src/types/index.ts:56](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L56)
 
 ## Type Parameters
 
@@ -20,7 +20,7 @@ Defined in: [src/types/index.ts:56](https://github.com/kcenon/screener_system/bl
 
 > **data**: `T`
 
-Defined in: [src/types/index.ts:57](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L57)
+Defined in: [src/types/index.ts:57](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L57)
 
 ***
 
@@ -28,4 +28,4 @@ Defined in: [src/types/index.ts:57](https://github.com/kcenon/screener_system/bl
 
 > `optional` **message**: `string`
 
-Defined in: [src/types/index.ts:58](https://github.com/kcenon/screener_system/blob/9a2d6f9db285c87b739af1754b1456d58585fb13/frontend/src/types/index.ts#L58)
+Defined in: [src/types/index.ts:58](https://github.com/kcenon/screener_system/blob/d044d1d2aa4ff785068489ad5946f0ac8c432792/frontend/src/types/index.ts#L58)
