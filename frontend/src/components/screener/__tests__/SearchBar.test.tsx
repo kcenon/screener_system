@@ -64,7 +64,10 @@ describe('SearchBar', () => {
 
   describe('User Input', () => {
     it('updates input value on user typing', async () => {
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+        advanceTimers: vi.advanceTimersByTime,
+      })
       render(<SearchBar value="" onChange={onChangeMock} />)
 
       const input = screen.getByRole('textbox')
@@ -74,7 +77,10 @@ describe('SearchBar', () => {
     })
 
     it('debounces onChange callback (300ms)', async () => {
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+        advanceTimers: vi.advanceTimersByTime,
+      })
       render(<SearchBar value="" onChange={onChangeMock} />)
 
       const input = screen.getByRole('textbox')
@@ -96,7 +102,10 @@ describe('SearchBar', () => {
     })
 
     it('debounces multiple rapid inputs correctly', async () => {
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+        advanceTimers: vi.advanceTimersByTime,
+      })
       render(<SearchBar value="" onChange={onChangeMock} />)
 
       const input = screen.getByRole('textbox')
@@ -140,7 +149,10 @@ describe('SearchBar', () => {
     })
 
     it('clears input and calls onChange when clear button is clicked', async () => {
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+        advanceTimers: vi.advanceTimersByTime,
+      })
       render(<SearchBar value="Samsung" onChange={onChangeMock} />)
 
       const clearButton = screen.getByRole('button', { name: /clear search/i })
@@ -152,7 +164,10 @@ describe('SearchBar', () => {
     })
 
     it('focuses input after clearing', async () => {
-      const user = userEvent.setup({ delay: null })
+      const user = userEvent.setup({
+        delay: null,
+        advanceTimers: vi.advanceTimersByTime,
+      })
       render(<SearchBar value="Samsung" onChange={onChangeMock} />)
 
       const clearButton = screen.getByRole('button', { name: /clear search/i })
