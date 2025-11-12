@@ -1,0 +1,18 @@
+# ============================================================================
+# Documentation Build Dependencies
+# ============================================================================
+
+# Core Sphinx
+sphinx==7.2.6
+sphinx-rtd-theme==2.0.0
+
+# Sphinx Extensions
+sphinx-autodoc-typehints==2.0.0
+sphinx-copybutton==0.5.2
+sphinxcontrib-mermaid==0.9.2
+
+# Python Google-style Docstrings
+myst-parser==2.0.0
+
+# Backend dependencies (needed for autodoc to import modules)
+-r backend/requirements.txt

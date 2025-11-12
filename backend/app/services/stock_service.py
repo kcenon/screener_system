@@ -1,4 +1,27 @@
-"""Stock service for business logic and caching"""
+"""Stock service layer for business logic and caching.
+
+This module provides the StockService class that implements business logic
+for stock-related operations with intelligent caching strategies.
+
+The service layer acts as an intermediary between API endpoints and the
+data access layer (repositories), providing:
+    - Data transformation and validation
+    - Caching logic with appropriate TTLs
+    - Business logic orchestration
+    - Error handling and exception translation
+
+Example:
+    Initialize the service with a database session and cache manager::
+
+        from app.services import StockService
+        from app.core.cache import cache_manager
+        from app.db import get_session
+
+        async with get_session() as session:
+            service = StockService(session, cache_manager)
+            stock = await service.get_stock_by_code("005930")
+            print(f"{stock.name}: {stock.latest_price.close_price:,} KRW")
+"""
 
 from datetime import date
 from typing import List, Optional
@@ -15,7 +38,27 @@ from app.schemas import (CalculatedIndicator, DailyPrice, FinancialStatement,
 
 
 class StockService:
-    """Service for stock operations with caching"""
+    """Service for stock operations with intelligent caching strategies.
+
+    This class implements business logic for stock-related operations including
+    listing, searching, retrieving details, and accessing historical data.
+    All operations are cached with appropriate TTLs to optimize performance.
+
+    Attributes:
+        STOCK_DETAIL_TTL: Cache TTL for stock details (5 minutes).
+        STOCK_LIST_TTL: Cache TTL for stock listings (5 minutes).
+        PRICE_DATA_TTL: Cache TTL for price history (30 minutes).
+        FINANCIAL_TTL: Cache TTL for financial statements (1 day).
+        SEARCH_TTL: Cache TTL for search results (10 minutes).
+        session: Async SQLAlchemy session for database operations.
+        cache: Cache manager instance for Redis operations.
+        stock_repo: Stock repository for data access.
+
+    Example:
+        >>> service = StockService(session, cache_manager)
+        >>> stocks = await service.list_stocks(market="KOSPI", page=1)
+        >>> print(f"Found {stocks.meta.total} stocks")
+    """
 
     # Cache TTL (seconds)
     STOCK_DETAIL_TTL = 5 * 60  # 5 minutes
@@ -25,7 +68,12 @@ class StockService:
     SEARCH_TTL = 10 * 60  # 10 minutes
 
     def __init__(self, session: AsyncSession, cache: CacheManager):
-        """Initialize service with database session and cache"""
+        """Initialize service with database session and cache manager.
+
+        Args:
+            session: Async SQLAlchemy session for database operations.
+            cache: CacheManager instance for Redis caching operations.
+        """
         self.session = session
         self.cache = cache
         self.stock_repo = StockRepository(session)
@@ -105,17 +153,37 @@ class StockService:
         return response
 
     async def get_stock_by_code(self, stock_code: str) -> StockDetail:
-        """
-        Get stock detail by code with caching
+        """Get comprehensive stock details by stock code with caching.
+
+        Retrieves detailed stock information including basic info, latest price data,
+        and calculated technical indicators. Results are cached for 5 minutes to
+        improve performance and reduce database load.
 
         Args:
-            stock_code: 6-digit stock code
+            stock_code: 6-digit Korean stock code (e.g., "005930" for Samsung Electronics).
 
         Returns:
-            StockDetail with latest price and indicators
+            StockDetail: Comprehensive stock information containing:
+                - Basic info: code, name, market, sector, industry
+                - Latest price: OHLCV data with timestamps
+                - Latest indicators: 200+ technical and financial indicators
+                - Company info: shares outstanding, listing date, etc.
 
         Raises:
-            NotFoundException: If stock not found
+            NotFoundException: If the stock code does not exist in the database.
+            ValidationError: If the stock code format is invalid (implicit via Pydantic).
+
+        Note:
+            This method uses Redis cache with key format: `stock:detail:{stock_code}`
+            Cache TTL is 5 minutes (STOCK_DETAIL_TTL).
+
+        Example:
+            >>> service = StockService(session, cache)
+            >>> detail = await service.get_stock_by_code("005930")
+            >>> print(f"{detail.name}: {detail.latest_price.close_price:,} KRW")
+            Samsung Electronics: 71,000 KRW
+            >>> print(f"P/E Ratio: {detail.latest_indicators.per:.2f}")
+            P/E Ratio: 15.23
         """
         # Check cache
         cache_key = f"stock:detail:{stock_code}"
