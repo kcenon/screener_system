@@ -10,3 +10,7 @@ docs-site/docs/api/intro.md:60
 # Tutorial and example files may contain fake credentials
 docs-site/docs/tutorial-*/**
 docs-site/blog/**
+
+# Documentation templates contain example API tokens and credentials (not real secrets)
+80f695e235f408dd2db881e60b0d8ebc8fb2a80d:docs-site/docs/08-contributing/templates/api-documentation-template.md:curl-auth-header:190
+c539dca88d0e0f39ea1fb65ef4e0cefb1b0bb6f8:docs-site/docs/08-contributing/templates/api-documentation-template.md:curl-auth-header:190
