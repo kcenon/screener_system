@@ -31,7 +31,7 @@ scripts_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'sc
 if scripts_path not in sys.path:
     sys.path.insert(0, scripts_path)
 # Also try absolute path in Docker container
-airflow_scripts_path = '/opt/airflow/data_pipeline/scripts'
+airflow_scripts_path = '/opt/airflow/scripts'
 if airflow_scripts_path not in sys.path:
     sys.path.insert(0, airflow_scripts_path)
 
