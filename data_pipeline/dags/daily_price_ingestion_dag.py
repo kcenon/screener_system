@@ -20,18 +20,20 @@ from airflow.utils.task_group import TaskGroup
 import logging
 import os
 import sys
+import time
 import requests
 import pandas as pd
 from typing import List, Dict, Optional
 
 # Add scripts directory to Python path for imports
 # Use absolute path for Docker environment
-scripts_path = os.path.join(os.path.dirname(__file__), '..', 'scripts')
+scripts_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 if scripts_path not in sys.path:
     sys.path.insert(0, scripts_path)
 # Also try absolute path in Docker container
-if '/opt/airflow/scripts' not in sys.path:
-    sys.path.insert(0, '/opt/airflow/scripts')
+airflow_scripts_path = '/opt/airflow/data_pipeline/scripts'
+if airflow_scripts_path not in sys.path:
+    sys.path.insert(0, airflow_scripts_path)
 
 # Import both KRX client and data source abstraction layer
 from krx_api_client import create_client as create_krx_client, PriceData
