@@ -1488,6 +1488,176 @@ def update_daily_prices():
 
 ---
 
+### 6.7 Documentation Infrastructure
+
+#### Unified Documentation Platform
+
+To ensure comprehensive, accessible, and maintainable documentation for all stakeholders (developers, users, QA, and business teams), we will implement a unified documentation platform that consolidates all project documentation.
+
+**Documentation Platform**: Docusaurus (React-based)
+
+**Rationale**:
+- **Modern & Interactive**: React-based with MDX support for interactive components
+- **Multi-language Support**: Integrates with Python (Sphinx) and TypeScript (TypeDoc) auto-documentation
+- **Developer-friendly**: Markdown-based authoring with hot reload
+- **Search & Navigation**: Built-in search with Algolia DocSearch integration
+- **Versioning**: Support for multiple documentation versions
+- **Deployment**: Simple deployment to GitHub Pages, Vercel, or Netlify with CDN
+
+#### Documentation Structure
+
+```
+docs-site/
+├── docs/
+│   ├── 01-getting-started/          # Quickstart, installation, setup
+│   ├── 02-guides/
+│   │   ├── user-guides/             # End-user feature guides
+│   │   ├── developer-guides/        # Development, testing, debugging
+│   │   └── deployment/              # Docker, K8s, monitoring setup
+│   ├── 03-api-reference/
+│   │   ├── backend/                 # Auto-generated from Python (Sphinx)
+│   │   ├── frontend/                # Auto-generated from TypeScript (TypeDoc)
+│   │   ├── rest-api.md              # REST API endpoints
+│   │   ├── websocket-api.md         # WebSocket API
+│   │   └── rate-limiting.md         # Rate limiting policies
+│   ├── 04-architecture/
+│   │   ├── system-design.md         # High-level architecture
+│   │   ├── database-schema.md       # Database design
+│   │   ├── data-pipeline.md         # Airflow DAGs
+│   │   ├── security.md              # Security architecture
+│   │   └── performance.md           # Performance design
+│   ├── 05-specifications/
+│   │   ├── prd.md                   # Product Requirements Document
+│   │   ├── srs.md                   # Software Requirements Specification
+│   │   └── sds.md                   # Software Design Specification
+│   └── 06-operations/
+│       ├── monitoring.md            # Monitoring & alerting
+│       ├── troubleshooting.md       # Common issues & solutions
+│       ├── performance-tuning.md    # Optimization guide
+│       └── disaster-recovery.md     # DR procedures
+└── blog/                            # Release notes, updates
+```
+
+#### Auto-Documentation Integration
+
+| Component | Tool | Source | Output |
+|-----------|------|--------|--------|
+| **Python Backend** | Sphinx + autodoc | Docstrings in `.py` files | API reference HTML |
+| **TypeScript Frontend** | TypeDoc | TSDoc comments in `.ts/.tsx` | Component docs |
+| **REST API** | FastAPI | OpenAPI spec | Interactive API docs |
+| **Database** | SchemaSpy | PostgreSQL schema | ER diagrams, table docs |
+
+#### Documentation Standards
+
+**Python Docstrings** (Google Style):
+```python
+def get_stock_by_code(stock_code: str) -> StockDetail:
+    """
+    Get stock detail by code with caching.
+
+    Args:
+        stock_code: 6-digit stock code (e.g., "005930").
+
+    Returns:
+        StockDetail with latest price and indicators.
+
+    Raises:
+        NotFoundException: If stock not found.
+
+    Example:
+        >>> detail = service.get_stock_by_code("005930")
+        >>> print(f"{detail.name}: {detail.latest_price.close_price:,} KRW")
+        Samsung Electronics: 71,000 KRW
+    """
+```
+
+**TypeScript TSDoc**:
+```typescript
+/**
+ * Stock screening table with advanced filtering.
+ *
+ * @param props - Component props
+ * @param props.filters - Active screening filters
+ * @param props.onStockSelect - Callback when stock selected
+ *
+ * @example
+ * ```tsx
+ * <StockScreener
+ *   filters={{ market: 'KOSPI', per: { max: 20 } }}
+ *   onStockSelect={(stock) => navigate(`/stocks/${stock.code}`)}
+ * />
+ * ```
+ */
+export const StockScreener: React.FC<Props> = ({ filters, onStockSelect }) => {
+  // Implementation
+};
+```
+
+#### CI/CD Integration
+
+Documentation will be automatically built and deployed on every commit:
+
+```yaml
+# .github/workflows/docs.yml
+on:
+  pull_request:
+    paths: ['docs/**', 'frontend/src/**', 'backend/app/**']
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    - Build Sphinx Python docs
+    - Build TypeDoc TypeScript docs
+    - Build Docusaurus site
+    - Check for broken links
+    - Run Lighthouse CI (performance audit)
+    - Deploy preview (PR only)
+    - Deploy production (main branch)
+```
+
+#### Documentation Hosting (GitHub Pages)
+
+**Platform**: GitHub Pages
+
+**Rationale**:
+- **Cost**: Free for public repositories (unlimited bandwidth)
+- **Integration**: Seamless integration with GitHub Actions
+- **Simplicity**: Single workflow file, no external services needed
+- **Reliability**: GitHub's infrastructure and SLA
+- **Version Control**: Documentation versioned alongside code
+- **No Limits**: Unlike Vercel/Netlify free tiers
+
+**Configuration**:
+- **Production URL**: `https://docs.screener.kr` (custom domain)
+- **Fallback URL**: `https://kcenon.github.io/screener_system/`
+- **Deployment**: Automatic via GitHub Actions on push to main
+- **Branch**: `gh-pages` (auto-created by deployment action)
+- **CDN**: GitHub's global CDN (Fastly-powered)
+- **SSL**: Auto-managed HTTPS with free certificate
+- **Search**: Algolia DocSearch integration (free for open source)
+
+#### Success Metrics
+
+| Metric | Target |
+|--------|--------|
+| **Documentation Coverage** | > 80% of public APIs documented |
+| **Build Time** | < 3 minutes |
+| **Page Load Speed** | < 1 second (Lighthouse score > 90) |
+| **Search Quality** | > 90% of queries return relevant results |
+| **Developer Usage** | > 70% of developers consult docs weekly |
+
+#### Benefits
+
+1. **Single Source of Truth**: All documentation in one searchable location
+2. **Auto-updated**: API docs generated from source code, always accurate
+3. **Version Control**: Documentation versioned alongside code
+4. **Discoverable**: Search, navigation, cross-references make finding info easy
+5. **Maintainable**: Markdown-based, easy to contribute, automated checks
+6. **Professional**: Modern UI, mobile-friendly, fast loading
+
+---
+
 ## 7. Data Requirements
 
 ### 7.1 Data Sources

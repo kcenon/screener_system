@@ -1286,6 +1286,285 @@ Not applicable (web-based application, no direct hardware interfaces)
 
 ---
 
+### 6.5 Documentation Requirements
+
+This section defines requirements for technical documentation, API documentation, user documentation, and documentation infrastructure to ensure comprehensive knowledge transfer and system maintainability.
+
+#### 6.5.1 Documentation Platform
+
+**DOC-001: Unified Documentation Platform**
+- **Requirement**: Implement a unified documentation platform that consolidates all project documentation (user guides, API references, architecture docs, specifications)
+- **Technology**: Docusaurus (React-based static site generator)
+- **Rationale**:
+  - Single source of truth for all documentation
+  - Modern, searchable, mobile-friendly interface
+  - Support for versioning
+  - Easy contribution via Markdown
+- **Implementation**: Deploy to `docs.screener.kr` with CDN
+- **Priority**: High
+- **Verification**: Documentation site accessible and all existing docs migrated
+
+**DOC-002: Documentation Auto-Generation**
+- **Requirement**: API documentation must be auto-generated from source code
+- **Python Backend**: Use Sphinx + autodoc to generate docs from docstrings
+- **TypeScript Frontend**: Use TypeDoc to generate docs from TSDoc comments
+- **REST API**: Use FastAPI's built-in OpenAPI documentation
+- **Rationale**: Ensure documentation stays synchronized with code
+- **Verification**:
+  - Run `sphinx-build` and verify HTML output
+  - Run `typedoc` and verify TypeScript docs
+  - Access `/docs` and `/redoc` endpoints for API docs
+
+**DOC-003: Documentation Build in CI/CD**
+- **Requirement**: Documentation must build and deploy automatically on every commit to main branch
+- **Implementation**: GitHub Actions workflow
+- **Steps**:
+  1. Build Python docs (Sphinx)
+  2. Build TypeScript docs (TypeDoc)
+  3. Build documentation site (Docusaurus)
+  4. Check for broken links
+  5. Deploy to hosting platform
+- **Success Criteria**: Build completes in < 5 minutes
+- **Verification**: Check CI/CD pipeline status after commit
+
+#### 6.5.2 API Documentation Requirements
+
+**DOC-004: REST API Documentation**
+- **Requirement**: All REST API endpoints must be documented in OpenAPI 3.0 format
+- **Required Fields**:
+  - Operation summary and description
+  - Request parameters (query, path, body)
+  - Response schemas (success and error)
+  - Authentication requirements
+  - Rate limiting info
+  - Example requests/responses
+- **Accessibility**: Interactive API documentation available at `/docs` (Swagger UI) and `/redoc` (ReDoc)
+- **Verification**: All endpoints appear in `/docs` with complete information
+
+**DOC-005: Python API Documentation**
+- **Requirement**: All public Python functions, classes, and methods must have docstrings
+- **Format**: Google style docstrings
+- **Required Sections**: Description, Args, Returns, Raises, Example (for complex functions)
+- **Coverage Target**: > 90% of public APIs documented
+- **Verification**: Run `sphinx-build` and check documentation coverage report
+
+**DOC-006: TypeScript API Documentation**
+- **Requirement**: All exported React components, hooks, and utilities must have TSDoc comments
+- **Required Information**:
+  - Component description and purpose
+  - Props documentation
+  - Usage examples
+  - Return types for hooks
+- **Coverage Target**: > 80% of exported symbols documented
+- **Verification**: Run `typedoc` and review generated documentation
+
+**DOC-007: WebSocket API Documentation**
+- **Requirement**: WebSocket API must be fully documented including:
+  - Connection establishment
+  - Message formats (subscribe, unsubscribe, data updates)
+  - Error handling
+  - Connection limits and rate limits
+- **Format**: Dedicated Markdown documentation
+- **Location**: `docs/api-reference/websocket-api.md`
+- **Verification**: Documentation includes complete protocol specification
+
+#### 6.5.3 User Documentation Requirements
+
+**DOC-008: Getting Started Guide**
+- **Requirement**: Provide comprehensive getting started guide for new users
+- **Contents**:
+  - System requirements
+  - Installation instructions (local dev and Docker)
+  - First-time setup
+  - Quick tutorial (create first screening)
+- **Format**: Step-by-step with screenshots
+- **Location**: `docs/getting-started/`
+- **Verification**: New developer can set up system in < 30 minutes following guide
+
+**DOC-009: User Feature Guides**
+- **Requirement**: Document all major user-facing features
+- **Required Guides**:
+  - Stock screening (filters, indicators, results)
+  - Stock detail pages
+  - Portfolio management
+  - Price alerts
+  - Real-time updates (WebSocket)
+- **Format**: Task-oriented guides with screenshots
+- **Location**: `docs/guides/user-guides/`
+- **Verification**: Each feature has corresponding guide
+
+**DOC-010: Developer Guides**
+- **Requirement**: Provide development guides for contributors
+- **Required Topics**:
+  - Local development setup
+  - Testing strategy and running tests
+  - Debugging techniques
+  - Code review process
+  - Git workflow
+  - Documentation contribution guidelines
+- **Location**: `docs/guides/developer-guides/`
+- **Verification**: Covers all aspects of development workflow
+
+#### 6.5.4 Architecture Documentation Requirements
+
+**DOC-011: System Architecture**
+- **Requirement**: Maintain comprehensive architecture documentation
+- **Required Diagrams**:
+  - High-level system architecture
+  - Component interaction diagram
+  - Database schema (ER diagram)
+  - Data flow diagrams
+  - Deployment architecture
+- **Format**: Markdown with embedded diagrams (Mermaid or images)
+- **Location**: `docs/architecture/`
+- **Update Frequency**: On any architecture change
+- **Verification**: Diagrams accurately reflect current system
+
+**DOC-012: Database Schema Documentation**
+- **Requirement**: Document all database tables, columns, indexes, and relationships
+- **Auto-generation**: Use SchemaSpy or similar tool to generate from live database
+- **Required Information**:
+  - Table descriptions and purpose
+  - Column types and constraints
+  - Foreign key relationships
+  - Indexes and their purpose
+- **Location**: `docs/architecture/database-schema.md`
+- **Verification**: All tables and columns documented
+
+**DOC-013: Data Pipeline Documentation**
+- **Requirement**: Document all Airflow DAGs and data workflows
+- **Required Information**:
+  - DAG purpose and schedule
+  - Task dependencies
+  - Data sources and destinations
+  - Error handling and retry logic
+- **Location**: `docs/architecture/data-pipeline.md`
+- **Verification**: All DAGs have corresponding documentation
+
+#### 6.5.5 Documentation Quality Requirements
+
+**DOC-014: Documentation Standards**
+- **Requirement**: Establish and enforce documentation standards
+- **Standards Include**:
+  - Writing style guide (tone, voice, terminology)
+  - Code example formatting
+  - Screenshot guidelines
+  - Markdown linting rules
+- **Implementation**:
+  - Create `docs/contributing/documentation-style-guide.md`
+  - Configure markdownlint
+  - Add documentation checklist to PR template
+- **Verification**: All new documentation passes linting checks
+
+**DOC-015: Link Validation**
+- **Requirement**: All internal and external links in documentation must be valid
+- **Implementation**: Automated link checking in CI/CD pipeline
+- **Frequency**: On every PR and daily scheduled check
+- **Action on Failure**: Block PR merge if broken internal links found
+- **Verification**: Link check reports zero broken links
+
+**DOC-016: Documentation Search**
+- **Requirement**: Documentation platform must have functional search capability
+- **Implementation**: Algolia DocSearch integration
+- **Search Quality**: > 90% of queries return relevant results
+- **Verification**: Manual testing of common search queries
+
+**DOC-017: Documentation Accessibility**
+- **Requirement**: Documentation must be accessible and mobile-friendly
+- **Standards**:
+  - WCAG 2.1 Level AA compliance
+  - Responsive design (works on mobile, tablet, desktop)
+  - Lighthouse accessibility score > 90
+- **Verification**: Run Lighthouse audit on documentation site
+
+**DOC-018: Documentation Versioning**
+- **Requirement**: Support multiple documentation versions aligned with software releases
+- **Implementation**: Docusaurus versioning feature
+- **Retention**: Maintain docs for current version + 2 previous major versions
+- **Verification**: Version selector works, old versions remain accessible
+
+#### 6.5.6 Documentation Maintenance Requirements
+
+**DOC-019: Documentation Updates**
+- **Requirement**: Documentation must be updated whenever related code changes
+- **Process**:
+  - PRs that change public APIs must update corresponding docs
+  - Documentation review required before merge
+  - Breaking changes must update migration guide
+- **Enforcement**: PR checklist includes documentation update confirmation
+- **Verification**: No API changes without documentation updates
+
+**DOC-020: Documentation Coverage Tracking**
+- **Requirement**: Track and report documentation coverage metrics
+- **Metrics**:
+  - % of public APIs with docstrings/TSDoc
+  - % of user features with guides
+  - % of architecture components documented
+- **Reporting**: Weekly dashboard showing coverage trends
+- **Target**: Maintain > 80% overall coverage
+- **Verification**: Coverage metrics available in CI/CD dashboard
+
+**DOC-021: Documentation Review Process**
+- **Requirement**: All documentation changes must be reviewed
+- **Reviewers**: At least one reviewer with domain knowledge
+- **Review Criteria**:
+  - Technical accuracy
+  - Clarity and completeness
+  - Adherence to style guide
+  - Working code examples
+- **Verification**: PR approval required from documentation reviewer
+
+#### 6.5.7 Documentation Hosting Requirements
+
+**DOC-022: GitHub Pages Hosting**
+- **Requirement**: Documentation site must be publicly accessible via GitHub Pages
+- **Platform**: GitHub Pages (mandatory)
+- **Rationale**:
+  - Free and unlimited for public repositories
+  - Integrated with GitHub Actions
+  - Simple configuration
+  - No third-party dependencies
+  - GitHub's infrastructure SLA
+- **Configuration**:
+  - **Primary URL**: `https://docs.screener.kr` (custom domain with CNAME)
+  - **Fallback URL**: `https://kcenon.github.io/screener_system/`
+  - **Deployment Branch**: `gh-pages` (auto-created by GitHub Actions)
+  - **HTTPS**: Enforced with auto-managed SSL certificate
+  - **CDN**: GitHub's global CDN (Fastly-backed)
+- **Requirements**:
+  - HTTPS enforced (SSL certificate auto-renewal)
+  - Page load time < 1 second (P95)
+  - DNS configured with CNAME record
+  - GitHub Actions workflow deploys on main branch push
+- **Verification**:
+  - Access `https://docs.screener.kr` (200 OK)
+  - Verify SSL certificate validity
+  - Check Lighthouse performance score > 90
+  - Confirm automatic deployment from CI/CD
+
+**DOC-023: Documentation Deployment Automation**
+- **Requirement**: Documentation must deploy automatically on every commit to main branch
+- **Implementation**: GitHub Actions workflow with peaceiris/actions-gh-pages
+- **Workflow Triggers**:
+  - Push to main branch (paths: docs/**, frontend/src/**, backend/app/**)
+  - Manual workflow dispatch (for emergency rebuilds)
+- **Deployment Process**:
+  1. Build Sphinx Python documentation
+  2. Build TypeDoc TypeScript documentation
+  3. Build Docusaurus main site
+  4. Deploy to gh-pages branch
+  5. GitHub Pages serves from gh-pages branch
+- **Success Criteria**:
+  - Build completes in < 3 minutes
+  - Zero deployment failures (auto-retry on transient errors)
+  - GitHub Actions deployment status visible in repository
+- **Verification**:
+  - Check GitHub Actions workflow runs successfully
+  - Verify deployment appears in repository's Environments tab
+  - Confirm updated content visible on live site within 5 minutes
+
+---
+
 ## 7. Other Requirements
 
 ### 7.1 Legal Requirements

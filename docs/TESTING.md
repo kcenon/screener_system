@@ -633,9 +633,476 @@ After verifying all tests pass:
 3. 🔄 Move tasks from review to done (if not already)
 4. 🚀 Proceed with next sprint tasks
 
+## Documentation Testing
+
+### Overview
+
+The unified documentation platform must be tested to ensure:
+- All documentation builds without errors
+- Auto-generated API docs are accurate
+- Links are valid
+- Search functionality works
+- Documentation site is accessible
+
+### 1. Documentation Build Testing
+
+#### Test Sphinx Documentation (Python API)
+
+```bash
+# Navigate to Sphinx docs directory
+cd docs/api/python
+
+# Build documentation
+sphinx-build -b html . _build
+
+# Check for errors and warnings
+# Expected: 0 errors, 0 warnings
+
+# View generated docs
+open _build/index.html
+```
+
+**Validation Checklist**:
+- [ ] No Sphinx build errors
+- [ ] No missing docstring warnings
+- [ ] All modules appear in navigation
+- [ ] Code examples render correctly
+- [ ] Type hints display properly
+- [ ] Cross-references work
+
+#### Test TypeDoc Documentation (TypeScript API)
+
+```bash
+# Navigate to docs-site directory
+cd docs-site
+
+# Install dependencies
+npm ci
+
+# Build TypeDoc documentation
+npx typedoc
+
+# Check for errors
+# Expected: 0 errors
+
+# View generated docs
+open api/frontend/index.html
+```
+
+**Validation Checklist**:
+- [ ] No TypeDoc build errors
+- [ ] All exported components documented
+- [ ] Props tables complete
+- [ ] React component examples present
+- [ ] Hooks documented with parameters
+- [ ] Type definitions visible
+
+#### Test Docusaurus Site Build
+
+```bash
+# Navigate to docs-site directory
+cd docs-site
+
+# Build production site
+npm run build
+
+# Check build output
+ls -la build/
+
+# Serve locally to test
+npx serve build
+
+# Open in browser
+open http://localhost:3000
+```
+
+**Validation Checklist**:
+- [ ] Build completes without errors
+- [ ] No broken MDX syntax
+- [ ] All pages accessible
+- [ ] Navigation works correctly
+- [ ] Search index generated
+- [ ] Assets load properly
+- [ ] Mobile responsive
+
+### 2. Documentation Content Testing
+
+#### Test Documentation Coverage
+
+**Python Backend Coverage**:
+```bash
+# Check docstring coverage
+cd backend
+
+# Install interrogate (docstring coverage tool)
+pip install interrogate
+
+# Generate coverage report
+interrogate -v app/
+
+# Expected: > 90% coverage
+```
+
+**TypeScript Frontend Coverage**:
+```bash
+# Check TSDoc coverage
+cd frontend
+
+# Run custom coverage script
+npm run docs:coverage
+
+# Expected: > 80% coverage
+```
+
+#### Test Code Examples
+
+**Extract and test Python examples**:
+```bash
+# Create test script
+cat > test_doc_examples.py << 'EOF'
+#!/usr/bin/env python3
+"""Test code examples from documentation."""
+import doctest
+import sys
+
+def test_all_docstrings():
+    """Run doctests for all modules."""
+    import app.services.stock_service
+    import app.repositories.stock_repository
+
+    failures = 0
+
+    for module in [app.services.stock_service, app.repositories.stock_repository]:
+        result = doctest.testmod(module, verbose=True)
+        failures += result.failed
+
+    return failures
+
+if __name__ == "__main__":
+    failures = test_all_docstrings()
+    sys.exit(1 if failures > 0 else 0)
+EOF
+
+# Run tests
+python test_doc_examples.py
+```
+
+**Test TypeScript examples**:
+```bash
+# Ensure example code compiles
+cd docs-site
+
+# Extract examples and test
+npm run docs:test-examples
+```
+
+### 3. Link Validation Testing
+
+#### Test Internal Links
+
+```bash
+# Install link checker
+npm install -g markdown-link-check
+
+# Check all Markdown files
+find docs -name "*.md" -exec markdown-link-check {} \;
+
+# Expected: 0 broken links
+```
+
+#### Test External Links
+
+```bash
+# Check external links (with cache to avoid rate limits)
+npx broken-link-checker http://localhost:3000 \
+  --recursive \
+  --ordered \
+  --exclude-external \
+  --verbose
+
+# Expected: 0 broken internal links
+```
+
+**GitHub Actions Link Check**:
+```yaml
+# Part of .github/workflows/docs.yml
+- name: Check for broken links
+  run: |
+    npm run docs:check-links
+```
+
+### 4. Search Functionality Testing
+
+#### Test Algolia DocSearch (if configured)
+
+```bash
+# Test search index exists
+curl https://ALGOLIA_APP_ID-dsn.algolia.net/1/indexes/screener_docs \
+  -H "X-Algolia-API-Key: SEARCH_ONLY_API_KEY"
+
+# Should return index metadata
+```
+
+#### Manual Search Testing
+
+1. Navigate to documentation site
+2. Use search bar (Cmd/Ctrl + K)
+3. Test queries:
+   - "stock service" → should find StockService docs
+   - "authentication" → should find auth-related pages
+   - "database schema" → should find DB docs
+   - "API endpoints" → should find REST API reference
+
+**Validation**:
+- [ ] Search results relevant
+- [ ] Search highlights match
+- [ ] Navigation to results works
+- [ ] Search speed < 100ms
+
+### 5. Accessibility Testing
+
+#### Lighthouse Audit
+
+```bash
+# Install Lighthouse CLI
+npm install -g lighthouse
+
+# Run audit on documentation site
+lighthouse http://localhost:3000 \
+  --only-categories=accessibility,performance,best-practices \
+  --output=html \
+  --output-path=./lighthouse-report.html
+
+# Expected scores:
+# - Accessibility: > 90
+# - Performance: > 90
+# - Best Practices: > 90
+```
+
+#### Manual Accessibility Checks
+
+- [ ] Keyboard navigation works (Tab, Enter, Esc)
+- [ ] Screen reader compatible (test with VoiceOver/NVDA)
+- [ ] Color contrast meets WCAG 2.1 AA
+- [ ] Images have alt text
+- [ ] Code blocks have language labels
+- [ ] Headings follow logical hierarchy
+
+### 6. Mobile Responsiveness Testing
+
+#### Test on Multiple Devices
+
+```bash
+# Use Chrome DevTools device emulation
+
+# Test breakpoints:
+# - Mobile: 375px (iPhone SE)
+# - Tablet: 768px (iPad)
+# - Desktop: 1440px (MacBook)
+```
+
+**Validation Checklist**:
+- [ ] Navigation menu collapses on mobile
+- [ ] Code blocks scroll horizontally
+- [ ] Tables are responsive
+- [ ] Images scale properly
+- [ ] Search works on mobile
+- [ ] No horizontal scroll on mobile
+
+### 7. GitHub Pages Deployment Testing
+
+#### Test Local Deployment Simulation
+
+```bash
+# Build for GitHub Pages
+cd docs-site
+npm run build
+
+# Simulate gh-pages serving
+npx serve build --single
+
+# Test custom domain simulation
+# Add to /etc/hosts: 127.0.0.1 docs.screener.kr
+
+# Access at http://docs.screener.kr:3000
+```
+
+#### Test GitHub Actions Workflow
+
+```bash
+# Trigger workflow manually
+gh workflow run docs.yml
+
+# Monitor workflow
+gh run watch
+
+# Check deployment status
+gh api repos/kcenon/screener_system/pages
+
+# Verify deployment
+curl -I https://docs.screener.kr
+# Expected: HTTP/2 200
+
+# Check SSL
+curl -vI https://docs.screener.kr 2>&1 | grep -i "SSL certificate verify"
+# Expected: OK
+```
+
+### 8. Documentation Versioning Testing
+
+#### Test Version Switching
+
+```bash
+# Create a new version
+npm run docusaurus docs:version 1.0
+
+# Build with versions
+npm run build
+
+# Test version selector works
+# Navigate to site and switch versions
+```
+
+**Validation**:
+- [ ] Version selector appears
+- [ ] Can switch between versions
+- [ ] Old versions remain accessible
+- [ ] Links work in old versions
+
+### 9. Performance Testing
+
+#### Measure Build Performance
+
+```bash
+# Time the full build
+time npm run build
+
+# Expected: < 3 minutes
+
+# Measure individual steps
+time sphinx-build -b html . _build    # < 30s
+time npx typedoc                      # < 20s
+time npm run build                    # < 90s
+```
+
+#### Measure Page Load Performance
+
+```bash
+# Test page load speed
+curl -o /dev/null -s -w "Time: %{time_total}s\n" https://docs.screener.kr
+
+# Expected: < 1 second
+
+# Test with slow 3G simulation
+lighthouse https://docs.screener.kr \
+  --throttling-method=devtools \
+  --throttling.cpuSlowdownMultiplier=4 \
+  --only-categories=performance
+```
+
+### 10. Automated Testing Script
+
+Create `scripts/test_docs.sh`:
+
+```bash
+#!/bin/bash
+set -e
+
+echo "🔍 Testing Documentation Platform..."
+
+echo "1️⃣ Testing Sphinx build..."
+cd docs/api/python
+sphinx-build -b html . _build -W
+echo "✅ Sphinx build OK"
+
+echo "2️⃣ Testing TypeDoc build..."
+cd ../../../docs-site
+npm ci --silent
+npx typedoc
+echo "✅ TypeDoc build OK"
+
+echo "3️⃣ Testing Docusaurus build..."
+npm run build
+echo "✅ Docusaurus build OK"
+
+echo "4️⃣ Checking for broken links..."
+npm run docs:check-links
+echo "✅ No broken links"
+
+echo "5️⃣ Testing documentation coverage..."
+cd ../backend
+interrogate -v app/ --fail-under 90
+echo "✅ Documentation coverage > 90%"
+
+echo "6️⃣ Running Lighthouse audit..."
+cd ../docs-site
+npx serve build > /dev/null 2>&1 &
+SERVER_PID=$!
+sleep 3
+lighthouse http://localhost:3000 \
+  --only-categories=accessibility,performance \
+  --quiet \
+  --chrome-flags="--headless"
+kill $SERVER_PID
+echo "✅ Lighthouse audit passed"
+
+echo ""
+echo "🎉 All documentation tests passed!"
+```
+
+Make executable:
+```bash
+chmod +x scripts/test_docs.sh
+./scripts/test_docs.sh
+```
+
+### 11. Integration with CI/CD
+
+Documentation tests are automatically run in GitHub Actions:
+
+```yaml
+# .github/workflows/docs.yml includes:
+- Build Sphinx docs
+- Build TypeDoc docs
+- Build Docusaurus site
+- Check for broken links
+- Run Lighthouse audit
+- Deploy to GitHub Pages (if all tests pass)
+```
+
+**Status Checks**:
+- Documentation build must pass before PR merge
+- Broken links block deployment
+- Coverage below threshold triggers warning
+
+### 12. Documentation Quality Metrics
+
+Track these metrics over time:
+
+| Metric | Target | Current | Status |
+|--------|--------|---------|--------|
+| **Build Success Rate** | 100% | TBD | 🟡 |
+| **Python Coverage** | > 90% | TBD | 🟡 |
+| **TypeScript Coverage** | > 80% | TBD | 🟡 |
+| **Broken Links** | 0 | TBD | 🟡 |
+| **Lighthouse Score** | > 90 | TBD | 🟡 |
+| **Build Time** | < 3 min | TBD | 🟡 |
+| **Page Load Time** | < 1s | TBD | 🟡 |
+
+Update metrics after running tests:
+```bash
+# Generate metrics report
+./scripts/docs_metrics.sh > docs/DOCUMENTATION_METRICS.md
+```
+
 ## References
 
 - **Docker Compose Docs**: https://docs.docker.com/compose/
 - **FastAPI Testing**: https://fastapi.tiangolo.com/tutorial/testing/
 - **PostgreSQL Testing**: https://www.postgresql.org/docs/current/regress.html
 - **Redis Testing**: https://redis.io/docs/manual/patterns/
+- **Sphinx Testing**: https://www.sphinx-doc.org/en/master/usage/builders/index.html
+- **TypeDoc**: https://typedoc.org/
+- **Docusaurus Testing**: https://docusaurus.io/docs/deployment
+- **Lighthouse**: https://developers.google.com/web/tools/lighthouse
+- **Accessibility Testing**: https://www.w3.org/WAI/test-evaluate/
