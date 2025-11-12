@@ -7,7 +7,7 @@ apache-airflow[postgres,celery]==3.1.2  # Security: Latest stable, fixes werkzeu
 
 # Database Drivers
 # =============================================================================
-asyncpg==0.29.0  # Async PostgreSQL driver
+asyncpg==0.30.0  # Async PostgreSQL driver
 psycopg2-binary==2.9.9  # PostgreSQL driver (for Airflow metadata DB)
 
 # Data Processing
