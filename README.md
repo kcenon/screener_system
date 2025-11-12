@@ -6,7 +6,7 @@
 [![PR Checks](https://github.com/kcenon/screener_system/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/pr-checks.yml)
 [![codecov](https://codecov.io/gh/kcenon/screener_system/branch/main/graph/badge.svg)](https://codecov.io/gh/kcenon/screener_system)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Docs Status](https://img.shields.io/badge/docs-live-success)](https://docs.screener.kr)
+[![Docs Status](https://img.shields.io/badge/docs-live-success)](https://kcenon.github.io/screener_system)
 [![Project Status](https://img.shields.io/badge/status-production--ready-success)]()
 [![Completion](https://img.shields.io/badge/tickets-54%2F54%20(100%25)-brightgreen)]()
 
@@ -66,7 +66,7 @@ A comprehensive stock analysis and screening platform for Korean markets (KOSPI/
 
 ## 📖 Documentation
 
-Comprehensive documentation is automatically built and deployed at **[docs.screener.kr](https://docs.screener.kr)**
+Comprehensive documentation is automatically built and deployed at **[kcenon.github.io/screener_system](https://kcenon.github.io/screener_system)**
 
 The documentation site includes:
 - **Getting Started Guide** - Setup and installation
@@ -98,7 +98,7 @@ Documentation is automatically built and deployed on every push to `main`:
 - **Sphinx** generates Python API documentation
 - **TypeDoc** generates TypeScript API documentation
 - **Docusaurus** builds the main documentation site
-- **GitHub Pages** hosts at docs.screener.kr
+- **GitHub Pages** hosts at https://kcenon.github.io/screener_system
 
 See [CI/CD Setup Guide](docs/CI_CD_SETUP.md) for details.
 
@@ -406,8 +406,8 @@ kubectl logs -f deployment/backend -n screener
 
 Comprehensive API documentation is available in multiple formats:
 
-**Documentation Portal** (https://docs.screener.kr):
-- **API Reference**: https://docs.screener.kr/docs/api/intro
+**Documentation Portal** (https://kcenon.github.io/screener_system):
+- **API Reference**: https://kcenon.github.io/screener_system/docs/api/intro
   - Python Backend API (auto-generated with Sphinx)
   - TypeScript Frontend API (auto-generated with TypeDoc)
   - Architecture and design patterns
@@ -436,7 +436,7 @@ This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICE
 
 - **Email**: kcenon@gmail.com
 - **Issue Tracker**: https://github.com/kcenon/screener_system/issues
-- **Documentation**: https://docs.screener.kr
+- **Documentation**: https://kcenon.github.io/screener_system
 
 ## 📊 Project Statistics
 
