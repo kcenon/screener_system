@@ -30,15 +30,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Pull latest Docker images
         run: |
           docker pull ghcr.io/${{ github.repository }}/backend:latest
           docker pull ghcr.io/${{ github.repository }}/frontend:latest
 
+      - name: Verify images
+        run: |
+          echo "✓ Backend image pulled successfully"
+          docker inspect ghcr.io/${{ github.repository }}/backend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
+          echo ""
+          echo "✓ Frontend image pulled successfully"
+          docker inspect ghcr.io/${{ github.repository }}/frontend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
+
       - name: Deploy to staging
         run: |
-          echo "Deploying to staging environment..."
-          # Add actual deployment commands here
+          echo "✓ Images verified and ready for deployment"
+          echo "Note: Actual deployment commands are disabled (placeholder)"
+          # Add actual deployment commands here when ready:
           # docker-compose -f docker-compose.staging.yml up -d
 
       - name: Run smoke tests
@@ -81,15 +97,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Pull latest Docker images
         run: |
           docker pull ghcr.io/${{ github.repository }}/backend:latest
           docker pull ghcr.io/${{ github.repository }}/frontend:latest
 
+      - name: Verify images
+        run: |
+          echo "✓ Backend image pulled successfully"
+          docker inspect ghcr.io/${{ github.repository }}/backend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
+          echo ""
+          echo "✓ Frontend image pulled successfully"
+          docker inspect ghcr.io/${{ github.repository }}/frontend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
+
       - name: Deploy to production
         run: |
-          echo "Deploying to production environment..."
-          # Add Kubernetes deployment commands
+          echo "✓ Images verified and ready for production deployment"
+          echo "Note: Actual deployment commands are disabled (placeholder)"
+          # Add Kubernetes deployment commands when ready:
           # kubectl set image deployment/backend backend=ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
           # kubectl set image deployment/frontend frontend=ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
 
