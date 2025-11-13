@@ -13,6 +13,10 @@ on:
           - staging
           - production
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   deploy-staging:
     name: Deploy to Staging
@@ -45,7 +49,7 @@ jobs:
           # curl -f https://staging.screener.example.com/health || exit 1
 
       - name: Notify on Slack
-        if: always()
+        if: false  # Disabled: SLACK_WEBHOOK_URL not configured
         uses: slackapi/slack-github-action@v1
         with:
           payload: |
@@ -106,7 +110,7 @@ jobs:
           # kubectl rollout undo deployment/frontend
 
       - name: Notify on Slack
-        if: always()
+        if: false  # Disabled: SLACK_WEBHOOK_URL not configured
         uses: slackapi/slack-github-action@v1
         with:
           payload: |
@@ -126,7 +130,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Send email notification
-        if: always()
+        if: false  # Disabled: Email credentials not configured
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
