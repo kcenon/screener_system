@@ -3,15 +3,32 @@
  * Main page for comparing multiple stocks side-by-side
  */
 
-import { BarChart3, Share2, Download } from 'lucide-react'
+import { BarChart3, Share2, Download, RefreshCw } from 'lucide-react'
 import { useStockComparison } from '../hooks/useStockComparison'
-import { StockChip } from '../components/comparison/StockChip'
+import { useComparisonData } from '../hooks/useComparisonData'
+import { StockChip, ComparisonTable } from '../components/comparison'
 import { StockSelector } from '../components/comparison/StockSelector'
-import { MAX_COMPARISON_STOCKS } from '../types/comparison'
+import { MAX_COMPARISON_STOCKS, COMPARISON_METRICS } from '../types/comparison'
+import { exportToCSV, downloadBlob } from '../utils/comparison'
 
 export default function StockComparisonPage() {
   const { stockCodes, addStock, removeStock, clearAll, isMaxReached } =
     useStockComparison()
+
+  const { stocks, isLoading, errors, refetch } = useComparisonData(stockCodes)
+
+  const handleExport = () => {
+    const metricKeys = COMPARISON_METRICS.map((m) => m.key)
+    const blob = exportToCSV(stocks, metricKeys)
+    const timestamp = new Date().toISOString().split('T')[0]
+    downloadBlob(blob, `stock-comparison-${timestamp}.csv`)
+  }
+
+  const handleShare = () => {
+    // Copy URL to clipboard
+    navigator.clipboard.writeText(window.location.href)
+    alert('Comparison URL copied to clipboard!')
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,9 +49,21 @@ export default function StockComparisonPage() {
             {stockCodes.length >= 2 && (
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => {
-                    /* TODO: Share functionality */
-                  }}
+                  onClick={refetch}
+                  disabled={isLoading}
+                  className="
+                    px-4 py-2 rounded-lg
+                    text-gray-700 bg-white border border-gray-300
+                    hover:bg-gray-50
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                    flex items-center gap-2
+                  "
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </button>
+                <button
+                  onClick={handleShare}
                   className="
                     px-4 py-2 rounded-lg
                     text-gray-700 bg-white border border-gray-300
@@ -46,18 +75,18 @@ export default function StockComparisonPage() {
                   Share
                 </button>
                 <button
-                  onClick={() => {
-                    /* TODO: Export functionality */
-                  }}
+                  onClick={handleExport}
+                  disabled={isLoading}
                   className="
                     px-4 py-2 rounded-lg
                     text-gray-700 bg-white border border-gray-300
                     hover:bg-gray-50
+                    disabled:opacity-50 disabled:cursor-not-allowed
                     flex items-center gap-2
                   "
                 >
                   <Download className="w-4 h-4" />
-                  Export
+                  Export CSV
                 </button>
               </div>
             )}
@@ -96,12 +125,12 @@ export default function StockComparisonPage() {
           {/* Selected Stocks */}
           {stockCodes.length > 0 && (
             <div className="flex flex-wrap gap-3">
-              {stockCodes.map((code) => (
+              {stocks.map((stock) => (
                 <StockChip
-                  key={code}
-                  code={code}
-                  name={`Stock ${code}`} // TODO: Fetch real name
-                  market="KOSPI" // TODO: Fetch real market
+                  key={stock.code}
+                  code={stock.code}
+                  name={stock.name || 'Loading...'}
+                  market={stock.market}
                   onRemove={removeStock}
                 />
               ))}
@@ -167,16 +196,39 @@ export default function StockComparisonPage() {
           </div>
         )}
 
-        {/* Comparison Content (Placeholder for Phase 2) */}
+        {/* Comparison Table */}
         {stockCodes.length >= 2 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-            <p className="text-gray-600">
-              Comparison table and charts will appear here
-            </p>
-            <p className="text-sm text-gray-500 mt-2">
-              (Phase 2: Comparison Table - Coming Next)
-            </p>
-          </div>
+          <>
+            {/* Error Messages */}
+            {errors.length > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <h4 className="text-red-900 font-semibold mb-2">
+                  Failed to load some stocks:
+                </h4>
+                <ul className="text-sm text-red-700 list-disc list-inside">
+                  {errors.map(({ code, error }) => (
+                    <li key={code}>
+                      {code}: {String(error)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Comparison Table */}
+            <ComparisonTable stocks={stocks} />
+
+            {/* Charts Placeholder */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center mt-6">
+              <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600 font-medium">
+                Charts Visualization
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                (Phase 3: Radar charts, bar charts, and performance charts - Coming Next)
+              </p>
+            </div>
+          </>
         )}
 
         {/* Single Stock Info */}
