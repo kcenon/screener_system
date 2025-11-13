@@ -1,0 +1,5 @@
+export { default as HeroSection } from './HeroSection'
+export { default as MarketSummary } from './MarketSummary'
+export { default as FeatureShowcase } from './FeatureShowcase'
+export { default as StatisticsSection } from './StatisticsSection'
+export { default as Footer } from './Footer'
