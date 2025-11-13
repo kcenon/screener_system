@@ -6,12 +6,12 @@
 | Field | Value |
 |-------|-------|
 | **Product Name** | The Screener - Stock Analysis Platform |
-| **Version** | 1.0 |
-| **Status** | Draft |
+| **Version** | 1.1 |
+| **Status** | Updated - Phase 2 Enhancement |
 | **Created Date** | 2025-11-09 |
-| **Last Updated** | 2025-11-09 |
+| **Last Updated** | 2025-11-14 |
 | **Author** | Product Team |
-| **Stakeholders** | Engineering, Design, Data Science, Business |
+| **Stakeholders** | Engineering, Design, Data Science, Business, Growth |
 | **Classification** | Internal |
 
 ---
@@ -58,13 +58,23 @@ A web-based platform that:
 
 ### 1.4 Success Criteria
 
-| Metric | Target | Timeline |
-|--------|--------|----------|
-| **Active Users** | 50,000+ | 12 months |
-| **Conversion Rate** (Free → Paid) | 5% | 6 months |
-| **User Retention** (30-day) | 40% | 6 months |
-| **Average Session Duration** | 8+ minutes | 3 months |
-| **Screening Performance** | < 500ms query time | Launch |
+#### MVP Success Criteria (Achieved ✅)
+| Metric | Target | Actual | Status |
+|--------|--------|--------|--------|
+| **Screening Performance** | < 500ms query time | ~220ms (p99) | ✅ Exceeded |
+| **API Response Time** | < 200ms (p95) | ~150ms | ✅ Exceeded |
+| **Test Coverage** | > 70% | 80% backend | ✅ Exceeded |
+
+#### Phase 2 Success Criteria (Freemium Model)
+| Metric | Current (Login-Required) | Target (Freemium) | Timeline |
+|--------|-------------------------|-------------------|----------|
+| **Visitor → Screener Use** | 15% | 60% (+300%) | 1 month |
+| **Overall Conversion Rate** | 0.75% | 12% (+1,500%) | 3 months |
+| **Active Users** | ~100 | 50,000+ | 12 months |
+| **Organic Traffic (SEO)** | Limited | +500% | 6 months |
+| **User Retention** (30-day) | 25% | 45% (+80%) | 6 months |
+| **Average Session Duration** | ~5 min | 10+ min | 3 months |
+| **Free → Paid Conversion** | N/A | 5-10% | 6 months |
 
 ---
 
@@ -459,6 +469,75 @@ A web-based platform that:
 ---
 
 ### 5.2 Functional Requirements
+
+#### FR-0: Public Access & Freemium Model 🆕
+
+**Priority**: P0 (Critical for Growth)
+
+**Description**: Transform the platform from login-required to freemium model, enabling anonymous users to access core features with limitations while encouraging conversion to registered users.
+
+**Business Rationale**:
+- **Current Problem**: 60-70% of visitors bounce at login wall
+- **SEO Impact**: Stock pages not indexed by Google (login required)
+- **Viral Growth**: Cannot share screening results or stock analyses
+- **User Acquisition**: High barrier to entry limits growth
+
+**Requirements**:
+
+| ID | Requirement | Priority | Acceptance Criteria |
+|----|-------------|----------|---------------------|
+| FR-0.1 | Public access to stock screener | P0 | Anonymous users can use screener with limitations |
+| FR-0.2 | Public access to stock detail pages | P0 | Stock pages accessible without login (SEO-friendly) |
+| FR-0.3 | Screening result limits (public) | P0 | Display max 20 results for anonymous users |
+| FR-0.4 | Daily usage limits (public) | P0 | Max 10 searches per day for anonymous users |
+| FR-0.5 | Content restrictions (public) | P0 | Blur/lock financial statements and advanced features |
+| FR-0.6 | Freemium UI components | P0 | Upgrade prompts, limit modals, locked content overlays |
+| FR-0.7 | Usage tracking (client-side) | P0 | localStorage-based tracking for public users |
+| FR-0.8 | Server-side rate limiting | P0 | IP-based rate limiting (10 searches/day) |
+| FR-0.9 | SEO meta tags | P1 | Dynamic meta tags for stock pages (Open Graph, Twitter Card) |
+| FR-0.10 | Social sharing functionality | P1 | Share buttons for stock pages and screening results |
+| FR-0.11 | User tier detection | P0 | System identifies Public/Free/Premium users |
+| FR-0.12 | Upgrade CTAs | P1 | Persistent banners and modals encouraging registration |
+
+**User Tier Matrix**:
+
+| Feature | Public (No Login) | Registered (Free) | Premium (Future) |
+|---------|-------------------|-------------------|------------------|
+| Stock Screener | ⚠️ Limited (20 results, 10/day) | ✅ Unlimited | ✅ Unlimited + AI |
+| Stock Detail | ⚠️ Limited (charts, blurred financials) | ✅ Full access | ✅ Full + Analysis |
+| Market Overview | ✅ Full access | ✅ Full access | ✅ Full access |
+| Compare Tool | ⚠️ 2 stocks max | ✅ 5 stocks | ✅ 10 stocks |
+| Watchlists | ❌ Not available | ✅ 10 lists (100 stocks each) | ✅ Unlimited |
+| Dashboard | ❌ Not available | ✅ Full access | ✅ Full + Insights |
+| Export Data | ❌ Not available | ✅ CSV only | ✅ CSV + PDF + API |
+| Filter Presets | ❌ Not available | ✅ Up to 10 | ✅ Unlimited |
+| Price Alerts | ❌ Not available | ❌ Not available | ✅ Available |
+
+**User Stories**:
+- As a **prospective user**, I want to try the screener without registering, so that I can evaluate the platform before committing
+- As a **Google searcher**, I want to land directly on stock detail pages, so that I can quickly get the information I need
+- As a **satisfied public user**, I want clear upgrade prompts, so that I understand the benefits of registering
+- As a **registered user**, I want unrestricted access to all free features, so that I feel the value of creating an account
+
+**Expected Impact**:
+- Visitor → Screener: 15% → 60% (+300%)
+- Overall Conversion: 0.75% → 12% (+1,500%)
+- Organic Traffic: +500% (SEO indexing)
+- New Signups: +400% in 30 days
+
+**Technical Components**:
+- `useFreemiumAccess` hook for tier detection
+- `FreemiumBanner`, `LockedContent`, `LimitReachedModal` components
+- localStorage-based usage tracking
+- Server-side rate limiting (BE-010)
+- SEO meta tags (react-helmet-async)
+- Social sharing (Web Share API)
+
+**Dependencies**:
+- BE-010: Server-side rate limiting API
+- Remove `ProtectedRoute` from screener and stock detail pages
+
+---
 
 #### FR-1: Stock Screening Engine
 

@@ -6,12 +6,12 @@
 | Field | Value |
 |-------|-------|
 | **Project** | Stock Screening Platform |
-| **Version** | 1.0 (MVP) |
+| **Version** | 1.1 (MVP + Phase 2 Enhancement Plan) |
 | **Report Type** | Verification Report |
-| **Date** | 2025-11-11 |
+| **Date** | 2025-11-14 |
 | **Author** | QA & Development Team |
-| **Status** | Complete |
-| **Sprints Covered** | Sprint 1, 2, 3 (6 weeks) |
+| **Status** | Updated with Phase 2 Test Plan |
+| **Sprints Covered** | Sprint 1, 2, 3 (MVP Complete) + Sprint 4-6 Planning (Phase 2) |
 
 ---
 
@@ -1122,11 +1122,340 @@ TOTAL                                              4521   1040   77%
 
 ---
 
+## 10. Phase 2 Enhancement - Verification Plan 🆕
+
+**Status**: Planned for Sprint 4-6 (Phase 2)
+**Focus**: Freemium Model (FE-012) + Frontend Enhancements (FE-006 to FE-011)
+
+### 10.1 Test Coverage Plan (Phase 2)
+
+#### 10.1.1 Freemium Model Tests (FE-012)
+
+**Unit Tests (Target: 45 tests)**:
+
+```typescript
+// hooks/useFreemiumAccess.test.ts
+describe('useFreemiumAccess', () => {
+  it('returns public tier limits for anonymous users', () => {
+    const { result } = renderHook(() => useFreemiumAccess());
+    expect(result.current.tier).toBe('public');
+    expect(result.current.maxScreeningResults).toBe(20);
+    expect(result.current.dailyScreeningLimit).toBe(10);
+  });
+
+  it('returns registered tier limits for authenticated users', () => {
+    mockAuthStore({ isAuthenticated: true, user: { id: '123' } });
+    const { result } = renderHook(() => useFreemiumAccess());
+    expect(result.current.tier).toBe('registered');
+    expect(result.current.maxScreeningResults).toBe(Infinity);
+  });
+});
+
+// hooks/useUsageTracking.test.ts
+describe('useUsageTracking', () => {
+  it('increments daily search count', async () => {
+    const { result } = renderHook(() => useUsageTracking());
+    const { allowed, count } = await result.current.trackScreening();
+    expect(allowed).toBe(true);
+    expect(count).toBe(1);
+  });
+
+  it('blocks after 10 searches', async () => {
+    localStorage.setItem('usage-storage', JSON.stringify({
+      dailySearchCount: 10,
+      lastResetDate: new Date().toDateString()
+    }));
+    const { result } = renderHook(() => useUsageTracking());
+    const { allowed } = await result.current.trackScreening();
+    expect(allowed).toBe(false);
+  });
+});
+
+// store/usageStore.test.ts
+describe('usageStore', () => {
+  it('resets count on new day', () => {
+    const { incrementSearchCount, resetIfNewDay } = useUsageStore.getState();
+    incrementSearchCount();
+
+    // Simulate new day
+    jest.setSystemTime(new Date('2025-11-15'));
+    resetIfNewDay();
+
+    expect(useUsageStore.getState().dailySearchCount).toBe(0);
+  });
+});
+```
+
+**Integration Tests (Target: 25 tests)**:
+
+```python
+# tests/integration/test_freemium.py
+class TestFreemiumModel:
+    def test_public_user_screening_limit(self, client):
+        """Public users see max 20 results"""
+        response = client.post('/v1/screen', json={
+            'filters': {'per': {'max': 15}},
+            'page': 1,
+            'per_page': 100
+        })
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data['stocks']) <= 20
+        assert data['meta']['limited'] == True
+        assert 'usage' in data
+
+    def test_daily_limit_enforcement(self, client):
+        """11th search returns 429"""
+        # Make 10 successful requests
+        for i in range(10):
+            response = client.post('/v1/screen', json={'filters': {}})
+            assert response.status_code == 200
+
+        # 11th request should fail
+        response = client.post('/v1/screen', json={'filters': {}})
+        assert response.status_code == 429
+        assert 'daily_limit_exceeded' in response.json()['error']
+
+    def test_registered_user_unlimited(self, client, auth_headers):
+        """Registered users have unlimited searches"""
+        for i in range(15):
+            response = client.post(
+                '/v1/screen',
+                json={'filters': {}},
+                headers=auth_headers
+            )
+            assert response.status_code == 200
+```
+
+**E2E Tests (Target: 15 tests)**:
+
+```typescript
+// e2e/freemium.spec.ts
+describe('Freemium Model E2E', () => {
+  test('Anonymous user journey', async ({ page }) => {
+    // Visit screener without login
+    await page.goto('/screener');
+    await expect(page.locator('h1')).toContainText('Stock Screener');
+
+    // Apply filters
+    await page.fill('[data-testid="per-max"]', '15');
+    await page.click('[data-testid="search-button"]');
+
+    // See limited results
+    await expect(page.locator('[data-testid="result-row"]')).toHaveCount(20);
+    await expect(page.locator('[data-testid="limit-banner"]'))
+      .toContainText('Showing 20 of');
+
+    // Try to save preset
+    await page.click('[data-testid="save-preset"]');
+    await expect(page.locator('[data-testid="login-modal"]')).toBeVisible();
+  });
+
+  test('Daily limit modal appears', async ({ page }) => {
+    // Simulate 10 searches
+    for (let i = 0; i < 10; i++) {
+      await page.goto('/screener');
+      await page.click('[data-testid="search-button"]');
+    }
+
+    // 11th search shows modal
+    await page.goto('/screener');
+    await page.click('[data-testid="search-button"]');
+    await expect(page.locator('[data-testid="limit-reached-modal"]')).toBeVisible();
+    await expect(page.locator('[data-testid="reset-time"]')).toBeVisible();
+  });
+});
+```
+
+#### 10.1.2 Performance Tests (Phase 2)
+
+```python
+# tests/performance/test_freemium_load.py
+from locust import HttpUser, task, between
+
+class FreemiumUser(HttpUser):
+    wait_time = between(1, 3)
+
+    @task(1)
+    def public_screening(self):
+        """Simulate public user screening"""
+        self.client.post('/v1/screen', json={
+            'filters': {'per': {'max': 15}},
+            'page': 1,
+            'per_page': 20
+        })
+
+    @task(2)
+    def check_usage(self):
+        """Check daily usage status"""
+        self.client.get('/v1/usage/status')
+
+# Target: 10,000 concurrent public users
+# Expected: < 500ms p95 latency
+```
+
+#### 10.1.3 Security Tests (Phase 2)
+
+```python
+# tests/security/test_rate_limiting.py
+class TestRateLimiting:
+    def test_ip_based_rate_limit(self, client):
+        """100 requests/hour per IP"""
+        for i in range(100):
+            response = client.get('/v1/stocks')
+            assert response.status_code == 200
+
+        # 101st request should fail
+        response = client.get('/v1/stocks')
+        assert response.status_code == 429
+        assert 'rate_limit_exceeded' in response.json()['error']
+
+    def test_limit_bypass_attempt(self, client):
+        """Multiple IPs from same user blocked"""
+        # Simulate VPN hopping
+        for i in range(15):
+            headers = {'X-Forwarded-For': f'192.168.1.{i}'}
+            response = client.post('/v1/screen', json={}, headers=headers)
+
+        # Should trigger CAPTCHA or additional checks
+        assert response.status_code in [200, 429]
+```
+
+### 10.2 Code Quality Targets (Phase 2)
+
+| Metric | Current (MVP) | Target (Phase 2) | Measurement |
+|--------|---------------|------------------|-------------|
+| **Frontend Test Coverage** | ~90% | 92% | Jest coverage report |
+| **Backend Test Coverage** | 77% | 82% | pytest-cov |
+| **E2E Test Coverage** | 100% (critical paths) | 100% (all paths) | Playwright |
+| **TypeScript Strict Mode** | Enabled | Enabled + No any | tsc --strict |
+| **Linting Warnings** | 8 | 0 | ESLint, Pylint |
+| **Code Duplication** | ~5% | < 3% | SonarQube |
+| **Cyclomatic Complexity** | Max 12 | Max 10 | Radon |
+
+### 10.3 Performance Benchmarks (Phase 2)
+
+| Operation | Target | Measurement Method |
+|-----------|--------|-------------------|
+| **Tier Detection** | < 10ms | Performance.now() profiling |
+| **localStorage Read/Write** | < 5ms | Browser DevTools |
+| **Public Screener Query** | < 500ms | APM (Application Performance Monitoring) |
+| **Redis Rate Limit Check** | < 5ms | Redis MONITOR |
+| **Usage Tracking API** | < 100ms | Backend metrics |
+| **Freemium Component Render** | < 50ms | React DevTools Profiler |
+
+### 10.4 Verification Timeline (Sprint 4-6)
+
+**Week 1-2 (Implementation)**:
+- [ ] Write 45 unit tests for freemium hooks
+- [ ] Write 25 integration tests for API endpoints
+- [ ] Write 15 E2E tests for user journeys
+- [ ] Achieve 85%+ test coverage
+
+**Week 3 (QA Testing)**:
+- [ ] Execute all automated tests (85 total)
+- [ ] Perform load testing (10,000 concurrent users)
+- [ ] Conduct security penetration testing
+- [ ] Validate SEO tags (Lighthouse audit)
+
+**Week 4 (Beta Testing)**:
+- [ ] Deploy to staging environment
+- [ ] Invite 50 beta testers
+- [ ] Monitor real-world usage patterns
+- [ ] Collect user feedback
+
+**Week 5-6 (Optimization & Release)**:
+- [ ] Fix bugs identified in beta
+- [ ] Optimize performance bottlenecks
+- [ ] Complete final security audit
+- [ ] Production deployment
+
+### 10.5 Test Automation Strategy
+
+**CI/CD Pipeline** (GitHub Actions):
+
+```yaml
+# .github/workflows/phase2-tests.yml
+name: Phase 2 Tests
+
+on: [push, pull_request]
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: cd frontend && npm install
+      - name: Run unit tests
+        run: npm run test -- --coverage
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+
+  backend-tests:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+      postgres:
+        image: postgres:15-alpine
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run integration tests
+        run: pytest tests/integration --cov=app --cov-report=xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run E2E tests
+        run: npm run test:e2e
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-results
+          path: test-results/
+```
+
+### 10.6 Defect Management (Phase 2)
+
+**Priority Levels**:
+- **P0 (Blocker)**: Freemium broken, no public access, security breach
+- **P1 (Critical)**: Daily limit not enforced, tier detection wrong
+- **P2 (High)**: UI bugs, performance degradation
+- **P3 (Medium)**: Minor UX issues, cosmetic bugs
+- **P4 (Low)**: Nice-to-have improvements
+
+**Acceptance Criteria**:
+- Zero P0/P1 defects before production
+- < 5 P2 defects before production
+- P3/P4 can be deferred to next sprint
+
+### 10.7 Success Criteria (Phase 2 Verification)
+
+Phase 2 will be considered verified when:
+
+- ✅ All 85 automated tests pass (45 unit + 25 integration + 15 E2E)
+- ✅ Test coverage: Frontend 92%, Backend 82%
+- ✅ Performance benchmarks met (< 500ms screening, < 10ms tier detection)
+- ✅ Load test passes (10,000 concurrent users, < 500ms p95)
+- ✅ Security audit passes (no critical vulnerabilities)
+- ✅ Zero P0/P1 defects
+- ✅ SEO score > 90 (Lighthouse)
+- ✅ Beta user feedback > 70% positive
+
+**Verification Owner**: QA & Development Team
+**Planned Completion**: Sprint 6 (2025-12-27)
+
+---
+
 **Report Approved By**:
 - QA Lead: [Signature]
 - Development Lead: [Signature]
 - Product Manager: [Signature]
 
-**Date**: 2025-11-11
-**Version**: 1.0
-**Status**: Final
+**Date**: 2025-11-14
+**Version**: 1.1
+**Status**: Updated with Phase 2 Plan

@@ -6,12 +6,12 @@
 | Item | Details |
 |------|---------|
 | **Project Name** | Stock Screening Platform |
-| **Document Version** | 1.0 |
-| **Status** | Final |
+| **Document Version** | 1.1 |
+| **Status** | Updated - Phase 2 Enhancement |
 | **Created Date** | 2025-11-09 |
-| **Last Updated** | 2025-11-09 |
+| **Last Updated** | 2025-11-14 |
 | **Authors** | Architecture Team |
-| **Reviewers** | Engineering Team, QA Team |
+| **Reviewers** | Engineering Team, QA Team, Growth Team |
 | **Classification** | Internal - Confidential |
 
 ---
@@ -544,6 +544,371 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 }));
+```
+
+#### 3.1.4 Freemium Components & Architecture 🆕
+
+**Overview**: The freemium model introduces a new layer of components and hooks to manage user tier detection, usage tracking, and feature gating without requiring authentication.
+
+**Component Hierarchy**:
+```
+components/
+├── freemium/
+│   ├── FreemiumBanner.tsx          # Upgrade prompts
+│   ├── LockedContent.tsx           # Blurred content with unlock CTA
+│   ├── LimitReachedModal.tsx       # Daily limit notification
+│   ├── UpgradePrompt.tsx           # Strategic upgrade CTAs
+│   ├── TierBadge.tsx               # User tier indicator
+│   └── FeatureComparisonTable.tsx  # Tier comparison matrix
+```
+
+**Freemium Banner Component**:
+```typescript
+// components/freemium/FreemiumBanner.tsx
+interface FreemiumBannerProps {
+  variant: 'result-limit' | 'save-locked' | 'export-locked';
+  resultsShown?: number;
+  totalResults?: number;
+}
+
+const FreemiumBanner: React.FC<FreemiumBannerProps> = ({
+  variant,
+  resultsShown,
+  totalResults
+}) => {
+  const navigate = useNavigate();
+
+  const bannerContent = {
+    'result-limit': {
+      icon: <EyeOff className="w-5 h-5" />,
+      title: `Showing ${resultsShown} of ${totalResults} results`,
+      message: 'Sign up to see all matching stocks',
+      cta: 'Sign Up Free',
+    },
+    'save-locked': {
+      icon: <Lock className="w-5 h-5" />,
+      title: 'Save your screening presets',
+      message: 'Create a free account to save and reuse filters',
+      cta: 'Create Account',
+    },
+    'export-locked': {
+      icon: <Download className="w-5 h-5" />,
+      title: 'Export results to CSV',
+      message: 'Sign up to export your screening results',
+      cta: 'Sign Up Free',
+    },
+  };
+
+  const content = bannerContent[variant];
+
+  return (
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className="text-blue-600">{content.icon}</div>
+        <div>
+          <h3 className="font-semibold text-gray-900">{content.title}</h3>
+          <p className="text-sm text-gray-600">{content.message}</p>
+        </div>
+      </div>
+      <Button
+        variant="primary"
+        onClick={() => navigate('/signup?context=' + variant)}
+      >
+        {content.cta}
+      </Button>
+    </div>
+  );
+};
+```
+
+**Locked Content Component**:
+```typescript
+// components/freemium/LockedContent.tsx
+interface LockedContentProps {
+  isLocked: boolean;
+  feature: string;
+  children: React.ReactNode;
+}
+
+const LockedContent: React.FC<LockedContentProps> = ({
+  isLocked,
+  feature,
+  children
+}) => {
+  const [showModal, setShowModal] = useState(false);
+
+  if (!isLocked) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div className="relative">
+      {/* Blurred content */}
+      <div className="filter blur-sm pointer-events-none select-none">
+        {children}
+      </div>
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white flex items-center justify-center">
+        <div className="text-center bg-white p-6 rounded-lg shadow-xl border border-gray-200 max-w-md">
+          <Lock className="w-12 h-12 mx-auto mb-4 text-blue-600" />
+          <h3 className="text-xl font-bold mb-2">
+            Unlock {feature}
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Create a free account to access detailed {feature.toLowerCase()}
+          </p>
+          <Button onClick={() => setShowModal(true)} variant="primary">
+            Sign Up Free
+          </Button>
+        </div>
+      </div>
+
+      <SignupModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        context={feature}
+      />
+    </div>
+  );
+};
+```
+
+**Limit Reached Modal**:
+```typescript
+// components/freemium/LimitReachedModal.tsx
+interface LimitReachedModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  limitType: 'daily-search' | 'result-count';
+  resetTime?: Date;
+}
+
+const LimitReachedModal: React.FC<LimitReachedModalProps> = ({
+  isOpen,
+  onClose,
+  limitType,
+  resetTime
+}) => {
+  const navigate = useNavigate();
+
+  const content = {
+    'daily-search': {
+      title: "You've reached your daily search limit",
+      message: 'Free users can perform up to 10 screenings per day.',
+      benefit: 'Sign up for unlimited daily screenings',
+    },
+    'result-count': {
+      title: "More results available",
+      message: 'You can see up to 20 results as a guest.',
+      benefit: 'Sign up to see unlimited results',
+    },
+  };
+
+  const info = content[limitType];
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="text-center p-6">
+        <AlertCircle className="w-16 h-16 mx-auto mb-4 text-amber-500" />
+        <h2 className="text-2xl font-bold mb-2">{info.title}</h2>
+        <p className="text-gray-600 mb-6">{info.message}</p>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <Check className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+          <p className="font-semibold text-blue-900">{info.benefit}</p>
+          <p className="text-sm text-blue-700 mt-1">
+            Plus: Save presets, export data, create watchlists
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="flex-1"
+          >
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => navigate('/signup?ref=limit')}
+            className="flex-1"
+          >
+            Sign Up Free
+          </Button>
+        </div>
+
+        {resetTime && (
+          <p className="text-sm text-gray-500 mt-4">
+            Your limit resets at {resetTime.toLocaleTimeString()}
+          </p>
+        )}
+      </div>
+    </Modal>
+  );
+};
+```
+
+**Freemium Access Hook**:
+```typescript
+// hooks/useFreemiumAccess.ts
+export interface FreemiumLimits {
+  isAuthenticated: boolean;
+  tier: 'public' | 'registered' | 'premium';
+  maxScreeningResults: number;
+  dailyScreeningLimit: number;
+  dailySearchCount: number;
+  canSavePresets: boolean;
+  canExportResults: boolean;
+  canViewDetailedFinancials: boolean;
+  maxCompareStocks: number;
+  maxWatchlists: number;
+  canAccessRealtime: boolean;
+}
+
+export const useFreemiumAccess = (): FreemiumLimits => {
+  const { user, isAuthenticated } = useAuthStore();
+  const { dailySearchCount } = useUsageStore();
+
+  // Public (anonymous) user limits
+  if (!isAuthenticated) {
+    return {
+      isAuthenticated: false,
+      tier: 'public',
+      maxScreeningResults: 20,
+      dailyScreeningLimit: 10,
+      dailySearchCount,
+      canSavePresets: false,
+      canExportResults: false,
+      canViewDetailedFinancials: false,
+      maxCompareStocks: 2,
+      maxWatchlists: 0,
+      canAccessRealtime: false,
+    };
+  }
+
+  // Registered (free) user limits
+  return {
+    isAuthenticated: true,
+    tier: user?.isPremium ? 'premium' : 'registered',
+    maxScreeningResults: Infinity,
+    dailyScreeningLimit: Infinity,
+    dailySearchCount,
+    canSavePresets: true,
+    canExportResults: true,
+    canViewDetailedFinancials: true,
+    maxCompareStocks: 5,
+    maxWatchlists: 10,
+    canAccessRealtime: true,
+  };
+};
+```
+
+**Usage Tracking Hook**:
+```typescript
+// hooks/useUsageTracking.ts
+export const useUsageTracking = () => {
+  const { isAuthenticated } = useAuthStore();
+  const { dailySearchCount, incrementSearchCount, resetIfNewDay } = useUsageStore();
+
+  useEffect(() => {
+    // Reset counter if it's a new day
+    resetIfNewDay();
+  }, []);
+
+  const trackScreening = useCallback(async () => {
+    // Only track for public users
+    if (isAuthenticated) return { allowed: true };
+
+    const newCount = incrementSearchCount();
+
+    // Send to backend for IP-based tracking
+    try {
+      await api.post('/api/usage/track', {
+        action: 'screening',
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to track usage:', error);
+    }
+
+    return {
+      allowed: newCount <= 10,
+      count: newCount,
+      limit: 10,
+    };
+  }, [isAuthenticated, incrementSearchCount]);
+
+  return { trackScreening, dailySearchCount };
+};
+```
+
+**Usage Store (Zustand)**:
+```typescript
+// store/usageStore.ts
+interface UsageState {
+  dailySearchCount: number;
+  lastResetDate: string;
+  incrementSearchCount: () => number;
+  resetIfNewDay: () => void;
+  resetCount: () => void;
+}
+
+export const useUsageStore = create<UsageState>(
+  persist(
+    (set, get) => ({
+      dailySearchCount: 0,
+      lastResetDate: new Date().toDateString(),
+
+      incrementSearchCount: () => {
+        const newCount = get().dailySearchCount + 1;
+        set({ dailySearchCount: newCount });
+        return newCount;
+      },
+
+      resetIfNewDay: () => {
+        const today = new Date().toDateString();
+        if (get().lastResetDate !== today) {
+          set({ dailySearchCount: 0, lastResetDate: today });
+        }
+      },
+
+      resetCount: () => {
+        set({ dailySearchCount: 0, lastResetDate: new Date().toDateString() });
+      },
+    }),
+    {
+      name: 'usage-storage', // localStorage key
+    }
+  )
+);
+```
+
+**Updated Directory Structure with Freemium**:
+```
+frontend/src/
+├── components/
+│   ├── freemium/              # 🆕 Freemium components
+│   │   ├── FreemiumBanner.tsx
+│   │   ├── LockedContent.tsx
+│   │   ├── LimitReachedModal.tsx
+│   │   ├── UpgradePrompt.tsx
+│   │   └── TierBadge.tsx
+│   ├── common/
+│   ├── stock/
+│   └── portfolio/
+│
+├── hooks/
+│   ├── useFreemiumAccess.ts   # 🆕 Tier detection hook
+│   ├── useUsageTracking.ts    # 🆕 Usage tracking hook
+│   ├── useAuth.ts
+│   └── useStockData.ts
+│
+├── store/
+│   ├── usageStore.ts          # 🆕 Usage tracking state
+│   ├── authStore.ts
+│   └── stockStore.ts
 ```
 
 ### 3.2 Backend Architecture
@@ -1534,6 +1899,278 @@ POST /v1/screen
         "query_time_ms": 234
       }
     }
+```
+
+#### 5.2.3a Usage Tracking & Rate Limiting Endpoints 🆕
+
+**Overview**: These endpoints support the freemium model by tracking anonymous user usage and enforcing rate limits.
+
+```yaml
+POST /v1/usage/track
+  Summary: Track anonymous user screening activity
+  Description: Records screening attempts for daily limit enforcement
+  Headers:
+    - X-Forwarded-For: string (IP address, if behind proxy)
+  Request Body:
+    {
+      "action": "screening",
+      "timestamp": "2024-11-14T10:30:00Z",
+      "metadata": {
+        "filter_count": 3,
+        "result_count": 45
+      }
+    }
+  Response: 200 OK
+    {
+      "tracked": true,
+      "daily_count": 7,
+      "daily_limit": 10,
+      "remaining": 3,
+      "reset_at": "2024-11-15T00:00:00Z"
+    }
+  Response: 429 Too Many Requests (limit exceeded)
+    {
+      "error": "daily_limit_exceeded",
+      "message": "You've reached your daily screening limit (10/day)",
+      "daily_count": 11,
+      "daily_limit": 10,
+      "reset_at": "2024-11-15T00:00:00Z",
+      "upgrade_url": "/signup?ref=limit"
+    }
+
+GET /v1/usage/status
+  Summary: Check current usage status for anonymous user
+  Description: Returns remaining daily screenings (IP-based)
+  Response: 200 OK
+    {
+      "daily_count": 7,
+      "daily_limit": 10,
+      "remaining": 3,
+      "reset_at": "2024-11-15T00:00:00Z",
+      "tier": "public"
+    }
+
+GET /v1/usage/tier
+  Summary: Get user tier information
+  Description: Returns tier and feature limits (authenticated or public)
+  Headers: Authorization: Bearer <access_token> (optional)
+  Response: 200 OK
+    {
+      "tier": "public" | "registered" | "premium",
+      "limits": {
+        "max_screening_results": 20,
+        "daily_screening_limit": 10,
+        "can_save_presets": false,
+        "can_export_results": false,
+        "can_view_detailed_financials": false,
+        "max_compare_stocks": 2,
+        "max_watchlists": 0,
+        "can_access_realtime": false
+      },
+      "current_usage": {
+        "daily_screening_count": 7,
+        "saved_presets": 0,
+        "watchlists": 0
+      }
+    }
+```
+
+**Rate Limiting Middleware**:
+
+```python
+# app/core/rate_limiting.py
+from fastapi import Request, HTTPException
+from redis import Redis
+import time
+
+redis_client = Redis(host='redis', port=6379, db=0)
+
+def get_client_ip(request: Request) -> str:
+    """Extract client IP from request headers"""
+    forwarded = request.headers.get('X-Forwarded-For')
+    if forwarded:
+        return forwarded.split(',')[0].strip()
+    return request.client.host
+
+async def check_rate_limit(
+    request: Request,
+    limit: int = 100,
+    window: int = 3600  # 1 hour
+) -> None:
+    """
+    Rate limiting middleware using Redis
+
+    Args:
+        request: FastAPI request object
+        limit: Max requests per window
+        window: Time window in seconds
+
+    Raises:
+        HTTPException: 429 if rate limit exceeded
+    """
+    client_ip = get_client_ip(request)
+    key = f"rate_limit:{client_ip}:{request.url.path}"
+
+    current = redis_client.get(key)
+
+    if current is None:
+        # First request in window
+        redis_client.setex(key, window, 1)
+        return
+
+    if int(current) >= limit:
+        # Limit exceeded
+        ttl = redis_client.ttl(key)
+        raise HTTPException(
+            status_code=429,
+            detail={
+                "error": "rate_limit_exceeded",
+                "message": f"Too many requests. Try again in {ttl} seconds.",
+                "limit": limit,
+                "window": window,
+                "retry_after": ttl
+            }
+        )
+
+    # Increment counter
+    redis_client.incr(key)
+
+async def check_daily_screening_limit(
+    request: Request,
+    user_id: str | None = None
+) -> dict:
+    """
+    Check daily screening limit for public users
+
+    Args:
+        request: FastAPI request object
+        user_id: User ID if authenticated (bypasses limit)
+
+    Returns:
+        dict: Usage status with remaining count
+
+    Raises:
+        HTTPException: 429 if daily limit exceeded
+    """
+    # Authenticated users have no limit
+    if user_id:
+        return {
+            "allowed": True,
+            "tier": "registered",
+            "daily_count": 0,
+            "daily_limit": float('inf'),
+            "remaining": float('inf')
+        }
+
+    # Public user - enforce limit
+    client_ip = get_client_ip(request)
+    today = time.strftime("%Y-%m-%d")
+    key = f"daily_screening:{today}:{client_ip}"
+
+    current = redis_client.get(key)
+    count = int(current) if current else 0
+    limit = 10
+
+    if count >= limit:
+        # Get TTL for reset time
+        ttl = redis_client.ttl(key)
+        if ttl < 0:
+            # Key exists but no TTL - set it
+            redis_client.expire(key, 86400)  # 24 hours
+            ttl = 86400
+
+        reset_at = time.time() + ttl
+
+        raise HTTPException(
+            status_code=429,
+            detail={
+                "error": "daily_limit_exceeded",
+                "message": "You've reached your daily screening limit",
+                "daily_count": count,
+                "daily_limit": limit,
+                "remaining": 0,
+                "reset_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(reset_at)),
+                "upgrade_url": "/signup?ref=daily-limit"
+            }
+        )
+
+    # Increment counter with 24-hour expiry
+    if current is None:
+        redis_client.setex(key, 86400, 1)
+        count = 1
+    else:
+        redis_client.incr(key)
+        count += 1
+
+    return {
+        "allowed": True,
+        "tier": "public",
+        "daily_count": count,
+        "daily_limit": limit,
+        "remaining": limit - count
+    }
+```
+
+**Updated Screening Endpoint (with tier support)**:
+
+```python
+# app/api/v1/screening.py
+from fastapi import APIRouter, Depends, Request
+from app.core.rate_limiting import check_daily_screening_limit
+from app.core.auth import get_current_user_optional
+
+router = APIRouter()
+
+@router.post("/screen")
+async def screen_stocks(
+    request: Request,
+    filters: ScreenFilters,
+    user: User | None = Depends(get_current_user_optional)
+):
+    """
+    Screen stocks with freemium tier enforcement
+    """
+    # Check daily limit for public users
+    usage_status = await check_daily_screening_limit(
+        request,
+        user_id=user.id if user else None
+    )
+
+    # Determine result limit based on tier
+    if user:
+        # Registered users: unlimited results
+        max_results = None
+    else:
+        # Public users: max 20 results
+        max_results = 20
+
+    # Execute screening query
+    results = await screening_service.screen(
+        filters=filters,
+        limit=max_results
+    )
+
+    # Add usage metadata to response
+    response = {
+        "stocks": results.stocks,
+        "meta": {
+            "total": results.total,
+            "shown": len(results.stocks),
+            "limited": results.total > len(results.stocks),
+            "tier": usage_status["tier"],
+            "query_time_ms": results.query_time_ms
+        }
+    }
+
+    # Add usage warning for public users
+    if not user:
+        response["usage"] = {
+            "daily_count": usage_status["daily_count"],
+            "daily_limit": usage_status["daily_limit"],
+            "remaining": usage_status["remaining"]
+        }
+
+    return response
 ```
 
 #### 5.2.4 Portfolio Endpoints
