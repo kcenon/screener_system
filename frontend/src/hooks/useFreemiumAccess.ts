@@ -146,9 +146,16 @@ export function useFreemiumAccess(): FreemiumLimits {
   return useMemo(() => {
     // Determine user tier
     let tier: FreemiumTier = 'public'
-    if (isAuthenticated) {
-      // Check subscription tier (future enhancement)
-      tier = (user?.subscription_tier as FreemiumTier) || 'free'
+    if (isAuthenticated && user) {
+      // Map User.tier to FreemiumTier
+      // 'basic' users get 'free' tier features
+      const userTier = user.tier
+      if (userTier === 'premium') {
+        tier = 'premium'
+      } else {
+        // 'free' and 'basic' both map to 'free' tier
+        tier = 'free'
+      }
     }
 
     // Get limits for tier

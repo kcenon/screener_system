@@ -4,7 +4,6 @@ import { useScreening } from '@/hooks/useScreening'
 import { useFilterPresets } from '@/hooks/useFilterPresets'
 import { useURLSync } from '@/hooks/useURLSync'
 import { useFreemiumAccess } from '@/hooks/useFreemiumAccess'
-import { trackScreening, canPerformScreening } from '@/utils/usageTracker'
 import FilterPanel from '@/components/screener/FilterPanel'
 import ResultsTable from '@/components/screener/ResultsTable'
 import Pagination from '@/components/common/Pagination'
@@ -44,9 +43,9 @@ export default function ScreenerPage() {
     maxScreeningResults,
     dailyScreeningLimit,
     screeningsToday,
-    screeningsRemaining,
     canExportResults,
-    canSavePresets,
+    // Note: canSavePresets check will be added in future phase
+    // Note: screeningsRemaining could be used for progress indicator in future
   } = useFreemiumAccess()
 
   const [showLimitModal, setShowLimitModal] = useState(false)
@@ -54,18 +53,8 @@ export default function ScreenerPage() {
   // Sync filters/sort/pagination with URL
   useURLSync(filters, setFilters, sort, setSort, pagination, setPagination)
 
-  // Check usage limit before screening
-  const checkUsageLimit = (): boolean => {
-    if (isAuthenticated) return true
-
-    if (!canPerformScreening(dailyScreeningLimit)) {
-      setShowLimitModal(true)
-      return false
-    }
-
-    trackScreening()
-    return true
-  }
+  // Note: Usage limit checking for manual search actions will be added in future phase
+  // Currently, screenings are auto-triggered by filter changes
 
   // Handle sort column click
   const handleSort = (field: ScreeningSortField) => {

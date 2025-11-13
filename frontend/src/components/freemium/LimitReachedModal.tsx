@@ -79,7 +79,7 @@ export default function LimitReachedModal({
   const defaultMessage =
     actionsUsed !== undefined && dailyLimit !== undefined
       ? `You've used all ${dailyLimit} of your free searches today. Sign up for unlimited access!`
-      : 'You've reached the daily limit. Sign up for unlimited access!'
+      : 'You\'ve reached the daily limit. Sign up for unlimited access!'
 
   return (
     <Dialog.Root open={open} onOpenChange={onClose}>
