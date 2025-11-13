@@ -6,7 +6,6 @@
 import { useQueries } from '@tanstack/react-query'
 import { stockService } from '../services/stockService'
 import type { ComparisonStock } from '../types/comparison'
-import type { StockDetail } from '../types'
 
 export function useComparisonData(stockCodes: string[]) {
   // Fetch all stocks in parallel using useQueries

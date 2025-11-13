@@ -14,7 +14,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import type { ComparisonStock, ComparisonMetric } from '../../types/comparison'
+import type { ComparisonStock } from '../../types/comparison'
 import { COMPARISON_METRICS } from '../../types/comparison'
 import { getMetricValue, formatMetricValue } from '../../utils/comparison'
 

@@ -4,9 +4,9 @@
  */
 
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, ArrowUpDown } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { ComparisonStock, ComparisonMetric } from '../../types/comparison'
-import { COMPARISON_METRICS, getMetricsByCategory } from '../../types/comparison'
+import { getMetricsByCategory } from '../../types/comparison'
 import {
   getMetricValue,
   formatMetricValue,

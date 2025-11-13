@@ -134,7 +134,7 @@ export default function StockComparisonPage() {
                   key={stock.code}
                   code={stock.code}
                   name={stock.name || 'Loading...'}
-                  market={stock.market}
+                  market={(stock.market as 'KOSPI' | 'KOSDAQ') || 'KOSPI'}
                   onRemove={removeStock}
                 />
               ))}

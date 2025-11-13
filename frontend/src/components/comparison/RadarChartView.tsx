@@ -82,7 +82,7 @@ export function RadarChartView({ stocks, className = '' }: RadarChartViewProps) 
       fullName: metric.label,
     }
 
-    stocks.forEach((stock, index) => {
+    stocks.forEach((stock) => {
       const value = getMetricValue(stock, metric.key)
       const allValues = stocks.map((s) => getMetricValue(s, metric.key))
 
