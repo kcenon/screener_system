@@ -76,3 +76,6 @@ export * from './screening'
 
 // Stock detail types
 export * from './stock'
+
+// Comparison types
+export * from './comparison'

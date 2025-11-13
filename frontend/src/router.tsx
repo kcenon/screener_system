@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ScreenerPage from './pages/ScreenerPage'
 import StockDetailPage from './pages/StockDetailPage'
+import StockComparisonPage from './pages/StockComparisonPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: 'stocks/:code',
         element: <StockDetailPage />,
+      },
+      {
+        path: 'compare',
+        element: <StockComparisonPage />,
       },
       {
         path: 'login',
