@@ -6,12 +6,12 @@
 | Item | Details |
 |------|---------|
 | **Project Name** | Stock Screening Platform |
-| **Document Version** | 1.0 |
-| **Status** | Draft |
+| **Document Version** | 1.1 |
+| **Status** | Updated - Phase 2 Enhancement |
 | **Created Date** | 2025-11-09 |
-| **Last Updated** | 2025-11-09 |
+| **Last Updated** | 2025-11-14 |
 | **Authors** | Engineering Team |
-| **Reviewers** | Product Team, QA Team |
+| **Reviewers** | Product Team, QA Team, Growth Team |
 | **Classification** | Internal - Confidential |
 
 ---
@@ -1038,6 +1038,171 @@ Not applicable (web-based application, no direct hardware interfaces)
 ---
 
 ## 5. System Features
+
+### 5.0 Public Access & Freemium Model 🆕
+
+**Feature ID**: SF-0
+**Priority**: Critical
+**Status**: New - Phase 2 Enhancement
+
+#### 5.0.1 Description and Priority
+- **Priority**: P0 (Critical for Growth)
+- **Description**: Enable public access to core features without login while maintaining strategic feature gating to drive user registration and engagement
+
+**Business Rationale**:
+- Current login wall causes 60-70% visitor bounce rate
+- Public access enables SEO indexing and viral sharing
+- Strategic feature limitations create clear upgrade incentives
+- Expected 100x ROI (10,000+ visitors vs. 100 users benefit)
+
+#### 5.0.2 Stimulus/Response Sequences
+
+**Scenario 1: Anonymous User Screening**
+1. User visits screener page without login
+2. System loads screener interface (no auth check)
+3. User applies filters (PER < 15, ROE > 10%)
+4. System queries database with user tier limits
+5. System returns max 20 results (vs. unlimited for registered)
+6. System displays "Sign up to see all results" banner
+7. User attempts to save preset
+8. System shows modal: "Sign up to save presets"
+
+**Scenario 2: Daily Limit Enforcement**
+1. Public user performs 10th screening of the day
+2. System checks localStorage + IP-based counter
+3. System shows limit reached modal
+4. Modal offers: "Sign up for unlimited searches"
+5. User clicks "Sign Up"
+6. System navigates to registration with context parameter
+
+**Scenario 3: Stock Detail Page Access**
+1. User clicks Google search result for "Samsung Electronics 005930"
+2. System loads stock detail page (no login required)
+3. System shows full basic info (price, volume, market cap)
+4. System blurs advanced sections (detailed financials)
+5. User hovers over blurred section
+6. Tooltip: "Sign up to view detailed financials"
+
+#### 5.0.3 Functional Requirements
+
+| Req ID | Requirement | Acceptance Criteria |
+|--------|-------------|---------------------|
+| SF-0.1 | Anonymous screener access | Screener page loads without login, all filters functional |
+| SF-0.2 | Result limit enforcement | Display max 20 results for public users, show upgrade banner |
+| SF-0.3 | Daily usage tracking | Track searches via localStorage + IP, persist across sessions |
+| SF-0.4 | Limit reached modal | Show modal on 11th search attempt with clear CTA |
+| SF-0.5 | Feature gating (save) | "Save Preset" button shows login modal for public users |
+| SF-0.6 | Feature gating (export) | "Export CSV" button shows upgrade prompt for public users |
+| SF-0.7 | Feature gating (watchlist) | "Add to Watchlist" shows login modal |
+| SF-0.8 | Stock detail SEO | Stock pages render server-side with Open Graph meta tags |
+| SF-0.9 | Social sharing | Share buttons (Twitter, KakaoTalk) work without login |
+| SF-0.10 | Gradual content reveal | Blur detailed financials for public, show teaser content |
+| SF-0.11 | Tier detection | System correctly identifies user tier on every request |
+| SF-0.12 | Upgrade prompts | Strategic CTAs throughout public user journey |
+
+#### 5.0.4 Non-Functional Requirements
+
+**Performance**:
+- Public screener results: < 500ms response time
+- Tier detection: < 10ms overhead per request
+- localStorage operations: < 5ms
+- No performance degradation vs. authenticated users
+
+**Security**:
+- IP-based rate limiting: 100 requests/hour per IP
+- No sensitive data exposure to public users
+- CAPTCHA after 3 consecutive searches (bot protection)
+- IP + localStorage fingerprinting for limit evasion prevention
+
+**Scalability**:
+- Support 10,000 concurrent public users
+- Redis-based distributed rate limiting
+- CDN caching for static stock pages
+- Database query optimization for limited results
+
+**Usability**:
+- Upgrade prompts: non-intrusive, contextually relevant
+- Clear tier comparison table on all gated features
+- One-click registration from any locked feature
+- Preserve user context after registration (return to same page)
+
+**SEO & Analytics**:
+- All stock detail pages: sitemap.xml inclusion
+- Canonical URLs for stock pages
+- Structured data (JSON-LD) for stock information
+- Track conversion funnel: view → interact → limit → signup
+
+#### 5.0.5 User Tier Matrix
+
+| Feature | Public (Anonymous) | Registered (Free) | Premium (Future) |
+|---------|-------------------|-------------------|------------------|
+| **Stock Screener** | ⚠️ Limited (20 results, 10/day) | ✅ Unlimited | ✅ Unlimited + AI |
+| **Save Presets** | ❌ Not available | ✅ Up to 10 | ✅ Unlimited |
+| **Export Results** | ❌ Not available | ✅ CSV only | ✅ CSV + Excel + API |
+| **Stock Detail** | ⚠️ Basic info only | ✅ Full access | ✅ Full + Analysis |
+| **Watchlists** | ❌ Not available | ✅ 10 lists, 50 stocks each | ✅ Unlimited |
+| **Comparison Tool** | ⚠️ Max 2 stocks | ✅ Max 5 stocks | ✅ Unlimited |
+| **Historical Data** | ⚠️ 1 month | ✅ 5 years | ✅ Full history + Export |
+| **Real-time Updates** | ❌ 15-min delay | ✅ Real-time | ✅ Real-time + Alerts |
+| **API Access** | ❌ Not available | ❌ Not available | ✅ Full API access |
+
+#### 5.0.6 Implementation Dependencies
+
+**Frontend Changes**:
+- Remove `<ProtectedRoute>` from: `/screener`, `/stock/:code`, `/compare`
+- Add `useFreemiumAccess()` hook for tier detection
+- Create `<FreemiumBanner>`, `<LockedContent>`, `<LimitReachedModal>` components
+- Update `ScreenerPage` to enforce 20-result limit
+- Add usage tracking to `useScreener()` hook
+
+**Backend Changes**:
+- Add `/api/usage/track` endpoint for daily limit checking
+- Update `/api/stocks/screen` to accept tier parameter
+- Implement Redis-based rate limiting middleware
+- Add IP-based usage tracking
+- Generate sitemap.xml with stock detail URLs
+
+**State Management**:
+- Add `usageStore` (Zustand) for tracking daily limits
+- Persist usage counts in localStorage
+- Sync usage state across tabs (BroadcastChannel API)
+
+**Database**:
+- No schema changes required
+- Add Redis cache for usage counters
+
+#### 5.0.7 Testing Requirements
+
+**Unit Tests**:
+- `useFreemiumAccess()` hook returns correct tier limits
+- `trackUsage()` increments localStorage counter
+- `LimitReachedModal` shows after 10 searches
+
+**Integration Tests**:
+- Public user can access screener without login
+- 20-result limit enforced for public users
+- Daily limit modal shows on 11th search
+- Locked features show upgrade prompt
+
+**E2E Tests**:
+- Full public user journey: search → limit → signup
+- SEO tags present on stock detail pages
+- Social sharing generates correct preview
+
+**Performance Tests**:
+- 10,000 concurrent public users
+- Tier detection overhead < 10ms
+- Redis rate limiting under load
+
+#### 5.0.8 Success Metrics
+
+| Metric | Baseline | Target | Timeline |
+|--------|----------|--------|----------|
+| Visitor → Screener Use Rate | 15% | 60% | 1 month |
+| Public User Daily Searches | N/A | 5,000 | 1 month |
+| Conversion Rate (Public → Registered) | 0.75% | 12% | 3 months |
+| Organic Traffic (SEO) | 100/day | 500/day | 6 months |
+| Social Shares per Stock Page | 0 | 50/day | 3 months |
 
 ### 5.1 Stock Screening Feature
 

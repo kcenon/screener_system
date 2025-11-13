@@ -6,12 +6,12 @@
 | Field | Value |
 |-------|-------|
 | **Project** | Stock Screening Platform |
-| **Version** | 1.0 (MVP) |
+| **Version** | 1.1 (MVP + Phase 2 Enhancement Plan) |
 | **Report Type** | Validation Report |
-| **Date** | 2025-11-11 |
+| **Date** | 2025-11-14 |
 | **Author** | Product & QA Team |
-| **Status** | Complete |
-| **Sprints Covered** | Sprint 1, 2, 3 (6 weeks) |
+| **Status** | Updated with Phase 2 Requirements |
+| **Sprints Covered** | Sprint 1, 2, 3 (MVP Complete) + Sprint 4-6 Planning (Phase 2) |
 
 ---
 
@@ -1111,6 +1111,163 @@ Total: 27
 > "Export to CSV works perfectly with my Excel analysis workflow. Huge time saver!" - Tester 4
 
 > "Mobile experience is smooth. I can screen stocks on my commute!" - Tester 5
+
+---
+
+### Appendix F: Phase 2 Enhancement Plan - Validation Criteria 🆕
+
+**Status**: Planned for Sprint 4-6 (Phase 2)
+**Document**: FE-006 through FE-012 Enhancement Tickets
+
+This appendix outlines the validation criteria for Phase 2 frontend enhancements, particularly the critical **Freemium Model** (FE-012).
+
+#### F.1 Freemium Model Validation Criteria (FE-012) - CRITICAL
+
+| Req ID | Requirement | Acceptance Criteria | Validation Method |
+|--------|-------------|---------------------|-------------------|
+| **FR-0.1** | Anonymous screener access | - Screener loads without login<br>- All filters functional<br>- No auth errors in console | E2E test, Manual test |
+| **FR-0.2** | Result limit (20 max) | - Public users see max 20 results<br>- Banner shows "Showing 20 of X"<br>- Registered users see all results | Unit test, Integration test |
+| **FR-0.3** | Daily limit (10 searches) | - 11th search shows limit modal<br>- localStorage tracks count<br>- Resets at midnight | E2E test, Jest test |
+| **FR-0.4** | Usage tracking | - Backend tracks IP-based usage<br>- Redis stores daily counts<br>- `/usage/status` returns correct count | API test, Redis inspection |
+| **FR-0.5** | Feature gating (save) | - "Save Preset" shows login modal<br>- Modal has signup CTA<br>- Context preserved after signup | E2E test, Manual test |
+| **FR-0.6** | Feature gating (export) | - "Export CSV" shows upgrade prompt<br>- Prompt explains limitation<br>- Links to signup page | E2E test, Manual test |
+| **FR-0.7** | Stock detail SEO | - Stock pages have Open Graph tags<br>- Meta description present<br>- Canonical URL correct | SEO audit, Lighthouse |
+| **FR-0.8** | Social sharing | - Share buttons work without login<br>- Preview shows correct image/text<br>- Analytics track shares | Manual test, Twitter/KakaoTalk |
+| **FR-0.9** | Locked content blur | - Financials blurred for public users<br>- Tooltip shows unlock message<br>- Click navigates to signup | E2E test, Visual regression |
+| **FR-0.10** | Tier detection | - `useFreemiumAccess()` returns correct tier<br>- Works for anonymous/registered<br>- < 10ms overhead | Unit test, Performance test |
+| **FR-0.11** | Rate limiting | - IP-based limit: 100 req/hour<br>- Returns 429 when exceeded<br>- Retry-After header present | Load test, API test |
+| **FR-0.12** | Upgrade prompts | - Contextual CTAs appear at limits<br>- Non-intrusive placement<br>- Clear value proposition | UX review, A/B test |
+
+#### F.2 Expected Validation Metrics (Phase 2)
+
+| Metric | Baseline (MVP) | Target (Post-FE-012) | Timeline | Validation Method |
+|--------|----------------|----------------------|----------|-------------------|
+| **Visitor → Screener Use** | 15% | 60% (+300%) | 1 month | Google Analytics |
+| **Public User Daily Searches** | N/A | 5,000/day | 1 month | Backend analytics |
+| **Conversion Rate (Public → Registered)** | 0.75% | 12% (+1,500%) | 3 months | Funnel analysis |
+| **Organic Traffic (SEO)** | 100/day | 500/day (+400%) | 6 months | Google Search Console |
+| **Social Shares/Stock Page** | 0 | 50/day | 3 months | Share event tracking |
+| **Avg Session Duration (Public)** | N/A | 5+ minutes | 1 month | Google Analytics |
+| **Bounce Rate** | 60-70% | < 40% | 2 months | Google Analytics |
+
+#### F.3 Acceptance Test Plan (FE-012)
+
+**Test Scenario 1: Anonymous User Journey**
+```gherkin
+Given I am an anonymous user
+When I visit the screener page
+Then I see the screener interface without login
+And I can apply filters
+When I search with 3 filters
+Then I see up to 20 results
+And I see a banner "Sign up to see all X results"
+When I click "Save Preset"
+Then I see a modal prompting me to sign up
+When I sign up
+Then I am redirected back to screener
+And I can now see all results
+```
+
+**Test Scenario 2: Daily Limit Enforcement**
+```gherkin
+Given I am an anonymous user
+And I have performed 10 screenings today
+When I attempt an 11th screening
+Then I see a "Daily Limit Reached" modal
+And the modal shows my usage (11/10)
+And the modal shows reset time (tomorrow midnight)
+When I click "Sign Up Free"
+Then I am navigated to signup page with context
+And after signup, I have unlimited searches
+```
+
+**Test Scenario 3: SEO & Social Sharing**
+```gherkin
+Given I am Googlebot crawling stock pages
+When I fetch /stock/005930
+Then I see server-rendered HTML
+And Open Graph meta tags are present
+And Canonical URL is correct
+When I share this page on Twitter
+Then the preview shows stock name, price, and chart
+And the link tracks properly in analytics
+```
+
+#### F.4 Non-Functional Validation (FE-012)
+
+| Category | Requirement | Target | Validation Method |
+|----------|-------------|--------|-------------------|
+| **Performance** | Tier detection overhead | < 10ms | Performance profiling |
+| | localStorage ops | < 5ms | Browser DevTools |
+| | Public screener query | < 500ms | Load test, APM |
+| **Security** | IP-based rate limiting | 100 req/hour | Penetration test |
+| | CAPTCHA after 3 searches | Works without false positives | Manual test |
+| | No sensitive data leak | Public users see limited data | Security audit |
+| **Scalability** | Concurrent public users | 10,000 users | Load test (Locust) |
+| | Redis rate limit perf | < 5ms per check | Redis benchmark |
+| **UX** | Upgrade prompt placement | Non-intrusive | UX review, heatmap |
+| | Contextual signup | Returns to same page | E2E test |
+| **SEO** | Lighthouse SEO score | > 90 | Lighthouse CI |
+| | Stock pages in sitemap | All 2,400+ stocks | Sitemap validation |
+
+#### F.5 Rollback Criteria (FE-012)
+
+If any of these conditions occur, rollback Phase 2 changes:
+
+1. **Conversion rate drops** below baseline (< 0.5%)
+2. **Bounce rate increases** above 80%
+3. **Critical security vulnerability** in rate limiting
+4. **Performance degradation** > 20% (screening > 600ms)
+5. **Redis failure** causing service outage
+6. **Negative user feedback** > 30% (measured via survey)
+
+#### F.6 Additional Enhancement Tickets Validation
+
+| Ticket | Enhancement | Key Validation Criteria |
+|--------|-------------|------------------------|
+| **FE-006** | Enhanced Landing Page | - Market widgets load < 1s<br>- Statistics accurate<br>- CTA conversion > 10% |
+| **FE-007** | User Dashboard | - Loads < 800ms<br>- All widgets functional<br>- Real-time updates work |
+| **FE-008** | Watchlist Feature | - CRUD operations work<br>- Real-time price updates<br>- Max 10 lists enforced |
+| **FE-009** | Market Overview | - Sector heatmap renders correctly<br>- Interactive hover works<br>- Data accurate |
+| **FE-010** | Stock Comparison | - Compares up to 5 stocks<br>- Radar chart renders<br>- Performance metrics correct |
+| **FE-011** | Enhanced Navigation | - All menu links work<br>- Mobile hamburger smooth<br>- Global search < 500ms |
+
+#### F.7 Validation Timeline
+
+**Week 1-2 (Implementation)**:
+- Unit tests for `useFreemiumAccess()`, `useUsageTracking()`
+- Integration tests for `/usage/track` API
+- E2E tests for freemium flows
+
+**Week 3 (QA Testing)**:
+- Functional validation (all FR-0.x requirements)
+- Performance testing (10,000 concurrent users)
+- Security testing (rate limit bypass attempts)
+
+**Week 4 (Beta Launch)**:
+- Monitor real user metrics
+- A/B test upgrade prompts
+- Collect user feedback
+
+**Week 5-6 (Optimization)**:
+- Adjust limits based on data
+- Improve conversion funnel
+- SEO optimization
+
+#### F.8 Success Criteria (Phase 2 Approval)
+
+Phase 2 will be considered validated and approved for full release when:
+
+- ✅ All 12 freemium requirements (FR-0.1 through FR-0.12) pass validation
+- ✅ Performance benchmarks met (< 500ms screening, < 10ms tier detection)
+- ✅ Security audit passes (no critical vulnerabilities)
+- ✅ SEO score > 90 (Lighthouse)
+- ✅ Conversion rate improvement visible (> 5% within 1 month)
+- ✅ No critical bugs in production (P0/P1)
+- ✅ User feedback positive (> 70% satisfaction)
+
+**Validation Owner**: Product & QA Team
+**Planned Validation Date**: Sprint 4-6 (2025-11-18 to 2025-12-27)
 
 ---
 
