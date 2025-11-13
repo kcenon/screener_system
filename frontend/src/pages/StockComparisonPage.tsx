@@ -6,7 +6,11 @@
 import { BarChart3, Share2, Download, RefreshCw } from 'lucide-react'
 import { useStockComparison } from '../hooks/useStockComparison'
 import { useComparisonData } from '../hooks/useComparisonData'
-import { StockChip, ComparisonTable } from '../components/comparison'
+import {
+  StockChip,
+  ComparisonTable,
+  ComparisonCharts,
+} from '../components/comparison'
 import { StockSelector } from '../components/comparison/StockSelector'
 import { MAX_COMPARISON_STOCKS, COMPARISON_METRICS } from '../types/comparison'
 import { exportToCSV, downloadBlob } from '../utils/comparison'
@@ -218,16 +222,8 @@ export default function StockComparisonPage() {
             {/* Comparison Table */}
             <ComparisonTable stocks={stocks} />
 
-            {/* Charts Placeholder */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center mt-6">
-              <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600 font-medium">
-                Charts Visualization
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                (Phase 3: Radar charts, bar charts, and performance charts - Coming Next)
-              </p>
-            </div>
+            {/* Comparison Charts */}
+            <ComparisonCharts stocks={stocks} className="mt-6" />
           </>
         )}
 
