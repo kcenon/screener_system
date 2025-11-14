@@ -36,6 +36,7 @@ export function MarketDashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [showScrollShadow, setShowScrollShadow] = useState(false)
+  const [sectorFilter, setSectorFilter] = useState<string | null>(null)
 
   // Get initial tab from URL or localStorage
   const getInitialTab = (): TabValue => {
@@ -63,6 +64,12 @@ export function MarketDashboardPage() {
   // Tab switching shortcuts (from other tabs)
   const switchToTab = useCallback((tab: TabValue) => {
     handleTabChange(tab)
+  }, [handleTabChange])
+
+  // Switch to screener with sector filter
+  const switchToScreenerWithSector = useCallback((sector: string) => {
+    setSectorFilter(sector)
+    handleTabChange('screener')
   }, [handleTabChange])
 
   // Keyboard shortcuts: Cmd/Ctrl + 1-5
@@ -165,17 +172,15 @@ export function MarketDashboardPage() {
           </Tabs.Content>
 
           <Tabs.Content value="screener" className="focus:outline-none">
-            <ScreenerTab />
+            <ScreenerTab
+              initialFilters={sectorFilter ? { sector: sectorFilter } : undefined}
+            />
           </Tabs.Content>
 
           <Tabs.Content value="heatmap" className="focus:outline-none">
             <HeatMapTab
               autoRefresh={autoRefresh}
-              onSectorClick={(sector) => {
-                // TODO: Pass sector filter to screener and switch to screener tab
-                console.log('Sector clicked:', sector)
-                switchToTab('screener')
-              }}
+              onSectorClick={switchToScreenerWithSector}
             />
           </Tabs.Content>
 
@@ -186,11 +191,7 @@ export function MarketDashboardPage() {
           <Tabs.Content value="sectors" className="focus:outline-none">
             <SectorsTab
               autoRefresh={autoRefresh}
-              onSectorClick={(sector) => {
-                // TODO: Pass sector filter to screener and switch to screener tab
-                console.log('Sector clicked:', sector)
-                switchToTab('screener')
-              }}
+              onSectorClick={switchToScreenerWithSector}
             />
           </Tabs.Content>
         </div>

@@ -8,7 +8,7 @@
  * - Export functionality
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useScreening } from '@/hooks/useScreening'
 import { useFilterPresets } from '@/hooks/useFilterPresets'
@@ -40,10 +40,14 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
     setPagination,
   } = useScreening()
 
-  // Apply initial filters if provided
-  // Note: This will be properly implemented when URL sync is added
-  // For now, initialFilters are accepted but not used
-  void initialFilters
+  // Apply initial filters if provided (Phase 2E)
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters({ ...filters, ...initialFilters })
+    }
+    // Only run when initialFilters changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFilters])
 
   const { presets, savePreset, deletePreset } = useFilterPresets()
   const {
