@@ -1,4 +1,4 @@
-import { LucideIcon, TrendingUp, Filter, ListTodo } from 'lucide-react'
+import { LucideIcon, TrendingUp, Filter, ListTodo, BarChart3 } from 'lucide-react'
 
 export interface NavigationItem {
   label: string
@@ -10,6 +10,11 @@ export interface NavigationItem {
 }
 
 export const navigationConfig: NavigationItem[] = [
+  {
+    label: 'Market',
+    path: '/market',
+    icon: BarChart3,
+  },
   {
     label: 'Screener',
     path: '/screener',
