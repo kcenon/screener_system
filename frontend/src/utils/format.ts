@@ -210,7 +210,7 @@ export function formatDate(
  *
  * @example
  * const { text, className } = formatChange(1234)
- * // { text: "+1,234", className: "text-red-600" }
+ * // { text: "+1,234", className: "text-green-600" }
  */
 export function formatChange(
   value: number | null | undefined,
@@ -225,9 +225,9 @@ export function formatChange(
 
   let className = 'text-gray-500'
   if (value > 0) {
-    className = 'text-red-600' // Red for positive (Korean market convention)
+    className = 'text-green-600' // Green for positive (international standard)
   } else if (value < 0) {
-    className = 'text-blue-600' // Blue for negative (Korean market convention)
+    className = 'text-red-600' // Red for negative (international standard)
   }
 
   return { text, className }
