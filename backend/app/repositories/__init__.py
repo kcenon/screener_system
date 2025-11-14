@@ -15,6 +15,7 @@ __all__ = [
     "UserRepository",
     "UserSessionRepository",
     "StockRepository",
+    "MarketRepository",
     "ScreeningRepository",
     "WatchlistRepository",
     "UserActivityRepository",

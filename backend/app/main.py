@@ -204,6 +204,9 @@ app.include_router(users.router, prefix="/v1")
 # Include stock routes
 app.include_router(stocks.router, prefix="/v1")
 
+# Include market overview routes
+app.include_router(market.router, prefix="/v1")
+
 # Include screening routes
 app.include_router(screening.router, prefix="/v1")
 
