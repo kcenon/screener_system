@@ -12,6 +12,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSectorPerformance } from '../../hooks/useSectorPerformance'
+import { componentSpacing, typography } from '../../config/theme'
+import { formatCompactMarketCap } from '../../utils/formatNumber'
 import type { SectorPerformance } from '../../types/market'
 
 /**
@@ -42,23 +44,23 @@ function SectorTile({ sector }: { sector: SectorPerformance }) {
   return (
     <button
       onClick={handleClick}
-      className={`group relative flex flex-col items-center justify-center rounded-lg p-4 transition-all hover:scale-105 hover:shadow-lg ${colorClass}`}
+      className={`group relative flex flex-col items-center justify-center rounded-lg p-3 transition-all hover:scale-105 hover:shadow-lg ${colorClass}`}
       title={`${sector.name}: ${isPositive ? '+' : ''}${sector.change_percent.toFixed(2)}%`}
     >
       {/* Sector name */}
-      <div className="mb-2 text-center text-sm font-medium">
+      <div className="mb-1 text-center text-xs font-medium">
         {sector.name}
       </div>
 
       {/* Change percentage */}
-      <div className="text-2xl font-bold">
+      <div className="text-xl font-bold">
         {isPositive ? '+' : ''}
         {sector.change_percent.toFixed(2)}%
       </div>
 
       {/* Stock count */}
-      <div className="mt-2 text-xs opacity-80">
-        {sector.stock_count}개 종목
+      <div className="mt-1 text-xs opacity-80">
+        {sector.stock_count}개
       </div>
 
       {/* Tooltip on hover */}
@@ -67,7 +69,7 @@ function SectorTile({ sector }: { sector: SectorPerformance }) {
         <div>변동률: {isPositive ? '+' : ''}{sector.change_percent.toFixed(2)}%</div>
         <div>종목 수: {sector.stock_count}개</div>
         {sector.market_cap && (
-          <div>시가총액: {(sector.market_cap / 1_000_000_000_000).toFixed(1)}조원</div>
+          <div>시가총액: {formatCompactMarketCap(sector.market_cap)}</div>
         )}
         <div className="mt-1 text-gray-400">클릭하여 종목 보기 →</div>
         {/* Arrow */}
@@ -117,20 +119,20 @@ export function SectorHeatmap({
   ]
 
   return (
-    <div className={`rounded-lg bg-white p-6 shadow-sm ${className}`}>
+    <div className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}>
       {/* Header with timeframe selector */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
-          섹터 성과 <span className="text-sm font-normal text-gray-500">Sector Performance</span>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className={`${typography.h2} text-gray-900`}>
+          섹터 성과 <span className="text-xs font-normal text-gray-500">Sector Performance</span>
         </h2>
 
         {/* Timeframe selector */}
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {timeframes.map((tf) => (
             <button
               key={tf.value}
               onClick={() => setTimeframe(tf.value)}
-              className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                 timeframe === tf.value
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -143,29 +145,29 @@ export function SectorHeatmap({
       </div>
 
       {/* Legend */}
-      <div className="mb-4 flex flex-wrap items-center gap-4 text-xs">
+      <div className="mb-3 flex flex-wrap items-center gap-3 text-xs">
         <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded bg-green-600"></div>
+          <div className="h-3 w-3 rounded bg-green-600"></div>
           <span>+2% 이상</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded bg-green-500"></div>
+          <div className="h-3 w-3 rounded bg-green-500"></div>
           <span>+1% ~ +2%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded bg-green-100 border border-green-300"></div>
+          <div className="h-3 w-3 rounded bg-green-100 border border-green-300"></div>
           <span>0% ~ +1%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded bg-red-100 border border-red-300"></div>
+          <div className="h-3 w-3 rounded bg-red-100 border border-red-300"></div>
           <span>-1% ~ 0%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded bg-red-500"></div>
+          <div className="h-3 w-3 rounded bg-red-500"></div>
           <span>-2% ~ -1%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded bg-red-600"></div>
+          <div className="h-3 w-3 rounded bg-red-600"></div>
           <span>-2% 이하</span>
         </div>
       </div>
@@ -179,16 +181,16 @@ export function SectorHeatmap({
 
       {/* Loading State */}
       {isLoading && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-32 animate-pulse rounded-lg bg-gray-200"></div>
+            <div key={i} className="h-28 animate-pulse rounded-lg bg-gray-200"></div>
           ))}
         </div>
       )}
 
       {/* Data State */}
       {data && !isLoading && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           {data.sectors.map((sector) => (
             <SectorTile key={sector.code} sector={sector} />
           ))}
@@ -196,7 +198,7 @@ export function SectorHeatmap({
       )}
 
       {/* Help text */}
-      <div className="mt-4 text-center text-xs text-gray-500">
+      <div className="mt-3 text-center text-xs text-gray-500">
         섹터를 클릭하면 해당 섹터의 종목 목록을 볼 수 있습니다
       </div>
     </div>

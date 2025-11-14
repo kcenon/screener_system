@@ -10,6 +10,8 @@
 
 import { useMarketIndices } from '../../hooks/useMarketIndices'
 import { Sparkline } from './Sparkline'
+import { formatCompactVolume, formatChangePercentage } from '../../utils/formatNumber'
+import { componentSpacing, typography } from '../../config/theme'
 import type { MarketIndex } from '../../types/market'
 
 /**
@@ -21,16 +23,16 @@ function IndexCard({ index }: { index: MarketIndex }) {
   const bgClass = isPositive ? 'bg-green-50' : 'bg-red-50'
 
   return (
-    <div className={`rounded-lg border border-gray-200 p-4 ${bgClass} transition-all hover:shadow-md`}>
+    <div className={`rounded-lg border border-gray-200 p-3 ${bgClass} transition-all hover:shadow-md`}>
       {/* Index name and code */}
-      <div className="mb-2">
+      <div className="mb-1">
         <h3 className="text-sm font-medium text-gray-600">{index.code}</h3>
         <p className="text-xs text-gray-500">{index.name}</p>
       </div>
 
       {/* Current value */}
-      <div className="mb-2">
-        <p className="text-2xl font-bold text-gray-900">
+      <div className="mb-1">
+        <p className="text-xl font-bold text-gray-900">
           {index.current.toLocaleString('ko-KR', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
@@ -39,7 +41,7 @@ function IndexCard({ index }: { index: MarketIndex }) {
       </div>
 
       {/* Change amount and percentage */}
-      <div className={`mb-3 flex items-center gap-2 text-sm font-medium ${changeClass}`}>
+      <div className={`mb-2 flex items-center gap-2 text-sm font-medium ${changeClass}`}>
         <span>{isPositive ? '▲' : '▼'}</span>
         <span>
           {Math.abs(index.change).toLocaleString('ko-KR', {
@@ -48,13 +50,12 @@ function IndexCard({ index }: { index: MarketIndex }) {
           })}
         </span>
         <span>
-          ({isPositive ? '+' : ''}
-          {index.change_percent.toFixed(2)}%)
+          {formatChangePercentage(index.change_percent)}
         </span>
       </div>
 
       {/* High/Low */}
-      <div className="mb-3 flex justify-between text-xs text-gray-600">
+      <div className="mb-2 flex justify-between text-xs text-gray-600">
         <span>
           고: {index.high.toLocaleString('ko-KR', { minimumFractionDigits: 2 })}
         </span>
@@ -64,13 +65,13 @@ function IndexCard({ index }: { index: MarketIndex }) {
       </div>
 
       {/* Sparkline chart */}
-      <div className="h-12">
+      <div className="h-10">
         <Sparkline data={index.sparkline} color={isPositive ? '#16a34a' : '#dc2626'} />
       </div>
 
       {/* Volume */}
       <div className="mt-2 text-xs text-gray-500">
-        거래량: {(index.volume / 1000000).toFixed(1)}M
+        거래량: {formatCompactVolume(index.volume)}
       </div>
     </div>
   )
@@ -134,11 +135,11 @@ export function MarketIndicesWidget({
     : ''
 
   return (
-    <div className={`rounded-lg bg-white p-6 shadow-sm ${className}`}>
+    <div className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}>
       {/* Header */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
-          시장 지수 <span className="text-sm font-normal text-gray-500">Market Indices</span>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className={`${typography.h2} text-gray-900`}>
+          시장 지수 <span className="text-xs font-normal text-gray-500">Market Indices</span>
         </h2>
         {lastUpdated && (
           <span className="text-xs text-gray-500">
@@ -159,7 +160,7 @@ export function MarketIndicesWidget({
 
       {/* Loading State */}
       {isLoading && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <IndexCardSkeleton />
           <IndexCardSkeleton />
           <IndexCardSkeleton />
@@ -168,7 +169,7 @@ export function MarketIndicesWidget({
 
       {/* Data State */}
       {data && !isLoading && (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           {data.indices.map((index) => (
             <IndexCard key={index.code} index={index} />
           ))}

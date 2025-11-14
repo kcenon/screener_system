@@ -95,20 +95,20 @@ export function MarketMoversWidget({
   })
 
   return (
-    <div className={`rounded-lg bg-white p-6 shadow-sm ${className}`}>
+    <div className={`rounded-lg bg-white p-4 shadow-sm ${className}`}>
       {/* Header with market filter */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-base font-semibold text-gray-900">
           시장 주도주 <span className="text-sm font-normal text-gray-500">Market Movers</span>
         </h2>
 
         {/* Market filter */}
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map((market) => (
             <button
               key={market}
               onClick={() => setSelectedMarket(market)}
-              className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                 selectedMarket === market
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

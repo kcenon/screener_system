@@ -10,6 +10,7 @@
 
 import { useState } from 'react'
 import { useMarketBreadth } from '../../hooks/useMarketBreadth'
+import { componentSpacing, typography } from '../../config/theme'
 import type { MarketType, MarketSentiment } from '../../types/market'
 
 /**
@@ -38,7 +39,7 @@ function SentimentBadge({ sentiment }: { sentiment: MarketSentiment }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm font-medium ${badge.className}`}
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${badge.className}`}
     >
       <span>{badge.icon}</span>
       <span>{badge.label}</span>
@@ -67,7 +68,7 @@ function DistributionBar({
   return (
     <div>
       {/* Bar */}
-      <div className="flex h-8 overflow-hidden rounded-lg">
+      <div className="flex h-6 overflow-hidden rounded-lg">
         {/* Advancing */}
         <div
           className="bg-green-500 transition-all"
@@ -89,17 +90,17 @@ function DistributionBar({
       </div>
 
       {/* Legend */}
-      <div className="mt-3 flex justify-between text-xs text-gray-600">
+      <div className="mt-2 flex justify-between text-xs text-gray-600">
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded bg-green-500"></div>
+          <div className="h-2.5 w-2.5 rounded bg-green-500"></div>
           <span>상승 {advancingPct.toFixed(1)}%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded bg-red-500"></div>
+          <div className="h-2.5 w-2.5 rounded bg-red-500"></div>
           <span>하락 {decliningPct.toFixed(1)}%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded bg-gray-400"></div>
+          <div className="h-2.5 w-2.5 rounded bg-gray-400"></div>
           <span>보합 {unchangedPct.toFixed(1)}%</span>
         </div>
       </div>
@@ -143,20 +144,20 @@ export function MarketBreadthWidget({
   })
 
   return (
-    <div className={`rounded-lg bg-white p-6 shadow-sm ${className}`}>
+    <div className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}>
       {/* Header with market filter */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
-          시장 폭 <span className="text-sm font-normal text-gray-500">Market Breadth</span>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className={`${typography.h2} text-gray-900`}>
+          시장 폭 <span className="text-xs font-normal text-gray-500">Market Breadth</span>
         </h2>
 
         {/* Market filter buttons */}
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map((market) => (
             <button
               key={market}
               onClick={() => setSelectedMarket(market)}
-              className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                 selectedMarket === market
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -190,39 +191,39 @@ export function MarketBreadthWidget({
       {/* Data State */}
       {data && !isLoading && (
         <>
-          {/* Stats Grid */}
-          <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {/* Stats - Inline Layout */}
+          <div className="mb-3 flex flex-wrap items-center gap-3">
             {/* Advancing */}
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
-              <p className="text-sm text-gray-600">상승</p>
-              <p className="text-2xl font-bold text-green-600">{data.advancing.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">
-                {((data.advancing / data.total) * 100).toFixed(1)}%
-              </p>
+            <div className="flex items-baseline gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2">
+              <span className="text-xs text-gray-600">상승</span>
+              <span className="text-lg font-bold text-green-600">{data.advancing.toLocaleString()}</span>
+              <span className="text-xs text-gray-500">
+                ({((data.advancing / data.total) * 100).toFixed(1)}%)
+              </span>
             </div>
 
             {/* Declining */}
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-              <p className="text-sm text-gray-600">하락</p>
-              <p className="text-2xl font-bold text-red-600">{data.declining.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">
-                {((data.declining / data.total) * 100).toFixed(1)}%
-              </p>
+            <div className="flex items-baseline gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
+              <span className="text-xs text-gray-600">하락</span>
+              <span className="text-lg font-bold text-red-600">{data.declining.toLocaleString()}</span>
+              <span className="text-xs text-gray-500">
+                ({((data.declining / data.total) * 100).toFixed(1)}%)
+              </span>
             </div>
 
             {/* Unchanged */}
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <p className="text-sm text-gray-600">보합</p>
-              <p className="text-2xl font-bold text-gray-600">{data.unchanged.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">
-                {((data.unchanged / data.total) * 100).toFixed(1)}%
-              </p>
+            <div className="flex items-baseline gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
+              <span className="text-xs text-gray-600">보합</span>
+              <span className="text-lg font-bold text-gray-600">{data.unchanged.toLocaleString()}</span>
+              <span className="text-xs text-gray-500">
+                ({((data.unchanged / data.total) * 100).toFixed(1)}%)
+              </span>
             </div>
 
             {/* A/D Ratio */}
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm text-gray-600">A/D 비율</p>
-              <p className="text-2xl font-bold text-blue-600">{data.ad_ratio.toFixed(2)}</p>
+            <div className="flex items-baseline gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
+              <span className="text-xs text-gray-600">A/D 비율</span>
+              <span className="text-lg font-bold text-blue-600">{data.ad_ratio.toFixed(2)}</span>
               <SentimentBadge sentiment={data.sentiment} />
             </div>
           </div>
