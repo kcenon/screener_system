@@ -260,15 +260,14 @@ class TestWatchlistEndpoints:
         db.add(ws)
         await db.commit()
 
-        # Debug: Verify WatchlistStock was created
+        # Verify WatchlistStock was created in database
         from sqlalchemy import select as sql_select
         debug_result = await db.execute(
             sql_select(WatchlistStock).where(WatchlistStock.watchlist_id == watchlist.id)
         )
         debug_stocks = list(debug_result.scalars().all())
-        print(f"DEBUG: Found {len(debug_stocks)} WatchlistStock records")
-        for stock in debug_stocks:
-            print(f"DEBUG: WatchlistStock - watchlist_id={stock.watchlist_id}, stock_code={stock.stock_code}")
+        assert len(debug_stocks) == 1, f"Expected 1 WatchlistStock in DB, found {len(debug_stocks)}"
+        assert debug_stocks[0].stock_code == "005930", f"Expected stock_code 005930, got {debug_stocks[0].stock_code}"
 
         response = await client.get(
             f"/v1/users/watchlists/{watchlist.id}", headers=auth_headers
