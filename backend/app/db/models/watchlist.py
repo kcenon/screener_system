@@ -30,7 +30,7 @@ class Watchlist(Base, TimestampMixin):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(
-        UUID(as_uuid=True),
+        Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
@@ -104,7 +104,7 @@ class UserActivity(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(
-        UUID(as_uuid=True),
+        Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
@@ -142,7 +142,7 @@ class UserPreferences(Base, TimestampMixin):
     __tablename__ = "user_preferences"
 
     user_id = Column(
-        UUID(as_uuid=True),
+        Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
         primary_key=True,
     )

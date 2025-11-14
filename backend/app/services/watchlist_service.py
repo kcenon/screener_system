@@ -38,7 +38,7 @@ class WatchlistService:
 
     async def get_user_watchlists(
         self,
-        user_id: UUID,
+        user_id: int,
         skip: int = 0,
         limit: int = 10,
         load_stocks: bool = False,
@@ -62,7 +62,7 @@ class WatchlistService:
         return watchlists, total
 
     async def get_watchlist_by_id(
-        self, watchlist_id: UUID, user_id: UUID, load_stocks: bool = True
+        self, watchlist_id: UUID, user_id: int, load_stocks: bool = True
     ) -> Optional[Watchlist]:
         """Get watchlist by ID (ownership check)"""
         return await self.watchlist_repo.get_by_id(
@@ -70,7 +70,7 @@ class WatchlistService:
         )
 
     async def create_watchlist(
-        self, user_id: UUID, data: WatchlistCreate
+        self, user_id: int, data: WatchlistCreate
     ) -> Watchlist:
         """
         Create new watchlist
@@ -125,7 +125,7 @@ class WatchlistService:
         return watchlist
 
     async def update_watchlist(
-        self, watchlist_id: UUID, user_id: UUID, data: WatchlistUpdate
+        self, watchlist_id: UUID, user_id: int, data: WatchlistUpdate
     ) -> Watchlist:
         """
         Update watchlist
@@ -194,7 +194,7 @@ class WatchlistService:
         await self.session.refresh(watchlist)
         return watchlist
 
-    async def delete_watchlist(self, watchlist_id: UUID, user_id: UUID) -> None:
+    async def delete_watchlist(self, watchlist_id: UUID, user_id: int) -> None:
         """
         Delete watchlist
 
@@ -225,7 +225,7 @@ class WatchlistService:
         await self.session.commit()
 
     async def add_stock_to_watchlist(
-        self, watchlist_id: UUID, user_id: UUID, stock_code: str
+        self, watchlist_id: UUID, user_id: int, stock_code: str
     ) -> WatchlistStock:
         """Add stock to watchlist"""
         # Verify ownership
@@ -255,7 +255,7 @@ class WatchlistService:
         return watchlist_stock
 
     async def remove_stock_from_watchlist(
-        self, watchlist_id: UUID, user_id: UUID, stock_code: str
+        self, watchlist_id: UUID, user_id: int, stock_code: str
     ) -> None:
         """Remove stock from watchlist"""
         # Verify ownership
@@ -282,7 +282,7 @@ class WatchlistService:
 
     async def log_activity(
         self,
-        user_id: UUID,
+        user_id: int,
         activity_type: str,
         description: str,
         activity_metadata: Optional[dict[str, Any]] = None,
@@ -297,7 +297,7 @@ class WatchlistService:
         return await self.activity_repo.create(activity)
 
     async def get_recent_activities(
-        self, user_id: UUID, limit: int = 10, activity_type: Optional[str] = None
+        self, user_id: int, limit: int = 10, activity_type: Optional[str] = None
     ) -> tuple[list[UserActivity], int]:
         """Get recent user activities"""
         activities = await self.activity_repo.get_user_activities(
@@ -308,7 +308,7 @@ class WatchlistService:
         )
         return activities, total
 
-    async def get_dashboard_summary(self, user_id: UUID, user_tier: str) -> DashboardSummary:
+    async def get_dashboard_summary(self, user_id: int, user_tier: str) -> DashboardSummary:
         """
         Get dashboard summary for user
 

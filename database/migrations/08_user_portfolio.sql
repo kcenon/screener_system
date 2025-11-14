@@ -12,7 +12,7 @@
 
 CREATE TABLE IF NOT EXISTS watchlists (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
+    user_id INTEGER NOT NULL,
     name VARCHAR(100) NOT NULL,
     description TEXT,
 
@@ -56,10 +56,10 @@ COMMENT ON COLUMN watchlist_stocks.notes IS 'Optional user notes about this stoc
 
 CREATE TABLE IF NOT EXISTS user_activities (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL,
+    user_id INTEGER NOT NULL,
     activity_type VARCHAR(50) NOT NULL,
     description TEXT NOT NULL,
-    metadata JSONB,
+    activity_metadata JSONB,
 
     created_at TIMESTAMP DEFAULT NOW(),
 
@@ -83,14 +83,14 @@ CREATE TABLE IF NOT EXISTS user_activities (
 COMMENT ON TABLE user_activities IS 'Audit log of user activities for recent history';
 COMMENT ON COLUMN user_activities.activity_type IS 'Type of activity performed';
 COMMENT ON COLUMN user_activities.description IS 'Human-readable description of activity';
-COMMENT ON COLUMN user_activities.metadata IS 'Additional structured data (screening filters, etc.)';
+COMMENT ON COLUMN user_activities.activity_metadata IS 'Additional structured data (screening filters, etc.)';
 
 -- ============================================================================
 -- USER PREFERENCES (Dashboard Settings)
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS user_preferences (
-    user_id UUID PRIMARY KEY,
+    user_id INTEGER PRIMARY KEY,
     default_watchlist_id UUID,
     screening_quota_used INTEGER DEFAULT 0,
     screening_quota_reset_at TIMESTAMP DEFAULT NOW() + INTERVAL '1 month',

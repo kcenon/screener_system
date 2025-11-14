@@ -117,7 +117,7 @@ class WatchlistResponse(WatchlistBase):
     """Schema for watchlist response"""
 
     id: UUID
-    user_id: UUID
+    user_id: int
     stock_count: int = 0
     created_at: datetime
     updated_at: datetime
@@ -178,7 +178,7 @@ class UserActivityResponse(UserActivityBase):
     """Schema for user activity response"""
 
     id: UUID
-    user_id: UUID
+    user_id: int
     created_at: datetime
 
     # Additional fields for specific activity types
@@ -268,7 +268,7 @@ class UserPreferencesUpdate(UserPreferencesBase):
 class UserPreferencesResponse(UserPreferencesBase):
     """Schema for user preferences response"""
 
-    user_id: UUID
+    user_id: int
     screening_quota_used: int = 0
     screening_quota_reset_at: datetime
     created_at: datetime
