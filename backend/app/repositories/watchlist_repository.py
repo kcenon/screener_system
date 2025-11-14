@@ -37,10 +37,23 @@ class WatchlistRepository:
         )
 
         if load_stocks:
-            query = query.options(selectinload(Watchlist.stocks))
+            from sqlalchemy.orm import joinedload
+            query = query.options(
+                selectinload(Watchlist.stocks).joinedload(WatchlistStock.stock)
+            )
 
         result = await self.session.execute(query)
-        return result.scalar_one_or_none()
+        watchlist = result.scalar_one_or_none()
+
+        # Force load relationships before returning
+        if watchlist and load_stocks:
+            # Access the relationship to trigger lazy loading
+            _ = watchlist.stocks
+            # Also access nested stock relationship for each WatchlistStock
+            for ws in watchlist.stocks:
+                _ = ws.stock
+
+        return watchlist
 
     async def get_user_watchlists(
         self,
@@ -70,10 +83,24 @@ class WatchlistRepository:
         )
 
         if load_stocks:
-            query = query.options(selectinload(Watchlist.stocks))
+            from sqlalchemy.orm import joinedload
+            query = query.options(
+                selectinload(Watchlist.stocks).joinedload(WatchlistStock.stock)
+            )
 
         result = await self.session.execute(query)
-        return list(result.scalars().all())
+        watchlists = list(result.scalars().all())
+
+        # Force load relationships before returning
+        if load_stocks:
+            for watchlist in watchlists:
+                # Access the relationship to trigger lazy loading
+                _ = watchlist.stocks
+                # Also access nested stock relationship for each WatchlistStock
+                for ws in watchlist.stocks:
+                    _ = ws.stock
+
+        return watchlists
 
     async def count_user_watchlists(self, user_id: int) -> int:
         """Count watchlists owned by user"""
