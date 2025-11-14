@@ -32,18 +32,19 @@ class WatchlistRepository:
         Returns:
             Watchlist if found and owned by user, None otherwise
         """
+        from sqlalchemy.orm import selectinload, joinedload
+
         query = select(Watchlist).where(
             Watchlist.id == watchlist_id, Watchlist.user_id == user_id
         )
 
-        if load_stocks:
-            from sqlalchemy.orm import joinedload
-            query = query.options(
-                joinedload(Watchlist.stocks).joinedload(WatchlistStock.stock)
-            )
+        # Always eagerly load stocks and nested stock relationship
+        query = query.options(
+            selectinload(Watchlist.stocks).selectinload(WatchlistStock.stock)
+        )
 
         result = await self.session.execute(query)
-        return result.unique().scalar_one_or_none()
+        return result.scalar_one_or_none()
 
     async def get_user_watchlists(
         self,
@@ -72,14 +73,15 @@ class WatchlistRepository:
             .limit(limit)
         )
 
+        # Always eagerly load stocks and nested stock relationship when requested
         if load_stocks:
-            from sqlalchemy.orm import joinedload
+            from sqlalchemy.orm import selectinload
             query = query.options(
-                joinedload(Watchlist.stocks).joinedload(WatchlistStock.stock)
+                selectinload(Watchlist.stocks).selectinload(WatchlistStock.stock)
             )
 
         result = await self.session.execute(query)
-        return list(result.unique().scalars().all())
+        return list(result.scalars().all())
 
     async def count_user_watchlists(self, user_id: int) -> int:
         """Count watchlists owned by user"""
