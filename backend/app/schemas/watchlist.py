@@ -165,7 +165,7 @@ class UserActivityBase(BaseModel):
         "stock_add|stock_remove|stock_view|login|logout)$",
     )
     description: str = Field(..., min_length=1, max_length=500)
-    metadata: Optional[dict[str, Any]] = None
+    activity_metadata: Optional[dict[str, Any]] = None
 
 
 class UserActivityCreate(UserActivityBase):

@@ -111,7 +111,7 @@ class UserActivity(Base):
     )
     activity_type = Column(String(50), nullable=False, index=True)
     description = Column(Text, nullable=False)
-    metadata = Column(JSONB, nullable=True)
+    activity_metadata = Column(JSONB, nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         default=datetime.now,

@@ -117,7 +117,7 @@ class WatchlistService:
             user_id=user_id,
             activity_type="watchlist_create",
             description=f"Created watchlist '{data.name}'",
-            metadata={"watchlist_id": str(watchlist.id)},
+            activity_metadata={"watchlist_id": str(watchlist.id)},
         )
 
         await self.session.commit()
@@ -187,7 +187,7 @@ class WatchlistService:
                 user_id=user_id,
                 activity_type="watchlist_update",
                 description=f"Updated watchlist: {', '.join(changes)}",
-                metadata={"watchlist_id": str(watchlist_id)},
+                activity_metadata={"watchlist_id": str(watchlist_id)},
             )
 
         await self.session.commit()
@@ -219,7 +219,7 @@ class WatchlistService:
             user_id=user_id,
             activity_type="watchlist_delete",
             description=f"Deleted watchlist '{watchlist_name}'",
-            metadata={"watchlist_id": str(watchlist_id)},
+            activity_metadata={"watchlist_id": str(watchlist_id)},
         )
 
         await self.session.commit()
@@ -248,7 +248,7 @@ class WatchlistService:
             user_id=user_id,
             activity_type="stock_add",
             description=f"Added {stock.name} ({stock_code}) to watchlist",
-            metadata={"watchlist_id": str(watchlist_id), "stock_code": stock_code},
+            activity_metadata={"watchlist_id": str(watchlist_id), "stock_code": stock_code},
         )
 
         await self.session.commit()
@@ -275,7 +275,7 @@ class WatchlistService:
             user_id=user_id,
             activity_type="stock_remove",
             description=f"Removed {stock_code} from watchlist",
-            metadata={"watchlist_id": str(watchlist_id), "stock_code": stock_code},
+            activity_metadata={"watchlist_id": str(watchlist_id), "stock_code": stock_code},
         )
 
         await self.session.commit()
@@ -285,14 +285,14 @@ class WatchlistService:
         user_id: UUID,
         activity_type: str,
         description: str,
-        metadata: Optional[dict[str, Any]] = None,
+        activity_metadata: Optional[dict[str, Any]] = None,
     ) -> UserActivity:
         """Log user activity"""
         activity = UserActivity(
             user_id=user_id,
             activity_type=activity_type,
             description=description,
-            metadata=metadata,
+            activity_metadata=activity_metadata,
         )
         return await self.activity_repo.create(activity)
 
