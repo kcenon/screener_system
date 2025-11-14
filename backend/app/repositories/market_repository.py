@@ -1,16 +1,16 @@
-"""Market repository for market overview and sector analysis operations"""
+"""Market repository for market overview data operations"""
 
 from datetime import datetime, timedelta
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy import and_, case, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import CalculatedIndicator, DailyPrice, MarketIndex, Stock
+from app.db.models import DailyPrice, MarketIndex, Stock
 
 
 class MarketRepository:
-    """Repository for market overview database operations"""
+    """Repository for Market Overview database operations"""
 
     def __init__(self, session: AsyncSession):
         """Initialize repository with database session"""
@@ -20,72 +20,86 @@ class MarketRepository:
     # Market Indices Operations
     # ========================================================================
 
-    async def get_current_indices(
-        self,
-    ) -> List[Tuple[MarketIndex, List[float]]]:
+    async def get_current_indices(self) -> List[MarketIndex]:
         """
-        Get current values for all market indices with sparkline data
+        Get current (latest) values for all market indices
 
         Returns:
-            List of (MarketIndex, sparkline_data) tuples
-            sparkline_data contains last 30 data points
+            List of latest MarketIndex records for KOSPI, KOSDAQ, KRX100
         """
-        indices = []
-
-        for index_code in ["KOSPI", "KOSDAQ", "KRX100"]:
-            # Get latest index value
-            latest_query = (
-                select(MarketIndex)
-                .where(MarketIndex.code == index_code)
-                .order_by(desc(MarketIndex.timestamp))
-                .limit(1)
+        # Subquery to get latest timestamp for each index code
+        latest_timestamps = (
+            select(
+                MarketIndex.code,
+                func.max(MarketIndex.timestamp).label("max_timestamp"),
             )
-            result = await self.session.execute(latest_query)
-            latest = result.scalar_one_or_none()
+            .group_by(MarketIndex.code)
+            .subquery()
+        )
 
-            if not latest:
-                continue
-
-            # Get sparkline data (last 30 data points)
-            sparkline_query = (
-                select(MarketIndex.close_value)
-                .where(MarketIndex.code == index_code)
-                .order_by(desc(MarketIndex.timestamp))
-                .limit(30)
+        # Join to get full records for latest timestamps
+        query = (
+            select(MarketIndex)
+            .join(
+                latest_timestamps,
+                and_(
+                    MarketIndex.code == latest_timestamps.c.code,
+                    MarketIndex.timestamp == latest_timestamps.c.max_timestamp,
+                ),
             )
-            sparkline_result = await self.session.execute(sparkline_query)
-            sparkline_values = [
-                float(row[0]) for row in sparkline_result.all()
-            ]
-            # Reverse to get chronological order
-            sparkline_values.reverse()
+            .order_by(MarketIndex.code)
+        )
 
-            indices.append((latest, sparkline_values))
+        result = await self.session.execute(query)
+        return list(result.scalars().all())
 
-        return indices
+    async def get_index_sparkline(
+        self, code: str, data_points: int = 30
+    ) -> List[float]:
+        """
+        Get sparkline data (last N closing values) for an index
+
+        Args:
+            code: Index code (KOSPI, KOSDAQ, KRX100)
+            data_points: Number of recent data points (default: 30)
+
+        Returns:
+            List of closing values in chronological order
+        """
+        query = (
+            select(MarketIndex.close_value)
+            .where(MarketIndex.code == code)
+            .order_by(desc(MarketIndex.timestamp))
+            .limit(data_points)
+        )
+
+        result = await self.session.execute(query)
+        # Reverse to get chronological order (oldest to newest)
+        values = [float(v) for v in result.scalars().all()]
+        return list(reversed(values))
 
     async def get_index_history(
         self,
-        index_code: str,
+        code: str,
         start_date: datetime,
         end_date: datetime,
     ) -> List[MarketIndex]:
         """
-        Get historical index data for a specific timeframe
+        Get historical index data for a time range
 
         Args:
-            index_code: Index code (KOSPI, KOSDAQ, KRX100)
+            code: Index code (KOSPI, KOSDAQ, KRX100)
             start_date: Start datetime
             end_date: End datetime
 
         Returns:
-            List of MarketIndex records
+            List of MarketIndex records in chronological order
         """
         query = (
             select(MarketIndex)
             .where(
                 and_(
-                    MarketIndex.code == index_code,
+                    MarketIndex.code == code,
                     MarketIndex.timestamp >= start_date,
                     MarketIndex.timestamp <= end_date,
                 )
@@ -100,77 +114,71 @@ class MarketRepository:
     # Market Breadth Operations
     # ========================================================================
 
-    async def get_market_breadth(self, market: str = "ALL") -> dict:
+    async def get_market_breadth(
+        self, market: Optional[str] = None
+    ) -> Dict[str, int]:
         """
-        Get advancing/declining/unchanged stock counts
+        Get market breadth indicators (advancing/declining/unchanged counts)
 
         Args:
-            market: Market filter (KOSPI, KOSDAQ, ALL)
+            market: Market filter (KOSPI, KOSDAQ, or None for ALL)
 
         Returns:
-            Dictionary with advancing, declining, unchanged counts and A/D ratio
+            Dictionary with advancing, declining, unchanged counts
         """
         # Subquery to get latest price for each stock
         latest_prices = (
             select(
                 DailyPrice.stock_code,
+                func.max(DailyPrice.trade_date).label("max_date"),
+            )
+            .group_by(DailyPrice.stock_code)
+            .subquery()
+        )
+
+        # Join to get full latest price records
+        latest_price_data = (
+            select(
+                DailyPrice.stock_code,
                 DailyPrice.close_price,
                 DailyPrice.open_price,
-                func.row_number()
-                .over(
-                    partition_by=DailyPrice.stock_code,
-                    order_by=desc(DailyPrice.trade_date),
-                )
-                .label("rn"),
+            )
+            .join(
+                latest_prices,
+                and_(
+                    DailyPrice.stock_code == latest_prices.c.stock_code,
+                    DailyPrice.trade_date == latest_prices.c.max_date,
+                ),
             )
             .subquery()
         )
 
-        # Join with stocks and filter by market
-        query = (
-            select(
-                Stock.code,
-                Stock.market,
-                latest_prices.c.close_price,
-                latest_prices.c.open_price,
-            )
-            .join(latest_prices, Stock.code == latest_prices.c.stock_code)
-            .where(
-                and_(
-                    latest_prices.c.rn == 1,
-                    Stock.delisting_date.is_(None),
-                )
-            )
-        )
+        # Calculate change and count
+        query = select(
+            func.count(
+                case((latest_price_data.c.close_price > latest_price_data.c.open_price, 1))
+            ).label("advancing"),
+            func.count(
+                case((latest_price_data.c.close_price < latest_price_data.c.open_price, 1))
+            ).label("declining"),
+            func.count(
+                case((latest_price_data.c.close_price == latest_price_data.c.open_price, 1))
+            ).label("unchanged"),
+        ).select_from(latest_price_data)
 
-        if market != "ALL":
-            query = query.where(Stock.market == market)
+        # Apply market filter if specified
+        if market and market != "ALL":
+            query = query.join(
+                Stock, Stock.code == latest_price_data.c.stock_code
+            ).where(Stock.market == market)
 
         result = await self.session.execute(query)
-        stocks_data = result.all()
-
-        # Calculate advancing, declining, unchanged
-        advancing = 0
-        declining = 0
-        unchanged = 0
-
-        for stock in stocks_data:
-            if stock.close_price > stock.open_price:
-                advancing += 1
-            elif stock.close_price < stock.open_price:
-                declining += 1
-            else:
-                unchanged += 1
-
-        total = advancing + declining + unchanged
-        ad_ratio = advancing / declining if declining > 0 else 0.0
+        data = result.one()
 
         return {
-            "advancing": advancing,
-            "declining": declining,
-            "unchanged": unchanged,
-            "total": total,
-            "ad_ratio": round(ad_ratio, 2),
+            "advancing": data.advancing or 0,
+            "declining": data.declining or 0,
+            "unchanged": data.unchanged or 0,
         }
 
     # ========================================================================
@@ -179,142 +187,182 @@ class MarketRepository:
 
     async def get_sector_performance(
         self,
-        market: str = "ALL",
-        timeframe: str = "1D",
-    ) -> List[dict]:
+        market: Optional[str] = None,
+        timeframe_days: int = 1,
+    ) -> List[Dict]:
         """
-        Get aggregated sector performance
+        Get sector-level performance aggregation
 
         Args:
-            market: Market filter (KOSPI, KOSDAQ, ALL)
-            timeframe: Time period (1D, 1W, 1M, 3M)
+            market: Market filter (KOSPI, KOSDAQ, or None for ALL)
+            timeframe_days: Number of days for performance calculation (1, 7, 30, 90)
 
         Returns:
             List of sector performance dictionaries
         """
-        # Calculate lookback days based on timeframe
-        lookback_days = {
-            "1D": 1,
-            "1W": 7,
-            "1M": 30,
-            "3M": 90,
-        }.get(timeframe, 1)
-
-        # Subquery to get latest and previous prices
+        # Subquery for latest prices
         latest_prices = (
             select(
                 DailyPrice.stock_code,
-                DailyPrice.close_price.label("latest_price"),
-                func.row_number()
-                .over(
-                    partition_by=DailyPrice.stock_code,
-                    order_by=desc(DailyPrice.trade_date),
-                )
-                .label("rn"),
+                func.max(DailyPrice.trade_date).label("max_date"),
             )
+            .group_by(DailyPrice.stock_code)
             .subquery()
+        )
+
+        # Subquery for prices N days ago
+        cutoff_date = (
+            select(func.max(DailyPrice.trade_date) - timedelta(days=timeframe_days))
+            .scalar_subquery()
         )
 
         previous_prices = (
             select(
                 DailyPrice.stock_code,
-                DailyPrice.close_price.label("previous_price"),
-                func.row_number()
-                .over(
-                    partition_by=DailyPrice.stock_code,
-                    order_by=desc(DailyPrice.trade_date),
-                )
-                .label("rn"),
+                DailyPrice.close_price.label("prev_close"),
             )
-            .where(
-                DailyPrice.trade_date
-                <= func.current_date() - timedelta(days=lookback_days)
-            )
+            .where(DailyPrice.trade_date == cutoff_date)
             .subquery()
         )
 
-        # Calculate change percentage and aggregate by sector
+        # Calculate sector aggregations
         query = (
             select(
                 Stock.sector,
                 func.count(Stock.code).label("stock_count"),
+                func.sum(Stock.shares_outstanding * DailyPrice.close_price).label(
+                    "market_cap"
+                ),
+                func.sum(DailyPrice.volume).label("total_volume"),
                 func.avg(
-                    ((latest_prices.c.latest_price - previous_prices.c.previous_price)
-                     / previous_prices.c.previous_price * 100)
+                    (DailyPrice.close_price - previous_prices.c.prev_close)
+                    / previous_prices.c.prev_close
+                    * 100
                 ).label("avg_change_percent"),
-                func.sum(Stock.shares_outstanding * latest_prices.c.latest_price).label(
-                    "total_market_cap"
+            )
+            .select_from(Stock)
+            .join(
+                latest_prices,
+                Stock.code == latest_prices.c.stock_code,
+            )
+            .join(
+                DailyPrice,
+                and_(
+                    DailyPrice.stock_code == Stock.code,
+                    DailyPrice.trade_date == latest_prices.c.max_date,
                 ),
             )
-            .join(latest_prices, Stock.code == latest_prices.c.stock_code)
-            .outerjoin(previous_prices, Stock.code == previous_prices.c.stock_code)
+            .outerjoin(
+                previous_prices,
+                Stock.code == previous_prices.c.stock_code,
+            )
             .where(
                 and_(
-                    latest_prices.c.rn == 1,
-                    previous_prices.c.rn == 1,
-                    Stock.delisting_date.is_(None),
                     Stock.sector.isnot(None),
+                    Stock.delisting_date.is_(None),
                 )
             )
             .group_by(Stock.sector)
             .order_by(desc("avg_change_percent"))
         )
 
-        if market != "ALL":
+        # Apply market filter
+        if market and market != "ALL":
             query = query.where(Stock.market == market)
 
         result = await self.session.execute(query)
         sectors = result.all()
 
-        # Get top stock for each sector
-        sector_data = []
-        for sector in sectors:
-            # Get top performing stock in this sector
-            top_stock_query = (
-                select(Stock.code, Stock.name)
-                .join(latest_prices, Stock.code == latest_prices.c.stock_code)
-                .outerjoin(previous_prices, Stock.code == previous_prices.c.stock_code)
-                .where(
-                    and_(
-                        Stock.sector == sector.sector,
-                        latest_prices.c.rn == 1,
-                        previous_prices.c.rn == 1,
-                        Stock.delisting_date.is_(None),
-                    )
-                )
-                .order_by(
-                    desc(
-                        (latest_prices.c.latest_price - previous_prices.c.previous_price)
-                        / previous_prices.c.previous_price
-                    )
-                )
-                .limit(1)
+        return [
+            {
+                "code": row.sector,
+                "stock_count": row.stock_count,
+                "market_cap": row.market_cap or 0,
+                "volume": row.total_volume or 0,
+                "change_percent": round(float(row.avg_change_percent or 0), 2),
+            }
+            for row in sectors
+        ]
+
+    async def get_sector_top_stock(self, sector: str) -> Optional[Tuple[str, str, float]]:
+        """
+        Get top performing stock in a sector
+
+        Args:
+            sector: Sector code
+
+        Returns:
+            Tuple of (stock_code, stock_name, change_percent) or None
+        """
+        # Subquery for latest prices
+        latest_prices = (
+            select(
+                DailyPrice.stock_code,
+                func.max(DailyPrice.trade_date).label("max_date"),
             )
+            .group_by(DailyPrice.stock_code)
+            .subquery()
+        )
 
-            top_stock_result = await self.session.execute(top_stock_query)
-            top_stock = top_stock_result.first()
-
-            sector_data.append(
-                {
-                    "code": sector.sector,
-                    "name": sector.sector,
-                    "stock_count": sector.stock_count,
-                    "change_percent": round(float(sector.avg_change_percent), 2)
-                    if sector.avg_change_percent
-                    else 0.0,
-                    "market_cap": int(sector.total_market_cap)
-                    if sector.total_market_cap
-                    else 0,
-                    "top_stock": {
-                        "code": top_stock.code if top_stock else None,
-                        "name": top_stock.name if top_stock else None,
-                    }
-                    if top_stock
-                    else None,
-                }
+        # Subquery for previous day prices
+        prev_prices = (
+            select(
+                DailyPrice.stock_code,
+                DailyPrice.close_price.label("prev_close"),
             )
+            .join(
+                latest_prices,
+                DailyPrice.stock_code == latest_prices.c.stock_code,
+            )
+            .where(
+                DailyPrice.trade_date == latest_prices.c.max_date - timedelta(days=1)
+            )
+            .subquery()
+        )
 
-        return sector_data
+        # Query top stock by change percent
+        query = (
+            select(
+                Stock.code,
+                Stock.name,
+                (
+                    (DailyPrice.close_price - prev_prices.c.prev_close)
+                    / prev_prices.c.prev_close
+                    * 100
+                ).label("change_percent"),
+            )
+            .select_from(Stock)
+            .join(
+                latest_prices,
+                Stock.code == latest_prices.c.stock_code,
+            )
+            .join(
+                DailyPrice,
+                and_(
+                    DailyPrice.stock_code == Stock.code,
+                    DailyPrice.trade_date == latest_prices.c.max_date,
+                ),
+            )
+            .join(
+                prev_prices,
+                Stock.code == prev_prices.c.stock_code,
+            )
+            .where(
+                and_(
+                    Stock.sector == sector,
+                    Stock.delisting_date.is_(None),
+                )
+            )
+            .order_by(desc("change_percent"))
+            .limit(1)
+        )
+
+        result = await self.session.execute(query)
+        row = result.one_or_none()
+
+        if row:
+            return (row.code, row.name, round(float(row.change_percent), 2))
+        return None
 
     # ========================================================================
     # Market Movers Operations
@@ -322,86 +370,91 @@ class MarketRepository:
 
     async def get_top_movers(
         self,
-        mover_type: str,
-        market: str = "ALL",
+        move_type: str,  # "gainers" or "losers"
+        market: Optional[str] = None,
         limit: int = 20,
-    ) -> List[Tuple[Stock, DailyPrice, float]]:
+    ) -> List[Dict]:
         """
         Get top gaining or losing stocks
 
         Args:
-            mover_type: 'gainers' or 'losers'
-            market: Market filter (KOSPI, KOSDAQ, ALL)
-            limit: Number of results
+            move_type: "gainers" or "losers"
+            market: Market filter (KOSPI, KOSDAQ, or None for ALL)
+            limit: Maximum number of results
 
         Returns:
-            List of (Stock, DailyPrice, change_percent) tuples
+            List of stock dictionaries with price and change info
         """
-        # Subquery to get latest prices with previous day comparison
+        # Subquery for latest prices
         latest_prices = (
             select(
                 DailyPrice.stock_code,
-                DailyPrice.close_price,
-                DailyPrice.open_price,
-                DailyPrice.volume,
-                DailyPrice.trading_value,
-                DailyPrice.trade_date,
-                func.row_number()
-                .over(
-                    partition_by=DailyPrice.stock_code,
-                    order_by=desc(DailyPrice.trade_date),
-                )
-                .label("rn"),
+                func.max(DailyPrice.trade_date).label("max_date"),
             )
+            .group_by(DailyPrice.stock_code)
             .subquery()
         )
 
-        previous_prices = (
+        # Subquery for previous day prices
+        prev_prices = (
             select(
                 DailyPrice.stock_code,
                 DailyPrice.close_price.label("prev_close"),
-                func.row_number()
-                .over(
-                    partition_by=DailyPrice.stock_code,
-                    order_by=desc(DailyPrice.trade_date),
-                )
-                .label("rn"),
             )
-            .where(DailyPrice.trade_date < func.current_date())
+            .join(
+                latest_prices,
+                DailyPrice.stock_code == latest_prices.c.stock_code,
+            )
+            .where(
+                DailyPrice.trade_date == latest_prices.c.max_date - timedelta(days=1)
+            )
             .subquery()
         )
 
-        # Calculate change percentage
-        change_expr = (
-            (latest_prices.c.close_price - previous_prices.c.prev_close)
-            / previous_prices.c.prev_close
+        # Build main query
+        change_percent = (
+            (DailyPrice.close_price - prev_prices.c.prev_close)
+            / prev_prices.c.prev_close
             * 100
         )
 
         query = (
             select(
-                Stock,
-                latest_prices.c.close_price,
-                latest_prices.c.volume,
-                latest_prices.c.trading_value,
-                change_expr.label("change_percent"),
+                Stock.code,
+                Stock.name,
+                Stock.market,
+                Stock.sector,
+                DailyPrice.close_price,
+                (DailyPrice.close_price - prev_prices.c.prev_close).label("change"),
+                change_percent.label("change_percent"),
+                DailyPrice.volume,
+                DailyPrice.trading_value,
             )
-            .join(latest_prices, Stock.code == latest_prices.c.stock_code)
-            .join(previous_prices, Stock.code == previous_prices.c.stock_code)
-            .where(
+            .select_from(Stock)
+            .join(
+                latest_prices,
+                Stock.code == latest_prices.c.stock_code,
+            )
+            .join(
+                DailyPrice,
                 and_(
-                    latest_prices.c.rn == 1,
-                    previous_prices.c.rn == 1,
-                    Stock.delisting_date.is_(None),
-                )
+                    DailyPrice.stock_code == Stock.code,
+                    DailyPrice.trade_date == latest_prices.c.max_date,
+                ),
             )
+            .join(
+                prev_prices,
+                Stock.code == prev_prices.c.stock_code,
+            )
+            .where(Stock.delisting_date.is_(None))
         )
 
-        if market != "ALL":
+        # Apply market filter
+        if market and market != "ALL":
             query = query.where(Stock.market == market)
 
-        # Order by change percentage
-        if mover_type == "gainers":
+        # Sort by change percent
+        if move_type == "gainers":
             query = query.order_by(desc("change_percent"))
         else:  # losers
             query = query.order_by("change_percent")
@@ -409,95 +462,132 @@ class MarketRepository:
         query = query.limit(limit)
 
         result = await self.session.execute(query)
-        movers = []
+        stocks = result.all()
 
-        for row in result.all():
-            stock = row[0]
-            price_data = DailyPrice(
-                stock_code=stock.code,
-                trade_date=datetime.now().date(),
-                close_price=int(row[1]),
-                volume=row[2],
-                trading_value=row[3],
-            )
-            change_pct = float(row[4]) if row[4] else 0.0
-            movers.append((stock, price_data, change_pct))
-
-        return movers
+        return [
+            {
+                "code": row.code,
+                "name": row.name,
+                "market": row.market,
+                "sector": row.sector,
+                "current_price": row.close_price,
+                "change": row.change,
+                "change_percent": round(float(row.change_percent), 2),
+                "volume": row.volume,
+                "value": row.trading_value,
+            }
+            for row in stocks
+        ]
 
     # ========================================================================
-    # Most Active Stocks Operations
+    # Most Active Operations
     # ========================================================================
 
     async def get_most_active(
         self,
-        metric: str,
-        market: str = "ALL",
+        metric: str,  # "volume" or "value"
+        market: Optional[str] = None,
         limit: int = 20,
-    ) -> List[Tuple[Stock, DailyPrice]]:
+    ) -> List[Dict]:
         """
-        Get stocks with highest volume or trading value
+        Get stocks with highest trading volume or value
 
         Args:
-            metric: 'volume' or 'value'
-            market: Market filter (KOSPI, KOSDAQ, ALL)
-            limit: Number of results
+            metric: "volume" or "value"
+            market: Market filter (KOSPI, KOSDAQ, or None for ALL)
+            limit: Maximum number of results
 
         Returns:
-            List of (Stock, DailyPrice) tuples
+            List of stock dictionaries with trading info
         """
-        # Subquery to get latest prices
+        # Subquery for latest prices
         latest_prices = (
             select(
                 DailyPrice.stock_code,
-                DailyPrice.close_price,
-                DailyPrice.volume,
-                DailyPrice.trading_value,
-                DailyPrice.trade_date,
-                func.row_number()
-                .over(
-                    partition_by=DailyPrice.stock_code,
-                    order_by=desc(DailyPrice.trade_date),
-                )
-                .label("rn"),
+                func.max(DailyPrice.trade_date).label("max_date"),
+            )
+            .group_by(DailyPrice.stock_code)
+            .subquery()
+        )
+
+        # Subquery for previous day prices
+        prev_prices = (
+            select(
+                DailyPrice.stock_code,
+                DailyPrice.close_price.label("prev_close"),
+            )
+            .join(
+                latest_prices,
+                DailyPrice.stock_code == latest_prices.c.stock_code,
+            )
+            .where(
+                DailyPrice.trade_date == latest_prices.c.max_date - timedelta(days=1)
             )
             .subquery()
         )
 
-        query = (
-            select(Stock, latest_prices)
-            .join(latest_prices, Stock.code == latest_prices.c.stock_code)
-            .where(
-                and_(
-                    latest_prices.c.rn == 1,
-                    Stock.delisting_date.is_(None),
-                )
-            )
+        # Build main query
+        change_percent = (
+            (DailyPrice.close_price - prev_prices.c.prev_close)
+            / prev_prices.c.prev_close
+            * 100
         )
 
-        if market != "ALL":
+        query = (
+            select(
+                Stock.code,
+                Stock.name,
+                Stock.market,
+                Stock.sector,
+                DailyPrice.close_price,
+                change_percent.label("change_percent"),
+                DailyPrice.volume,
+                DailyPrice.trading_value,
+            )
+            .select_from(Stock)
+            .join(
+                latest_prices,
+                Stock.code == latest_prices.c.stock_code,
+            )
+            .join(
+                DailyPrice,
+                and_(
+                    DailyPrice.stock_code == Stock.code,
+                    DailyPrice.trade_date == latest_prices.c.max_date,
+                ),
+            )
+            .outerjoin(
+                prev_prices,
+                Stock.code == prev_prices.c.stock_code,
+            )
+            .where(Stock.delisting_date.is_(None))
+        )
+
+        # Apply market filter
+        if market and market != "ALL":
             query = query.where(Stock.market == market)
 
-        # Order by volume or trading value
+        # Sort by metric
         if metric == "volume":
-            query = query.order_by(desc(latest_prices.c.volume))
+            query = query.order_by(desc(DailyPrice.volume))
         else:  # value
-            query = query.order_by(desc(latest_prices.c.trading_value))
+            query = query.order_by(desc(DailyPrice.trading_value))
 
         query = query.limit(limit)
 
         result = await self.session.execute(query)
-        active_stocks = []
+        stocks = result.all()
 
-        for row in result.all():
-            stock = row[0]
-            price_data = DailyPrice(
-                stock_code=stock.code,
-                trade_date=row[6],  # trade_date
-                close_price=int(row[2]),  # close_price
-                volume=row[3],  # volume
-                trading_value=row[4],  # trading_value
-            )
-            active_stocks.append((stock, price_data))
-
-        return active_stocks
+        return [
+            {
+                "code": row.code,
+                "name": row.name,
+                "market": row.market,
+                "sector": row.sector,
+                "current_price": row.close_price,
+                "change_percent": round(float(row.change_percent or 0), 2),
+                "volume": row.volume,
+                "value": row.trading_value,
+            }
+            for row in stocks
+        ]

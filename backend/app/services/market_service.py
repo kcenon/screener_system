@@ -1,48 +1,85 @@
-"""Market service layer for market overview business logic and caching"""
+"""Market service layer for market overview business logic and caching.
+
+This module provides the MarketService class that implements business logic
+for market overview operations with intelligent caching strategies.
+
+The service layer handles:
+    - Market indices aggregation and transformation
+    - Market breadth calculations with sentiment analysis
+    - Sector performance aggregation
+    - Top movers and most active stock identification
+    - Cache management with appropriate TTLs
+    - Data validation and transformation
+
+Example:
+    Initialize the service with a database session and cache manager::
+
+        from app.services import MarketService
+        from app.core.cache import cache_manager
+        from app.db import get_session
+
+        async with get_session() as session:
+            service = MarketService(session, cache_manager)
+            breadth = await service.get_market_breadth()
+            print(f"A/D Ratio: {breadth['ad_ratio']}, Sentiment: {breadth['sentiment']}")
+"""
 
 from datetime import datetime, timedelta
-from typing import List
+from typing import Dict, List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache import CacheManager
-from app.repositories.market_repository import MarketRepository
-from app.schemas.market import (
-    ActiveStock,
-    MarketBreadthResponse,
-    MarketIndexData,
-    MarketIndicesResponse,
-    MarketMover,
-    MarketMoversResponse,
-    MarketTrendData,
-    MarketTrendResponse,
-    MostActiveResponse,
-    SectorPerformance,
-    SectorPerformanceResponse,
-    TopStock,
-)
+from app.repositories import MarketRepository
 
 
 class MarketService:
-    """Service for market overview operations with caching"""
+    """Service for market overview operations with intelligent caching.
+
+    This class implements business logic for market-wide data including
+    indices, breadth indicators, sector performance, and market movers.
+    All operations are cached with appropriate TTLs to optimize performance.
+
+    Attributes:
+        MARKET_DATA_TTL: Cache TTL for real-time market data (5 minutes).
+        INDEX_HISTORY_TTL: Cache TTL for historical index data (30 minutes).
+        SECTOR_DATA_TTL: Cache TTL for sector performance (5 minutes).
+        session: Async SQLAlchemy session for database operations.
+        cache: Cache manager instance for Redis operations.
+        market_repo: Market repository for data access.
+
+    Example:
+        >>> service = MarketService(session, cache_manager)
+        >>> sectors = await service.get_sector_performance(market="KOSPI")
+        >>> print(f"Found {len(sectors)} sectors")
+    """
 
     # Cache TTL (seconds)
-    MARKET_INDEX_TTL = 5 * 60  # 5 minutes (real-time data)
-    MARKET_BREADTH_TTL = 5 * 60  # 5 minutes
-    SECTOR_PERFORMANCE_TTL = 5 * 60  # 5 minutes
-    MARKET_MOVERS_TTL = 5 * 60  # 5 minutes
-    MOST_ACTIVE_TTL = 5 * 60  # 5 minutes
-    MARKET_TREND_TTL = 30 * 60  # 30 minutes (historical data)
+    MARKET_DATA_TTL = 5 * 60  # 5 minutes for real-time data
+    INDEX_HISTORY_TTL = 30 * 60  # 30 minutes for historical data
+    SECTOR_DATA_TTL = 5 * 60  # 5 minutes for sector aggregations
 
-    # Index name mapping
-    INDEX_NAMES = {
-        "KOSPI": "코스피",
-        "KOSDAQ": "코스닥",
-        "KRX100": "KRX 100",
+    # Sector name mapping (Korean)
+    SECTOR_NAMES = {
+        "technology": "기술",
+        "finance": "금융",
+        "healthcare": "헬스케어",
+        "consumer": "소비재",
+        "materials": "소재",
+        "industrial": "산업재",
+        "energy": "에너지",
+        "utilities": "유틸리티",
+        "telecom": "통신",
+        "real_estate": "부동산",
     }
 
     def __init__(self, session: AsyncSession, cache: CacheManager):
-        """Initialize service with database session and cache manager"""
+        """Initialize service with database session and cache manager.
+
+        Args:
+            session: Async SQLAlchemy session for database operations.
+            cache: CacheManager instance for Redis caching operations.
+        """
         self.session = session
         self.cache = cache
         self.market_repo = MarketRepository(session)
@@ -51,61 +88,132 @@ class MarketService:
     # Market Indices Operations
     # ========================================================================
 
-    async def get_market_indices(self) -> MarketIndicesResponse:
+    async def get_market_indices(self) -> Dict[str, List[Dict]]:
         """
-        Get current market indices with sparkline data
+        Get current market indices with sparklines
 
         Returns:
-            MarketIndicesResponse with KOSPI, KOSDAQ, KRX100 data
+            Dictionary with 'indices' list and 'updated_at' timestamp
         """
+        # Check cache
         cache_key = "market:indices:current"
-
-        # Try cache first
         cached = await self.cache.get(cache_key)
         if cached:
-            return MarketIndicesResponse(**cached)
+            return cached
 
-        # Fetch from database
-        indices_data = await self.market_repo.get_current_indices()
+        # Get current indices
+        indices = await self.market_repo.get_current_indices()
 
-        # Transform to response schema
-        indices_list = []
-        for market_index, sparkline in indices_data:
-            indices_list.append(
-                MarketIndexData(
-                    code=market_index.code,
-                    name=self.INDEX_NAMES.get(market_index.code, market_index.code),
-                    current=float(market_index.close_value),
-                    change=float(market_index.change_value)
-                    if market_index.change_value
-                    else None,
-                    change_percent=float(market_index.change_percent)
-                    if market_index.change_percent
-                    else None,
-                    high=float(market_index.high_value)
-                    if market_index.high_value
-                    else None,
-                    low=float(market_index.low_value)
-                    if market_index.low_value
-                    else None,
-                    volume=market_index.volume,
-                    value=market_index.trading_value,
-                    timestamp=market_index.timestamp,
-                    sparkline=sparkline,
-                )
+        # Get sparklines for each index
+        result = []
+        for index in indices:
+            sparkline = await self.market_repo.get_index_sparkline(
+                code=index.code, data_points=30
             )
 
-        response = MarketIndicesResponse(
-            indices=indices_list,
-            updated_at=datetime.now(),
+            result.append(
+                {
+                    "code": index.code,
+                    "name": self._get_index_name(index.code),
+                    "current": float(index.close_value),
+                    "change": float(index.change_value) if index.change_value else 0.0,
+                    "change_percent": (
+                        float(index.change_percent) if index.change_percent else 0.0
+                    ),
+                    "high": float(index.high_value) if index.high_value else None,
+                    "low": float(index.low_value) if index.low_value else None,
+                    "volume": index.volume,
+                    "value": index.trading_value,
+                    "timestamp": index.timestamp.isoformat(),
+                    "sparkline": sparkline,
+                }
+            )
+
+        response = {"indices": result, "updated_at": datetime.now().isoformat()}
+
+        # Cache result
+        await self.cache.set(cache_key, response, ttl=self.MARKET_DATA_TTL)
+
+        return response
+
+    async def get_market_trend(
+        self,
+        index: str = "KOSPI",
+        timeframe: str = "1M",
+    ) -> Dict:
+        """
+        Get historical market trend data
+
+        Args:
+            index: Index code (KOSPI, KOSDAQ, KRX100)
+            timeframe: Timeframe (1D, 5D, 1M, 3M, 6M, 1Y)
+
+        Returns:
+            Dictionary with historical data points
+        """
+        # Validate index
+        if index not in ["KOSPI", "KOSDAQ", "KRX100"]:
+            index = "KOSPI"
+
+        # Check cache
+        cache_key = f"market:trend:{index}:{timeframe}"
+        cached = await self.cache.get(cache_key)
+        if cached:
+            return cached
+
+        # Calculate date range
+        end_date = datetime.now()
+        days_map = {
+            "1D": 1,
+            "5D": 5,
+            "1M": 30,
+            "3M": 90,
+            "6M": 180,
+            "1Y": 365,
+        }
+        days = days_map.get(timeframe, 30)
+        start_date = end_date - timedelta(days=days)
+
+        # Get historical data
+        history = await self.market_repo.get_index_history(
+            code=index, start_date=start_date, end_date=end_date
         )
 
-        # Cache the result
-        await self.cache.set(
-            cache_key,
-            response.model_dump(),
-            ttl=self.MARKET_INDEX_TTL,
-        )
+        # Transform to response format
+        data_points = [
+            {
+                "timestamp": point.timestamp.isoformat(),
+                "open": float(point.open_value) if point.open_value else None,
+                "high": float(point.high_value) if point.high_value else None,
+                "low": float(point.low_value) if point.low_value else None,
+                "close": float(point.close_value),
+                "volume": point.volume,
+            }
+            for point in history
+        ]
+
+        # Determine interval based on timeframe
+        interval_map = {
+            "1D": "1m",
+            "5D": "5m",
+            "1M": "1h",
+            "3M": "1h",
+            "6M": "1d",
+            "1Y": "1d",
+        }
+        interval = interval_map.get(timeframe, "1h")
+
+        response = {
+            "index": index,
+            "timeframe": timeframe,
+            "interval": interval,
+            "data": data_points,
+            "count": len(data_points),
+            "updated_at": datetime.now().isoformat(),
+        }
+
+        # Cache result (longer TTL for historical data)
+        await self.cache.set(cache_key, response, ttl=self.INDEX_HISTORY_TTL)
 
         return response
 
@@ -113,55 +221,251 @@ class MarketService:
     # Market Breadth Operations
     # ========================================================================
 
-    async def get_market_breadth(self, market: str = "ALL") -> MarketBreadthResponse:
+    async def get_market_breadth(self, market: str = "ALL") -> Dict:
         """
-        Get market breadth indicators
+        Get market breadth indicators with sentiment analysis
 
         Args:
             market: Market filter (KOSPI, KOSDAQ, ALL)
 
         Returns:
-            MarketBreadthResponse with advancing/declining counts
+            Dictionary with breadth metrics and sentiment
         """
-        cache_key = f"market:breadth:{market}"
+        # Validate market
+        if market not in ["KOSPI", "KOSDAQ", "ALL"]:
+            market = "ALL"
 
-        # Try cache first
+        # Check cache
+        cache_key = f"market:breadth:{market}"
         cached = await self.cache.get(cache_key)
         if cached:
-            return MarketBreadthResponse(**cached)
+            return cached
 
-        # Fetch from database
-        breadth_data = await self.market_repo.get_market_breadth(market)
+        # Get breadth data
+        breadth = await self.market_repo.get_market_breadth(market=market)
 
-        # Calculate sentiment
-        sentiment = self._calculate_sentiment(breadth_data["ad_ratio"])
+        # Calculate A/D ratio
+        advancing = breadth["advancing"]
+        declining = breadth["declining"]
+        unchanged = breadth["unchanged"]
+        total = advancing + declining + unchanged
 
-        response = MarketBreadthResponse(
-            advancing=breadth_data["advancing"],
-            declining=breadth_data["declining"],
-            unchanged=breadth_data["unchanged"],
-            total=breadth_data["total"],
-            ad_ratio=breadth_data["ad_ratio"],
-            sentiment=sentiment,
-            market=market,
-            timestamp=datetime.now(),
-        )
+        ad_ratio = round(advancing / declining, 2) if declining > 0 else 0.0
 
-        # Cache the result
-        await self.cache.set(
-            cache_key,
-            response.model_dump(),
-            ttl=self.MARKET_BREADTH_TTL,
-        )
+        # Determine sentiment
+        sentiment = self._calculate_sentiment(ad_ratio)
+
+        response = {
+            "advancing": advancing,
+            "declining": declining,
+            "unchanged": unchanged,
+            "total": total,
+            "ad_ratio": ad_ratio,
+            "sentiment": sentiment,
+            "market": market,
+            "timestamp": datetime.now().isoformat(),
+        }
+
+        # Cache result
+        await self.cache.set(cache_key, response, ttl=self.MARKET_DATA_TTL)
 
         return response
+
+    # ========================================================================
+    # Sector Performance Operations
+    # ========================================================================
+
+    async def get_sector_performance(
+        self,
+        timeframe: str = "1D",
+        market: str = "ALL",
+    ) -> Dict:
+        """
+        Get sector performance aggregation
+
+        Args:
+            timeframe: Timeframe (1D, 1W, 1M, 3M)
+            market: Market filter (KOSPI, KOSDAQ, ALL)
+
+        Returns:
+            Dictionary with sectors list and metadata
+        """
+        # Validate inputs
+        if market not in ["KOSPI", "KOSDAQ", "ALL"]:
+            market = "ALL"
+
+        timeframe_map = {"1D": 1, "1W": 7, "1M": 30, "3M": 90}
+        timeframe_days = timeframe_map.get(timeframe, 1)
+
+        # Check cache
+        cache_key = f"market:sectors:{timeframe}:{market}"
+        cached = await self.cache.get(cache_key)
+        if cached:
+            return cached
+
+        # Get sector data
+        sectors_data = await self.market_repo.get_sector_performance(
+            market=market, timeframe_days=timeframe_days
+        )
+
+        # Enrich with sector names and top stocks
+        enriched_sectors = []
+        for sector in sectors_data:
+            sector_code = sector["code"]
+
+            # Get top stock for this sector
+            top_stock = await self.market_repo.get_sector_top_stock(sector_code)
+
+            enriched_sectors.append(
+                {
+                    "code": sector_code,
+                    "name": self._get_sector_name(sector_code),
+                    "change_percent": sector["change_percent"],
+                    "stock_count": sector["stock_count"],
+                    "market_cap": sector["market_cap"],
+                    "volume": sector["volume"],
+                    "top_stock": (
+                        {
+                            "code": top_stock[0],
+                            "name": top_stock[1],
+                            "change_percent": top_stock[2],
+                        }
+                        if top_stock
+                        else None
+                    ),
+                }
+            )
+
+        response = {
+            "sectors": enriched_sectors,
+            "timeframe": timeframe,
+            "market": market,
+            "updated_at": datetime.now().isoformat(),
+        }
+
+        # Cache result
+        await self.cache.set(cache_key, response, ttl=self.SECTOR_DATA_TTL)
+
+        return response
+
+    # ========================================================================
+    # Market Movers Operations
+    # ========================================================================
+
+    async def get_market_movers(
+        self,
+        move_type: str,  # "gainers" or "losers"
+        market: str = "ALL",
+        limit: int = 20,
+    ) -> Dict:
+        """
+        Get top gaining or losing stocks
+
+        Args:
+            move_type: Type of movers (gainers or losers)
+            market: Market filter (KOSPI, KOSDAQ, ALL)
+            limit: Maximum number of results
+
+        Returns:
+            Dictionary with stocks list and metadata
+        """
+        # Validate inputs
+        if move_type not in ["gainers", "losers"]:
+            move_type = "gainers"
+
+        if market not in ["KOSPI", "KOSDAQ", "ALL"]:
+            market = "ALL"
+
+        limit = min(100, max(1, limit))
+
+        # Check cache
+        cache_key = f"market:movers:{move_type}:{market}:{limit}"
+        cached = await self.cache.get(cache_key)
+        if cached:
+            return cached
+
+        # Get movers data
+        stocks = await self.market_repo.get_top_movers(
+            move_type=move_type, market=market, limit=limit
+        )
+
+        response = {
+            "type": move_type,
+            "market": market,
+            "stocks": stocks,
+            "total": len(stocks),
+            "updated_at": datetime.now().isoformat(),
+        }
+
+        # Cache result
+        await self.cache.set(cache_key, response, ttl=self.MARKET_DATA_TTL)
+
+        return response
+
+    # ========================================================================
+    # Most Active Operations
+    # ========================================================================
+
+    async def get_most_active(
+        self,
+        metric: str = "volume",  # "volume" or "value"
+        market: str = "ALL",
+        limit: int = 20,
+    ) -> Dict:
+        """
+        Get stocks with highest trading volume or value
+
+        Args:
+            metric: Sorting metric (volume or value)
+            market: Market filter (KOSPI, KOSDAQ, ALL)
+            limit: Maximum number of results
+
+        Returns:
+            Dictionary with stocks list and metadata
+        """
+        # Validate inputs
+        if metric not in ["volume", "value"]:
+            metric = "volume"
+
+        if market not in ["KOSPI", "KOSDAQ", "ALL"]:
+            market = "ALL"
+
+        limit = min(100, max(1, limit))
+
+        # Check cache
+        cache_key = f"market:active:{metric}:{market}:{limit}"
+        cached = await self.cache.get(cache_key)
+        if cached:
+            return cached
+
+        # Get active stocks data
+        stocks = await self.market_repo.get_most_active(
+            metric=metric, market=market, limit=limit
+        )
+
+        response = {
+            "metric": metric,
+            "market": market,
+            "stocks": stocks,
+            "total": len(stocks),
+            "updated_at": datetime.now().isoformat(),
+        }
+
+        # Cache result
+        await self.cache.set(cache_key, response, ttl=self.MARKET_DATA_TTL)
+
+        return response
+
+    # ========================================================================
+    # Helper Methods
+    # ========================================================================
 
     def _calculate_sentiment(self, ad_ratio: float) -> str:
         """
         Calculate market sentiment from A/D ratio
 
         Args:
-            ad_ratio: Advance/Decline ratio
+            ad_ratio: Advancing/Declining ratio
 
         Returns:
             Sentiment string (bullish, neutral, bearish)
@@ -172,298 +476,15 @@ class MarketService:
             return "bearish"
         return "neutral"
 
-    # ========================================================================
-    # Sector Performance Operations
-    # ========================================================================
-
-    async def get_sector_performance(
-        self,
-        timeframe: str = "1D",
-        market: str = "ALL",
-    ) -> SectorPerformanceResponse:
-        """
-        Get sector performance aggregated by sector
-
-        Args:
-            timeframe: Time period (1D, 1W, 1M, 3M)
-            market: Market filter (KOSPI, KOSDAQ, ALL)
-
-        Returns:
-            SectorPerformanceResponse with sector data
-        """
-        cache_key = f"market:sectors:{timeframe}:{market}"
-
-        # Try cache first
-        cached = await self.cache.get(cache_key)
-        if cached:
-            return SectorPerformanceResponse(**cached)
-
-        # Fetch from database
-        sectors_data = await self.market_repo.get_sector_performance(market, timeframe)
-
-        # Transform to response schema
-        sectors_list = []
-        for sector in sectors_data:
-            top_stock = None
-            if sector.get("top_stock") and sector["top_stock"]["code"]:
-                top_stock = TopStock(
-                    code=sector["top_stock"]["code"],
-                    name=sector["top_stock"]["name"],
-                    change_percent=None,  # Can be added if needed
-                )
-
-            sectors_list.append(
-                SectorPerformance(
-                    code=sector["code"],
-                    name=sector["name"],
-                    change_percent=sector["change_percent"],
-                    stock_count=sector["stock_count"],
-                    market_cap=sector["market_cap"],
-                    volume=None,  # Can be added if needed
-                    top_stock=top_stock,
-                )
-            )
-
-        response = SectorPerformanceResponse(
-            sectors=sectors_list,
-            timeframe=timeframe,
-            market=market,
-            updated_at=datetime.now(),
-        )
-
-        # Cache the result
-        await self.cache.set(
-            cache_key,
-            response.model_dump(),
-            ttl=self.SECTOR_PERFORMANCE_TTL,
-        )
-
-        return response
-
-    # ========================================================================
-    # Market Movers Operations
-    # ========================================================================
-
-    async def get_market_movers(
-        self,
-        mover_type: str,
-        market: str = "ALL",
-        limit: int = 20,
-    ) -> MarketMoversResponse:
-        """
-        Get top gaining or losing stocks
-
-        Args:
-            mover_type: 'gainers' or 'losers'
-            market: Market filter (KOSPI, KOSDAQ, ALL)
-            limit: Number of results
-
-        Returns:
-            MarketMoversResponse with top movers
-        """
-        cache_key = f"market:movers:{mover_type}:{market}:{limit}"
-
-        # Try cache first
-        cached = await self.cache.get(cache_key)
-        if cached:
-            return MarketMoversResponse(**cached)
-
-        # Fetch from database
-        movers_data = await self.market_repo.get_top_movers(mover_type, market, limit)
-
-        # Transform to response schema
-        movers_list = []
-        for stock, price_data, change_pct in movers_data:
-            # Calculate change value
-            prev_close = int(price_data.close_price / (1 + change_pct / 100))
-            change_value = price_data.close_price - prev_close
-
-            movers_list.append(
-                MarketMover(
-                    code=stock.code,
-                    name=stock.name,
-                    market=stock.market,
-                    current_price=price_data.close_price,
-                    change=change_value,
-                    change_percent=round(change_pct, 2),
-                    volume=price_data.volume,
-                    value=price_data.trading_value,
-                    sector=stock.sector,
-                )
-            )
-
-        response = MarketMoversResponse(
-            type=mover_type,
-            market=market,
-            stocks=movers_list,
-            total=len(movers_list),
-            updated_at=datetime.now(),
-        )
-
-        # Cache the result
-        await self.cache.set(
-            cache_key,
-            response.model_dump(),
-            ttl=self.MARKET_MOVERS_TTL,
-        )
-
-        return response
-
-    # ========================================================================
-    # Most Active Stocks Operations
-    # ========================================================================
-
-    async def get_most_active(
-        self,
-        metric: str,
-        market: str = "ALL",
-        limit: int = 20,
-    ) -> MostActiveResponse:
-        """
-        Get stocks with highest volume or trading value
-
-        Args:
-            metric: 'volume' or 'value'
-            market: Market filter (KOSPI, KOSDAQ, ALL)
-            limit: Number of results
-
-        Returns:
-            MostActiveResponse with most active stocks
-        """
-        cache_key = f"market:active:{metric}:{market}:{limit}"
-
-        # Try cache first
-        cached = await self.cache.get(cache_key)
-        if cached:
-            return MostActiveResponse(**cached)
-
-        # Fetch from database
-        active_data = await self.market_repo.get_most_active(metric, market, limit)
-
-        # Transform to response schema
-        active_list = []
-        for stock, price_data in active_data:
-            active_list.append(
-                ActiveStock(
-                    code=stock.code,
-                    name=stock.name,
-                    market=stock.market,
-                    current_price=price_data.close_price,
-                    change_percent=None,  # Can be calculated if needed
-                    volume=price_data.volume,
-                    value=price_data.trading_value,
-                    sector=stock.sector,
-                )
-            )
-
-        response = MostActiveResponse(
-            metric=metric,
-            market=market,
-            stocks=active_list,
-            total=len(active_list),
-            updated_at=datetime.now(),
-        )
-
-        # Cache the result
-        await self.cache.set(
-            cache_key,
-            response.model_dump(),
-            ttl=self.MOST_ACTIVE_TTL,
-        )
-
-        return response
-
-    # ========================================================================
-    # Market Trend Operations
-    # ========================================================================
-
-    async def get_market_trend(
-        self,
-        index: str = "KOSPI",
-        timeframe: str = "1M",
-    ) -> MarketTrendResponse:
-        """
-        Get historical market trend data
-
-        Args:
-            index: Index code (KOSPI, KOSDAQ, KRX100)
-            timeframe: Time period (1D, 5D, 1M, 3M, 6M, 1Y)
-
-        Returns:
-            MarketTrendResponse with historical data
-        """
-        cache_key = f"market:trend:{index}:{timeframe}"
-
-        # Try cache first
-        cached = await self.cache.get(cache_key)
-        if cached:
-            return MarketTrendResponse(**cached)
-
-        # Calculate date range
-        end_date = datetime.now()
-        start_date = self._calculate_start_date(timeframe)
-
-        # Determine interval
-        interval = self._determine_interval(timeframe)
-
-        # Fetch from database
-        trend_data = await self.market_repo.get_index_history(
-            index, start_date, end_date
-        )
-
-        # Transform to response schema
-        data_list = []
-        for record in trend_data:
-            data_list.append(
-                MarketTrendData(
-                    timestamp=record.timestamp,
-                    open=float(record.open_value) if record.open_value else None,
-                    high=float(record.high_value) if record.high_value else None,
-                    low=float(record.low_value) if record.low_value else None,
-                    close=float(record.close_value),
-                    volume=record.volume,
-                )
-            )
-
-        response = MarketTrendResponse(
-            index=index,
-            timeframe=timeframe,
-            interval=interval,
-            data=data_list,
-            count=len(data_list),
-            updated_at=datetime.now(),
-        )
-
-        # Cache the result
-        await self.cache.set(
-            cache_key,
-            response.model_dump(),
-            ttl=self.MARKET_TREND_TTL,
-        )
-
-        return response
-
-    def _calculate_start_date(self, timeframe: str) -> datetime:
-        """Calculate start date based on timeframe"""
-        now = datetime.now()
-        timeframe_map = {
-            "1D": timedelta(days=1),
-            "5D": timedelta(days=5),
-            "1M": timedelta(days=30),
-            "3M": timedelta(days=90),
-            "6M": timedelta(days=180),
-            "1Y": timedelta(days=365),
+    def _get_index_name(self, code: str) -> str:
+        """Get Korean name for index code"""
+        name_map = {
+            "KOSPI": "코스피",
+            "KOSDAQ": "코스닥",
+            "KRX100": "KRX 100",
         }
-        return now - timeframe_map.get(timeframe, timedelta(days=30))
+        return name_map.get(code, code)
 
-    def _determine_interval(self, timeframe: str) -> str:
-        """Determine appropriate interval based on timeframe"""
-        interval_map = {
-            "1D": "1m",
-            "5D": "5m",
-            "1M": "1h",
-            "3M": "1h",
-            "6M": "1d",
-            "1Y": "1d",
-        }
-        return interval_map.get(timeframe, "1d")
+    def _get_sector_name(self, code: str) -> str:
+        """Get Korean name for sector code"""
+        return self.SECTOR_NAMES.get(code, code)

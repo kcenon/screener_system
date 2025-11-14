@@ -210,6 +210,9 @@ app.include_router(market.router, prefix="/v1")
 # Include screening routes
 app.include_router(screening.router, prefix="/v1")
 
+# Include market overview routes
+app.include_router(market.router, prefix="/v1")
+
 # Include WebSocket routes
 app.include_router(websocket.router, prefix="/v1")
 
