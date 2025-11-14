@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { StockScreeningResult, ScreeningSortField, SortOrder } from '@/types/screening'
+import { AddToWatchlistButton } from '@/components/watchlist'
 
 /**
  * Sort configuration
@@ -104,6 +105,12 @@ const columns: Column[] = [
     sortable: true,
     align: 'right',
     format: (v) => formatNumber(v, 0),
+  },
+  {
+    key: 'code' as ScreeningSortField, // Non-sortable actions column
+    label: 'Actions',
+    sortable: false,
+    align: 'center',
   },
 ]
 
@@ -255,6 +262,30 @@ export default function ResultsTable({
                   }}
                 >
                   {columns.map((column) => {
+                    // Special handling for Actions column
+                    if (column.label === 'Actions') {
+                      return (
+                        <td
+                          key="actions"
+                          className="px-4 py-3 text-center whitespace-nowrap"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <AddToWatchlistButton
+                            stock={{
+                              code: stock.code,
+                              name: stock.name,
+                              market: stock.market as 'KOSPI' | 'KOSDAQ',
+                              current_price: stock.current_price || undefined,
+                              change_percent: stock.price_change_1d || undefined,
+                              volume: stock.current_volume || undefined,
+                            }}
+                            variant="icon"
+                            size="sm"
+                          />
+                        </td>
+                      )
+                    }
+
                     const value = stock[column.key as keyof StockScreeningResult]
                     const formattedValue = column.format ? column.format(value) : value
 

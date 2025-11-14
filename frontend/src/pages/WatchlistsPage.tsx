@@ -4,8 +4,9 @@
  */
 
 import { useEffect, useState } from 'react'
-import { Star, RefreshCw, AlertCircle } from 'lucide-react'
+import { Star, RefreshCw, AlertCircle, Wifi, WifiOff } from 'lucide-react'
 import { useWatchlistStore, watchlistSelectors } from '@/store/watchlistStore'
+import { useWatchlistPrices } from '@/hooks/useWatchlistPrices'
 import { WatchlistSidebar } from '@/components/watchlist/WatchlistSidebar'
 import { WatchlistStockTable } from '@/components/watchlist/WatchlistStockTable'
 import { WatchlistDialog } from '@/components/watchlist/WatchlistDialog'
@@ -33,6 +34,9 @@ export default function WatchlistsPage() {
   } = useWatchlistStore()
 
   const activeWatchlist = useWatchlistStore(watchlistSelectors.selectActiveWatchlist)
+
+  // Real-time price updates via WebSocket
+  const { connectionState, isConnected, subscriptionCount } = useWatchlistPrices()
 
   // Fetch watchlists on mount
   useEffect(() => {
@@ -101,9 +105,30 @@ export default function WatchlistsPage() {
                 <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
                 My Watchlists
               </h1>
-              <p className="mt-2 text-gray-600">
-                Track and monitor your favorite stocks
-              </p>
+              <div className="mt-2 flex items-center gap-4">
+                <p className="text-gray-600">
+                  Track and monitor your favorite stocks
+                </p>
+                {watchlists.length > 0 && (
+                  <div className="flex items-center gap-1.5 text-sm">
+                    {isConnected ? (
+                      <>
+                        <Wifi className="w-4 h-4 text-green-600" />
+                        <span className="text-green-600 font-medium">
+                          Live ({subscriptionCount} stocks)
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <WifiOff className="w-4 h-4 text-gray-400" />
+                        <span className="text-gray-500">
+                          {connectionState === 'connecting' ? 'Connecting...' : 'Offline'}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {activeWatchlist && (

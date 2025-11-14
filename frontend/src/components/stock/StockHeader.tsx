@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import type { StockDetail, PriceChange } from '@/types'
+import { AddToWatchlistButton } from '@/components/watchlist'
 
 interface StockHeaderProps {
   stock: StockDetail
@@ -79,27 +80,20 @@ export default function StockHeader({ stock }: StockHeaderProps) {
             </div>
           </div>
 
-          {/* Action Buttons (Phase 2) */}
+          {/* Action Buttons */}
           <div className="flex gap-2">
-            <button
-              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              disabled
-            >
-              <svg
-                className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                />
-              </svg>
-              관심종목
-            </button>
+            <AddToWatchlistButton
+              stock={{
+                code: stock.code,
+                name: stock.name,
+                market: stock.market as 'KOSPI' | 'KOSDAQ',
+                current_price: stock.current_price || undefined,
+                change_percent: stock.price_change_1d || undefined,
+                volume: stock.current_volume || undefined,
+              }}
+              variant="button"
+              size="md"
+            />
           </div>
         </div>
 
