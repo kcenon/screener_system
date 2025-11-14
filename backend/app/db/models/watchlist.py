@@ -44,7 +44,6 @@ class Watchlist(Base, TimestampMixin):
         "WatchlistStock",
         back_populates="watchlist",
         cascade="all, delete-orphan",
-        lazy="selectin",
     )
 
     # Constraints
@@ -90,7 +89,7 @@ class WatchlistStock(Base):
 
     # Relationships
     watchlist = relationship("Watchlist", back_populates="stocks")
-    stock = relationship("Stock", lazy="joined")
+    stock = relationship("Stock")
 
     def __repr__(self) -> str:
         """String representation"""
