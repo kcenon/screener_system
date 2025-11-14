@@ -32,19 +32,35 @@ class WatchlistRepository:
         Returns:
             Watchlist if found and owned by user, None otherwise
         """
-        from sqlalchemy.orm import selectinload, joinedload
-
         query = select(Watchlist).where(
             Watchlist.id == watchlist_id, Watchlist.user_id == user_id
         )
 
-        # Always eagerly load stocks and nested stock relationship
-        query = query.options(
-            selectinload(Watchlist.stocks).selectinload(WatchlistStock.stock)
-        )
-
         result = await self.session.execute(query)
-        return result.scalar_one_or_none()
+        watchlist = result.scalar_one_or_none()
+
+        if not watchlist:
+            return None
+
+        # Manually load stocks with explicit query to ensure they're loaded
+        if load_stocks:
+            stocks_query = (
+                select(WatchlistStock)
+                .where(WatchlistStock.watchlist_id == watchlist_id)
+                .order_by(WatchlistStock.added_at.desc())
+            )
+            stocks_result = await self.session.execute(stocks_query)
+            watchlist.stocks = list(stocks_result.scalars().all())
+
+            # Load Stock data for each WatchlistStock
+            for ws in watchlist.stocks:
+                if ws.stock_code:
+                    from app.db.models.stock import Stock
+                    stock_query = select(Stock).where(Stock.code == ws.stock_code)
+                    stock_result = await self.session.execute(stock_query)
+                    ws.stock = stock_result.scalar_one_or_none()
+
+        return watchlist
 
     async def get_user_watchlists(
         self,
@@ -73,15 +89,31 @@ class WatchlistRepository:
             .limit(limit)
         )
 
-        # Always eagerly load stocks and nested stock relationship when requested
-        if load_stocks:
-            from sqlalchemy.orm import selectinload
-            query = query.options(
-                selectinload(Watchlist.stocks).selectinload(WatchlistStock.stock)
-            )
-
         result = await self.session.execute(query)
-        return list(result.scalars().all())
+        watchlists = list(result.scalars().all())
+
+        # Manually load stocks for each watchlist if requested
+        if load_stocks:
+            from app.db.models.stock import Stock
+
+            for watchlist in watchlists:
+                # Load WatchlistStock records
+                stocks_query = (
+                    select(WatchlistStock)
+                    .where(WatchlistStock.watchlist_id == watchlist.id)
+                    .order_by(WatchlistStock.added_at.desc())
+                )
+                stocks_result = await self.session.execute(stocks_query)
+                watchlist.stocks = list(stocks_result.scalars().all())
+
+                # Load Stock data for each WatchlistStock
+                for ws in watchlist.stocks:
+                    if ws.stock_code:
+                        stock_query = select(Stock).where(Stock.code == ws.stock_code)
+                        stock_result = await self.session.execute(stock_query)
+                        ws.stock = stock_result.scalar_one_or_none()
+
+        return watchlists
 
     async def count_user_watchlists(self, user_id: int) -> int:
         """Count watchlists owned by user"""
