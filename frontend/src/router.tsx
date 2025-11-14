@@ -7,6 +7,7 @@ import ScreenerPage from './pages/ScreenerPage'
 import StockDetailPage from './pages/StockDetailPage'
 import StockComparisonPage from './pages/StockComparisonPage'
 import WatchlistsPage from './pages/WatchlistsPage'
+import DashboardPage from './pages/DashboardPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: 'compare',
         element: <StockComparisonPage />,
+      },
+      {
+        path: 'dashboard',
+        element: <DashboardPage />,
       },
       {
         path: 'watchlists',

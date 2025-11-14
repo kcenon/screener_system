@@ -82,3 +82,6 @@ export * from './comparison'
 
 // Watchlist types
 export * from './watchlist'
+
+// Dashboard types
+export * from './dashboard'
