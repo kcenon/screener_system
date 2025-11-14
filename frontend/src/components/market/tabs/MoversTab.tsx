@@ -52,25 +52,13 @@ export function MoversTab({ autoRefresh = true }: MoversTabProps) {
         </div>
       </div>
 
-      {/* Split view: Gainers and Losers */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Gainers */}
-        <div>
-          <MarketMoversWidget
-            defaultMarket={market}
-            limit={20}
-            autoRefresh={autoRefresh}
-          />
-        </div>
-
-        {/* Top Losers (will be separated in Phase 3) */}
-        <div>
-          <MarketMoversWidget
-            defaultMarket={market}
-            limit={20}
-            autoRefresh={autoRefresh}
-          />
-        </div>
+      {/* Expanded market movers (already shows gainers and losers side-by-side) */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <MarketMoversWidget
+          defaultMarket={market}
+          limit={50}
+          autoRefresh={autoRefresh}
+        />
       </div>
 
       {/* Info */}
