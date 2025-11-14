@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage'
 import ScreenerPage from './pages/ScreenerPage'
 import StockDetailPage from './pages/StockDetailPage'
 import StockComparisonPage from './pages/StockComparisonPage'
+import WatchlistsPage from './pages/WatchlistsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: 'compare',
         element: <StockComparisonPage />,
+      },
+      {
+        path: 'watchlists',
+        element: <WatchlistsPage />,
       },
       {
         path: 'login',

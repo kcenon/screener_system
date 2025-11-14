@@ -79,3 +79,6 @@ export * from './stock'
 
 // Comparison types
 export * from './comparison'
+
+// Watchlist types
+export * from './watchlist'
