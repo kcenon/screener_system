@@ -1,4 +1,4 @@
-import { LucideIcon, LayoutDashboard, TrendingUp, Filter, Wrench, ListTodo } from 'lucide-react'
+import { LucideIcon, TrendingUp, Filter, ListTodo } from 'lucide-react'
 
 export interface NavigationItem {
   label: string

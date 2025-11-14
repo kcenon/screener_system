@@ -56,7 +56,6 @@ export default function Breadcrumb() {
         <ol className="flex items-center space-x-2 text-sm">
           {breadcrumbs.map((crumb, index) => {
             const isFirst = index === 0
-            const isLast = !crumb.path
 
             return (
               <li key={crumb.path || crumb.label} className="flex items-center">

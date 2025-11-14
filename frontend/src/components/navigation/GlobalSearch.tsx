@@ -3,7 +3,6 @@ import { Search, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useGlobalSearch } from '@/hooks/useGlobalSearch'
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
-import clsx from 'clsx'
 
 export default function GlobalSearch() {
   const navigate = useNavigate()

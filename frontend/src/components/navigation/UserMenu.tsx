@@ -38,9 +38,9 @@ export default function UserMenu() {
           aria-label="User menu"
         >
           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-            {user.username.charAt(0).toUpperCase()}
+            {user.name.charAt(0).toUpperCase()}
           </div>
-          <span className="hidden md:inline">{user.username}</span>
+          <span className="hidden md:inline">{user.name}</span>
         </button>
       </DropdownMenu.Trigger>
 
