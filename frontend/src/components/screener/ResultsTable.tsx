@@ -213,7 +213,7 @@ export default function ResultsTable({
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto" ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50 sticky top-0 z-10">
+          <thead className="bg-gray-50 sticky top-0 z-20">
             <tr>
               {columns.map((column) => (
                 <th

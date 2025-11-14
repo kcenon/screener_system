@@ -18,6 +18,7 @@ import { ScreenerTab } from '@/components/market/tabs/ScreenerTab'
 import { HeatMapTab } from '@/components/market/tabs/HeatMapTab'
 import { MoversTab } from '@/components/market/tabs/MoversTab'
 import { SectorsTab } from '@/components/market/tabs/SectorsTab'
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton'
 
 type TabValue = 'overview' | 'screener' | 'heatmap' | 'movers' | 'sectors'
 
@@ -34,6 +35,7 @@ const LAST_TAB_KEY = 'market_dashboard_last_tab'
 export function MarketDashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const [showScrollShadow, setShowScrollShadow] = useState(false)
 
   // Get initial tab from URL or localStorage
   const getInitialTab = (): TabValue => {
@@ -80,6 +82,17 @@ export function MarketDashboardPage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleTabChange])
 
+  // Scroll shadow effect for tab navigation
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollShadow(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    handleScroll() // Check initial state
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Page Header */}
@@ -117,7 +130,11 @@ export function MarketDashboardPage() {
       {/* Tabs Container */}
       <Tabs.Root value={activeTab} onValueChange={handleTabChange}>
         {/* Tab Navigation (Sticky) */}
-        <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+        <div
+          className={`sticky top-0 z-40 bg-white border-b border-gray-200 transition-shadow ${
+            showScrollShadow ? 'shadow-md' : 'shadow-sm'
+          }`}
+        >
           <div className="container mx-auto px-4">
             <Tabs.List className="flex gap-1">
               {TAB_CONFIG.map((tab) => (
@@ -188,6 +205,9 @@ export function MarketDashboardPage() {
           </p>
         </div>
       </div>
+
+      {/* Scroll to top button */}
+      <ScrollToTopButton />
     </div>
   )
 }

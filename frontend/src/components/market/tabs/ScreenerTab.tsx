@@ -130,7 +130,7 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
         {/* Filter Panel (Collapsible) */}
         {!filterPanelCollapsed && (
           <div className="w-80 flex-shrink-0">
-            <div className="sticky top-24">
+            <div className="sticky top-24 z-30">
               <FilterPanel
                 filters={filters}
                 onFiltersChange={setFilters}
@@ -152,7 +152,7 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
         {/* Collapsed Filter Panel Toggle */}
         {filterPanelCollapsed && (
           <div className="w-12 flex-shrink-0">
-            <div className="sticky top-24">
+            <div className="sticky top-24 z-30">
               <button
                 onClick={() => setFilterPanelCollapsed(false)}
                 className="w-12 h-32 flex items-center justify-center bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
