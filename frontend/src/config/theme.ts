@@ -49,6 +49,7 @@ export const marketColors = {
     bg: 'bg-gray-50',
     border: 'border-gray-200',
     hover: 'hover:bg-gray-100',
+    icon: '➡️',
     hex: '#6b7280',
   },
 

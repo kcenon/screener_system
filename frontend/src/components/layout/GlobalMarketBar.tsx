@@ -66,7 +66,7 @@ export function GlobalMarketBar() {
 
     const sentimentMap = {
       bullish: { text: '강세', icon: colors.icon },
-      neutral: { text: '중립', icon: '➡️' },
+      neutral: { text: '중립', icon: colors.icon },
       bearish: { text: '약세', icon: colors.icon },
     }
 
