@@ -115,24 +115,34 @@ async def list_watchlists(
     Raises:
         401: Unauthorized
     """
+    from app.repositories.watchlist_repository import WatchlistRepository
+
     skip = (page - 1) * limit
     watchlists, total = await watchlist_service.get_user_watchlists(
         user_id=current_user.id, skip=skip, limit=limit, load_stocks=False
     )
 
     # Convert to summary format
-    watchlist_summaries = [
-        WatchlistSummary(
-            id=w.id,
-            name=w.name,
-            description=w.description,
-            stock_count=w.stock_count,
-            last_stock_added=None,  # TODO: Add this to query
-            created_at=w.created_at,
-            updated_at=w.updated_at,
+    # Query stock count for each watchlist separately to avoid relationship loading
+    watchlist_repo = WatchlistRepository(watchlist_service.session)
+    watchlist_summaries = []
+
+    for w in watchlists:
+        # Get stock count by querying watchlist_stocks
+        watchlist_stocks = await watchlist_repo.get_watchlist_stocks(w.id)
+        stock_count = len(watchlist_stocks)
+
+        watchlist_summaries.append(
+            WatchlistSummary(
+                id=w.id,
+                name=w.name,
+                description=w.description,
+                stock_count=stock_count,
+                last_stock_added=None,  # TODO: Add this to query
+                created_at=w.created_at,
+                updated_at=w.updated_at,
+            )
         )
-        for w in watchlists
-    ]
 
     return WatchlistListResponse(
         total=total,

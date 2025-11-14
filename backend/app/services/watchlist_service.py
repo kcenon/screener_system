@@ -323,11 +323,14 @@ class WatchlistService:
         watchlist_count = await self.watchlist_repo.count_user_watchlists(user_id)
 
         # Get total stocks across all watchlists
-        # (simplified - in production, use a single optimized query)
+        # Query stock counts separately to avoid relationship loading
         watchlists = await self.watchlist_repo.get_user_watchlists(
-            user_id=user_id, skip=0, limit=100, load_stocks=True
+            user_id=user_id, skip=0, limit=100, load_stocks=False
         )
-        total_stocks = sum(len(wl.stocks) if wl.stocks else 0 for wl in watchlists)
+        total_stocks = 0
+        for wl in watchlists:
+            watchlist_stocks = await self.watchlist_repo.get_watchlist_stocks(wl.id)
+            total_stocks += len(watchlist_stocks)
 
         # Get recent activity count (last 30 days)
         recent_count = await self.activity_repo.count_user_activities(user_id)
