@@ -327,7 +327,7 @@ class WatchlistService:
         watchlists = await self.watchlist_repo.get_user_watchlists(
             user_id=user_id, skip=0, limit=100, load_stocks=True
         )
-        total_stocks = sum(len(wl.stocks) for wl in watchlists)
+        total_stocks = sum(len(wl.stocks) if wl.stocks else 0 for wl in watchlists)
 
         # Get recent activity count (last 30 days)
         recent_count = await self.activity_repo.count_user_activities(user_id)

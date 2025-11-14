@@ -90,7 +90,7 @@ class WatchlistStock(Base):
 
     # Relationships
     watchlist = relationship("Watchlist", back_populates="stocks")
-    stock = relationship("Stock")
+    stock = relationship("Stock", lazy="joined")
 
     def __repr__(self) -> str:
         """String representation"""
