@@ -19,7 +19,7 @@ class WatchlistRepository:
         self.session = session
 
     async def get_by_id(
-        self, watchlist_id: UUID, user_id: UUID, load_stocks: bool = True
+        self, watchlist_id: UUID, user_id: int, load_stocks: bool = True
     ) -> Optional[Watchlist]:
         """
         Get watchlist by ID (only if owned by user)
@@ -44,7 +44,7 @@ class WatchlistRepository:
 
     async def get_user_watchlists(
         self,
-        user_id: UUID,
+        user_id: int,
         skip: int = 0,
         limit: int = 10,
         load_stocks: bool = False,
@@ -75,7 +75,7 @@ class WatchlistRepository:
         result = await self.session.execute(query)
         return list(result.scalars().all())
 
-    async def count_user_watchlists(self, user_id: UUID) -> int:
+    async def count_user_watchlists(self, user_id: int) -> int:
         """Count watchlists owned by user"""
         result = await self.session.execute(
             select(func.count(Watchlist.id)).where(Watchlist.user_id == user_id)
@@ -179,7 +179,7 @@ class UserActivityRepository:
 
     async def get_user_activities(
         self,
-        user_id: UUID,
+        user_id: int,
         limit: int = 10,
         activity_type: Optional[str] = None,
     ) -> list[UserActivity]:
@@ -208,7 +208,7 @@ class UserActivityRepository:
         return list(result.scalars().all())
 
     async def count_user_activities(
-        self, user_id: UUID, activity_type: Optional[str] = None
+        self, user_id: int, activity_type: Optional[str] = None
     ) -> int:
         """Count user activities"""
         query = select(func.count(UserActivity.id)).where(
@@ -222,7 +222,7 @@ class UserActivityRepository:
         return result.scalar_one()
 
     async def get_recent_screenings(
-        self, user_id: UUID, limit: int = 10
+        self, user_id: int, limit: int = 10
     ) -> list[UserActivity]:
         """Get recent screening activities"""
         return await self.get_user_activities(
@@ -237,7 +237,7 @@ class UserPreferencesRepository:
         """Initialize repository with database session"""
         self.session = session
 
-    async def get_by_user_id(self, user_id: UUID) -> Optional[UserPreferences]:
+    async def get_by_user_id(self, user_id: int) -> Optional[UserPreferences]:
         """Get user preferences by user ID"""
         result = await self.session.execute(
             select(UserPreferences).where(UserPreferences.user_id == user_id)
@@ -257,14 +257,14 @@ class UserPreferencesRepository:
         await self.session.refresh(preferences)
         return preferences
 
-    async def increment_screening_quota(self, user_id: UUID) -> None:
+    async def increment_screening_quota(self, user_id: int) -> None:
         """Increment screening quota usage"""
         prefs = await self.get_by_user_id(user_id)
         if prefs:
             prefs.screening_quota_used += 1
             await self.session.flush()
 
-    async def reset_screening_quota(self, user_id: UUID) -> None:
+    async def reset_screening_quota(self, user_id: int) -> None:
         """Reset screening quota (monthly reset)"""
         prefs = await self.get_by_user_id(user_id)
         if prefs:
