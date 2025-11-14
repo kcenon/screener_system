@@ -258,7 +258,7 @@ export const useWatchlistStore = create<WatchlistState>()(
       },
 
       // Update stock price in real-time (from WebSocket)
-      updateStockPrice: (stockCode: string, price: number, change: number, changePct: number, volume: number) => {
+      updateStockPrice: (stockCode: string, price: number, _change: number, changePct: number, volume: number) => {
         set((state) => ({
           watchlists: state.watchlists.map((watchlist) => ({
             ...watchlist,

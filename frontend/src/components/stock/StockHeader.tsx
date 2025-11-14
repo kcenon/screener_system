@@ -86,10 +86,10 @@ export default function StockHeader({ stock }: StockHeaderProps) {
               stock={{
                 code: stock.code,
                 name: stock.name,
-                market: stock.market,
+                market: stock.market as 'KOSPI' | 'KOSDAQ',
                 current_price: stock.current_price || undefined,
                 change_percent: stock.price_change_1d || undefined,
-                volume: stock.volume || undefined,
+                volume: stock.current_volume || undefined,
               }}
               variant="button"
               size="md"

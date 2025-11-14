@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react'
 import { Star, Check, Plus } from 'lucide-react'
 import { useWatchlistStore, watchlistSelectors } from '@/store/watchlistStore'
 import { WatchlistDialog } from './WatchlistDialog'
-import type { Stock } from '@/types'
 
 interface AddToWatchlistButtonProps {
   stock: {
@@ -63,11 +62,6 @@ export function AddToWatchlistButton({
 
       await addStockToWatchlist(watchlistId, {
         stock_code: stock.code,
-        stock_name: stock.name,
-        market: stock.market,
-        current_price: stock.current_price,
-        change_percent: stock.change_percent,
-        volume: stock.volume,
       })
     }
   }
