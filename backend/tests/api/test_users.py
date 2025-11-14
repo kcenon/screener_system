@@ -13,13 +13,13 @@ from app.db.models import Stock, User, UserPreferences, Watchlist, WatchlistStoc
 @pytest.fixture
 async def test_user(db):
     """Create test user"""
+    from app.core.security import get_password_hash
+
     user = User(
         email="test@example.com",
-        username="testuser",
-        hashed_password="$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5eBb8Pd5RQGK6",  # "password"
-        full_name="Test User",
+        password_hash=get_password_hash("password"),
+        name="Test User",
         subscription_tier="free",
-        is_active=True,
     )
     db.add(user)
     await db.commit()
@@ -75,9 +75,9 @@ async def auth_headers(client: AsyncClient, test_user):
     """Get authentication headers"""
     # Login to get access token
     response = await client.post(
-        "/api/v1/auth/login",
+        "/v1/auth/login",
         json={
-            "username": "testuser",
+            "email": "test@example.com",
             "password": "password",
         },
     )
@@ -287,10 +287,12 @@ class TestWatchlistEndpoints:
     ):
         """Test accessing another user's watchlist"""
         # Create another user and their watchlist
+        from app.core.security import get_password_hash
+
         other_user = User(
             email="other@example.com",
-            username="otheruser",
-            hashed_password="hashed",
+            password_hash=get_password_hash("password"),
+            name="Other User",
             subscription_tier="free",
         )
         db.add(other_user)

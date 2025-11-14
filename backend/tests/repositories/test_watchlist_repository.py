@@ -17,11 +17,12 @@ from app.repositories.watchlist_repository import (
 @pytest.fixture
 async def test_user(db):
     """Create test user"""
+    from app.core.security import get_password_hash
+
     user = User(
         email="test@example.com",
-        username="testuser",
-        hashed_password="hashed_password",
-        full_name="Test User",
+        password_hash=get_password_hash("password"),
+        name="Test User",
         subscription_tier="free",
     )
     db.add(user)
