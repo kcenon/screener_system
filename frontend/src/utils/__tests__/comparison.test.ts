@@ -165,13 +165,6 @@ describe('Comparison Utilities', () => {
         market: 'KOSPI',
         current_price: 75000,
         per: 12.5,
-        sector: '',
-        industry: '',
-        description: '',
-        market_cap: 0,
-        volume: 0,
-        change_percent: 0,
-        indicators: {},
       },
       {
         code: '000660',
@@ -179,13 +172,6 @@ describe('Comparison Utilities', () => {
         market: 'KOSPI',
         current_price: 125000,
         per: 8.3,
-        sector: '',
-        industry: '',
-        description: '',
-        market_cap: 0,
-        volume: 0,
-        change_percent: 0,
-        indicators: {},
       },
     ]
 
