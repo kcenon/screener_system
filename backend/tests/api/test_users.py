@@ -411,7 +411,8 @@ class TestWatchlistEndpoints:
         """Test accessing watchlist endpoints without authentication"""
         response = await client.get("/v1/users/watchlists")
 
-        assert response.status_code == 401  # Unauthorized
+        # Without auth token, FastAPI returns 403 (Forbidden) not 401
+        assert response.status_code == 403
 
 
 # =============================================================================
