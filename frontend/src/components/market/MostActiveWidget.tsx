@@ -21,8 +21,8 @@ function StockRow({ stock, rank }: { stock: MostActiveStock; rank: number }) {
 
   return (
     <tr className="border-b border-gray-200 transition-colors hover:bg-gray-50">
-      <td className="px-4 py-3 text-center text-sm text-gray-500">{rank}</td>
-      <td className="px-4 py-3">
+      <td className="px-3 py-2 text-center text-sm text-gray-500">{rank}</td>
+      <td className="px-3 py-2">
         <Link
           to={`/stocks/${stock.code}`}
           className="block hover:text-blue-600"
@@ -31,21 +31,21 @@ function StockRow({ stock, rank }: { stock: MostActiveStock; rank: number }) {
           <div className="text-xs text-gray-500">{stock.code}</div>
         </Link>
       </td>
-      <td className="px-4 py-3 text-right text-sm text-gray-900">
+      <td className="px-3 py-2 text-right text-sm text-gray-900">
         ₩{stock.current_price.toLocaleString()}
       </td>
       <td
-        className={`px-4 py-3 text-right text-sm font-medium ${
+        className={`px-3 py-2 text-right text-sm font-medium ${
           isPositive ? 'text-green-600' : 'text-red-600'
         }`}
       >
         {isPositive ? '▲' : '▼'}
         {Math.abs(stock.change_percent).toFixed(2)}%
       </td>
-      <td className="px-4 py-3 text-right text-sm text-gray-900">
+      <td className="px-3 py-2 text-right text-sm text-gray-900">
         {(stock.volume / 1000000).toFixed(1)}M
       </td>
-      <td className="px-4 py-3 text-right text-sm text-gray-900">
+      <td className="px-3 py-2 text-right text-sm text-gray-900">
         {(stock.value / 1000000000).toFixed(1)}억
       </td>
     </tr>
@@ -89,20 +89,20 @@ export function MostActiveWidget({
   })
 
   return (
-    <div className={`rounded-lg bg-white p-6 shadow-sm ${className}`}>
+    <div className={`rounded-lg bg-white p-4 shadow-sm ${className}`}>
       {/* Header with market filter */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-base font-semibold text-gray-900">
           거래 상위 종목 <span className="text-sm font-normal text-gray-500">Most Active</span>
         </h2>
 
         {/* Market filter */}
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map((market) => (
             <button
               key={market}
               onClick={() => setSelectedMarket(market)}
-              className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
+              className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
                 selectedMarket === market
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -136,12 +136,12 @@ export function MostActiveWidget({
           <table className="w-full">
             <thead>
               <tr className="border-b-2 border-gray-300 text-sm text-gray-600">
-                <th className="px-4 py-3 text-center">순위</th>
-                <th className="px-4 py-3 text-left">종목명</th>
-                <th className="px-4 py-3 text-right">현재가</th>
-                <th className="px-4 py-3 text-right">등락률</th>
-                <th className="px-4 py-3 text-right">거래량</th>
-                <th className="px-4 py-3 text-right">거래대금</th>
+                <th className="px-3 py-2 text-center">순위</th>
+                <th className="px-3 py-2 text-left">종목명</th>
+                <th className="px-3 py-2 text-right">현재가</th>
+                <th className="px-3 py-2 text-right">등락률</th>
+                <th className="px-3 py-2 text-right">거래량</th>
+                <th className="px-3 py-2 text-right">거래대금</th>
               </tr>
             </thead>
             <tbody>

@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { StockScreeningResult, ScreeningSortField, SortOrder } from '@/types/screening'
 import { AddToWatchlistButton } from '@/components/watchlist'
+import { formatCompactPrice } from '@/utils/formatNumber'
 
 /**
  * Sort configuration
@@ -56,11 +57,11 @@ const formatPercent = (value: string | number | null | undefined): string => {
 }
 
 /**
- * Format large numbers (market cap, price)
+ * Format large numbers (market cap, price) - use compact format
  */
 const formatPrice = (value: string | number | null | undefined): string => {
   if (value === null || value === undefined || typeof value === 'string') return '-'
-  return value.toLocaleString('ko-KR')
+  return formatCompactPrice(value)
 }
 
 /**
@@ -137,18 +138,18 @@ export default function ResultsTable({
   const rowVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 48, // Row height in pixels
+    estimateSize: () => 36, // Row height in pixels (compact)
     overscan: 5,
   })
 
   // Loading skeleton
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-gray-200 rounded" />
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+        <div className="animate-pulse space-y-3">
+          <div className="h-8 bg-gray-200 rounded" />
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-12 bg-gray-100 rounded" />
+            <div key={i} className="h-9 bg-gray-100 rounded" />
           ))}
         </div>
       </div>
@@ -218,7 +219,7 @@ export default function ResultsTable({
                 <th
                   key={column.key}
                   scope="col"
-                  className={`px-4 py-3 text-xs font-medium text-gray-700 uppercase tracking-wider ${
+                  className={`px-3 py-2 text-xs font-medium text-gray-700 uppercase tracking-wider ${
                     column.align === 'right'
                       ? 'text-right'
                       : column.align === 'center'
@@ -267,7 +268,7 @@ export default function ResultsTable({
                       return (
                         <td
                           key="actions"
-                          className="px-4 py-3 text-center whitespace-nowrap"
+                          className="px-3 py-2 text-center whitespace-nowrap"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <AddToWatchlistButton
@@ -290,9 +291,9 @@ export default function ResultsTable({
                     const formattedValue = column.format ? column.format(value) : value
 
                     // Special styling for change%
-                    let cellClassName = 'px-4 py-3 text-sm text-gray-900 whitespace-nowrap'
+                    let cellClassName = 'px-3 py-2 text-xs text-gray-900 whitespace-nowrap'
                     if (column.key === 'price_change_1d' && typeof value === 'number') {
-                      cellClassName += value > 0 ? ' text-red-600' : value < 0 ? ' text-blue-600' : ''
+                      cellClassName += value > 0 ? ' text-green-600' : value < 0 ? ' text-red-600' : ''
                     }
                     if (column.align === 'right') cellClassName += ' text-right'
                     if (column.align === 'center') cellClassName += ' text-center'
