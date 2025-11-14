@@ -15,7 +15,8 @@ import { componentSpacing, typography } from '../../config/theme'
 import type { MarketIndex } from '../../types/market'
 
 /**
- * Single index card component
+ * Single index card component (Compact version for Phase 2C)
+ * Height reduced from ~400px to ~140px (-65%)
  */
 function IndexCard({ index }: { index: MarketIndex }) {
   const isPositive = index.change >= 0
@@ -23,75 +24,75 @@ function IndexCard({ index }: { index: MarketIndex }) {
   const bgClass = isPositive ? 'bg-green-50' : 'bg-red-50'
 
   return (
-    <div className={`rounded-lg border border-gray-200 p-3 ${bgClass} transition-all hover:shadow-md`}>
-      {/* Index name and code */}
-      <div className="mb-1">
-        <h3 className="text-sm font-medium text-gray-600">{index.code}</h3>
-        <p className="text-xs text-gray-500">{index.name}</p>
+    <div className={`rounded-lg border border-gray-200 p-2 ${bgClass} transition-all hover:shadow-md`}>
+      {/* Top row: Name and Code */}
+      <div className="flex items-center justify-between mb-1.5">
+        <h3 className="text-xs font-semibold text-gray-700">{index.code}</h3>
+        <p className="text-[10px] text-gray-500">{index.name}</p>
       </div>
 
-      {/* Current value */}
-      <div className="mb-1">
-        <p className="text-xl font-bold text-gray-900">
+      {/* Main row: Price and Change */}
+      <div className="flex items-baseline justify-between mb-1.5">
+        {/* Current value */}
+        <p className="text-lg font-bold text-gray-900">
           {index.current.toLocaleString('ko-KR', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
         </p>
+
+        {/* Change percentage */}
+        <div className={`flex items-center gap-1 text-xs font-semibold ${changeClass}`}>
+          <span>{isPositive ? '▲' : '▼'}</span>
+          <span>{formatChangePercentage(index.change_percent)}</span>
+        </div>
       </div>
 
-      {/* Change amount and percentage */}
-      <div className={`mb-2 flex items-center gap-2 text-sm font-medium ${changeClass}`}>
-        <span>{isPositive ? '▲' : '▼'}</span>
-        <span>
-          {Math.abs(index.change).toLocaleString('ko-KR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
-        <span>
-          {formatChangePercentage(index.change_percent)}
-        </span>
-      </div>
-
-      {/* High/Low */}
-      <div className="mb-2 flex justify-between text-xs text-gray-600">
-        <span>
-          고: {index.high.toLocaleString('ko-KR', { minimumFractionDigits: 2 })}
-        </span>
-        <span>
-          저: {index.low.toLocaleString('ko-KR', { minimumFractionDigits: 2 })}
-        </span>
-      </div>
-
-      {/* Sparkline chart */}
-      <div className="h-10">
+      {/* Sparkline chart (reduced height) */}
+      <div className="h-8 mb-1.5">
         <Sparkline data={index.sparkline} color={isPositive ? '#16a34a' : '#dc2626'} />
       </div>
 
-      {/* Volume */}
-      <div className="mt-2 text-xs text-gray-500">
-        거래량: {formatCompactVolume(index.volume)}
+      {/* Bottom row: High/Low and Volume */}
+      <div className="flex items-center justify-between text-[10px] text-gray-500">
+        <span>
+          고 {index.high.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}
+        </span>
+        <span>
+          저 {index.low.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}
+        </span>
+        <span>
+          {formatCompactVolume(index.volume)}
+        </span>
       </div>
     </div>
   )
 }
 
 /**
- * Loading skeleton for index card
+ * Loading skeleton for index card (Compact version)
  */
 function IndexCardSkeleton() {
   return (
-    <div className="animate-pulse rounded-lg border border-gray-200 bg-gray-50 p-4">
-      <div className="mb-2 h-4 w-20 rounded bg-gray-300"></div>
-      <div className="mb-2 h-8 w-32 rounded bg-gray-300"></div>
-      <div className="mb-3 h-4 w-24 rounded bg-gray-300"></div>
-      <div className="mb-3 flex justify-between">
+    <div className="animate-pulse rounded-lg border border-gray-200 bg-gray-50 p-2">
+      {/* Top row */}
+      <div className="mb-1.5 flex justify-between">
         <div className="h-3 w-16 rounded bg-gray-300"></div>
-        <div className="h-3 w-16 rounded bg-gray-300"></div>
+        <div className="h-2.5 w-20 rounded bg-gray-300"></div>
       </div>
-      <div className="mb-2 h-12 rounded bg-gray-300"></div>
-      <div className="h-3 w-20 rounded bg-gray-300"></div>
+      {/* Main row */}
+      <div className="mb-1.5 flex justify-between">
+        <div className="h-5 w-24 rounded bg-gray-300"></div>
+        <div className="h-4 w-16 rounded bg-gray-300"></div>
+      </div>
+      {/* Sparkline */}
+      <div className="mb-1.5 h-8 rounded bg-gray-300"></div>
+      {/* Bottom row */}
+      <div className="flex justify-between">
+        <div className="h-2.5 w-12 rounded bg-gray-300"></div>
+        <div className="h-2.5 w-12 rounded bg-gray-300"></div>
+        <div className="h-2.5 w-12 rounded bg-gray-300"></div>
+      </div>
     </div>
   )
 }
