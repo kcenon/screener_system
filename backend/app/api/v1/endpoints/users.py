@@ -156,7 +156,7 @@ async def get_watchlist(
         401: Unauthorized
     """
     watchlist = await watchlist_service.get_watchlist_by_id(
-        watchlist_id=watchlist_id, user_id=current_user.id, load_stocks=True
+        watchlist_id=watchlist_id, user_id=current_user.id, load_stocks=False
     )
 
     if not watchlist:
@@ -165,15 +165,30 @@ async def get_watchlist(
             detail="Watchlist not found or access denied",
         )
 
-    # TODO: Enrich stocks with current price data
+    # Get stocks separately to avoid relationship loading issues
+    from app.db.models import WatchlistStock
+    from app.repositories.watchlist_repository import WatchlistRepository
+    from sqlalchemy import select
+
+    watchlist_repo = WatchlistRepository(watchlist_service.session)
+    watchlist_stocks = await watchlist_repo.get_watchlist_stocks(watchlist_id)
+
+    # Load Stock data for each WatchlistStock
+    from app.db.models.stock import Stock
+
     stock_responses = []
-    for ws in watchlist.stocks:
+    for ws in watchlist_stocks:
+        # Get stock details
+        stock_query = select(Stock).where(Stock.code == ws.stock_code)
+        stock_result = await watchlist_service.session.execute(stock_query)
+        stock = stock_result.scalar_one_or_none()
+
         stock_responses.append(
             {
                 "stock_code": ws.stock_code,
                 "notes": ws.notes,
                 "added_at": ws.added_at,
-                "stock_name": ws.stock.name if ws.stock else None,
+                "stock_name": stock.name if stock else None,
                 "current_price": None,  # TODO: Fetch from price service
                 "change_percent": None,
                 "volume": None,
@@ -185,7 +200,7 @@ async def get_watchlist(
         user_id=watchlist.user_id,
         name=watchlist.name,
         description=watchlist.description,
-        stock_count=watchlist.stock_count,
+        stock_count=len(watchlist_stocks),
         created_at=watchlist.created_at,
         updated_at=watchlist.updated_at,
         stocks=stock_responses,

@@ -37,30 +37,7 @@ class WatchlistRepository:
         )
 
         result = await self.session.execute(query)
-        watchlist = result.scalar_one_or_none()
-
-        if not watchlist:
-            return None
-
-        # Manually load stocks with explicit query to ensure they're loaded
-        if load_stocks:
-            stocks_query = (
-                select(WatchlistStock)
-                .where(WatchlistStock.watchlist_id == watchlist_id)
-                .order_by(WatchlistStock.added_at.desc())
-            )
-            stocks_result = await self.session.execute(stocks_query)
-            watchlist.stocks = list(stocks_result.scalars().all())
-
-            # Load Stock data for each WatchlistStock
-            for ws in watchlist.stocks:
-                if ws.stock_code:
-                    from app.db.models.stock import Stock
-                    stock_query = select(Stock).where(Stock.code == ws.stock_code)
-                    stock_result = await self.session.execute(stock_query)
-                    ws.stock = stock_result.scalar_one_or_none()
-
-        return watchlist
+        return result.scalar_one_or_none()
 
     async def get_user_watchlists(
         self,
@@ -90,30 +67,7 @@ class WatchlistRepository:
         )
 
         result = await self.session.execute(query)
-        watchlists = list(result.scalars().all())
-
-        # Manually load stocks for each watchlist if requested
-        if load_stocks:
-            from app.db.models.stock import Stock
-
-            for watchlist in watchlists:
-                # Load WatchlistStock records
-                stocks_query = (
-                    select(WatchlistStock)
-                    .where(WatchlistStock.watchlist_id == watchlist.id)
-                    .order_by(WatchlistStock.added_at.desc())
-                )
-                stocks_result = await self.session.execute(stocks_query)
-                watchlist.stocks = list(stocks_result.scalars().all())
-
-                # Load Stock data for each WatchlistStock
-                for ws in watchlist.stocks:
-                    if ws.stock_code:
-                        stock_query = select(Stock).where(Stock.code == ws.stock_code)
-                        stock_result = await self.session.execute(stock_query)
-                        ws.stock = stock_result.scalar_one_or_none()
-
-        return watchlists
+        return list(result.scalars().all())
 
     async def count_user_watchlists(self, user_id: int) -> int:
         """Count watchlists owned by user"""
