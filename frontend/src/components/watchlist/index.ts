@@ -6,3 +6,4 @@
 export { WatchlistDialog } from './WatchlistDialog'
 export { WatchlistSidebar } from './WatchlistSidebar'
 export { WatchlistStockTable } from './WatchlistStockTable'
+export { AddToWatchlistButton } from './AddToWatchlistButton'

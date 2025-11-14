@@ -41,6 +41,7 @@ interface WatchlistState {
 
   // Actions - Utilities
   refreshStockPrices: () => Promise<void>
+  updateStockPrice: (stockCode: string, price: number, change: number, changePct: number, volume: number) => void
   getWatchlistById: (id: string) => Watchlist | undefined
   isStockInWatchlist: (watchlistId: string, stockCode: string) => boolean
   getWatchlistsContainingStock: (stockCode: string) => Watchlist[]
@@ -254,6 +255,25 @@ export const useWatchlistStore = create<WatchlistState>()(
           console.error('Failed to refresh stock prices:', error)
           // Don't set error state for background refresh failures
         }
+      },
+
+      // Update stock price in real-time (from WebSocket)
+      updateStockPrice: (stockCode: string, price: number, change: number, changePct: number, volume: number) => {
+        set((state) => ({
+          watchlists: state.watchlists.map((watchlist) => ({
+            ...watchlist,
+            stocks: watchlist.stocks.map((stock) =>
+              stock.code === stockCode
+                ? {
+                    ...stock,
+                    current_price: price,
+                    change_percent: changePct,
+                    volume,
+                  }
+                : stock
+            ),
+          })),
+        }))
       },
 
       // Get watchlist by ID (from current state)
