@@ -1,5 +1,19 @@
 """Pydantic schemas package"""
 
+from app.schemas.market import (
+    ActiveStock,
+    MarketBreadthResponse,
+    MarketIndexData,
+    MarketIndicesResponse,
+    MarketMover,
+    MarketMoversResponse,
+    MarketTrendData,
+    MarketTrendResponse,
+    MostActiveResponse,
+    SectorPerformance,
+    SectorPerformanceResponse,
+    TopStock,
+)
 from app.schemas.screening import (FilterRange, ScreenedStock,
                                    ScreeningFilters, ScreeningMetadata,
                                    ScreeningRequest, ScreeningResponse,
@@ -57,6 +71,19 @@ __all__ = [
     "StockSearchQuery",
     "StockSearchResult",
     "StockSearchResponse",
+    # Market schemas
+    "MarketIndexData",
+    "MarketIndicesResponse",
+    "MarketBreadthResponse",
+    "TopStock",
+    "SectorPerformance",
+    "SectorPerformanceResponse",
+    "MarketMover",
+    "MarketMoversResponse",
+    "ActiveStock",
+    "MostActiveResponse",
+    "MarketTrendData",
+    "MarketTrendResponse",
     # Screening schemas
     "FilterRange",
     "ScreeningFilters",
