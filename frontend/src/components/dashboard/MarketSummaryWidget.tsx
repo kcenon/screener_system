@@ -90,7 +90,6 @@ function IndexCard({ index }: { index?: MarketIndex }) {
 export default function MarketSummaryWidget({
   kospi,
   kosdaq,
-  isLoading = false,
 }: MarketSummaryWidgetProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

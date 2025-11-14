@@ -6,7 +6,7 @@
  */
 
 import { Link } from 'react-router-dom'
-import { Search, Eye, GitCompare, BarChart3, FileDown, TrendingUp } from 'lucide-react'
+import { Search, Eye, GitCompare, TrendingUp } from 'lucide-react'
 
 interface QuickAction {
   id: string

@@ -5,7 +5,7 @@
  */
 
 import { Link } from 'react-router-dom'
-import { Eye, TrendingUp, TrendingDown, Plus } from 'lucide-react'
+import { Eye, Plus } from 'lucide-react'
 import type { WatchlistSummary } from '../../types'
 
 interface WatchlistWidgetProps {

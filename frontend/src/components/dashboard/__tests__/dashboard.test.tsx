@@ -7,12 +7,20 @@
 
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { BrowserRouter } from 'react-router-dom'
 import MarketSummaryWidget from '../MarketSummaryWidget'
 import WatchlistWidget from '../WatchlistWidget'
 import RecentActivityWidget from '../RecentActivityWidget'
 import QuickActionsWidget from '../QuickActionsWidget'
 import PlatformStatsWidget from '../PlatformStatsWidget'
 import type { MarketIndex, WatchlistSummary, UserActivity } from '../../../types'
+
+/**
+ * Helper to wrap components with Router
+ */
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(<BrowserRouter>{component}</BrowserRouter>)
+}
 
 describe('MarketSummaryWidget', () => {
   it('renders loading state', () => {
@@ -54,7 +62,7 @@ describe('MarketSummaryWidget', () => {
 
 describe('WatchlistWidget', () => {
   it('renders empty state when no watchlists', () => {
-    render(<WatchlistWidget watchlists={[]} />)
+    renderWithRouter(<WatchlistWidget watchlists={[]} />)
     expect(screen.getByText('No Watchlists Yet')).toBeInTheDocument()
   })
 
@@ -77,7 +85,7 @@ describe('WatchlistWidget', () => {
       },
     ]
 
-    render(<WatchlistWidget watchlists={watchlists} />)
+    renderWithRouter(<WatchlistWidget watchlists={watchlists} />)
     expect(screen.getByText('Tech Stocks')).toBeInTheDocument()
     expect(screen.getByText('Value Plays')).toBeInTheDocument()
     expect(screen.getByText('5 stocks')).toBeInTheDocument()
@@ -114,7 +122,7 @@ describe('RecentActivityWidget', () => {
 
 describe('QuickActionsWidget', () => {
   it('renders all quick action buttons', () => {
-    render(<QuickActionsWidget />)
+    renderWithRouter(<QuickActionsWidget />)
     expect(screen.getByText('New Screening')).toBeInTheDocument()
     expect(screen.getByText('Watchlists')).toBeInTheDocument()
     expect(screen.getByText('Compare Stocks')).toBeInTheDocument()
