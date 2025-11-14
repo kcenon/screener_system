@@ -100,7 +100,7 @@ class TestWatchlistEndpoints:
         self, client: AsyncClient, auth_headers, test_user
     ):
         """Test listing watchlists when user has none"""
-        response = await client.get("/api/v1/users/watchlists", headers=auth_headers)
+        response = await client.get("/v1/users/watchlists", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -112,7 +112,7 @@ class TestWatchlistEndpoints:
     ):
         """Test creating a watchlist"""
         response = await client.post(
-            "/api/v1/users/watchlists",
+            "/v1/users/watchlists",
             headers=auth_headers,
             json={
                 "name": "My Tech Stocks",
@@ -134,7 +134,7 @@ class TestWatchlistEndpoints:
     ):
         """Test creating watchlist with initial stocks"""
         response = await client.post(
-            "/api/v1/users/watchlists",
+            "/v1/users/watchlists",
             headers=auth_headers,
             json={
                 "name": "Tech Watchlist",
@@ -152,7 +152,7 @@ class TestWatchlistEndpoints:
     ):
         """Test creating watchlist with non-existent stock code"""
         response = await client.post(
-            "/api/v1/users/watchlists",
+            "/v1/users/watchlists",
             headers=auth_headers,
             json={
                 "name": "Invalid Watchlist",
@@ -175,7 +175,7 @@ class TestWatchlistEndpoints:
 
         # Try to create 11th
         response = await client.post(
-            "/api/v1/users/watchlists",
+            "/v1/users/watchlists",
             headers=auth_headers,
             json={"name": "Overflow Watchlist"},
         )
@@ -189,7 +189,7 @@ class TestWatchlistEndpoints:
         """Test validation errors"""
         # Empty name
         response = await client.post(
-            "/api/v1/users/watchlists",
+            "/v1/users/watchlists",
             headers=auth_headers,
             json={"name": "   ", "description": "Test"},
         )
@@ -206,7 +206,7 @@ class TestWatchlistEndpoints:
             db.add(watchlist)
         await db.commit()
 
-        response = await client.get("/api/v1/users/watchlists", headers=auth_headers)
+        response = await client.get("/v1/users/watchlists", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -225,7 +225,7 @@ class TestWatchlistEndpoints:
 
         # Get first page (3 items)
         response = await client.get(
-            "/api/v1/users/watchlists?page=1&limit=3", headers=auth_headers
+            "/v1/users/watchlists?page=1&limit=3", headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -236,7 +236,7 @@ class TestWatchlistEndpoints:
 
         # Get second page
         response = await client.get(
-            "/api/v1/users/watchlists?page=2&limit=3", headers=auth_headers
+            "/v1/users/watchlists?page=2&limit=3", headers=auth_headers
         )
 
         data = response.json()
@@ -261,7 +261,7 @@ class TestWatchlistEndpoints:
         await db.commit()
 
         response = await client.get(
-            f"/api/v1/users/watchlists/{watchlist.id}", headers=auth_headers
+            f"/v1/users/watchlists/{watchlist.id}", headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -277,7 +277,7 @@ class TestWatchlistEndpoints:
         """Test getting non-existent watchlist"""
         fake_id = uuid.uuid4()
         response = await client.get(
-            f"/api/v1/users/watchlists/{fake_id}", headers=auth_headers
+            f"/v1/users/watchlists/{fake_id}", headers=auth_headers
         )
 
         assert response.status_code == 404
@@ -306,7 +306,7 @@ class TestWatchlistEndpoints:
 
         # Try to access with current user's token
         response = await client.get(
-            f"/api/v1/users/watchlists/{watchlist.id}", headers=auth_headers
+            f"/v1/users/watchlists/{watchlist.id}", headers=auth_headers
         )
 
         assert response.status_code == 404  # Not found (ownership check)
@@ -321,7 +321,7 @@ class TestWatchlistEndpoints:
         await db.refresh(watchlist)
 
         response = await client.put(
-            f"/api/v1/users/watchlists/{watchlist.id}",
+            f"/v1/users/watchlists/{watchlist.id}",
             headers=auth_headers,
             json={"name": "Updated Name", "description": "New description"},
         )
@@ -340,7 +340,7 @@ class TestWatchlistEndpoints:
         await db.refresh(watchlist)
 
         response = await client.put(
-            f"/api/v1/users/watchlists/{watchlist.id}",
+            f"/v1/users/watchlists/{watchlist.id}",
             headers=auth_headers,
             json={"add_stocks": ["005930", "000660"]},
         )
@@ -366,7 +366,7 @@ class TestWatchlistEndpoints:
 
         # Remove one stock
         response = await client.put(
-            f"/api/v1/users/watchlists/{watchlist.id}",
+            f"/v1/users/watchlists/{watchlist.id}",
             headers=auth_headers,
             json={"remove_stocks": ["000660"]},
         )
@@ -387,7 +387,7 @@ class TestWatchlistEndpoints:
         watchlist_id = watchlist.id
 
         response = await client.delete(
-            f"/api/v1/users/watchlists/{watchlist_id}", headers=auth_headers
+            f"/v1/users/watchlists/{watchlist_id}", headers=auth_headers
         )
 
         assert response.status_code == 204
@@ -402,14 +402,14 @@ class TestWatchlistEndpoints:
         """Test deleting non-existent watchlist"""
         fake_id = uuid.uuid4()
         response = await client.delete(
-            f"/api/v1/users/watchlists/{fake_id}", headers=auth_headers
+            f"/v1/users/watchlists/{fake_id}", headers=auth_headers
         )
 
         assert response.status_code == 404
 
     async def test_watchlist_unauthorized(self, client: AsyncClient, test_user):
         """Test accessing watchlist endpoints without authentication"""
-        response = await client.get("/api/v1/users/watchlists")
+        response = await client.get("/v1/users/watchlists")
 
         assert response.status_code == 401  # Unauthorized
 
@@ -426,7 +426,7 @@ class TestUserActivityEndpoints:
         self, client: AsyncClient, auth_headers, test_user
     ):
         """Test getting recent activity when user has none"""
-        response = await client.get("/api/v1/users/recent-activity", headers=auth_headers)
+        response = await client.get("/v1/users/recent-activity", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -439,14 +439,14 @@ class TestUserActivityEndpoints:
         """Test getting recent activities"""
         # Create a watchlist to generate activity
         response = await client.post(
-            "/api/v1/users/watchlists",
+            "/v1/users/watchlists",
             headers=auth_headers,
             json={"name": "Test Watchlist"},
         )
         assert response.status_code == 201
 
         # Get activities
-        response = await client.get("/api/v1/users/recent-activity", headers=auth_headers)
+        response = await client.get("/v1/users/recent-activity", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -461,14 +461,14 @@ class TestUserActivityEndpoints:
         # Create multiple watchlists to generate activities
         for i in range(5):
             await client.post(
-                "/api/v1/users/watchlists",
+                "/v1/users/watchlists",
                 headers=auth_headers,
                 json={"name": f"Watchlist {i}"},
             )
 
         # Get only 3 activities
         response = await client.get(
-            "/api/v1/users/recent-activity?limit=3", headers=auth_headers
+            "/v1/users/recent-activity?limit=3", headers=auth_headers
         )
 
         assert response.status_code == 200
@@ -481,14 +481,14 @@ class TestUserActivityEndpoints:
         """Test filtering activities by type"""
         # Create watchlist (generates watchlist_create activity)
         await client.post(
-            "/api/v1/users/watchlists",
+            "/v1/users/watchlists",
             headers=auth_headers,
             json={"name": "Test"},
         )
 
         # Filter by type
         response = await client.get(
-            "/api/v1/users/recent-activity?activity_type=watchlist_create",
+            "/v1/users/recent-activity?activity_type=watchlist_create",
             headers=auth_headers,
         )
 
@@ -509,7 +509,7 @@ class TestDashboardEndpoints:
         self, client: AsyncClient, auth_headers, test_user, test_user_preferences
     ):
         """Test getting dashboard summary"""
-        response = await client.get("/api/v1/users/dashboard", headers=auth_headers)
+        response = await client.get("/v1/users/dashboard", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -534,7 +534,7 @@ class TestDashboardEndpoints:
         db.add(ws)
         await db.commit()
 
-        response = await client.get("/api/v1/users/dashboard", headers=auth_headers)
+        response = await client.get("/v1/users/dashboard", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -545,7 +545,7 @@ class TestDashboardEndpoints:
         self, client: AsyncClient, auth_headers, test_user, test_user_preferences
     ):
         """Test screening quota in dashboard"""
-        response = await client.get("/api/v1/users/dashboard", headers=auth_headers)
+        response = await client.get("/v1/users/dashboard", headers=auth_headers)
 
         assert response.status_code == 200
         data = response.json()
