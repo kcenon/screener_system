@@ -1,7 +1,7 @@
 # [IMPROVEMENT-002] Global UI/UX Foundation - Finviz-Inspired Design (Phase 1)
 
 ## Metadata
-- **Status**: BACKLOG
+- **Status**: TODO
 - **Priority**: High
 - **Assignee**: Frontend Team
 - **Estimated Time**: 8-10 hours
