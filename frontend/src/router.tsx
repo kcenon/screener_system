@@ -8,6 +8,7 @@ import StockDetailPage from './pages/StockDetailPage'
 import StockComparisonPage from './pages/StockComparisonPage'
 import WatchlistsPage from './pages/WatchlistsPage'
 import DashboardPage from './pages/DashboardPage'
+import MarketDashboardPage from './pages/MarketDashboardPage'
 import MarketOverviewPage from './pages/MarketOverviewPage'
 import NotFoundPage from './pages/NotFoundPage'
 
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
       },
       {
         path: 'market',
+        element: <MarketDashboardPage />,
+      },
+      {
+        path: 'market-overview',
         element: <MarketOverviewPage />,
       },
       {

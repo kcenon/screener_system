@@ -1,0 +1,264 @@
+/**
+ * Screener Tab Component (IMPROVEMENT-003)
+ *
+ * Stock screener with:
+ * - Collapsible filter sidebar
+ * - Results table (full width when sidebar collapsed)
+ * - Quick filters bar (will be added in Phase 3)
+ * - Export functionality
+ */
+
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useScreening } from '@/hooks/useScreening'
+import { useFilterPresets } from '@/hooks/useFilterPresets'
+import { useFreemiumAccess } from '@/hooks/useFreemiumAccess'
+import FilterPanel from '@/components/screener/FilterPanel'
+import ResultsTable from '@/components/screener/ResultsTable'
+import Pagination from '@/components/common/Pagination'
+import ExportButton from '@/components/screener/ExportButton'
+import { FreemiumBanner, LimitReachedModal } from '@/components/freemium'
+import type { ScreeningSortField, StockScreeningResult } from '@/types/screening'
+
+interface ScreenerTabProps {
+  // Optional: can accept filters from parent (e.g., sector filter from heatmap)
+  initialFilters?: Record<string, unknown>
+}
+
+export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
+  const navigate = useNavigate()
+  const {
+    data,
+    isLoading,
+    error,
+    filters,
+    sort,
+    pagination,
+    setFilters,
+    setSort,
+    setPagination,
+  } = useScreening()
+
+  // Apply initial filters if provided
+  // Note: This will be properly implemented when URL sync is added
+  // For now, initialFilters are accepted but not used
+  void initialFilters
+
+  const { presets, savePreset, deletePreset } = useFilterPresets()
+  const {
+    isAuthenticated,
+    maxScreeningResults,
+    dailyScreeningLimit,
+    screeningsToday,
+    canExportResults,
+  } = useFreemiumAccess()
+
+  const [showLimitModal, setShowLimitModal] = useState(false)
+  const [filterPanelCollapsed, setFilterPanelCollapsed] = useState(false)
+
+  // Handle sort
+  const handleSort = (field: ScreeningSortField) => {
+    if (sort.sortBy === field) {
+      setSort({ sortBy: field, order: sort.order === 'asc' ? 'desc' : 'asc' })
+    } else {
+      setSort({ sortBy: field, order: 'desc' })
+    }
+  }
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setPagination({ ...pagination, offset: (page - 1) * pagination.limit })
+  }
+
+  // Handle page size change
+  const handlePageSizeChange = (pageSize: number) => {
+    setPagination({ offset: 0, limit: pageSize })
+  }
+
+  // Handle clear filters
+  const handleClearFilters = () => {
+    setFilters({ market: 'ALL' })
+  }
+
+  // Handle row click
+  const handleRowClick = (stock: StockScreeningResult) => {
+    navigate(`/stocks/${stock.code}`)
+  }
+
+  const currentPage = Math.floor(pagination.offset / pagination.limit) + 1
+
+  // Apply freemium limits
+  const displayedStocks = !isAuthenticated && data?.stocks && maxScreeningResults > 0
+    ? data.stocks.slice(0, maxScreeningResults)
+    : data?.stocks || []
+
+  const isResultsLimited = !isAuthenticated && (data?.stocks?.length || 0) > maxScreeningResults
+
+  return (
+    <div className="space-y-4">
+      {/* Freemium Banner */}
+      {!isAuthenticated && (
+        <FreemiumBanner
+          type="screener"
+          message={`🎁 Sign up for unlimited searches! (${screeningsToday}/${dailyScreeningLimit} used today)`}
+        />
+      )}
+
+      {/* Error state */}
+      {error && (
+        <div className="rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">Error loading data</h3>
+              <p className="mt-1 text-sm text-red-700">{error.message}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main layout with collapsible filter panel */}
+      <div className="flex gap-6">
+        {/* Filter Panel (Collapsible) */}
+        {!filterPanelCollapsed && (
+          <div className="w-80 flex-shrink-0">
+            <div className="sticky top-24">
+              <FilterPanel
+                filters={filters}
+                onFiltersChange={setFilters}
+                onClearFilters={handleClearFilters}
+                presets={presets}
+                onSavePreset={(name, description) => savePreset(name, filters, description)}
+                onDeletePreset={deletePreset}
+              />
+              <button
+                onClick={() => setFilterPanelCollapsed(true)}
+                className="mt-2 w-full py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+              >
+                ← Collapse Filters
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Collapsed Filter Panel Toggle */}
+        {filterPanelCollapsed && (
+          <div className="w-12 flex-shrink-0">
+            <div className="sticky top-24">
+              <button
+                onClick={() => setFilterPanelCollapsed(false)}
+                className="w-12 h-32 flex items-center justify-center bg-white border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+                title="Expand Filters"
+              >
+                <span className="transform -rotate-90 text-sm font-medium text-gray-600">
+                  Filters
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Results Column */}
+        <div className="flex-1 min-w-0 space-y-4">
+          {/* Results count and export */}
+          {!isLoading && data && (
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <p className="text-sm text-gray-700">
+                {isResultsLimited ? (
+                  <>
+                    Showing <span className="font-semibold">{maxScreeningResults}</span> of{' '}
+                    <span className="font-semibold">{data.meta.total}</span> stocks{' '}
+                    <span className="text-blue-600 font-medium">(Sign up for full results)</span>
+                  </>
+                ) : (
+                  <>
+                    Found <span className="font-semibold">{data.meta.total}</span> stocks
+                  </>
+                )}
+                {data.query_time_ms && (
+                  <span className="text-gray-500 ml-2">({data.query_time_ms}ms)</span>
+                )}
+              </p>
+              {canExportResults ? (
+                <ExportButton data={data.stocks} />
+              ) : (
+                <button
+                  disabled
+                  className="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-md cursor-not-allowed"
+                  title="Sign up to export results"
+                >
+                  Export (Sign up required)
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Results Table */}
+          <ResultsTable
+            data={displayedStocks}
+            loading={isLoading}
+            currentSort={{ field: sort.sortBy, order: sort.order }}
+            onSort={handleSort}
+            onRowClick={handleRowClick}
+          />
+
+          {/* Limited results notice */}
+          {isResultsLimited && (
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 text-center">
+              <p className="text-blue-900 font-medium mb-2">
+                📊 {data!.meta.total - maxScreeningResults} more stocks match your criteria
+              </p>
+              <p className="text-blue-700 text-sm mb-3">
+                Sign up for free to view all {data!.meta.total} results and unlock unlimited searches
+              </p>
+              <div className="flex gap-2 justify-center">
+                <button
+                  onClick={() => navigate('/register')}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Sign Up Free
+                </button>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="bg-white text-blue-600 border-2 border-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!isLoading && data && data.meta.total > 0 && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={data.meta.total_pages}
+                totalResults={data.meta.total}
+                pageSize={pagination.limit}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Limit Modal */}
+      <LimitReachedModal
+        open={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+        actionsUsed={screeningsToday}
+        dailyLimit={dailyScreeningLimit}
+      />
+    </div>
+  )
+}

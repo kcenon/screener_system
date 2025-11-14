@@ -1,7 +1,7 @@
 # [IMPROVEMENT-003] Unified Market Dashboard - Tabbed Interface (Phase 2)
 
 ## Metadata
-- **Status**: BACKLOG
+- **Status**: TODO
 - **Priority**: High
 - **Assignee**: Frontend Team
 - **Estimated Time**: 12-14 hours
