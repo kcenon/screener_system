@@ -36,7 +36,7 @@ from app.api.error_handlers import (app_exception_handler,
                                     generic_exception_handler,
                                     sqlalchemy_exception_handler,
                                     validation_exception_handler)
-from app.api.v1.endpoints import auth, health, screening, stocks, websocket
+from app.api.v1.endpoints import auth, health, screening, stocks, users, websocket
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.exceptions import AppException
@@ -197,6 +197,9 @@ app.include_router(health.router)
 
 # Include authentication routes
 app.include_router(auth.router, prefix="/v1")
+
+# Include user portfolio routes
+app.include_router(users.router, prefix="/v1")
 
 # Include stock routes
 app.include_router(stocks.router, prefix="/v1")

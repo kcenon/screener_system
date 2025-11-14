@@ -14,6 +14,23 @@ from app.schemas.stock import (CalculatedIndicator, DailyPrice,
                                StockSearchResponse, StockSearchResult)
 from app.schemas.user import (RefreshTokenRequest, TokenPayload, TokenResponse,
                               UserCreate, UserLogin, UserResponse, UserUpdate)
+from app.schemas.watchlist import (
+    DashboardSummary,
+    ScreeningQuota,
+    UserActivityCreate,
+    UserActivityListResponse,
+    UserActivityResponse,
+    UserPreferencesCreate,
+    UserPreferencesResponse,
+    UserPreferencesUpdate,
+    WatchlistCreate,
+    WatchlistListResponse,
+    WatchlistResponse,
+    WatchlistStockCreate,
+    WatchlistStockResponse,
+    WatchlistSummary,
+    WatchlistUpdate,
+)
 
 __all__ = [
     # User schemas
@@ -49,4 +66,23 @@ __all__ = [
     "ScreeningResponse",
     "ScreeningTemplate",
     "ScreeningTemplateList",
+    # Watchlist schemas
+    "WatchlistCreate",
+    "WatchlistUpdate",
+    "WatchlistResponse",
+    "WatchlistSummary",
+    "WatchlistListResponse",
+    "WatchlistStockCreate",
+    "WatchlistStockResponse",
+    # User Activity schemas
+    "UserActivityCreate",
+    "UserActivityResponse",
+    "UserActivityListResponse",
+    # Dashboard schemas
+    "DashboardSummary",
+    "ScreeningQuota",
+    # User Preferences schemas
+    "UserPreferencesCreate",
+    "UserPreferencesUpdate",
+    "UserPreferencesResponse",
 ]

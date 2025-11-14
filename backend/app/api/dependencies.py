@@ -10,6 +10,7 @@ from app.core.exceptions import UnauthorizedException
 from app.db.models import User
 from app.db.session import get_db
 from app.services import AuthService
+from app.services.watchlist_service import WatchlistService
 
 # HTTP Bearer token scheme
 security = HTTPBearer()
@@ -20,6 +21,13 @@ async def get_auth_service(
 ) -> AuthService:
     """Get AuthService instance with database session"""
     return AuthService(db)
+
+
+async def get_watchlist_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> WatchlistService:
+    """Get WatchlistService instance with database session"""
+    return WatchlistService(db)
 
 
 async def get_current_user(

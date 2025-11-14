@@ -47,6 +47,25 @@ class User(BaseModel):
         cascade="all, delete-orphan",
         lazy="select",
     )
+    watchlists = relationship(
+        "Watchlist",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    activities = relationship(
+        "UserActivity",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    preferences = relationship(
+        "UserPreferences",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="select",
+    )
 
     # Constraints
     __table_args__ = (
