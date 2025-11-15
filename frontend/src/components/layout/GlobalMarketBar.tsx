@@ -83,8 +83,8 @@ export function GlobalMarketBar() {
 
     return (
       <div key={index.code} className="flex items-center gap-2">
-        <span className="font-semibold text-gray-700">{index.code}</span>
-        <span className="font-bold">{index.current.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        <span className="font-semibold text-gray-700 dark:text-gray-300">{index.code}</span>
+        <span className="font-bold dark:text-white">{index.current.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
         <span className={`${color.text} font-medium flex items-center gap-1`}>
           <span>{arrow}</span>
           <span>{formatChangePercentage(index.change_percent)}</span>
@@ -98,9 +98,9 @@ export function GlobalMarketBar() {
   // Loading state
   if (isLoadingIndices) {
     return (
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
         <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center justify-center text-sm text-gray-500">
+          <div className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
             시장 데이터 로딩중...
           </div>
         </div>
@@ -111,9 +111,9 @@ export function GlobalMarketBar() {
   // No data state
   if (!indicesData || !indicesData.indices || indicesData.indices.length === 0) {
     return (
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
         <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center justify-center text-sm text-gray-500">
+          <div className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
             시장 데이터 없음
           </div>
         </div>
@@ -125,7 +125,7 @@ export function GlobalMarketBar() {
   const kosdaq = indicesData.indices.find((idx) => idx.code === 'KOSDAQ')
 
   return (
-    <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
       <div className="container mx-auto px-4 py-2">
         {/* Desktop Layout: Horizontal */}
         <div className="hidden md:flex items-center justify-between text-sm">
@@ -139,7 +139,7 @@ export function GlobalMarketBar() {
           <div className="flex items-center gap-6">
             {/* Market Sentiment */}
             <div className="flex items-center gap-2">
-              <span className="text-gray-600">시장심리:</span>
+              <span className="text-gray-600 dark:text-gray-400">시장심리:</span>
               <span className={`${sentiment.color} font-medium flex items-center gap-1`}>
                 <span>{sentiment.icon}</span>
                 <span>{sentiment.text}</span>
@@ -147,7 +147,7 @@ export function GlobalMarketBar() {
             </div>
 
             {/* Current Time (KST) */}
-            <div className="flex items-center gap-1 text-gray-600">
+            <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
               <span>{formatTime(currentTime)}</span>
               <span className="text-xs">KST</span>
             </div>
@@ -165,14 +165,14 @@ export function GlobalMarketBar() {
           {/* Row 2: Sentiment & Time */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-gray-600">심리:</span>
+              <span className="text-gray-600 dark:text-gray-400">심리:</span>
               <span className={`${sentiment.color} font-medium flex items-center gap-1`}>
                 <span>{sentiment.icon}</span>
                 <span>{sentiment.text}</span>
               </span>
             </div>
 
-            <div className="flex items-center gap-1 text-gray-600">
+            <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
               <span>{formatTime(currentTime)}</span>
               <span className="text-xs">KST</span>
             </div>

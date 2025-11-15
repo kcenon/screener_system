@@ -27,7 +27,7 @@ export default function MobileMenu() {
       {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md lg:hidden"
+        className="p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700 rounded-md lg:hidden transition-colors"
         aria-label="Toggle menu"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -38,18 +38,18 @@ export default function MobileMenu() {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 lg:hidden"
             onClick={closeMenu}
           />
 
           {/* Menu Panel */}
-          <div className="fixed top-0 left-0 bottom-0 w-64 bg-white shadow-xl z-50 lg:hidden overflow-y-auto">
+          <div className="fixed top-0 left-0 bottom-0 w-64 bg-white dark:bg-gray-800 shadow-xl z-50 lg:hidden overflow-y-auto transition-colors">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Menu</h2>
               <button
                 onClick={closeMenu}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors"
                 aria-label="Close menu"
               >
                 <X size={20} />
@@ -71,8 +71,8 @@ export default function MobileMenu() {
                         className={clsx(
                           'flex items-center gap-3 px-3 py-2 rounded-md text-base font-medium transition-colors',
                           isActive(item.path)
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
                         )}
                       >
                         {Icon && <Icon size={20} />}
@@ -85,21 +85,21 @@ export default function MobileMenu() {
             </nav>
 
             {/* User Section */}
-            <div className="border-t border-gray-200 p-4 mt-auto">
+            <div className="border-t border-gray-200 dark:border-gray-700 p-4 mt-auto">
               {user ? (
                 <>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                    <div className="w-10 h-10 bg-blue-600 dark:bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
                     </div>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                    className="w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 rounded-md transition-colors"
                   >
                     Logout
                   </button>
@@ -109,14 +109,14 @@ export default function MobileMenu() {
                   <Link
                     to="/login"
                     onClick={closeMenu}
-                    className="block w-full px-3 py-2 text-sm font-medium text-center text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                    className="block w-full px-3 py-2 text-sm font-medium text-center text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-md transition-colors"
                   >
                     Login
                   </Link>
                   <Link
                     to="/register"
                     onClick={closeMenu}
-                    className="block w-full px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+                    className="block w-full px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-md transition-colors"
                   >
                     Sign Up
                   </Link>
