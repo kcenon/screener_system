@@ -4,6 +4,8 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // Enable class-based dark mode
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -18,6 +20,9 @@ export default {
           700: '#1d4ed8',
           800: '#1e40af',
           900: '#1e3a8a',
+        },
+        gray: {
+          750: '#2d3748', // Custom color for elevated surfaces in dark mode
         },
       },
     },

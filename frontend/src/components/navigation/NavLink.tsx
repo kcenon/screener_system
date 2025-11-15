@@ -21,8 +21,8 @@ export default function NavLink({ to, label, icon: Icon, onClick, className }: N
       className={clsx(
         'flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors',
         isActive
-          ? 'bg-blue-50 text-blue-700'
-          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+          ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
         className
       )}
     >
