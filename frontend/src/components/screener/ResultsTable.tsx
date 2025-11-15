@@ -191,11 +191,11 @@ export default function ResultsTable({
   // Loading skeleton
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-3 transition-colors">
         <div className="animate-pulse space-y-3">
-          <div className="h-8 bg-gray-200 rounded" />
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded" />
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-9 bg-gray-100 rounded" />
+            <div key={i} className="h-9 bg-gray-100 dark:bg-gray-800 rounded" />
           ))}
         </div>
       </div>
@@ -205,10 +205,10 @@ export default function ResultsTable({
   // Empty state
   if (data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 transition-colors">
         <div className="text-center">
           <svg
-            className="mx-auto h-12 w-12 text-gray-400"
+            className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -220,8 +220,8 @@ export default function ResultsTable({
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No results found</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">No results found</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
             Try adjusting your filters to see more results.
           </p>
         </div>
@@ -233,7 +233,7 @@ export default function ResultsTable({
   const renderSortIcon = (columnKey: ScreeningSortField) => {
     if (currentSort.field !== columnKey) {
       return (
-        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-4 w-4 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -245,27 +245,27 @@ export default function ResultsTable({
     }
 
     return currentSort.order === 'asc' ? (
-      <svg className="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
     ) : (
-      <svg className="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
       </svg>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
       <div className="overflow-x-auto" ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50 sticky top-0 z-20">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800 sticky top-0 z-20 transition-colors">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
                   scope="col"
-                  className={`px-2.5 py-1.5 text-xs font-medium text-gray-700 uppercase tracking-wider ${
+                  className={`px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider transition-colors ${
                     column.align === 'right'
                       ? 'text-right'
                       : column.align === 'center'
@@ -276,7 +276,7 @@ export default function ResultsTable({
                   {column.sortable ? (
                     <button
                       onClick={() => onSort(column.key)}
-                      className="flex items-center space-x-1 hover:text-gray-900 transition-colors group w-full justify-between"
+                      className="flex items-center space-x-1 hover:text-gray-900 dark:hover:text-gray-100 transition-colors group w-full justify-between"
                     >
                       <span>{column.label}</span>
                       {renderSortIcon(column.key)}
@@ -288,7 +288,7 @@ export default function ResultsTable({
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800 transition-colors">
             <tr style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
               <td></td>
             </tr>
@@ -298,7 +298,7 @@ export default function ResultsTable({
                 <tr
                   key={stock.code}
                   onClick={() => onRowClick?.(stock)}
-                  className="hover:bg-gray-50 cursor-pointer transition-colors"
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
                   style={{
                     position: 'absolute',
                     top: 0,
@@ -341,7 +341,7 @@ export default function ResultsTable({
                       return (
                         <td
                           key={column.key}
-                          className="px-2.5 py-1 text-xs text-gray-900 whitespace-nowrap text-right"
+                          className="px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap text-right transition-colors"
                         >
                           {formattedValue}
                         </td>
@@ -365,9 +365,9 @@ export default function ResultsTable({
                     }
 
                     // Special styling for change%
-                    let cellClassName = 'px-2.5 py-1 text-xs text-gray-900 whitespace-nowrap'
+                    let cellClassName = 'px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap transition-colors'
                     if (column.key === 'price_change_1d' && typeof value === 'number') {
-                      cellClassName += value > 0 ? ' text-green-600' : value < 0 ? ' text-red-600' : ''
+                      cellClassName += value > 0 ? ' text-green-600 dark:text-green-400' : value < 0 ? ' text-red-600 dark:text-red-400' : ''
                     }
 
                     // Conditional formatting: bold for top/bottom performers

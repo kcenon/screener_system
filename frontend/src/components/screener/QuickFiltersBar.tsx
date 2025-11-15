@@ -210,17 +210,17 @@ export function QuickFiltersBar({
 
   return (
     <Tooltip.Provider>
-      <div className={`rounded-lg bg-white p-4 shadow-sm ${className}`}>
+      <div className={`rounded-lg bg-white dark:bg-gray-900 p-4 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors ${className}`}>
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-900">
-            인기 필터 <span className="text-xs font-normal text-gray-500">Quick Filters</span>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 transition-colors">
+            인기 필터 <span className="text-xs font-normal text-gray-500 dark:text-gray-400">Quick Filters</span>
           </h3>
 
           {activeFilters.size > 0 && (
             <button
               onClick={handleClearAll}
-              className="text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
+              className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
             >
               모두 지우기
             </button>
@@ -241,8 +241,8 @@ export function QuickFiltersBar({
                       inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-all
                       ${
                         isActive
-                          ? 'bg-blue-600 text-white shadow-sm hover:bg-blue-700'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900'
+                          ? 'bg-blue-600 dark:bg-blue-500 text-white shadow-sm hover:bg-blue-700 dark:hover:bg-blue-600'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'
                       }
                     `}
                     aria-pressed={isActive}
@@ -254,11 +254,11 @@ export function QuickFiltersBar({
 
                 <Tooltip.Portal>
                   <Tooltip.Content
-                    className="z-50 max-w-xs rounded-lg bg-gray-900 px-3 py-2 text-sm text-white shadow-lg"
+                    className="z-50 max-w-xs rounded-lg bg-gray-900 dark:bg-gray-950 px-3 py-2 text-sm text-white shadow-lg"
                     sideOffset={5}
                   >
                     {filter.tooltip}
-                    <Tooltip.Arrow className="fill-gray-900" />
+                    <Tooltip.Arrow className="fill-gray-900 dark:fill-gray-950" />
                   </Tooltip.Content>
                 </Tooltip.Portal>
               </Tooltip.Root>
@@ -268,7 +268,7 @@ export function QuickFiltersBar({
 
         {/* Active filters indicator */}
         {activeFilters.size > 0 && (
-          <div className="mt-3 text-xs text-gray-600">
+          <div className="mt-3 text-xs text-gray-600 dark:text-gray-400 transition-colors">
             {activeFilters.size}개 필터 활성화됨
           </div>
         )}
