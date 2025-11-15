@@ -23,18 +23,52 @@ GitHub Pages (gh-pages branch)
 https://docs.screener.kr
 ```
 
+## Quick Start
+
+**First-time setup** (one-time configuration):
+
+1. **Enable GitHub Pages**:
+   - Go to https://github.com/kcenon/screener_system/settings/pages
+   - Source: Select **"GitHub Actions"**
+   - Save
+
+2. **Trigger First Deployment**:
+   ```bash
+   # Manually trigger workflow
+   gh workflow run docs.yml
+
+   # Or push any documentation change
+   git commit --allow-empty -m "docs: initial deployment"
+   git push origin main
+   ```
+
+3. **Verify**:
+   - Check Actions tab: https://github.com/kcenon/screener_system/actions
+   - Wait ~5 minutes
+   - Visit: https://kcenon.github.io/screener_system
+
+**After setup**: Documentation automatically deploys on every push to `main` branch that affects documentation files.
+
+---
+
 ## Deployment Configuration
 
 ### 1. GitHub Pages Settings
 
 #### Enable GitHub Pages
 
+**IMPORTANT**: For GitHub Actions-based deployment, you must select "GitHub Actions" as the source, NOT "Deploy from a branch".
+
 1. Navigate to repository **Settings** → **Pages**
+   - URL: https://github.com/kcenon/screener_system/settings/pages
 2. Configure the following:
-   - **Source**: Deploy from a branch
-   - **Branch**: `gh-pages`
-   - **Folder**: `/` (root)
-   - **Enforce HTTPS**: ✅ Enabled
+   - **Source**: **GitHub Actions** ⚠️ (NOT "Deploy from a branch")
+   - **Enforce HTTPS**: ✅ Enabled (automatically enabled)
+
+**Why GitHub Actions?**
+- Our deployment workflow (`.github/workflows/docs.yml`) uses GitHub Actions to build and deploy
+- Selecting "Deploy from a branch" will cause deployment failures
+- GitHub Actions provides more control over build process (Sphinx + TypeDoc + Docusaurus)
 
 #### Custom Domain Setup
 
@@ -236,11 +270,43 @@ themeConfig: {
 
 ### Common Issues
 
-#### Issue: 404 errors after deployment
-**Symptoms**: Site shows 404 or pages not found
+#### Issue: GitHub Pages returns 404 error
+**Symptoms**: Site shows "404 - File not found" at https://kcenon.github.io/screener_system
+
+**Root Cause**: GitHub Pages is not enabled in repository settings
 
 **Solutions**:
-1. Check `baseUrl` in `docusaurus.config.ts` matches deployment path (`/` for custom domain)
+1. **Enable GitHub Pages** (REQUIRED):
+   - Go to https://github.com/kcenon/screener_system/settings/pages
+   - Under "Build and deployment" → "Source"
+   - Select **"GitHub Actions"** (NOT "Deploy from a branch")
+   - Save settings
+
+2. **Trigger Deployment**:
+   ```bash
+   # Option 1: Manually trigger workflow
+   gh workflow run docs.yml
+
+   # Option 2: Make a commit to trigger auto-deployment
+   git commit --allow-empty -m "Trigger documentation deployment"
+   git push origin main
+   ```
+
+3. **Verify Deployment**:
+   - Check workflow status: https://github.com/kcenon/screener_system/actions/workflows/docs.yml
+   - Wait 3-5 minutes for deployment to complete
+   - Visit https://kcenon.github.io/screener_system
+
+**Expected Timeline**:
+- Configuration change: < 1 minute
+- Workflow run: 3-5 minutes
+- Total: ~5 minutes
+
+#### Issue: 404 errors after deployment (pages not found)
+**Symptoms**: Site loads but individual pages show 404
+
+**Solutions**:
+1. Check `baseUrl` in `docusaurus.config.ts` matches deployment path (`/` for custom domain, `/screener_system/` for GitHub Pages)
 2. Verify CNAME file exists in build output: `docs-site/build/CNAME`
 3. Check GitHub Pages settings shows correct custom domain
 4. Wait 5-10 minutes for cache to clear
@@ -249,7 +315,7 @@ themeConfig: {
 # Verify build output
 ls docs-site/build/CNAME
 cat docs-site/build/CNAME
-# Should show: docs.screener.kr
+# Should show: docs.screener.kr (or empty if using GitHub Pages default URL)
 ```
 
 #### Issue: SSL certificate not working
