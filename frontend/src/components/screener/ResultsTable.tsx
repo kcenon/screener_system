@@ -2,7 +2,12 @@ import { useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { StockScreeningResult, ScreeningSortField, SortOrder } from '@/types/screening'
 import { AddToWatchlistButton } from '@/components/watchlist'
-import { formatCompactPrice } from '@/utils/formatNumber'
+import {
+  formatCompactPrice,
+  formatCompactVolume,
+  formatCompactMarketCap,
+  formatChangePercentage,
+} from '@/utils/formatNumber'
 
 /**
  * Sort configuration
@@ -48,12 +53,40 @@ const formatNumber = (value: string | number | null | undefined, decimals = 2): 
 }
 
 /**
- * Format percentage with null handling
+ * Format percentage with null handling and icon indicator
  */
 const formatPercent = (value: string | number | null | undefined): string => {
   if (value === null || value === undefined || typeof value === 'string') return '-'
-  const formatted = value.toFixed(2)
-  return value > 0 ? `+${formatted}%` : `${formatted}%`
+  return formatChangePercentage(value)
+}
+
+/**
+ * Get change indicator icon
+ */
+const getChangeIcon = (value: number | null | undefined): string => {
+  if (value === null || value === undefined) return '→'
+  if (value > 0) return '↑'
+  if (value < 0) return '↓'
+  return '→'
+}
+
+/**
+ * Format volume with high volume indicator
+ * High volume threshold: 1M shares (can be adjusted based on market)
+ */
+const formatVolumeWithIcon = (volume: string | number | null | undefined): string => {
+  if (volume === null || volume === undefined || typeof volume === 'string') return '-'
+  const HIGH_VOLUME_THRESHOLD = 1_000_000 // 1 million shares
+  const isHighVolume = volume > HIGH_VOLUME_THRESHOLD
+  return `${formatCompactVolume(volume)}${isHighVolume ? ' 🔥' : ''}`
+}
+
+/**
+ * Format market cap
+ */
+const formatMarketCapValue = (value: string | number | null | undefined): string => {
+  if (value === null || value === undefined || typeof value === 'string') return '-'
+  return formatCompactMarketCap(value)
 }
 
 /**
@@ -83,6 +116,19 @@ const columns: Column[] = [
     sortable: true,
     align: 'right',
     format: formatPercent,
+  },
+  {
+    key: 'current_volume' as ScreeningSortField,
+    label: 'Volume',
+    sortable: true,
+    align: 'right',
+  },
+  {
+    key: 'market_cap' as ScreeningSortField,
+    label: 'Market Cap',
+    sortable: true,
+    align: 'right',
+    format: formatMarketCapValue,
   },
   { key: 'per', label: 'PER', sortable: true, align: 'right', format: formatNumber },
   { key: 'pbr', label: 'PBR', sortable: true, align: 'right', format: formatNumber },
@@ -138,7 +184,7 @@ export default function ResultsTable({
   const rowVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 36, // Row height in pixels (compact)
+    estimateSize: () => 32, // Row height in pixels (ultra-compact)
     overscan: 5,
   })
 
@@ -219,7 +265,7 @@ export default function ResultsTable({
                 <th
                   key={column.key}
                   scope="col"
-                  className={`px-3 py-2 text-xs font-medium text-gray-700 uppercase tracking-wider ${
+                  className={`px-2.5 py-1.5 text-xs font-medium text-gray-700 uppercase tracking-wider ${
                     column.align === 'right'
                       ? 'text-right'
                       : column.align === 'center'
@@ -268,7 +314,7 @@ export default function ResultsTable({
                       return (
                         <td
                           key="actions"
-                          className="px-3 py-2 text-center whitespace-nowrap"
+                          className="px-2.5 py-1 text-center whitespace-nowrap"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <AddToWatchlistButton
@@ -287,14 +333,57 @@ export default function ResultsTable({
                       )
                     }
 
+                    // Special handling for Volume column with icon
+                    if (column.label === 'Volume') {
+                      const volume = stock.current_volume
+                      const formattedValue = formatVolumeWithIcon(volume)
+
+                      return (
+                        <td
+                          key={column.key}
+                          className="px-2.5 py-1 text-xs text-gray-900 whitespace-nowrap text-right"
+                        >
+                          {formattedValue}
+                        </td>
+                      )
+                    }
+
                     const value = stock[column.key as keyof StockScreeningResult]
-                    const formattedValue = column.format ? column.format(value) : value
+                    let formattedValue = column.format ? column.format(value) : value
+
+                    // Add change icon for price_change_1d
+                    if (column.key === 'price_change_1d' && typeof value === 'number') {
+                      const icon = getChangeIcon(value)
+                      formattedValue = `${icon} ${formattedValue}`
+                    }
+
+                    // Add value indicator for PER
+                    if (column.key === 'per' && typeof value === 'number') {
+                      if (value > 0 && value < 10) {
+                        formattedValue = `${formattedValue} 💎` // Low P/E indicator
+                      }
+                    }
 
                     // Special styling for change%
-                    let cellClassName = 'px-3 py-2 text-xs text-gray-900 whitespace-nowrap'
+                    let cellClassName = 'px-2.5 py-1 text-xs text-gray-900 whitespace-nowrap'
                     if (column.key === 'price_change_1d' && typeof value === 'number') {
                       cellClassName += value > 0 ? ' text-green-600' : value < 0 ? ' text-red-600' : ''
                     }
+
+                    // Conditional formatting: bold for top/bottom performers
+                    if (column.key === 'price_change_1d' && typeof value === 'number') {
+                      if (Math.abs(value) > 5) {
+                        cellClassName += ' font-bold'
+                      }
+                    }
+
+                    // Fade low volume stocks (less than 100K shares)
+                    const volume = stock.current_volume
+                    const LOW_VOLUME_THRESHOLD = 100_000 // 100K shares
+                    if (volume && typeof volume === 'number' && volume < LOW_VOLUME_THRESHOLD) {
+                      cellClassName += ' opacity-70'
+                    }
+
                     if (column.align === 'right') cellClassName += ' text-right'
                     if (column.align === 'center') cellClassName += ' text-center'
 
