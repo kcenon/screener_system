@@ -216,9 +216,91 @@ export function getChangeArrow(value: number | null | undefined): string {
 }
 
 /**
+ * Light Theme Configuration
+ *
+ * Default theme for light mode
+ */
+export const lightTheme = {
+  // Backgrounds
+  background: {
+    primary: 'bg-white',
+    secondary: 'bg-gray-50',
+    tertiary: 'bg-gray-100',
+  },
+
+  // Surfaces (cards, panels)
+  surface: {
+    primary: 'bg-white',
+    elevated: 'bg-white',
+    overlay: 'bg-white/95',
+  },
+
+  // Text
+  text: {
+    primary: 'text-gray-900',
+    secondary: 'text-gray-600',
+    tertiary: 'text-gray-500',
+    inverse: 'text-white',
+  },
+
+  // Borders
+  border: {
+    default: 'border-gray-200',
+    strong: 'border-gray-300',
+    subtle: 'border-gray-100',
+  },
+
+  // Market colors (same for both themes)
+  market: {
+    gain: 'text-green-600',
+    loss: 'text-red-600',
+    neutral: 'text-gray-600',
+  },
+} as const
+
+/**
+ * Dark Theme Configuration
+ *
+ * Theme for dark mode with adjusted colors for better contrast
+ */
+export const darkTheme = {
+  background: {
+    primary: 'bg-gray-900',
+    secondary: 'bg-gray-800',
+    tertiary: 'bg-gray-700',
+  },
+
+  surface: {
+    primary: 'bg-gray-800',
+    elevated: 'bg-gray-750', // Custom color
+    overlay: 'bg-gray-800/95',
+  },
+
+  text: {
+    primary: 'text-gray-100',
+    secondary: 'text-gray-400',
+    tertiary: 'text-gray-500',
+    inverse: 'text-gray-900',
+  },
+
+  border: {
+    default: 'border-gray-700',
+    strong: 'border-gray-600',
+    subtle: 'border-gray-800',
+  },
+
+  market: {
+    gain: 'text-green-400', // Brighter for dark background
+    loss: 'text-red-400',
+    neutral: 'text-gray-400',
+  },
+} as const
+
+/**
  * Type exports for TypeScript autocomplete
  */
 export type MarketColorKey = keyof typeof marketColors
 export type TypographyKey = keyof typeof typography
 export type SpacingKey = keyof typeof spacing
 export type ComponentSpacingKey = keyof typeof componentSpacing
+export type ThemeMode = 'light' | 'dark'
