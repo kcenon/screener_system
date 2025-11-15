@@ -9,6 +9,7 @@ import { QuickFiltersBar } from '@/components/screener/QuickFiltersBar'
 import ResultsTable from '@/components/screener/ResultsTable'
 import Pagination from '@/components/common/Pagination'
 import ExportButton from '@/components/screener/ExportButton'
+import ScrollToTopFAB from '@/components/common/ScrollToTopFAB'
 import { FreemiumBanner, LimitReachedModal } from '@/components/freemium'
 import type { ScreeningSortField, StockScreeningResult } from '@/types/screening'
 
@@ -259,6 +260,9 @@ export default function ScreenerPage() {
           actionsUsed={screeningsToday}
           dailyLimit={dailyScreeningLimit}
         />
+
+        {/* Scroll to Top FAB */}
+        <ScrollToTopFAB threshold={200} />
       </div>
     </div>
   )
