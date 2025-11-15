@@ -51,11 +51,11 @@ export default function FeatureShowcase() {
   ]
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800 transition-colors">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">강력한 기능들</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors">강력한 기능들</h2>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors">
             전문 투자자부터 개인 투자자까지,
             <br />
             모두를 위한 종합 주식 분석 플랫폼
@@ -66,44 +66,44 @@ export default function FeatureShowcase() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-blue-300"
+              className="group relative bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-sm hover:shadow-xl dark:hover:shadow-blue-900/20 transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500"
             >
               {/* Badge */}
               {feature.badge && (
                 <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1 text-xs font-semibold text-blue-600 bg-blue-50 rounded-full border border-blue-200">
+                  <span className="px-3 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-full border border-blue-200 dark:border-blue-700 transition-colors">
                     {feature.badge}
                   </span>
                 </div>
               )}
 
               {/* Icon */}
-              <div className="mb-6 inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl text-blue-600 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+              <div className="mb-6 inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                 {feature.icon}
               </div>
 
               {/* Title */}
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 transition-colors">
                 {feature.title}
               </h3>
 
               {/* Description */}
-              <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed transition-colors">{feature.description}</p>
 
               {/* Hover Effect */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-blue-600 dark:from-blue-500 dark:to-blue-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl"></div>
             </div>
           ))}
         </div>
 
         {/* Bottom CTA */}
         <div className="mt-16 text-center">
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-400 mb-6 transition-colors">
             모든 기능을 무료로 사용해보세요. 신용카드 필요 없습니다.
           </p>
           <a
             href="/screener"
-            className="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+            className="inline-flex items-center px-8 py-4 bg-blue-600 dark:bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl"
           >
             지금 시작하기
             <svg
