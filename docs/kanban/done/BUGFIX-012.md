@@ -3,10 +3,12 @@
 ## Metadata
 - **Type**: Bug Fix
 - **Priority**: P0 (Critical)
-- **Status**: TODO
+- **Status**: DONE
 - **Created**: 2025-11-15
+- **Completed**: 2025-11-15
 - **Assignee**: Frontend Team
 - **Estimated Time**: 1 hour
+- **Actual Time**: 0.5 hours
 - **Labels**: frontend, api, configuration, critical
 - **Parent**: BUGFIX-001 (discovered during rate limit fix)
 
@@ -121,20 +123,20 @@ app.include_router(screening.router, prefix="/api/v1")
 
 ## Testing Checklist
 
-- [ ] Frontend successfully calls `/v1/screen`
-- [ ] Frontend successfully calls `/v1/auth/login`
-- [ ] Frontend successfully calls `/v1/market/indices`
-- [ ] No 404 errors in browser console
-- [ ] Stock screener page loads data
-- [ ] Market overview displays correctly
+- [x] Frontend successfully calls `/v1/screen`
+- [x] Frontend successfully calls `/v1/auth/login`
+- [x] Frontend successfully calls `/v1/market/indices`
+- [x] No 404 errors in browser console
+- [x] Stock screener page loads data
+- [x] Market overview displays correctly
 
 ## Acceptance Criteria
 
-- [ ] Frontend API Base URL is `http://localhost:8000/v1`
-- [ ] All API endpoints return 200 OK
-- [ ] Frontend loads data without errors
-- [ ] No "데이터를 불러오는 중 오류가 발생했습니다" message
-- [ ] Browser console shows no 404 errors
+- [x] Frontend API Base URL is `http://localhost:8000/v1`
+- [x] All API endpoints return 200 OK
+- [x] Frontend loads data without errors
+- [x] No "데이터를 불러오는 중 오류가 발생했습니다" message
+- [x] Browser console shows no 404 errors
 
 ## Related Issues
 
@@ -148,9 +150,29 @@ app.include_router(screening.router, prefix="/api/v1")
 - Frontend API Client: `/frontend/src/services/api.ts:23`
 - OpenAPI Spec: `http://localhost:8000/openapi.json`
 
+## Implementation Result
+
+### Files Changed
+1. **frontend/src/services/api.ts** (line 21, 23)
+   - Updated `API_BASE_URL` default from `http://localhost:8000/api/v1` to `http://localhost:8000/v1`
+   - Updated JSDoc `@defaultValue` annotation to match
+
+2. **frontend/.env** (line 2)
+   - Updated `VITE_API_BASE_URL` from `http://localhost:8000/api/v1` to `http://localhost:8000/v1`
+
+3. **frontend/.env.example** (line 2)
+   - Updated `VITE_API_BASE_URL` template from `http://localhost:8000/api/v1` to `http://localhost:8000/v1`
+
+### Summary
+- Fixed API path mismatch by removing `/api` prefix from all frontend configuration
+- No backend changes required
+- Minimal, focused change affecting only 3 lines across 2 tracked files
+- Solution aligned with recommended Option 1 from ticket analysis
+
 ## Notes
 
 - This issue was discovered while fixing BUGFIX-001 (rate limiting)
 - Backend routes are correctly configured at `/v1/*`
 - Frontend was incorrectly using `/api/v1/*` prefix
-- Simple configuration fix, no code changes required
+- Simple configuration fix, no code logic changes required
+- Completed in 0.5 hours (estimated 1 hour)
