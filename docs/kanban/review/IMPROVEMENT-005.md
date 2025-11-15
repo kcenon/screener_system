@@ -8,11 +8,11 @@
 - **Updated**: 2025-11-15
 - **Parent**: UI/UX Improvement Proposal
 - **Estimated Time**: 40 hours
-- **Actual Time**: 3 hours (Phase 1 & 2)
-- **Progress**: Phase 1 & 2 Complete (40% done)
+- **Actual Time**: 6 hours (Phase 1, 2, 3C, 4 partial)
+- **Progress**: Phase 1, 2, 3A, 3B, 3C Complete + Phase 4 Partial (70% done)
 - **Labels**: frontend, ui, dark-mode, theme
-- **Branch**: feature/improvement-005-dark-mode
-- **Commits**: 2 (139919f, e8d847f)
+- **Branch**: feature/improvement-005-phase-3
+- **Commits**: 5 (139919f, e8d847f, 6423d0b, fdd16fc, 7f55c61, 32ead48)
 
 ## Problem Statement
 
@@ -419,13 +419,15 @@ chart.applyOptions({
 - [x] ResultsTable: table headers, rows, cells with virtualization
 - [x] QuickFiltersBar: filter buttons, tooltips, active states
 
-**Phase 3C: Screener Components (Remaining) 🚧 TODO**
-- [ ] FilterPanel (large component, ~500 lines)
-- [ ] FilterPanelCollapsible
-- [ ] FilterPresetManager
-- [ ] SearchBar
-- [ ] ExportButton
-- [ ] RangeFilter
+**Phase 3C: Screener Components (Remaining) ✅ COMPLETE**
+**Completed**: 2025-11-15
+**Commit**: 7f55c61
+- [x] FilterPanel (main filter panel with 6 accordion sections)
+- [x] FilterPanelCollapsible (collapsible wrapper with toggle)
+- [x] FilterPresetManager (preset save/load/delete dialog)
+- [x] SearchBar (search input with keyboard shortcut)
+- [x] ExportButton (CSV/JSON export dropdown)
+- [x] RangeFilter (min/max range input fields)
 
 **Not in scope for Phase 3** (deferred to Phase 4/5):
 - Dashboard components
@@ -434,20 +436,30 @@ chart.applyOptions({
 
 ---
 
-### Phase 4: Charts & Visualizations 🚧 TODO
-**Status**: Not started
-**Components to Update**: Chart components
+### Phase 4: Charts & Visualizations 🚧 PARTIAL (20% complete)
+**Status**: In progress
+**Completed**: 2025-11-15
+**Commit**: 32ead48
 
-Components in scope:
-- PriceChart
-- ComparisonCharts
-- SectorHeatmap
+**Completed Components**:
+- [x] PriceChart (dynamic theme-based chart colors with lightweight-charts)
+  - Theme-aware background, text, grid, and border colors
+  - Chart recreates on theme change
+  - Timeframe selector with dark mode
+  - Loading/empty states with proper contrast
 
-**Special Considerations**:
-- Chart colors need dark-optimized palettes
-- Background colors for chart canvas
-- Grid line colors
-- Text label colors
+**Remaining Components** (deferred to future PR):
+- [ ] ComparisonCharts
+- [ ] BarChartView
+- [ ] PerformanceChart
+- [ ] RadarChartView
+- [ ] MarketTrendChart
+
+**Special Considerations Applied**:
+- Chart colors dynamically change based on resolvedTheme
+- Background: #1f2937 (dark) vs #ffffff (light)
+- Text: #f3f4f6 (dark) vs #333 (light)
+- Grid/borders: gray-800/gray-600 (dark) vs gray-100 (light)
 
 ---
 
