@@ -3,11 +3,16 @@ import { Outlet } from 'react-router-dom'
 import { Navbar, Breadcrumb } from './components/navigation'
 import { GlobalMarketBar } from './components/layout'
 import { useTheme } from './hooks/useTheme'
+import { initializeCSSVariables } from './design-system/tokens'
 
 function App() {
-  // Initialize theme on mount
+  // Initialize theme and CSS variables on mount
   useEffect(() => {
-    useTheme.getState().initTheme()
+    const { initTheme, resolvedTheme } = useTheme.getState()
+    initTheme()
+
+    // Initialize CSS variables for color tokens
+    initializeCSSVariables(resolvedTheme)
   }, [])
 
   return (
