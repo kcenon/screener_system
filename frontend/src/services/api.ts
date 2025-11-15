@@ -18,9 +18,9 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
  * to localhost development server.
  *
  * @constant
- * @defaultValue 'http://localhost:8000/api/v1'
+ * @defaultValue 'http://localhost:8000/v1'
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/v1'
 
 /**
  * Pre-configured Axios instance for API communication.
