@@ -71,11 +71,11 @@ export default function PriceChart({
     { label: '5Y', value: '5Y' },
   ]
 
-  // Initialize chart
+  // Initialize chart (only once)
   useEffect(() => {
     if (!chartContainerRef.current) return
 
-    // Theme-based colors
+    // Initial theme colors
     const isDark = resolvedTheme === 'dark'
     const chartColors = {
       backgroundColor: isDark ? '#1f2937' : '#ffffff',
@@ -169,6 +169,38 @@ export default function PriceChart({
       volumeSeriesRef.current = null
       setChartReady(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Update theme colors when theme changes (without recreating chart)
+  useEffect(() => {
+    if (!chartRef.current) return
+
+    const isDark = resolvedTheme === 'dark'
+    const chartColors = {
+      backgroundColor: isDark ? '#1f2937' : '#ffffff',
+      textColor: isDark ? '#f3f4f6' : '#333',
+      gridColor: isDark ? '#374151' : '#f0f0f0',
+      borderColor: isDark ? '#4b5563' : '#e1e1e1',
+    }
+
+    // Update chart colors without recreating
+    chartRef.current.applyOptions({
+      layout: {
+        background: { type: ColorType.Solid, color: chartColors.backgroundColor },
+        textColor: chartColors.textColor,
+      },
+      grid: {
+        vertLines: { color: chartColors.gridColor },
+        horzLines: { color: chartColors.gridColor },
+      },
+      rightPriceScale: {
+        borderColor: chartColors.borderColor,
+      },
+      timeScale: {
+        borderColor: chartColors.borderColor,
+      },
+    })
   }, [resolvedTheme])
 
   // Update data when changed
