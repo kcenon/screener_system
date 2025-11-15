@@ -10,11 +10,11 @@ describe('QuickFiltersBar', () => {
   }
 
   let onFilterChangeMock: (filters: Partial<ScreeningFilters>) => void
-  let onClearAllMock: () => void
+  let onClearAllMock: (() => void) | undefined
 
   beforeEach(() => {
-    onFilterChangeMock = vi.fn()
-    onClearAllMock = vi.fn()
+    onFilterChangeMock = vi.fn() as (filters: Partial<ScreeningFilters>) => void
+    onClearAllMock = vi.fn() as () => void
   })
 
   describe('Rendering', () => {
@@ -188,27 +188,21 @@ describe('QuickFiltersBar', () => {
       // Test Top Losers (-5%)
       const topLosersButton = screen.getByRole('button', { name: /상위하락/i })
       await user.click(topLosersButton)
-      expect(onFilterChangeMock).toHaveBeenCalledWith({
+      expect(onFilterChangeMock).toHaveBeenLastCalledWith({
         price_change_1d: { max: -5 },
       })
-
-      // Reset mock
-      onFilterChangeMock.mockClear()
 
       // Test High Dividend (4%)
       const highDividendButton = screen.getByRole('button', { name: /고배당/i })
       await user.click(highDividendButton)
-      expect(onFilterChangeMock).toHaveBeenCalledWith({
+      expect(onFilterChangeMock).toHaveBeenLastCalledWith({
         dividend_yield: { min: 4 },
       })
-
-      // Reset mock
-      onFilterChangeMock.mockClear()
 
       // Test Low P/E (0.1-10)
       const lowPeButton = screen.getByRole('button', { name: /저PER/i })
       await user.click(lowPeButton)
-      expect(onFilterChangeMock).toHaveBeenCalledWith({
+      expect(onFilterChangeMock).toHaveBeenLastCalledWith({
         per: { min: 0.1, max: 10 },
       })
     })

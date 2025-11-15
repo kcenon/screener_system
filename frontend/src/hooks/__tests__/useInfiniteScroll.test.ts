@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { renderHook, act } from '@testing-library/react'
 import { useInfiniteScroll } from '../useInfiniteScroll'
 
 describe('useInfiniteScroll', () => {
-  let fetchMoreMock: ReturnType<typeof vi.fn>
+  let fetchMoreMock: () => void | Promise<void>
 
   beforeEach(() => {
-    fetchMoreMock = vi.fn()
+    fetchMoreMock = vi.fn() as () => void | Promise<void>
   })
 
   afterEach(() => {
@@ -380,7 +380,7 @@ describe('useInfiniteScroll', () => {
 
   describe('Edge Cases', () => {
     it('handles null scrollContainerRef gracefully', async () => {
-      const { result } = renderHook(() => useInfiniteScroll(fetchMoreMock))
+      renderHook(() => useInfiniteScroll(fetchMoreMock))
 
       // Do not set ref (keep as null)
       // Create container but don't attach it

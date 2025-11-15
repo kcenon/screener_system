@@ -10,7 +10,7 @@ describe('ScrollToTopFAB', () => {
 
   beforeEach(() => {
     scrollToMock = vi.fn()
-    window.scrollTo = scrollToMock
+    window.scrollTo = scrollToMock as typeof window.scrollTo
   })
 
   afterEach(() => {
@@ -72,7 +72,7 @@ describe('ScrollToTopFAB', () => {
       Object.defineProperty(window, 'pageYOffset', { value: 100, writable: true })
       Object.defineProperty(document.documentElement, 'scrollTop', { value: 100, writable: true })
 
-      const { rerender } = render(<ScrollToTopFAB threshold={200} />)
+      render(<ScrollToTopFAB threshold={200} />)
 
       // Button should be hidden
       expect(screen.queryByRole('button', { name: /scroll to top/i })).not.toBeInTheDocument()
