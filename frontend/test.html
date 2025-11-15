@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Diagnostic Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: #22c55e; font-weight: bold; }
+        .error { color: #ef4444; font-weight: bold; }
+        .warning { color: #f59e0b; font-weight: bold; }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Frontend Diagnostic Test</h1>
+    <p>This page tests if your browser can run the Stock Screening Platform.</p>
+
+    <div class="test-card">
+        <h2>Test 1: JavaScript Enabled</h2>
+        <div id="js-test">
+            <span class="error">❌ JavaScript is DISABLED</span>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>Test 2: Fetch API Available</h2>
+        <div id="fetch-test">Testing...</div>
+    </div>
+
+    <div class="test-card">
+        <h2>Test 3: Backend API Connection</h2>
+        <div id="api-test">Testing...</div>
+        <button onclick="testAPI()">Retry API Test</button>
+    </div>
+
+    <div class="test-card">
+        <h2>Test 4: Browser Information</h2>
+        <pre id="browser-info">Loading...</pre>
+    </div>
+
+    <div class="test-card">
+        <h2>Test 5: Console Errors</h2>
+        <p>Open browser DevTools (F12) and check the Console tab for any red errors.</p>
+        <pre id="console-log">Check F12 Console for errors...</pre>
+    </div>
+
+    <script>
+        // Test 1: JavaScript
+        document.getElementById('js-test').innerHTML =
+            '<span class="success">✅ JavaScript is ENABLED</span>';
+
+        // Test 2: Fetch API
+        if (typeof fetch === 'function') {
+            document.getElementById('fetch-test').innerHTML =
+                '<span class="success">✅ Fetch API is available</span>';
+        } else {
+            document.getElementById('fetch-test').innerHTML =
+                '<span class="error">❌ Fetch API not available (very old browser)</span>';
+        }
+
+        // Test 3: Backend API
+        async function testAPI() {
+            const testEl = document.getElementById('api-test');
+            testEl.innerHTML = '<span class="warning">⏳ Testing backend...</span>';
+
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/health');
+                if (response.ok) {
+                    testEl.innerHTML = '<span class="success">✅ Backend API is reachable</span>';
+                } else {
+                    testEl.innerHTML =
+                        `<span class="warning">⚠️  Backend responded with status: ${response.status}</span>`;
+                }
+            } catch (error) {
+                testEl.innerHTML =
+                    `<span class="error">❌ Cannot connect to backend: ${error.message}</span>`;
+            }
+        }
+        testAPI();
+
+        // Test 4: Browser Info
+        const browserInfo = {
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            cookiesEnabled: navigator.cookieEnabled,
+            onLine: navigator.onLine,
+            screenResolution: `${screen.width}x${screen.height}`,
+            windowSize: `${window.innerWidth}x${window.innerHeight}`,
+            localStorage: typeof Storage !== 'undefined',
+            currentURL: window.location.href,
+            timestamp: new Date().toISOString()
+        };
+        document.getElementById('browser-info').textContent =
+            JSON.stringify(browserInfo, null, 2);
+
+        // Override console.error to capture errors
+        const originalError = console.error;
+        const errors = [];
+        console.error = function(...args) {
+            errors.push(args.join(' '));
+            originalError.apply(console, args);
+            document.getElementById('console-log').textContent =
+                errors.length > 0 ? errors.join('\n') : 'No errors captured';
+        };
+
+        console.log('✅ Diagnostic page loaded successfully');
+        console.log('📍 Next: Try accessing http://localhost:5173/');
+    </script>
+</body>
+</html>
