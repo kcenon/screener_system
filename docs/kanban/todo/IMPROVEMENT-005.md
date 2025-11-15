@@ -3,11 +3,16 @@
 ## Metadata
 - **Type**: Feature / UI Enhancement
 - **Priority**: P0 (Critical)
-- **Status**: TODO
+- **Status**: IN_PROGRESS
 - **Created**: 2025-11-15
+- **Updated**: 2025-11-15
 - **Parent**: UI/UX Improvement Proposal
 - **Estimated Time**: 40 hours
+- **Actual Time**: 3 hours (Phase 1 & 2)
+- **Progress**: Phase 1 & 2 Complete (40% done)
 - **Labels**: frontend, ui, dark-mode, theme
+- **Branch**: feature/improvement-005-dark-mode
+- **Commits**: 2 (139919f, e8d847f)
 
 ## Problem Statement
 
@@ -336,3 +341,122 @@ chart.applyOptions({
 - [TailwindCSS Dark Mode](https://tailwindcss.com/docs/dark-mode)
 - [Next.js Themes](https://github.com/pacocoursey/next-themes)
 - [Zustand Persist](https://docs.pmnd.rs/zustand/integrations/persisting-store-data)
+
+---
+
+## Progress Summary
+
+### Phase 1: Core Infrastructure ✅ COMPLETE
+**Completed**: 2025-11-15
+**Commit**: 139919f
+
+- [x] Extended `theme.ts` with `lightTheme` and `darkTheme` configurations
+- [x] Created `useTheme` hook with Zustand
+  - System preference detection via `matchMedia`
+  - Manual theme override (light/dark/system)
+  - Persistent storage in localStorage
+  - Automatic DOM class updates
+- [x] Created `ThemeToggle` component
+  - Three-button layout (Sun/Monitor/Moon icons)
+  - Visual feedback for current selection
+  - Keyboard accessible with aria-labels
+- [x] Enabled Tailwind `darkMode: 'class'`
+  - Added custom `gray-750` color
+- [x] Initialized theme in `App.tsx`
+- [x] Integrated `ThemeToggle` into `Navbar`
+
+**Tests Passed**:
+- TypeScript type check: ✅
+- Production build: ✅ (1.95s)
+
+---
+
+### Phase 2: Layout & Navigation ✅ COMPLETE
+**Completed**: 2025-11-15
+**Commit**: e8d847f
+
+- [x] Updated `NavLink` component
+  - Active state: `blue-900/30` bg, `blue-400` text
+  - Hover state: `gray-700` bg, `white` text
+- [x] Updated `MobileMenu` component
+  - Hamburger button with dark mode hover
+  - Dark backdrop (`bg-opacity-70`)
+  - Menu panel: `gray-800` background
+  - All navigation links with proper contrast
+  - User section with adjusted colors
+- [x] Updated `Breadcrumb` component
+  - `gray-800` background, `gray-700` border
+  - Chevron and link colors for readability
+- [x] Updated `GlobalMarketBar` component
+  - `gray-800` background with `gray-700` border
+  - Market indices with proper text contrast
+  - Sentiment indicators remain vibrant
+  - Time display with `gray-400` text
+
+**Common Patterns Applied**:
+- `transition-colors` for smooth theme switching
+- Proper WCAG contrast ratios
+- Consistent color palette usage
+
+**Tests Passed**:
+- TypeScript type check: ✅
+
+---
+
+### Phase 3: Page Components 🚧 TODO
+**Status**: Not started
+**Components to Update**: ~20 page components
+
+Components in scope:
+- Landing page components (HeroSection, MarketSummary, FeatureShowcase, Footer)
+- Screener components (FilterPanel, ResultsTable, QuickFiltersBar)
+- Dashboard components
+- Stock detail page components
+- Comparison page components
+
+---
+
+### Phase 4: Charts & Visualizations 🚧 TODO
+**Status**: Not started
+**Components to Update**: Chart components
+
+Components in scope:
+- PriceChart
+- ComparisonCharts
+- SectorHeatmap
+
+**Special Considerations**:
+- Chart colors need dark-optimized palettes
+- Background colors for chart canvas
+- Grid line colors
+- Text label colors
+
+---
+
+### Phase 5: Final Polish & Testing 🚧 TODO
+**Status**: Not started
+
+Tasks:
+- [ ] Cross-browser testing (Chrome, Firefox, Safari, Edge)
+- [ ] Accessibility audit (WCAG AA compliance)
+- [ ] Performance testing (theme switch < 50ms)
+- [ ] Visual regression testing
+- [ ] Documentation update
+- [ ] User acceptance testing
+
+---
+
+## Next Steps
+
+1. **Continue with Phase 3** (Page Components)
+   - Start with landing page for maximum user impact
+   - Then screener components (most used feature)
+
+2. **Create incremental PRs**
+   - Phase 1 & 2: Ready for review (this PR)
+   - Phase 3: Separate PR for page components
+   - Phase 4 & 5: Final PR with charts and polish
+
+3. **Consider breaking IMPROVEMENT-006**
+   - Color system enhancement depends on this ticket
+   - Can start color system work once Phase 1 & 2 are merged
