@@ -44,7 +44,7 @@ export default function ExportButton({ data, disabled = false, filename }: Expor
       <DropdownMenu.Trigger asChild>
         <button
           disabled={isDisabled}
-          className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <svg
             className="h-4 w-4 mr-2"
@@ -79,11 +79,11 @@ export default function ExportButton({ data, disabled = false, filename }: Expor
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="min-w-[180px] bg-white rounded-md shadow-lg border border-gray-200 p-1 z-50"
+          className="min-w-[180px] bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 p-1 z-50 transition-colors"
           sideOffset={5}
         >
           <DropdownMenu.Item
-            className="flex items-center px-3 py-2 text-sm text-gray-700 rounded hover:bg-gray-100 cursor-pointer outline-none"
+            className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer outline-none transition-colors"
             onSelect={() => handleExport('csv')}
           >
             <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,7 +98,7 @@ export default function ExportButton({ data, disabled = false, filename }: Expor
           </DropdownMenu.Item>
 
           <DropdownMenu.Item
-            className="flex items-center px-3 py-2 text-sm text-gray-700 rounded hover:bg-gray-100 cursor-pointer outline-none"
+            className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer outline-none transition-colors"
             onSelect={() => handleExport('json')}
           >
             <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,9 +112,9 @@ export default function ExportButton({ data, disabled = false, filename }: Expor
             Export as JSON
           </DropdownMenu.Item>
 
-          <DropdownMenu.Separator className="h-px bg-gray-200 my-1" />
+          <DropdownMenu.Separator className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
 
-          <div className="px-3 py-2 text-xs text-gray-500">
+          <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">
             {data.length} {data.length === 1 ? 'stock' : 'stocks'}
           </div>
         </DropdownMenu.Content>

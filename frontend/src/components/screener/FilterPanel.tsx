@@ -180,13 +180,13 @@ export default function FilterPanel({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 space-y-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 space-y-4 transition-colors">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Filters</h2>
         <button
           onClick={onClearFilters}
-          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
         >
           Clear All
         </button>
@@ -203,11 +203,11 @@ export default function FilterPanel({
       )}
 
       {/* Divider */}
-      {onSavePreset && onDeletePreset && <div className="border-t border-gray-200" />}
+      {onSavePreset && onDeletePreset && <div className="border-t border-gray-200 dark:border-gray-700" />}
 
       {/* Search Bar */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Search</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Search</label>
         <SearchBar
           value={filters.search || ''}
           onChange={(value) => updateFilter('search', value || null)}
@@ -217,7 +217,7 @@ export default function FilterPanel({
 
       {/* Market Selector */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">Market</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Market</label>
         <div className="flex space-x-2">
           {(['ALL', 'KOSPI', 'KOSDAQ'] as const).map((market) => (
             <button
@@ -225,8 +225,8 @@ export default function FilterPanel({
               onClick={() => updateFilter('market', market)}
               className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 filters.market === market
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-blue-600 dark:bg-blue-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               {market}
@@ -238,7 +238,7 @@ export default function FilterPanel({
       {/* Sector/Industry */}
       <div className="space-y-3">
         <div>
-          <label htmlFor="sector" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="sector" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Sector
           </label>
           <input
@@ -247,11 +247,11 @@ export default function FilterPanel({
             value={filters.sector || ''}
             onChange={(e) => updateFilter('sector', e.target.value || null)}
             placeholder="e.g., Technology"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
           />
         </div>
         <div>
-          <label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="industry" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Industry
           </label>
           <input
@@ -260,7 +260,7 @@ export default function FilterPanel({
             value={filters.industry || ''}
             onChange={(e) => updateFilter('industry', e.target.value || null)}
             placeholder="e.g., Semiconductors"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
           />
         </div>
       </div>
@@ -273,9 +273,9 @@ export default function FilterPanel({
         className="space-y-2"
       >
         {/* Valuation Filters */}
-        <Accordion.Item value="valuation" className="border border-gray-200 rounded-md">
+        <Accordion.Item value="valuation" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
           <Accordion.Header>
-            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50">
+            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Valuation
               <svg
                 className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180"
@@ -318,9 +318,9 @@ export default function FilterPanel({
         </Accordion.Item>
 
         {/* Profitability Filters */}
-        <Accordion.Item value="profitability" className="border border-gray-200 rounded-md">
+        <Accordion.Item value="profitability" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
           <Accordion.Header>
-            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50">
+            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Profitability
               <svg
                 className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180"
@@ -378,9 +378,9 @@ export default function FilterPanel({
         </Accordion.Item>
 
         {/* Growth Filters */}
-        <Accordion.Item value="growth" className="border border-gray-200 rounded-md">
+        <Accordion.Item value="growth" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
           <Accordion.Header>
-            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50">
+            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Growth
               <svg
                 className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180"
@@ -420,9 +420,9 @@ export default function FilterPanel({
         </Accordion.Item>
 
         {/* Stability Filters */}
-        <Accordion.Item value="stability" className="border border-gray-200 rounded-md">
+        <Accordion.Item value="stability" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
           <Accordion.Header>
-            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50">
+            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Stability
               <svg
                 className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180"
@@ -466,9 +466,9 @@ export default function FilterPanel({
         </Accordion.Item>
 
         {/* Momentum Filters */}
-        <Accordion.Item value="momentum" className="border border-gray-200 rounded-md">
+        <Accordion.Item value="momentum" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
           <Accordion.Header>
-            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50">
+            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Momentum
               <svg
                 className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180"
@@ -526,9 +526,9 @@ export default function FilterPanel({
         </Accordion.Item>
 
         {/* Scores */}
-        <Accordion.Item value="scores" className="border border-gray-200 rounded-md">
+        <Accordion.Item value="scores" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
           <Accordion.Header>
-            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 hover:bg-gray-50">
+            <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Composite Scores
               <svg
                 className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180"
