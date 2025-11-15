@@ -377,7 +377,87 @@ No tickets currently in review.
 - ✅ Performance baselines established (BUGFIX-008)
 - ✅ CI/CD automation enabled (BUGFIX-009)
 
-**Current Backlog**: 3 tickets (UI/UX Enhancement Initiative)
+**Current Backlog**: 13 tickets (3 UI/UX + 10 Test Improvement)
+
+### 🧪 Test Improvement Initiative - Phase 1 Critical Tests
+**Total Effort**: 30 hours across 10 tickets
+**Goal**: Increase test coverage from 40% to 55% by implementing critical tests
+
+**New Tickets** (Phase 1 - Critical Tests):
+- **TEST-001**: Backend Security Module Tests - 4 hours
+  - JWT token generation/validation
+  - Password hashing/verification
+  - Authentication flows
+  - **Impact**: Critical security code 0% → >90% coverage
+
+- **TEST-002**: Backend Exception Handling Tests - 2 hours
+  - Custom exception classes
+  - Error response formatting
+  - Exception handler integration
+  - **Impact**: Core error handling 0% → >95% coverage
+
+- **TEST-003**: WebSocket ConnectionManager Unit Tests - 3 hours
+  - Connection lifecycle (connect, disconnect)
+  - Message broadcasting (all, user, group)
+  - Error handling and concurrency safety
+  - **Impact**: Real-time infrastructure 0% → >90% coverage
+
+- **TEST-004**: Dependency Injection Tests - 2 hours
+  - Database session lifecycle
+  - Redis client injection
+  - Service dependencies
+  - **Impact**: Core infrastructure 0% → >90% coverage
+
+- **TEST-005**: Stock API Endpoints Tests - 4 hours
+  - Stock listing with pagination/filters
+  - Stock detail endpoint
+  - Price history endpoint
+  - Financial data endpoint
+  - **Impact**: Core API endpoints 0% → >85% coverage
+
+- **TEST-006**: Health Check Endpoints Tests - 1 hour
+  - Basic health check
+  - Database health check
+  - Redis health check
+  - Detailed health status
+  - **Impact**: Monitoring infrastructure 0% → >95% coverage
+
+- **TEST-007**: LoginPage Component Tests - 3 hours
+  - Component rendering
+  - Form submission
+  - Error handling
+  - Redirect after login
+  - **Impact**: Critical auth UI 0% → >85% coverage
+
+- **TEST-008**: ScreenerPage Component Tests - 4 hours
+  - Filter application (market cap, sector, price, etc.)
+  - Results rendering (pagination, sorting)
+  - Export functionality
+  - **Impact**: Core platform feature 0% → >80% coverage
+
+- **TEST-009**: StockDetailPage Component Tests - 3 hours
+  - Stock data display
+  - Chart rendering
+  - Watchlist actions
+  - **Impact**: Critical stock view 0% → >85% coverage
+
+- **TEST-010**: E2E Authentication Flow Tests - 4 hours
+  - Login flow (success and failure)
+  - Authentication state persistence
+  - Protected routes
+  - Logout flow
+  - **Impact**: E2E authentication 0% → >85% coverage
+
+**Expected Outcomes**:
+- 📈 Overall coverage: 40% → 55% (+15%)
+- 🔒 Backend coverage: 65% → 80% (+15%)
+- 🎨 Frontend coverage: 21% → 35% (+14%)
+- ⚡ E2E coverage: 10% → 25% (+15%)
+- 🎯 Critical path coverage: 0% → 85%+
+
+**Reference**: [Test Improvement Plan](../TEST_IMPROVEMENT_PLAN.md)
+
+---
 
 ### 🎨 UI/UX Enhancement Initiative - Finviz-Inspired Design
 **Total Effort**: 30-36 hours across 3 tickets
