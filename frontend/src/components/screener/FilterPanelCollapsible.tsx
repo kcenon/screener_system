@@ -80,13 +80,13 @@ export function FilterPanelCollapsible({
             <div className="flex flex-col items-center gap-2">
               <button
                 onClick={handleToggle}
-                className="w-12 h-32 flex flex-col items-center justify-center bg-white border border-gray-200 rounded-md hover:bg-gray-50 shadow-sm transition-colors group"
+                className="w-12 h-32 flex flex-col items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-colors group"
                 title="Expand Filters"
                 aria-label="Expand filter panel"
               >
                 {/* Filter icon */}
                 <svg
-                  className="w-5 h-5 text-gray-500 group-hover:text-gray-700 mb-2"
+                  className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 mb-2 transition-colors"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ export function FilterPanelCollapsible({
                   />
                 </svg>
                 {/* Vertical text */}
-                <span className="transform -rotate-90 text-xs font-medium text-gray-600 whitespace-nowrap">
+                <span className="transform -rotate-90 text-xs font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   Filters
                 </span>
               </button>
@@ -110,14 +110,14 @@ export function FilterPanelCollapsible({
           {!collapsed && (
             <div className="space-y-2 animate-fade-in">
               {/* Filter Panel Content */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
                 {children}
               </div>
 
               {/* Collapse Button */}
               <button
                 onClick={handleToggle}
-                className="w-full py-2.5 px-4 flex items-center justify-center gap-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:text-gray-900 hover:bg-gray-50 shadow-sm transition-colors"
+                className="w-full py-2.5 px-4 flex items-center justify-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-colors"
                 aria-label="Collapse filter panel"
               >
                 <svg

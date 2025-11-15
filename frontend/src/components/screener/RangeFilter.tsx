@@ -83,9 +83,9 @@ export default function RangeFilter({
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
-        {unit && <span className="ml-1 text-gray-500">({unit})</span>}
+        {unit && <span className="ml-1 text-gray-500 dark:text-gray-400">({unit})</span>}
       </label>
       <div className="flex items-center space-x-2">
         <input
@@ -94,21 +94,21 @@ export default function RangeFilter({
           onChange={handleMinChange}
           placeholder={minPlaceholder}
           className={`block w-full rounded-md border ${
-            error ? 'border-red-300' : 'border-gray-300'
-          } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
+            error ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
+          } bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors`}
         />
-        <span className="text-gray-500">—</span>
+        <span className="text-gray-500 dark:text-gray-400">—</span>
         <input
           type="number"
           value={maxValue}
           onChange={handleMaxChange}
           placeholder={maxPlaceholder}
           className={`block w-full rounded-md border ${
-            error ? 'border-red-300' : 'border-gray-300'
-          } px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
+            error ? 'border-red-300 dark:border-red-600' : 'border-gray-300 dark:border-gray-600'
+          } bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors`}
         />
       </div>
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
     </div>
   )
 }
