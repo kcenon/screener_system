@@ -5,6 +5,7 @@ import { useFilterPresets } from '@/hooks/useFilterPresets'
 import { useURLSync } from '@/hooks/useURLSync'
 import { useFreemiumAccess } from '@/hooks/useFreemiumAccess'
 import FilterPanel from '@/components/screener/FilterPanel'
+import { QuickFiltersBar } from '@/components/screener/QuickFiltersBar'
 import ResultsTable from '@/components/screener/ResultsTable'
 import Pagination from '@/components/common/Pagination'
 import ExportButton from '@/components/screener/ExportButton'
@@ -159,6 +160,13 @@ export default function ScreenerPage() {
 
           {/* Right column - Results (3/4 width on large screens) */}
           <div className="lg:col-span-3 space-y-4">
+            {/* Quick Filters Bar */}
+            <QuickFiltersBar
+              currentFilters={filters}
+              onFilterChange={(newFilters) => setFilters({ ...filters, ...newFilters })}
+              onClearAll={handleClearFilters}
+            />
+
             {/* Results count and export */}
             {!isLoading && data && (
               <div className="flex items-center justify-between flex-wrap gap-2">
