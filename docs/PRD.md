@@ -6,10 +6,10 @@
 | Field | Value |
 |-------|-------|
 | **Product Name** | The Screener - Stock Analysis Platform |
-| **Version** | 1.1 |
-| **Status** | Updated - Phase 2 Enhancement |
+| **Version** | 1.2 |
+| **Status** | Updated - Documentation Platform Deployed |
 | **Created Date** | 2025-11-09 |
-| **Last Updated** | 2025-11-14 |
+| **Last Updated** | 2025-11-15 |
 | **Author** | Product Team |
 | **Stakeholders** | Engineering, Design, Data Science, Business, Growth |
 | **Classification** | Internal |
