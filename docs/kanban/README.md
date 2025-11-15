@@ -377,7 +377,7 @@ No tickets currently in review.
 - ✅ Performance baselines established (BUGFIX-008)
 - ✅ CI/CD automation enabled (BUGFIX-009)
 
-**Current Backlog**: 13 tickets (3 UI/UX + 10 Test Improvement)
+**Current Backlog**: 18 tickets (3 UI/UX + 10 Test + 5 P0/P1 Features)
 
 ### 🧪 Test Improvement Initiative - Phase 1 Critical Tests
 **Total Effort**: 30 hours across 10 tickets
@@ -456,6 +456,65 @@ No tickets currently in review.
 - 🎯 Critical path coverage: 0% → 85%+
 
 **Reference**: [Test Improvement Plan](../TEST_IMPROVEMENT_PLAN.md)
+
+---
+
+### 🚀 Missing P0/P1 Features - High-Value Additions
+**Total Effort**: 150-210 hours across 5 tickets
+**Goal**: Implement critical missing features from PRD to reach feature parity
+
+**P0 Features** (Critical - 90-120 hours):
+
+- **FEATURE-002**: Portfolio Management System - 40-60 hours
+  - Complete portfolio tracking (holdings, transactions, performance)
+  - Backend: Models, services, API (20-25h)
+  - Frontend: Pages, components, charts (15-20h)
+  - Business logic: Performance calculations, allocation (5-10h)
+  - **Impact**: Core value proposition, +40% user retention expected
+
+- **FEATURE-003**: Alerts & Notifications System - 30-40 hours
+  - Price alerts, volume spikes, change alerts
+  - Backend: Alert engine, notification service (15-20h)
+  - Frontend: Alert management UI (10-15h)
+  - Infrastructure: Email, real-time delivery (5-5h)
+  - **Impact**: User engagement +60%, daily active users +45%
+
+- **FEATURE-004**: Email Verification & Password Reset - 20-30 hours
+  - Secure email verification flow
+  - Password reset with token system
+  - Backend: Token management, security (12-15h)
+  - Frontend: Pages and forms (6-10h)
+  - Email templates (2-5h)
+  - **Impact**: Security compliance, reduce support tickets 70%
+
+**P1 Features** (High Priority - 60-90 hours):
+
+- **FEATURE-005**: OAuth Social Login Integration - 20-30 hours
+  - Google, Kakao, Naver OAuth
+  - Backend: OAuth service, providers (12-18h)
+  - Frontend: Social login buttons, linking (6-10h)
+  - Provider setup and configuration (2-2h)
+  - **Impact**: Signup conversion +35%, reduce friction
+
+- **FEATURE-006**: Subscription & Billing System - 40-50 hours
+  - Multi-tier pricing (Free, Premium $9.99, Pro $29.99)
+  - Backend: Stripe integration, subscription logic (20-25h)
+  - Frontend: Pricing, checkout, billing pages (15-20h)
+  - Feature gating and usage tracking (5-5h)
+  - **Impact**: Monetization enabled, MRR generation
+
+**Expected Outcomes**:
+- 📈 +40% user retention (portfolio management)
+- 💰 Revenue generation via subscriptions
+- 🔒 Security compliance (email verification)
+- ⚡ +60% engagement (alerts & notifications)
+- 🎯 +35% signup conversion (OAuth login)
+
+**Total Development**: 150-210 hours
+**Business Value**: High - Enables monetization and user retention
+**Priority**: Execute after Phase 1 critical tests or in parallel with Phases 2-3
+
+**Reference**: TEST_IMPROVEMENT_PLAN.md - Missing Features Section
 
 ---
 
