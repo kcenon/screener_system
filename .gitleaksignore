@@ -14,3 +14,7 @@ docs-site/blog/**
 # Documentation templates contain example API tokens and credentials (not real secrets)
 80f695e235f408dd2db881e60b0d8ebc8fb2a80d:docs-site/docs/08-contributing/templates/api-documentation-template.md:curl-auth-header:190
 c539dca88d0e0f39ea1fb65ef4e0cefb1b0bb6f8:docs-site/docs/08-contributing/templates/api-documentation-template.md:curl-auth-header:190
+
+# Test files contain intentional test secrets (not real credentials)
+90cd5f9ea6d70926fc11c7f5047bb04a35f37ae4:backend/tests/core/test_security.py:generic-api-key:189
+backend/tests/core/test_security.py:*
