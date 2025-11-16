@@ -197,11 +197,11 @@ class TestStockListEndpoints:
         assert response.status_code == 200
         data = response.json()
 
-        assert "stocks" in data
+        assert "items" in data
         assert "meta" in data
 
         # Should return all stocks with default pagination
-        assert len(data["stocks"]) == len(sample_stocks)
+        assert len(data["items"]) == len(sample_stocks)
 
         # Check meta information
         meta = data["meta"]
@@ -210,7 +210,7 @@ class TestStockListEndpoints:
         assert meta["per_page"] == 50
 
         # Verify stock data structure
-        stock = data["stocks"][0]
+        stock = data["items"][0]
         assert "code" in stock
         assert "name" in stock
         assert "market" in stock
@@ -225,7 +225,7 @@ class TestStockListEndpoints:
         assert response.status_code == 200
         data = response.json()
 
-        assert len(data["stocks"]) == 2
+        assert len(data["items"]) == 2
         assert data["meta"]["page"] == 1
         assert data["meta"]["per_page"] == 2
         assert data["meta"]["total"] == len(sample_stocks)
@@ -236,7 +236,7 @@ class TestStockListEndpoints:
         assert response.status_code == 200
         data = response.json()
 
-        assert len(data["stocks"]) == 2
+        assert len(data["items"]) == 2
         assert data["meta"]["page"] == 2
 
     async def test_list_stocks_with_market_filter(
@@ -251,10 +251,10 @@ class TestStockListEndpoints:
 
         # Should only return KOSPI stocks
         kospi_stocks = [s for s in sample_stocks if s.market == "KOSPI"]
-        assert len(data["stocks"]) == len(kospi_stocks)
+        assert len(data["items"]) == len(kospi_stocks)
 
         # Verify all returned stocks are KOSPI
-        for stock in data["stocks"]:
+        for stock in data["items"]:
             assert stock["market"] == "KOSPI"
 
         # Filter by KOSDAQ
@@ -265,7 +265,7 @@ class TestStockListEndpoints:
 
         # Should only return KOSDAQ stocks
         kosdaq_stocks = [s for s in sample_stocks if s.market == "KOSDAQ"]
-        assert len(data["stocks"]) == len(kosdaq_stocks)
+        assert len(data["items"]) == len(kosdaq_stocks)
 
     async def test_list_stocks_with_sector_filter(
         self, client: AsyncClient, sample_stocks: list[Stock]
@@ -278,10 +278,10 @@ class TestStockListEndpoints:
 
         # Should only return Technology sector stocks
         tech_stocks = [s for s in sample_stocks if s.sector == "Technology"]
-        assert len(data["stocks"]) == len(tech_stocks)
+        assert len(data["items"]) == len(tech_stocks)
 
         # Verify all returned stocks are in Technology sector
-        for stock in data["stocks"]:
+        for stock in data["items"]:
             assert stock["sector"] == "Technology"
 
     async def test_list_stocks_invalid_market(self, client: AsyncClient):
