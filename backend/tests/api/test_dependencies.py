@@ -7,12 +7,13 @@ Tests the core dependency injection infrastructure that provides:
 - User authentication (JWT-based)
 """
 
+from unittest.mock import AsyncMock, Mock
+
 import pytest
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from unittest.mock import AsyncMock, Mock, patch
 
 from app.api.dependencies import (
     get_auth_service,
