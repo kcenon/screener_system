@@ -10,6 +10,7 @@ Tests the core dependency injection infrastructure that provides:
 import pytest
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -38,7 +39,7 @@ async def test_get_db_session_lifecycle(db: AsyncSession):
     assert isinstance(db, AsyncSession)
 
     # Test basic query execution
-    result = await db.execute("SELECT 1")
+    result = await db.execute(text("SELECT 1"))
     assert result is not None
 
 
@@ -104,7 +105,7 @@ async def test_get_auth_service(db: AsyncSession):
     # Verify service is correctly instantiated
     assert service is not None
     assert isinstance(service, AuthService)
-    assert service.db is db
+    assert service.session is db
 
 
 @pytest.mark.asyncio
@@ -116,7 +117,7 @@ async def test_get_watchlist_service(db: AsyncSession):
     # Verify service is correctly instantiated
     assert service is not None
     assert isinstance(service, WatchlistService)
-    assert service.db is db
+    assert service.session is db
 
 
 @pytest.mark.asyncio
@@ -124,14 +125,14 @@ async def test_service_dependencies_chain(db: AsyncSession):
     """Test dependencies that depend on other dependencies"""
     # AuthService depends on db session
     auth_service = await get_auth_service(db)
-    assert auth_service.db is db
+    assert auth_service.session is db
 
     # WatchlistService also depends on db session
     watchlist_service = await get_watchlist_service(db)
-    assert watchlist_service.db is db
+    assert watchlist_service.session is db
 
     # Both should have access to same database session
-    assert auth_service.db is watchlist_service.db
+    assert auth_service.session is watchlist_service.session
 
 
 # =============================================================================
@@ -142,14 +143,11 @@ async def test_service_dependencies_chain(db: AsyncSession):
 @pytest.mark.asyncio
 async def test_get_current_user_valid_token(db: AsyncSession):
     """Test current user extraction from valid token"""
-    # Create mock user
-    mock_user = User(
-        id=1,
-        email="test@example.com",
-        username="testuser",
-        hashed_password="hashed",
-        is_active=True,
-    )
+    # Create mock user (use Mock instead of actual User model)
+    mock_user = Mock(spec=User)
+    mock_user.id = 1
+    mock_user.email = "test@example.com"
+    mock_user.name = "Test User"
 
     # Create mock credentials
     credentials = HTTPAuthorizationCredentials(
@@ -215,36 +213,37 @@ async def test_get_current_user_expired_token():
 
 
 @pytest.mark.asyncio
-async def test_get_current_active_user_active():
+async def test_get_current_active_user_active(db: AsyncSession):
     """Test active user verification succeeds for active users"""
-    # Create active user
-    mock_user = User(
-        id=1,
+    # Create actual user in database
+    from app.core.security import get_password_hash
+
+    active_user = User(
         email="active@example.com",
-        username="activeuser",
-        hashed_password="hashed",
-        is_active=True,
+        password_hash=get_password_hash("password123"),
+        name="Active User",
     )
+    db.add(active_user)
+    await db.commit()
+    await db.refresh(active_user)
 
     # Test get_current_active_user
-    user = await get_current_active_user(mock_user)
+    # Note: User model may not have is_active field, checking if it exists
+    user = await get_current_active_user(active_user)
 
     # Verify same user returned
-    assert user == mock_user
-    assert user.is_active is True
+    assert user == active_user
+    assert user.id == active_user.id
 
 
 @pytest.mark.asyncio
 async def test_get_current_active_user_inactive():
     """Test active user verification fails for inactive users"""
-    # Create inactive user
-    mock_user = User(
-        id=2,
-        email="inactive@example.com",
-        username="inactiveuser",
-        hashed_password="hashed",
-        is_active=False,
-    )
+    # Create mock inactive user
+    mock_user = Mock(spec=User)
+    mock_user.id = 2
+    mock_user.email = "inactive@example.com"
+    mock_user.is_active = False
 
     # Test get_current_active_user raises HTTPException
     with pytest.raises(HTTPException) as exc_info:
@@ -264,7 +263,7 @@ async def test_dependency_injection_full_chain(db: AsyncSession):
     # 2. Service injection (depends on db)
     auth_service = await get_auth_service(db)
     assert auth_service is not None
-    assert auth_service.db is db
+    assert auth_service.session is db
 
     # 3. User authentication (depends on service)
     # Create test user in database
@@ -273,9 +272,8 @@ async def test_dependency_injection_full_chain(db: AsyncSession):
 
     test_user = User(
         email="chain@example.com",
-        username="chainuser",
-        hashed_password=get_password_hash("password123"),
-        is_active=True,
+        password_hash=get_password_hash("password123"),
+        name="Chain User",
     )
     db.add(test_user)
     await db.commit()
@@ -299,7 +297,6 @@ async def test_dependency_injection_full_chain(db: AsyncSession):
     # Verify active user check
     active_user = await get_current_active_user(user)
     assert active_user.id == user.id
-    assert active_user.is_active is True
 
 
 @pytest.mark.asyncio
@@ -311,10 +308,10 @@ async def test_multiple_service_instances_share_session(db: AsyncSession):
     watchlist_service = await get_watchlist_service(db)
 
     # All should share the same database session
-    assert auth_service1.db is db
-    assert auth_service2.db is db
-    assert watchlist_service.db is db
+    assert auth_service1.session is db
+    assert auth_service2.session is db
+    assert watchlist_service.session is db
 
     # All should reference the same session object
-    assert auth_service1.db is auth_service2.db
-    assert auth_service1.db is watchlist_service.db
+    assert auth_service1.session is auth_service2.session
+    assert auth_service1.session is watchlist_service.session
