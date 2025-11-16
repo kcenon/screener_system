@@ -150,7 +150,7 @@ async def sample_financials(
             operating_profit=40000000000000 + (year - 2019) * 2000000000000,
             net_profit=30000000000000 + (year - 2019) * 1500000000000,
             total_assets=300000000000000 + (year - 2019) * 15000000000000,
-            total_equity=200000000000000 + (year - 2019) * 10000000000000,
+            equity=200000000000000 + (year - 2019) * 10000000000000,
             eps=5000 + (year - 2019) * 500,
         )
         financials.append(financial)
@@ -167,7 +167,7 @@ async def sample_financials(
             operating_profit=10000000000000 + quarter * 200000000000,
             net_profit=7500000000000 + quarter * 150000000000,
             total_assets=315000000000000,
-            total_equity=210000000000000,
+            equity=210000000000000,
             eps=1250 + quarter * 25,
         )
         financials.append(financial)
@@ -192,7 +192,7 @@ class TestStockListEndpoints:
         self, client: AsyncClient, sample_stocks: list[Stock]
     ):
         """Test GET /stocks/ with default parameters"""
-        response = await client.get("/v1/stocks/")
+        response = await client.get("/v1/stocks")
 
         assert response.status_code == 200
         data = response.json()
@@ -220,7 +220,7 @@ class TestStockListEndpoints:
     ):
         """Test GET /stocks/ with pagination parameters"""
         # Request page 1 with 2 items per page
-        response = await client.get("/v1/stocks/?page=1&per_page=2")
+        response = await client.get("/v1/stocks?page=1&per_page=2")
 
         assert response.status_code == 200
         data = response.json()
@@ -231,7 +231,7 @@ class TestStockListEndpoints:
         assert data["meta"]["total"] == len(sample_stocks)
 
         # Request page 2
-        response = await client.get("/v1/stocks/?page=2&per_page=2")
+        response = await client.get("/v1/stocks?page=2&per_page=2")
 
         assert response.status_code == 200
         data = response.json()
@@ -244,7 +244,7 @@ class TestStockListEndpoints:
     ):
         """Test GET /stocks/ with market filter"""
         # Filter by KOSPI
-        response = await client.get("/v1/stocks/?market=KOSPI")
+        response = await client.get("/v1/stocks?market=KOSPI")
 
         assert response.status_code == 200
         data = response.json()
@@ -258,7 +258,7 @@ class TestStockListEndpoints:
             assert stock["market"] == "KOSPI"
 
         # Filter by KOSDAQ
-        response = await client.get("/v1/stocks/?market=KOSDAQ")
+        response = await client.get("/v1/stocks?market=KOSDAQ")
 
         assert response.status_code == 200
         data = response.json()
@@ -271,7 +271,7 @@ class TestStockListEndpoints:
         self, client: AsyncClient, sample_stocks: list[Stock]
     ):
         """Test GET /stocks/ with sector filter"""
-        response = await client.get("/v1/stocks/?sector=Technology")
+        response = await client.get("/v1/stocks?sector=Technology")
 
         assert response.status_code == 200
         data = response.json()
@@ -286,7 +286,7 @@ class TestStockListEndpoints:
 
     async def test_list_stocks_invalid_market(self, client: AsyncClient):
         """Test GET /stocks/ with invalid market parameter"""
-        response = await client.get("/v1/stocks/?market=INVALID")
+        response = await client.get("/v1/stocks?market=INVALID")
 
         # Should return 422 Unprocessable Entity for invalid enum value
         assert response.status_code == 422
@@ -294,11 +294,11 @@ class TestStockListEndpoints:
     async def test_list_stocks_invalid_pagination(self, client: AsyncClient):
         """Test GET /stocks/ with invalid pagination parameters"""
         # page must be >= 1
-        response = await client.get("/v1/stocks/?page=0")
+        response = await client.get("/v1/stocks?page=0")
         assert response.status_code == 422
 
         # per_page must be <= 100
-        response = await client.get("/v1/stocks/?per_page=101")
+        response = await client.get("/v1/stocks?per_page=101")
         assert response.status_code == 422
 
     async def test_search_stocks_by_name(
@@ -310,9 +310,9 @@ class TestStockListEndpoints:
         assert response.status_code == 200
         data = response.json()
 
-        assert "stocks" in data
+        assert "items" in data
         # Should find Samsung Electronics
-        assert any(stock["code"] == "005930" for stock in data["stocks"])
+        assert any(stock["code"] == "005930" for stock in data["items"])
 
     async def test_search_stocks_by_code(
         self, client: AsyncClient, sample_stocks: list[Stock]
@@ -323,8 +323,8 @@ class TestStockListEndpoints:
         assert response.status_code == 200
         data = response.json()
 
-        assert len(data["stocks"]) >= 1
-        assert data["stocks"][0]["code"] == "005930"
+        assert len(data["items"]) >= 1
+        assert data["items"][0]["code"] == "005930"
 
     async def test_search_stocks_with_limit(
         self, client: AsyncClient, sample_stocks: list[Stock]
@@ -336,7 +336,7 @@ class TestStockListEndpoints:
         data = response.json()
 
         # Should respect limit parameter
-        assert len(data["stocks"]) <= 2
+        assert len(data["items"]) <= 2
 
     async def test_search_stocks_no_results(self, client: AsyncClient):
         """Test GET /stocks/search with no matching results"""
@@ -345,7 +345,7 @@ class TestStockListEndpoints:
         assert response.status_code == 200
         data = response.json()
 
-        assert data["stocks"] == []
+        assert data["items"] == []
 
 
 # ============================================================================
