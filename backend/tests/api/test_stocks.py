@@ -8,9 +8,9 @@ import pytest_asyncio
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.daily_price import DailyPrice
-from app.models.financial_statement import FinancialStatement
-from app.models.stock import Stock
+from app.db.models.daily_price import DailyPrice
+from app.db.models.financial_statement import FinancialStatement
+from app.db.models.stock import Stock
 
 
 @pytest_asyncio.fixture
