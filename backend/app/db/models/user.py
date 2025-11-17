@@ -53,6 +53,12 @@ class User(BaseModel):
         cascade="all, delete-orphan",
         lazy="select",
     )
+    portfolios = relationship(
+        "Portfolio",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
     activities = relationship(
         "UserActivity",
         back_populates="user",
