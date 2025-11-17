@@ -5,12 +5,12 @@
  * Displays alert list and creation form.
  */
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useAlerts } from '../hooks/useAlerts'
 import { AlertForm, AlertList } from '../components/alerts'
 import type { AlertCreate } from '../services/alertService'
 
-export const AlertsPage: React.FC = () => {
+export default function AlertsPage() {
   const { createAlert, isCreating, totalAlerts, activeAlerts } = useAlerts()
   const [showForm, setShowForm] = useState(false)
 

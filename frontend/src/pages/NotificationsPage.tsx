@@ -5,11 +5,10 @@
  * Displays all notifications with filtering options.
  */
 
-import React from 'react'
 import { useNotifications } from '../hooks/useNotifications'
 import { NotificationList } from '../components/notifications'
 
-export const NotificationsPage: React.FC = () => {
+export default function NotificationsPage() {
   const { markAllAsRead, unreadCount, total, isMarkingAllAsRead } = useNotifications()
 
   const handleMarkAllAsRead = async () => {
