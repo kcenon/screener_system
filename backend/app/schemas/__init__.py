@@ -1,5 +1,12 @@
 """Pydantic schemas package"""
 
+from app.schemas.alert import (
+    AlertCreate,
+    AlertListResponse,
+    AlertResponse,
+    AlertToggleResponse,
+    AlertUpdate,
+)
 from app.schemas.market import (
     ActiveStock,
     MarketBreadthResponse,
@@ -13,6 +20,16 @@ from app.schemas.market import (
     SectorPerformance,
     SectorPerformanceResponse,
     TopStock,
+)
+from app.schemas.notification import (
+    NotificationDeleteResponse,
+    NotificationListResponse,
+    NotificationMarkAllReadResponse,
+    NotificationMarkReadResponse,
+    NotificationPreferenceResponse,
+    NotificationPreferenceUpdate,
+    NotificationResponse,
+    NotificationUnreadCountResponse,
 )
 from app.schemas.portfolio import (
     HoldingCreate,
@@ -67,6 +84,21 @@ from app.schemas.watchlist import (
 )
 
 __all__ = [
+    # Alert schemas
+    "AlertCreate",
+    "AlertUpdate",
+    "AlertResponse",
+    "AlertListResponse",
+    "AlertToggleResponse",
+    # Notification schemas
+    "NotificationResponse",
+    "NotificationListResponse",
+    "NotificationUnreadCountResponse",
+    "NotificationMarkReadResponse",
+    "NotificationMarkAllReadResponse",
+    "NotificationDeleteResponse",
+    "NotificationPreferenceResponse",
+    "NotificationPreferenceUpdate",
     # User schemas
     "UserCreate",
     "UserLogin",

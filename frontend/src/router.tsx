@@ -15,6 +15,8 @@ import MarketDashboardPage from './pages/MarketDashboardPage'
 import MarketOverviewPage from './pages/MarketOverviewPage'
 import PortfolioListPage from './pages/PortfolioListPage'
 import PortfolioDetailPage from './pages/PortfolioDetailPage'
+import AlertsPage from './pages/AlertsPage'
+import NotificationsPage from './pages/NotificationsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -61,6 +63,14 @@ export const router = createBrowserRouter([
       {
         path: 'portfolios/:id',
         element: <PortfolioDetailPage />,
+      },
+      {
+        path: 'alerts',
+        element: <AlertsPage />,
+      },
+      {
+        path: 'notifications',
+        element: <NotificationsPage />,
       },
       {
         path: 'login',

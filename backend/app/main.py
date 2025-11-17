@@ -37,9 +37,11 @@ from app.api.error_handlers import (app_exception_handler,
                                     sqlalchemy_exception_handler,
                                     validation_exception_handler)
 from app.api.v1.endpoints import (
+    alerts,
     auth,
     health,
     market,
+    notifications,
     portfolios,
     screening,
     stocks,
@@ -212,6 +214,12 @@ app.include_router(users.router, prefix="/v1")
 
 # Include portfolio management routes
 app.include_router(portfolios.router, prefix="/v1")
+
+# Include alert routes
+app.include_router(alerts.router, prefix="/v1")
+
+# Include notification routes
+app.include_router(notifications.router, prefix="/v1")
 
 # Include stock routes
 app.include_router(stocks.router, prefix="/v1")
