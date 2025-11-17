@@ -85,6 +85,61 @@ async def db(db_engine) -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest_asyncio.fixture
+async def db_session(db: AsyncSession) -> AsyncSession:
+    """Alias for db session to match test naming"""
+    return db
+
+
+@pytest_asyncio.fixture
+async def test_user(db: AsyncSession):
+    """Create test user"""
+    from app.db.models import User
+    from app.core.security import get_password_hash
+
+    user = User(
+        email="test@example.com",
+        username="testuser",
+        hashed_password=get_password_hash("testpassword"),
+        is_active=True,
+        is_superuser=False,
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
+@pytest_asyncio.fixture
+async def test_stock(db: AsyncSession):
+    """Create test stock"""
+    from app.db.models import Stock
+
+    stock = Stock(
+        code="005930",
+        name="삼성전자",
+        market="KOSPI",
+        sector="전기전자",
+        industry="반도체",
+    )
+    db.add(stock)
+    await db.commit()
+    await db.refresh(stock)
+    return stock
+
+
+@pytest_asyncio.fixture
+async def auth_headers(test_user):
+    """Create authentication headers for test user"""
+    from app.core.security import create_access_token
+
+    access_token = create_access_token(
+        subject=test_user.id,
+        username=test_user.username,
+    )
+    return {"Authorization": f"Bearer {access_token}"}
+
+
+@pytest_asyncio.fixture
 async def client(db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """Create test HTTP client"""
 
