@@ -19,6 +19,8 @@ import { usePortfolioDetail } from '../hooks/usePortfolioDetail'
 import { usePortfolioPerformance } from '../hooks/usePortfolioPerformance'
 import { useTransactions } from '../hooks/useTransactions'
 import { TransactionType } from '../services/portfolioService'
+import PerformanceChart from '../components/portfolio/PerformanceChart'
+import AllocationChart from '../components/portfolio/AllocationChart'
 import {
   ArrowLeft,
   TrendingUp,
@@ -312,7 +314,7 @@ export default function PortfolioDetailPage() {
 
   const { user, isAuthenticated } = useAuthStore()
   const { portfolio, holdings, isLoading, isError, error, refresh } = usePortfolioDetail(portfolioId)
-  const { performance, isLoading: isPerfLoading } = usePortfolioPerformance(portfolioId)
+  const { performance, allocation, isLoading: isPerfLoading } = usePortfolioPerformance(portfolioId)
   const { transactions, isLoading: isTransLoading } = useTransactions(portfolioId, 0, 10)
 
   // Redirect if not authenticated
@@ -405,6 +407,20 @@ export default function PortfolioDetailPage() {
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
             <HoldingsTable holdings={holdings} />
           </div>
+        </section>
+
+        {/* Charts Section */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Performance Chart */}
+          <PerformanceChart performance={performance} title="Performance Overview" />
+
+          {/* Allocation Charts */}
+          <AllocationChart allocation={allocation} type="stock" title="Stock Allocation" />
+        </section>
+
+        {/* Sector Allocation */}
+        <section>
+          <AllocationChart allocation={allocation} type="sector" title="Sector Allocation" />
         </section>
 
         {/* Recent Transactions */}
