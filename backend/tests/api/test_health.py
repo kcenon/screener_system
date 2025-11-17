@@ -17,7 +17,7 @@ class TestBasicHealthCheck:
     @pytest.mark.asyncio
     async def test_health_endpoint(self, client: AsyncClient):
         """Test GET /health returns 200 OK"""
-        response = await client.get("/api/v1/health")
+        response = await client.get("/v1/health")
 
         assert response.status_code == 200
         data = response.json()
@@ -28,7 +28,7 @@ class TestBasicHealthCheck:
     async def test_health_endpoint_no_auth_required(self, client: AsyncClient):
         """Test health endpoint accessible without authentication"""
         # Make request without any authentication headers
-        response = await client.get("/api/v1/health")
+        response = await client.get("/v1/health")
 
         # Should still return 200 OK
         assert response.status_code == 200
@@ -37,7 +37,7 @@ class TestBasicHealthCheck:
     @pytest.mark.asyncio
     async def test_health_endpoint_response_format(self, client: AsyncClient):
         """Test response includes status and service name"""
-        response = await client.get("/api/v1/health")
+        response = await client.get("/v1/health")
 
         assert response.status_code == 200
         data = response.json()
@@ -57,7 +57,7 @@ class TestDatabaseHealthCheck:
         self, client: AsyncClient, db: AsyncSession
     ):
         """Test /health/db returns 200 when database connected"""
-        response = await client.get("/api/v1/health/db")
+        response = await client.get("/v1/health/db")
 
         assert response.status_code == 200
         data = response.json()
@@ -79,7 +79,7 @@ class TestDatabaseHealthCheck:
         app.dependency_overrides[get_db] = mock_get_db_failing
 
         try:
-            response = await client.get("/api/v1/health/db")
+            response = await client.get("/v1/health/db")
 
             # Endpoint returns 200 but with unhealthy status
             assert response.status_code == 200
@@ -96,7 +96,7 @@ class TestDatabaseHealthCheck:
         self, client: AsyncClient, db: AsyncSession
     ):
         """Test response includes database connection details"""
-        response = await client.get("/api/v1/health/db")
+        response = await client.get("/v1/health/db")
 
         assert response.status_code == 200
         data = response.json()
@@ -110,7 +110,7 @@ class TestDatabaseHealthCheck:
     @pytest.mark.asyncio
     async def test_health_db_no_auth_required(self, client: AsyncClient):
         """Test database health check accessible without authentication"""
-        response = await client.get("/api/v1/health/db")
+        response = await client.get("/v1/health/db")
 
         assert response.status_code == 200
 
@@ -136,7 +136,7 @@ class TestRedisHealthCheck:
         app.dependency_overrides[get_cache] = mock_get_cache
 
         try:
-            response = await client.get("/api/v1/health/redis")
+            response = await client.get("/v1/health/redis")
 
             assert response.status_code == 200
             data = response.json()
@@ -165,7 +165,7 @@ class TestRedisHealthCheck:
         app.dependency_overrides[get_cache] = mock_get_cache
 
         try:
-            response = await client.get("/api/v1/health/redis")
+            response = await client.get("/v1/health/redis")
 
             # Endpoint returns 200 but with unhealthy status
             assert response.status_code == 200
@@ -192,7 +192,7 @@ class TestRedisHealthCheck:
         app.dependency_overrides[get_cache] = mock_get_cache
 
         try:
-            response = await client.get("/api/v1/health/redis")
+            response = await client.get("/v1/health/redis")
 
             assert response.status_code == 200
             data = response.json()
@@ -221,7 +221,7 @@ class TestRedisHealthCheck:
         app.dependency_overrides[get_cache] = mock_get_cache
 
         try:
-            response = await client.get("/api/v1/health/redis")
+            response = await client.get("/v1/health/redis")
 
             assert response.status_code == 200
             data = response.json()
@@ -252,7 +252,7 @@ class TestRedisHealthCheck:
         app.dependency_overrides[get_cache] = mock_get_cache
 
         try:
-            response = await client.get("/api/v1/health/redis")
+            response = await client.get("/v1/health/redis")
             assert response.status_code == 200
         finally:
             app.dependency_overrides.clear()
@@ -264,7 +264,7 @@ class TestMetricsEndpoint:
     @pytest.mark.asyncio
     async def test_metrics_endpoint(self, client: AsyncClient):
         """Test GET /metrics returns Prometheus metrics"""
-        response = await client.get("/api/v1/metrics")
+        response = await client.get("/v1/metrics")
 
         assert response.status_code == 200
         # Prometheus metrics are in text format
@@ -273,14 +273,14 @@ class TestMetricsEndpoint:
     @pytest.mark.asyncio
     async def test_metrics_endpoint_no_auth_required(self, client: AsyncClient):
         """Test metrics endpoint accessible without authentication"""
-        response = await client.get("/api/v1/metrics")
+        response = await client.get("/v1/metrics")
 
         assert response.status_code == 200
 
     @pytest.mark.asyncio
     async def test_metrics_endpoint_format(self, client: AsyncClient):
         """Test metrics response is in Prometheus format"""
-        response = await client.get("/api/v1/metrics")
+        response = await client.get("/v1/metrics")
 
         assert response.status_code == 200
         content = response.text
@@ -300,7 +300,7 @@ class TestHealthCheckPerformance:
         import time
 
         start_time = time.time()
-        response = await client.get("/api/v1/health")
+        response = await client.get("/v1/health")
         elapsed_time = (time.time() - start_time) * 1000  # Convert to ms
 
         assert response.status_code == 200
@@ -315,7 +315,7 @@ class TestHealthCheckPerformance:
         import time
 
         start_time = time.time()
-        response = await client.get("/api/v1/health/db")
+        response = await client.get("/v1/health/db")
         elapsed_time = (time.time() - start_time) * 1000  # Convert to ms
 
         assert response.status_code == 200

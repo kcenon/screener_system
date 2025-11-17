@@ -193,7 +193,7 @@ app.add_exception_handler(Exception, generic_exception_handler)
 # ============================================================================
 
 # Include health check routes
-app.include_router(health.router)
+app.include_router(health.router, prefix="/v1")
 
 # Include authentication routes
 app.include_router(auth.router, prefix="/v1")
@@ -246,7 +246,7 @@ async def root():
         "message": "Welcome to Stock Screening Platform API",
         "version": settings.VERSION,
         "docs": "/docs",
-        "health": "/health",
+        "health": "/v1/health",
     }
 
 
