@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth import get_current_user
+from app.api.dependencies import get_current_user
 from app.db.models import Notification, NotificationPreference, User
 from app.db.session import get_db
 from app.schemas.notification import (
