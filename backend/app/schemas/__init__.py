@@ -26,8 +26,11 @@ from app.schemas.stock import (CalculatedIndicator, DailyPrice,
                                Stock, StockDetail, StockListItem,
                                StockListResponse, StockSearchQuery,
                                StockSearchResponse, StockSearchResult)
-from app.schemas.user import (RefreshTokenRequest, TokenPayload, TokenResponse,
-                              UserCreate, UserLogin, UserResponse, UserUpdate)
+from app.schemas.user import (EmailVerificationRequest, PasswordResetConfirm,
+                              PasswordResetRequest, RefreshTokenRequest,
+                              SuccessResponse, TokenPayload, TokenResponse,
+                              UserCreate, UserLogin, UserResponse, UserUpdate,
+                              VerificationStatusResponse)
 from app.schemas.watchlist import (
     DashboardSummary,
     ScreeningQuota,
@@ -55,6 +58,11 @@ __all__ = [
     "TokenPayload",
     "TokenResponse",
     "RefreshTokenRequest",
+    "EmailVerificationRequest",
+    "PasswordResetRequest",
+    "PasswordResetConfirm",
+    "VerificationStatusResponse",
+    "SuccessResponse",
     # Stock schemas
     "Stock",
     "StockDetail",

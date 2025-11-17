@@ -9,7 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.exceptions import UnauthorizedException
 from app.db.models import User
 from app.db.session import get_db
-from app.services import AuthService
+from app.services import (AuthService, EmailVerificationService,
+                          PasswordResetService)
 from app.services.watchlist_service import WatchlistService
 
 # HTTP Bearer token scheme
@@ -28,6 +29,20 @@ async def get_watchlist_service(
 ) -> WatchlistService:
     """Get WatchlistService instance with database session"""
     return WatchlistService(db)
+
+
+async def get_email_verification_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> EmailVerificationService:
+    """Get EmailVerificationService instance with database session"""
+    return EmailVerificationService(db)
+
+
+async def get_password_reset_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> PasswordResetService:
+    """Get PasswordResetService instance with database session"""
+    return PasswordResetService(db)
 
 
 async def get_current_user(
