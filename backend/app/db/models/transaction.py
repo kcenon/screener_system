@@ -41,7 +41,7 @@ class Transaction(Base, TimestampMixin):
 
     # Foreign Keys
     portfolio_id = Column(Integer, ForeignKey("portfolios.id", ondelete="CASCADE"), nullable=False, index=True)
-    stock_symbol = Column(String(20), ForeignKey("stocks.symbol", ondelete="RESTRICT"), nullable=False, index=True)
+    stock_symbol = Column(String(20), ForeignKey("stocks.code", ondelete="RESTRICT"), nullable=False, index=True)
 
     # Transaction Details
     transaction_type = Column(String(10), nullable=False, index=True)

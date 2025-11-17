@@ -30,7 +30,7 @@ class Holding(BaseModel):
 
     # Foreign Keys
     portfolio_id = Column(Integer, ForeignKey("portfolios.id", ondelete="CASCADE"), nullable=False, index=True)
-    stock_symbol = Column(String(20), ForeignKey("stocks.symbol", ondelete="RESTRICT"), nullable=False, index=True)
+    stock_symbol = Column(String(20), ForeignKey("stocks.code", ondelete="RESTRICT"), nullable=False, index=True)
 
     # Position Information
     shares = Column(DECIMAL(18, 8), nullable=False)
