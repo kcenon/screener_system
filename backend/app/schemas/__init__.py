@@ -14,6 +14,23 @@ from app.schemas.market import (
     SectorPerformanceResponse,
     TopStock,
 )
+from app.schemas.portfolio import (
+    HoldingCreate,
+    HoldingListResponse,
+    HoldingResponse,
+    HoldingUpdate,
+    PortfolioAllocation,
+    PortfolioCreate,
+    PortfolioListResponse,
+    PortfolioPerformance,
+    PortfolioResponse,
+    PortfolioSummary,
+    PortfolioUpdate,
+    TransactionCreate,
+    TransactionListResponse,
+    TransactionResponse,
+    TransactionType,
+)
 from app.schemas.screening import (FilterRange, ScreenedStock,
                                    ScreeningFilters, ScreeningMetadata,
                                    ScreeningRequest, ScreeningResponse,
@@ -120,4 +137,22 @@ __all__ = [
     "UserPreferencesCreate",
     "UserPreferencesUpdate",
     "UserPreferencesResponse",
+    # Portfolio schemas
+    "PortfolioCreate",
+    "PortfolioUpdate",
+    "PortfolioResponse",
+    "PortfolioListResponse",
+    "PortfolioSummary",
+    "PortfolioPerformance",
+    "PortfolioAllocation",
+    # Holding schemas
+    "HoldingCreate",
+    "HoldingUpdate",
+    "HoldingResponse",
+    "HoldingListResponse",
+    # Transaction schemas
+    "TransactionType",
+    "TransactionCreate",
+    "TransactionResponse",
+    "TransactionListResponse",
 ]
