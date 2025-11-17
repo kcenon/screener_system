@@ -1,11 +1,14 @@
 """Database models package"""
 
+from app.db.models.alert import Alert
 from app.db.models.calculated_indicator import CalculatedIndicator
 from app.db.models.daily_price import DailyPrice
 from app.db.models.email_verification_token import EmailVerificationToken
 from app.db.models.financial_statement import FinancialStatement
 from app.db.models.holding import Holding
 from app.db.models.market_index import MarketIndex
+from app.db.models.notification import Notification
+from app.db.models.notification_preference import NotificationPreference
 from app.db.models.password_reset_token import PasswordResetToken
 from app.db.models.portfolio import Portfolio
 from app.db.models.stock import Stock
@@ -20,21 +23,24 @@ from app.db.models.watchlist import (
 )
 
 __all__ = [
-    "User",
-    "UserSession",
-    "Stock",
-    "DailyPrice",
-    "FinancialStatement",
+    "Alert",
     "CalculatedIndicator",
-    "MarketIndex",
-    "Watchlist",
-    "WatchlistStock",
-    "UserActivity",
-    "UserPreferences",
+    "DailyPrice",
     "EmailVerificationToken",
+    "FinancialStatement",
+    "Holding",
+    "MarketIndex",
+    "Notification",
+    "NotificationPreference",
     "PasswordResetToken",
     "Portfolio",
-    "Holding",
+    "Stock",
     "Transaction",
     "TransactionType",
+    "User",
+    "UserActivity",
+    "UserPreferences",
+    "UserSession",
+    "Watchlist",
+    "WatchlistStock",
 ]

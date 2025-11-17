@@ -72,6 +72,25 @@ class User(BaseModel):
         uselist=False,
         lazy="select",
     )
+    alerts = relationship(
+        "Alert",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    notifications = relationship(
+        "Notification",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    notification_preference = relationship(
+        "NotificationPreference",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="select",
+    )
 
     # Constraints
     __table_args__ = (
