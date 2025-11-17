@@ -19,6 +19,11 @@ export const AlertList: React.FC = () => {
     isToggling,
   } = useAlerts()
 
+  // Wrapper to match AlertCard's expected signature
+  const handleToggle = async (id: number): Promise<void> => {
+    await toggleAlert(id)
+  }
+
   if (isLoading) {
     return (
       <div className="p-8 text-center">
@@ -58,7 +63,7 @@ export const AlertList: React.FC = () => {
         <AlertCard
           key={alert.id}
           alert={alert}
-          onToggle={toggleAlert}
+          onToggle={handleToggle}
           onDelete={deleteAlert}
           isToggling={isToggling}
           isDeleting={isDeleting}

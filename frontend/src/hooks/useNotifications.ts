@@ -8,8 +8,7 @@
  * @category Hooks
  */
 
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tantml:invoke>
-<parameter name="import { useState } from 'react'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   type Notification,
   NotificationPriority,

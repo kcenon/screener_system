@@ -9,7 +9,6 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
 import { alertService, type Alert, type AlertCreate, type AlertUpdate } from '../services/alertService'
 
 /**
@@ -65,7 +64,6 @@ export const alertsQueryKey = () => ['alerts'] as const
  */
 export function useAlerts() {
   const queryClient = useQueryClient()
-  const [optimisticAlerts, setOptimisticAlerts] = useState<Alert[]>([])
 
   // Fetch all alerts
   const {

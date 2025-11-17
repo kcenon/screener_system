@@ -143,7 +143,8 @@ class NotificationService {
     is_read?: boolean
     priority?: NotificationPriority
   }): Promise<NotificationListResponse> {
-    return api.get<NotificationListResponse>(this.basePath, { params })
+    const response = await api.get<NotificationListResponse>(this.basePath, { params })
+    return response.data
   }
 
   /**
@@ -158,7 +159,7 @@ class NotificationService {
    */
   async getUnreadCount(): Promise<number> {
     const response = await api.get<UnreadCountResponse>(`${this.basePath}/unread`)
-    return response.unread_count
+    return response.data.unread_count
   }
 
   /**
@@ -187,7 +188,7 @@ class NotificationService {
    */
   async markAllAsRead(): Promise<number> {
     const response = await api.post<{ marked_count: number }>(`${this.basePath}/read-all`)
-    return response.marked_count
+    return response.data.marked_count
   }
 
   /**
@@ -215,7 +216,8 @@ class NotificationService {
    * ```
    */
   async getPreferences(): Promise<NotificationPreference> {
-    return api.get<NotificationPreference>(`${this.basePath}/preferences`)
+    const response = await api.get<NotificationPreference>(`${this.basePath}/preferences`)
+    return response.data
   }
 
   /**
@@ -233,7 +235,8 @@ class NotificationService {
    * ```
    */
   async updatePreferences(data: NotificationPreferenceUpdate): Promise<NotificationPreference> {
-    return api.put<NotificationPreference>(`${this.basePath}/preferences`, data)
+    const response = await api.put<NotificationPreference>(`${this.basePath}/preferences`, data)
+    return response.data
   }
 
   /**

@@ -123,7 +123,7 @@ class AlertService {
     is_active?: boolean
   }): Promise<Alert[]> {
     const response = await api.get<AlertListResponse>(this.basePath, { params })
-    return response.items
+    return response.data.items
   }
 
   /**
@@ -138,7 +138,8 @@ class AlertService {
    * ```
    */
   async getAlert(id: number): Promise<Alert> {
-    return api.get<Alert>(`${this.basePath}/${id}`)
+    const response = await api.get<Alert>(`${this.basePath}/${id}`)
+    return response.data
   }
 
   /**
@@ -158,7 +159,8 @@ class AlertService {
    * ```
    */
   async createAlert(data: AlertCreate): Promise<Alert> {
-    return api.post<Alert>(this.basePath, data)
+    const response = await api.post<Alert>(this.basePath, data)
+    return response.data
   }
 
   /**
@@ -176,7 +178,8 @@ class AlertService {
    * ```
    */
   async updateAlert(id: number, data: AlertUpdate): Promise<Alert> {
-    return api.put<Alert>(`${this.basePath}/${id}`, data)
+    const response = await api.put<Alert>(`${this.basePath}/${id}`, data)
+    return response.data
   }
 
   /**
@@ -207,7 +210,7 @@ class AlertService {
    */
   async toggleAlert(id: number): Promise<Alert> {
     const response = await api.post<AlertToggleResponse>(`${this.basePath}/${id}/toggle`)
-    return response.alert
+    return response.data.alert
   }
 
   /**

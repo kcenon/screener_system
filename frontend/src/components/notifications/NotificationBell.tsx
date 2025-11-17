@@ -8,7 +8,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useUnreadCount } from '../../hooks/useUnreadCount'
-import { useNotifications } from '../../hooks/useNotifications'
 import { NotificationList } from './NotificationList'
 
 export const NotificationBell: React.FC = () => {
