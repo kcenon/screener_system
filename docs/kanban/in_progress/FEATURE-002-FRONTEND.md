@@ -18,8 +18,8 @@ Implement the frontend UI for the Portfolio Management System. The backend API (
 ## Current Status
 
 - **Backend**: ✅ 100% Complete (PR #144 merged)
-- **Frontend**: 🚧 0% → In Progress
-- **Overall Progress**: 60% → 80% (target)
+- **Frontend**: 🚧 85% → Near Complete
+- **Overall Progress**: 60% → 92% (target: 100%)
 
 ### Backend API Available (✅ Complete)
 - Portfolio CRUD (7 endpoints)
@@ -28,13 +28,22 @@ Implement the frontend UI for the Portfolio Management System. The backend API (
 - Performance calculations
 - Allocation calculations
 
-### Frontend To-Do (🚧 In Progress)
-- [ ] Custom hooks for API integration
-- [ ] Core pages (List, Detail, Edit, Transactions)
-- [ ] Components (Cards, Tables, Forms)
-- [ ] Charts (Performance, Allocation)
-- [ ] Mobile responsive design
-- [ ] Integration tests
+### Frontend Implementation (✅ Mostly Complete)
+- [x] Custom hooks for API integration (100%)
+  - [x] usePortfolios.ts
+  - [x] usePortfolioDetail.ts
+  - [x] usePortfolioPerformance.ts (includes allocation)
+  - [x] useTransactions.ts
+- [x] Core pages (100%)
+  - [x] PortfolioListPage.tsx
+  - [x] PortfolioDetailPage.tsx
+- [x] Charts (100%)
+  - [x] PerformanceChart.tsx (bar chart)
+  - [x] AllocationChart.tsx (pie/donut charts)
+- [ ] Testing (0%)
+  - [ ] Component tests
+  - [ ] Integration tests
+- [ ] Documentation updates (0%)
 
 ---
 
@@ -289,9 +298,26 @@ frontend/src/
 
 ## Progress Tracking
 
-- [ ] Phase 1: API Integration & Hooks (5h) - 0%
-- [ ] Phase 2: Core Pages & Components (8h) - 0%
-- [ ] Phase 3: Charts & Visualizations (4h) - 0%
+- [x] Phase 1: API Integration & Hooks (5h) - 100% ✅
+  - [x] portfolioService.ts (API client)
+  - [x] usePortfolios.ts
+  - [x] usePortfolioDetail.ts
+  - [x] usePortfolioPerformance.ts (includes allocation)
+  - [x] useTransactions.ts
+- [x] Phase 2: Core Pages & Components (8h) - 100% ✅
+  - [x] PortfolioListPage.tsx (with grid layout, metrics)
+  - [x] PortfolioDetailPage.tsx (with inline components)
+  - [x] Performance metrics display
+  - [x] Holdings table
+  - [x] Transaction form & history
+- [x] Phase 3: Charts & Visualizations (4h) - 100% ✅
+  - [x] PerformanceChart.tsx (bar chart with metrics)
+  - [x] AllocationChart.tsx (pie/donut charts)
+  - [x] Integrated into PortfolioDetailPage
 - [ ] Phase 4: Testing & Polish (3-5h) - 0%
+  - [ ] Component tests
+  - [ ] Integration tests
+  - [ ] Mobile responsive testing
 
-**Total Progress**: 0% → 100% (Target: 15-20h)
+**Total Progress**: 17h completed / 20h estimated (85% complete)
+**Commits**: 4 commits (API client, hooks, pages, charts)
