@@ -160,7 +160,7 @@ class PortfolioService:
 
         return await self.portfolio_repo.update(portfolio)
 
-    async def delete_portfolio(self, portfolio_id: int, user_id: int) -> None:
+    async def delete_portfolio(self, portfolio_id: int, user_id: int) -> bool:
         """
         Delete portfolio (cascades to holdings and transactions)
 
@@ -168,14 +168,15 @@ class PortfolioService:
             portfolio_id: Portfolio ID
             user_id: User ID (for ownership check)
 
-        Raises:
-            ValueError: If portfolio not found
+        Returns:
+            True if deleted, False if not found
         """
         portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
         if not portfolio:
-            raise ValueError("Portfolio not found")
+            return False
 
         await self.portfolio_repo.delete(portfolio)
+        return True
 
     async def add_manual_holding(
         self, portfolio_id: int, user_id: int, user_tier: str, data: HoldingCreate
@@ -252,14 +253,14 @@ class PortfolioService:
         await self.holding_repo.delete(holding)
 
     async def get_portfolio_holdings(
-        self, portfolio_id: int, user_id: int, active_only: bool = True
+        self, portfolio_id: int, user_id: int = None, active_only: bool = True
     ) -> list[Holding]:
         """
         Get all holdings for a portfolio
 
         Args:
             portfolio_id: Portfolio ID
-            user_id: User ID (for ownership check)
+            user_id: User ID (for ownership check, optional)
             active_only: If True, only return holdings with shares > 0
 
         Returns:
@@ -268,46 +269,300 @@ class PortfolioService:
         Raises:
             ValueError: If portfolio not found
         """
-        # Check ownership
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
-        if not portfolio:
-            raise ValueError("Portfolio not found")
+        # Check ownership if user_id provided
+        if user_id:
+            portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+            if not portfolio:
+                raise ValueError("Portfolio not found")
 
         return await self.holding_repo.get_portfolio_holdings(portfolio_id, active_only)
 
+    async def add_holding(
+        self, portfolio_id: int, user_id: int, user_tier: str, data: HoldingCreate
+    ) -> Holding:
+        """Alias for add_manual_holding for API consistency"""
+        return await self.add_manual_holding(portfolio_id, user_id, user_tier, data)
 
-class TransactionService:
-    """Service for transaction operations"""
-
-    def __init__(self, session: AsyncSession):
-        """Initialize service with database session"""
-        self.session = session
-        self.portfolio_repo = PortfolioRepository(session)
-        self.holding_repo = HoldingRepository(session)
-        self.transaction_repo = TransactionRepository(session)
-        self.stock_repo = StockRepository(session)
-
-    async def record_transaction(
-        self, portfolio_id: int, user_id: int, data: TransactionCreate
-    ) -> tuple[Transaction, Holding]:
+    async def update_holding(
+        self, holding_id: int, portfolio_id: int, user_id: int, data: HoldingUpdate
+    ) -> Optional[Holding]:
         """
-        Record a buy or sell transaction and update holdings
+        Update a holding
+
+        Args:
+            holding_id: Holding ID
+            portfolio_id: Portfolio ID
+            user_id: User ID (for ownership check)
+            data: Update data
+
+        Returns:
+            Updated holding or None if not found
+        """
+        holding = await self.holding_repo.get_by_id(holding_id)
+        if not holding or holding.portfolio_id != portfolio_id:
+            return None
+
+        # Check ownership
+        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        if not portfolio:
+            return None
+
+        # Update fields
+        if data.shares is not None:
+            holding.shares = data.shares
+        if data.average_cost is not None:
+            holding.average_cost = data.average_cost
+        holding.last_update_date = datetime.now()
+
+        return await self.holding_repo.update(holding)
+
+    async def delete_holding(
+        self, holding_id: int, portfolio_id: int, user_id: int
+    ) -> bool:
+        """
+        Delete a holding
+
+        Args:
+            holding_id: Holding ID
+            portfolio_id: Portfolio ID
+            user_id: User ID (for ownership check)
+
+        Returns:
+            True if deleted, False if not found
+        """
+        holding = await self.holding_repo.get_by_id(holding_id)
+        if not holding or holding.portfolio_id != portfolio_id:
+            return False
+
+        # Check ownership
+        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        if not portfolio:
+            return False
+
+        await self.holding_repo.delete(holding)
+        return True
+
+    async def get_holding_with_price(self, holding_id: int):
+        """
+        Get holding with current price (simplified)
+
+        Args:
+            holding_id: Holding ID
+
+        Returns:
+            HoldingResponse with current price
+        """
+        from app.schemas.portfolio import HoldingResponse
+        from decimal import Decimal
+
+        holding = await self.holding_repo.get_by_id(holding_id)
+        if not holding:
+            return None
+
+        # Get current stock price
+        stock = await self.stock_repo.get_by_code(holding.stock_symbol)
+        current_price = Decimal(str(stock.current_price)) if stock and stock.current_price else None
+
+        # Calculate current value and gains
+        total_cost = holding.total_cost
+        current_value = (Decimal(str(holding.shares)) * current_price) if current_price else None
+        unrealized_gain = (current_value - Decimal(str(total_cost))) if current_value else None
+        return_percent = (
+            (unrealized_gain / Decimal(str(total_cost)) * 100) if current_value and total_cost > 0 else None
+        )
+
+        return HoldingResponse(
+            id=holding.id,
+            portfolio_id=holding.portfolio_id,
+            stock_symbol=holding.stock_symbol,
+            stock_name=stock.name_kr if stock else None,
+            sector=stock.sector if stock else None,
+            shares=holding.shares,
+            average_cost=holding.average_cost,
+            current_price=current_price,
+            total_cost=total_cost,
+            current_value=current_value,
+            unrealized_gain=unrealized_gain,
+            return_percent=return_percent,
+            first_purchase_date=holding.first_purchase_date,
+            last_update_date=holding.last_update_date,
+            created_at=holding.created_at,
+            updated_at=holding.updated_at,
+        )
+
+    async def get_portfolio_performance(self, portfolio_id: int):
+        """
+        Get portfolio performance metrics (simplified)
 
         Args:
             portfolio_id: Portfolio ID
-            user_id: User ID (for ownership check)
+
+        Returns:
+            PortfolioPerformance or None
+        """
+        from app.schemas.portfolio import PortfolioPerformance
+        from decimal import Decimal
+
+        holdings = await self.holding_repo.get_portfolio_holdings(portfolio_id, active_only=True)
+        if not holdings:
+            return None
+
+        total_cost = Decimal("0")
+        total_value = Decimal("0")
+
+        best_performer = None
+        worst_performer = None
+        best_return = Decimal("-999999")
+        worst_return = Decimal("999999")
+
+        for holding in holdings:
+            stock = await self.stock_repo.get_by_code(holding.stock_symbol)
+            if not stock or not stock.current_price:
+                continue
+
+            cost = Decimal(str(holding.total_cost))
+            value = Decimal(str(holding.shares)) * Decimal(str(stock.current_price))
+            return_pct = ((value - cost) / cost * 100) if cost > 0 else Decimal("0")
+
+            total_cost += cost
+            total_value += value
+
+            if return_pct > best_return:
+                best_return = return_pct
+                best_performer = {
+                    "symbol": holding.stock_symbol,
+                    "name": stock.name_kr,
+                    "return_percent": float(return_pct),
+                }
+
+            if return_pct < worst_return:
+                worst_return = return_pct
+                worst_performer = {
+                    "symbol": holding.stock_symbol,
+                    "name": stock.name_kr,
+                    "return_percent": float(return_pct),
+                }
+
+        if total_cost == 0:
+            return None
+
+        unrealized_gain = total_value - total_cost
+        return_percent = (unrealized_gain / total_cost * 100)
+
+        return PortfolioPerformance(
+            portfolio_id=portfolio_id,
+            total_cost=total_cost,
+            total_value=total_value,
+            unrealized_gain=unrealized_gain,
+            return_percent=return_percent,
+            day_change=Decimal("0"),  # TODO: Calculate from price history
+            day_change_percent=Decimal("0"),  # TODO: Calculate from price history
+            realized_gain=Decimal("0"),  # TODO: Calculate from transactions
+            best_performer=best_performer,
+            worst_performer=worst_performer,
+        )
+
+    async def get_portfolio_allocation(self, portfolio_id: int):
+        """
+        Get portfolio allocation breakdown (simplified)
+
+        Args:
+            portfolio_id: Portfolio ID
+
+        Returns:
+            PortfolioAllocation or None
+        """
+        from app.schemas.portfolio import PortfolioAllocation
+        from decimal import Decimal
+        from collections import defaultdict
+
+        holdings = await self.holding_repo.get_portfolio_holdings(portfolio_id, active_only=True)
+        if not holdings:
+            return None
+
+        total_value = Decimal("0")
+        by_stock = []
+        by_sector = defaultdict(Decimal)
+
+        for holding in holdings:
+            stock = await self.stock_repo.get_by_code(holding.stock_symbol)
+            if not stock or not stock.current_price:
+                continue
+
+            value = Decimal(str(holding.shares)) * Decimal(str(stock.current_price))
+            total_value += value
+
+            by_stock.append({
+                "symbol": holding.stock_symbol,
+                "name": stock.name_kr,
+                "value": float(value),
+                "percent": 0,  # Will calculate after total
+            })
+
+            sector = stock.sector or "Unknown"
+            by_sector[sector] += value
+
+        # Calculate percentages
+        if total_value > 0:
+            for item in by_stock:
+                item["percent"] = (Decimal(str(item["value"])) / total_value * 100)
+                item["percent"] = float(item["percent"])
+
+        by_sector_list = [
+            {
+                "sector": sector,
+                "value": float(value),
+                "percent": float(value / total_value * 100) if total_value > 0 else 0,
+            }
+            for sector, value in by_sector.items()
+        ]
+
+        return PortfolioAllocation(
+            portfolio_id=portfolio_id,
+            by_stock=by_stock,
+            by_sector=by_sector_list,
+            by_market_cap={"large": 0, "mid": 0, "small": 0},  # TODO: Implement market cap classification
+        )
+
+    async def get_portfolio_transactions(
+        self, portfolio_id: int, skip: int = 0, limit: int = 100
+    ) -> tuple[list[Transaction], int]:
+        """
+        Get portfolio transactions (wrapper for consistency)
+
+        Args:
+            portfolio_id: Portfolio ID
+            skip: Number to skip
+            limit: Maximum results
+
+        Returns:
+            Tuple of (transactions, total_count)
+        """
+        transactions = await self.transaction_repo.get_portfolio_transactions(
+            portfolio_id, skip, limit, stock_symbol=None
+        )
+        total = await self.transaction_repo.count_portfolio_transactions(
+            portfolio_id, stock_symbol=None
+        )
+        return transactions, total
+
+    async def record_transaction(
+        self, portfolio_id: int, user_id: int, user_tier: str, data: TransactionCreate
+    ) -> Transaction:
+        """
+        Record a transaction (wrapper using TransactionService)
+
+        Args:
+            portfolio_id: Portfolio ID
+            user_id: User ID
+            user_tier: User tier (for limits)
             data: Transaction data
 
         Returns:
-            Tuple of (created transaction, updated/created holding)
-
-        Raises:
-            ValueError: If validation fails or insufficient shares for sell
+            Created transaction
         """
         # Check portfolio ownership
-        portfolio = await self.portfolio_repo.get_by_id(
-            portfolio_id, user_id, load_holdings=False
-        )
+        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
         if not portfolio:
             raise ValueError("Portfolio not found")
 
@@ -321,9 +576,9 @@ class TransactionService:
 
         # Process transaction based on type
         if data.transaction_type == TransactionType.BUY:
-            holding = await self._process_buy(portfolio_id, holding, data)
+            holding = await self._process_buy_transaction(portfolio_id, holding, data)
         else:  # SELL
-            holding = await self._process_sell(holding, data)
+            holding = await self._process_sell_transaction(holding, data)
 
         # Create transaction record
         transaction = Transaction(
@@ -340,9 +595,9 @@ class TransactionService:
 
         await self.session.commit()
 
-        return transaction, holding
+        return transaction
 
-    async def _process_buy(
+    async def _process_buy_transaction(
         self, portfolio_id: int, holding: Optional[Holding], data: TransactionCreate
     ) -> Holding:
         """Process buy transaction"""
@@ -359,13 +614,16 @@ class TransactionService:
             holding = await self.holding_repo.create(holding)
         else:
             # Update existing holding with weighted average cost
-            holding.update_average_cost(data.shares, data.price)
+            total_shares = Decimal(str(holding.shares)) + data.shares
+            total_cost = (Decimal(str(holding.shares)) * Decimal(str(holding.average_cost))) + (data.shares * data.price)
+            holding.shares = total_shares
+            holding.average_cost = total_cost / total_shares
             holding.last_update_date = datetime.now()
             holding = await self.holding_repo.update(holding)
 
         return holding
 
-    async def _process_sell(
+    async def _process_sell_transaction(
         self, holding: Optional[Holding], data: TransactionCreate
     ) -> Holding:
         """Process sell transaction"""
@@ -378,79 +636,35 @@ class TransactionService:
             )
 
         # Reduce shares
-        holding.reduce_shares(data.shares)
+        holding.shares = Decimal(str(holding.shares)) - data.shares
         holding.last_update_date = datetime.now()
         holding = await self.holding_repo.update(holding)
 
         return holding
 
-    async def get_portfolio_transactions(
-        self,
-        portfolio_id: int,
-        user_id: int,
-        skip: int = 0,
-        limit: int = 100,
-        stock_symbol: Optional[str] = None,
-    ) -> tuple[list[Transaction], int]:
-        """
-        Get transactions for a portfolio
-
-        Args:
-            portfolio_id: Portfolio ID
-            user_id: User ID (for ownership check)
-            skip: Number to skip (pagination)
-            limit: Maximum results
-            stock_symbol: Optional filter by stock
-
-        Returns:
-            Tuple of (transactions, total_count)
-
-        Raises:
-            ValueError: If portfolio not found
-        """
-        # Check ownership
-        portfolio = await self.portfolio_repo.get_by_id(
-            portfolio_id, user_id, load_holdings=False
-        )
-        if not portfolio:
-            raise ValueError("Portfolio not found")
-
-        transactions = await self.transaction_repo.get_portfolio_transactions(
-            portfolio_id, skip, limit, stock_symbol
-        )
-        total = await self.transaction_repo.count_portfolio_transactions(
-            portfolio_id, stock_symbol
-        )
-
-        return transactions, total
-
     async def delete_transaction(
-        self, transaction_id: int, user_id: int
-    ) -> None:
+        self, transaction_id: int, portfolio_id: int, user_id: int
+    ) -> bool:
         """
-        Delete transaction (WARNING: Does not reverse holding changes)
+        Delete a transaction
 
         Args:
             transaction_id: Transaction ID
+            portfolio_id: Portfolio ID
             user_id: User ID (for ownership check)
 
-        Raises:
-            ValueError: If transaction not found
-
-        Note:
-            This only deletes the transaction record. It does NOT reverse the
-            changes made to holdings. Manual adjustment of holdings required.
+        Returns:
+            True if deleted, False if not found
         """
         transaction = await self.transaction_repo.get_by_id(transaction_id)
-        if not transaction:
-            raise ValueError("Transaction not found")
+        if not transaction or transaction.portfolio_id != portfolio_id:
+            return False
 
-        # Check ownership through portfolio
-        portfolio = await self.portfolio_repo.get_by_id(
-            transaction.portfolio_id, user_id, load_holdings=False
-        )
+        # Check ownership
+        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
         if not portfolio:
-            raise ValueError("Transaction not found or not owned by user")
+            return False
 
         await self.transaction_repo.delete(transaction)
         await self.session.commit()
+        return True
