@@ -5,6 +5,8 @@ export interface User {
   name: string
   tier: 'free' | 'basic' | 'premium'
   is_active: boolean
+  email_verified: boolean
+  email_verified_at: string | null
   created_at: string
 }
 
