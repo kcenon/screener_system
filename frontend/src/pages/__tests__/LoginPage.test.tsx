@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { BrowserRouter, MemoryRouter } from 'react-router-dom'
+import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import LoginPage from '../LoginPage'
 import * as useAuthModule from '@/hooks/useAuth'
@@ -308,7 +308,6 @@ describe('LoginPage', () => {
 
       // react-hook-form validation should show error
       await waitFor(() => {
-        const errorMessage = screen.queryByText(/invalid email address/i)
         // The validation might not trigger due to browser HTML5 validation
         // So we just check that login was not called
         expect(mockLogin).not.toHaveBeenCalled()
