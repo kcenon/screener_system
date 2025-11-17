@@ -11,6 +11,7 @@ from app.repositories import HoldingRepository, PortfolioRepository, Transaction
 from app.repositories.stock_repository import StockRepository
 from app.schemas.portfolio import (
     HoldingCreate,
+    HoldingUpdate,
     PortfolioCreate,
     PortfolioUpdate,
     TransactionCreate,
