@@ -28,9 +28,9 @@ vi.mock('@/components/stock/StockHeader', () => ({
     <div data-testid="stock-header">
       <h1>{stock.name}</h1>
       <span data-testid="stock-code">{stock.code}</span>
-      <span data-testid="stock-price">{stock.price}</span>
-      <span data-testid="stock-change" className={stock.change >= 0 ? 'text-green-600' : 'text-red-600'}>
-        {stock.change > 0 ? '+' : ''}{stock.change}
+      <span data-testid="stock-price">{stock.current_price}</span>
+      <span data-testid="stock-change" className={(stock.price_change_1d ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}>
+        {(stock.price_change_1d ?? 0) > 0 ? '+' : ''}{stock.price_change_1d}
       </span>
     </div>
   ),
@@ -73,10 +73,9 @@ const mockStockDetail: StockDetail = {
   name: 'Samsung Electronics',
   market: 'KOSPI',
   sector: 'Technology',
-  price: 75000,
-  change: 1500,
-  change_pct: 2.04,
-  volume: 15000000,
+  current_price: 75000,
+  price_change_1d: 1500,
+  current_volume: 15000000,
   market_cap: 450000000000000,
   per: 15.5,
   pbr: 1.2,
@@ -296,7 +295,7 @@ describe('StockDetailPage Data Display', () => {
 
   test('displays positive price change in green', async () => {
     vi.mocked(useStockDataModule.useStockData).mockReturnValue({
-      data: { ...mockStockDetail, change: 1000 },
+      data: { ...mockStockDetail, price_change_1d: 1000 },
       isLoading: false,
       error: null,
     } as any)
@@ -319,7 +318,7 @@ describe('StockDetailPage Data Display', () => {
 
   test('displays negative price change in red', async () => {
     vi.mocked(useStockDataModule.useStockData).mockReturnValue({
-      data: { ...mockStockDetail, change: -1000 },
+      data: { ...mockStockDetail, price_change_1d: -1000 },
       isLoading: false,
       error: null,
     } as any)
