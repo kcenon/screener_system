@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -25,7 +25,7 @@ export default function ResetPasswordPage() {
   } = useForm<ResetPasswordForm>()
 
   // Validate token on page load
-  const { data: tokenValidation, isLoading: isValidating, isError: isTokenInvalid } = useQuery({
+  const { isLoading: isValidating, isError: isTokenInvalid } = useQuery({
     queryKey: ['validate-reset-token', token],
     queryFn: () => authService.validateResetToken(token!),
     enabled: !!token,
