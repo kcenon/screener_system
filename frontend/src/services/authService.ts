@@ -5,6 +5,11 @@ import type {
   TokenResponse,
   RefreshTokenRequest,
   User,
+  EmailVerificationRequest,
+  VerificationStatusResponse,
+  PasswordResetRequest,
+  PasswordResetConfirm,
+  SuccessResponse,
 } from '../types'
 
 /**
@@ -108,6 +113,72 @@ class AuthService {
    */
   isAuthenticated(): boolean {
     return !!this.getAccessToken()
+  }
+
+  /**
+   * Verify email address with verification token
+   */
+  async verifyEmail(data: EmailVerificationRequest): Promise<SuccessResponse> {
+    const response = await api.post<SuccessResponse>(
+      `${this.AUTH_BASE_URL}/verify-email`,
+      data
+    )
+    return response.data
+  }
+
+  /**
+   * Resend verification email to current user
+   */
+  async resendVerificationEmail(): Promise<SuccessResponse> {
+    const response = await api.post<SuccessResponse>(
+      `${this.AUTH_BASE_URL}/resend-verification`
+    )
+    return response.data
+  }
+
+  /**
+   * Get email verification status for current user
+   */
+  async getVerificationStatus(): Promise<VerificationStatusResponse> {
+    const response = await api.get<VerificationStatusResponse>(
+      `${this.AUTH_BASE_URL}/verification-status`
+    )
+    return response.data
+  }
+
+  /**
+   * Request password reset for email address
+   */
+  async requestPasswordReset(data: PasswordResetRequest): Promise<SuccessResponse> {
+    const response = await api.post<SuccessResponse>(
+      `${this.AUTH_BASE_URL}/forgot-password`,
+      data
+    )
+    return response.data
+  }
+
+  /**
+   * Validate password reset token
+   */
+  async validateResetToken(token: string): Promise<SuccessResponse> {
+    const response = await api.get<SuccessResponse>(
+      `${this.AUTH_BASE_URL}/validate-reset-token`,
+      { params: { token } }
+    )
+    return response.data
+  }
+
+  /**
+   * Reset password with token and new password
+   */
+  async resetPassword(data: PasswordResetConfirm): Promise<SuccessResponse> {
+    const response = await api.post<SuccessResponse>(
+      `${this.AUTH_BASE_URL}/reset-password`,
+      data
+    )
+    // Clear tokens after password reset (user is logged out)
+    this.clearTokens()
+    return response.data
   }
 }
 

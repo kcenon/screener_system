@@ -430,7 +430,7 @@ describe('LoginPage', () => {
 
       const forgotPasswordLink = screen.getByText(/forgot your password\?/i)
       expect(forgotPasswordLink).toBeInTheDocument()
-      expect(forgotPasswordLink).toHaveAttribute('href', '#')
+      expect(forgotPasswordLink).toHaveAttribute('href', '/forgot-password')
     })
   })
 

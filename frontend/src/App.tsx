@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Navbar, Breadcrumb } from './components/navigation'
 import { GlobalMarketBar } from './components/layout'
+import EmailVerificationBanner from './components/auth/EmailVerificationBanner'
 import { useTheme } from './hooks/useTheme'
 import { initializeCSSVariables } from './design-system/tokens'
 
@@ -18,6 +19,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar />
+      <EmailVerificationBanner />
       <GlobalMarketBar />
       <Breadcrumb />
       <main>
