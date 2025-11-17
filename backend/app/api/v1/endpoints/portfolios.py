@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import CurrentUser
-from app.db.models import User
 from app.db.session import get_db
 from app.schemas.portfolio import (
     HoldingCreate,
@@ -34,7 +33,7 @@ def get_portfolio_service(db: AsyncSession = Depends(get_db)) -> PortfolioServic
     return PortfolioService(db)
 
 
-def get_user_tier(current_user: User) -> str:
+def get_user_tier(current_user: CurrentUser) -> str:
     """Get user subscription tier"""
     # TODO: Implement subscription tier logic when subscription system is ready
     # For now, return 'free' for all users
