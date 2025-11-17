@@ -108,8 +108,8 @@ class HoldingBase(BaseModel):
     """Base holding schema"""
 
     stock_symbol: str = Field(..., pattern="^[0-9]{6}$")
-    shares: Decimal = Field(..., ge=0, decimal_places=8)
-    average_cost: Decimal = Field(..., ge=0, decimal_places=2)
+    shares: Decimal = Field(..., ge=0)
+    average_cost: Decimal = Field(..., ge=0)
 
     @field_validator("shares")
     @classmethod
@@ -137,8 +137,8 @@ class HoldingCreate(HoldingBase):
 class HoldingUpdate(BaseModel):
     """Schema for updating a holding"""
 
-    shares: Optional[Decimal] = Field(None, ge=0, decimal_places=8)
-    average_cost: Optional[Decimal] = Field(None, ge=0, decimal_places=2)
+    shares: Optional[Decimal] = Field(None, ge=0)
+    average_cost: Optional[Decimal] = Field(None, ge=0)
 
 
 class HoldingResponse(HoldingBase):
@@ -182,9 +182,9 @@ class TransactionBase(BaseModel):
 
     stock_symbol: str = Field(..., pattern="^[0-9]{6}$")
     transaction_type: TransactionType
-    shares: Decimal = Field(..., gt=0, decimal_places=8)
-    price: Decimal = Field(..., ge=0, decimal_places=2)
-    commission: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=2)
+    shares: Decimal = Field(..., gt=0)
+    price: Decimal = Field(..., ge=0)
+    commission: Decimal = Field(default=Decimal("0"), ge=0)
     notes: Optional[str] = Field(None, max_length=500)
 
     @field_validator("shares")
