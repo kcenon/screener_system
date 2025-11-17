@@ -31,6 +31,32 @@ export interface RefreshTokenRequest {
   refresh_token: string
 }
 
+// Email verification types
+export interface EmailVerificationRequest {
+  token: string
+}
+
+export interface VerificationStatusResponse {
+  email_verified: boolean
+  email_verified_at: string | null
+  pending_tokens_count: number
+  can_resend: boolean
+}
+
+// Password reset types
+export interface PasswordResetRequest {
+  email: string
+}
+
+export interface PasswordResetConfirm {
+  token: string
+  new_password: string
+}
+
+export interface SuccessResponse {
+  message: string
+}
+
 export interface Stock {
   code: string
   name: string
