@@ -2,7 +2,8 @@
 
 **Type**: TEST
 **Priority**: P0
-**Status**: REVIEW
+**Status**: DONE
+**PR**: #138 (merged)
 **Started**: 2025-11-17
 **Completed**: 2025-11-17
 **Created**: 2025-11-16
