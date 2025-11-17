@@ -13,6 +13,8 @@ import WatchlistsPage from './pages/WatchlistsPage'
 import DashboardPage from './pages/DashboardPage'
 import MarketDashboardPage from './pages/MarketDashboardPage'
 import MarketOverviewPage from './pages/MarketOverviewPage'
+import PortfolioListPage from './pages/PortfolioListPage'
+import PortfolioDetailPage from './pages/PortfolioDetailPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 export const router = createBrowserRouter([
@@ -51,6 +53,14 @@ export const router = createBrowserRouter([
       {
         path: 'watchlists',
         element: <WatchlistsPage />,
+      },
+      {
+        path: 'portfolios',
+        element: <PortfolioListPage />,
+      },
+      {
+        path: 'portfolios/:id',
+        element: <PortfolioDetailPage />,
       },
       {
         path: 'login',
