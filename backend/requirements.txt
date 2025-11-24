@@ -38,7 +38,7 @@ aiohttp==3.12.14  # Security: Fixed request smuggling in chunked trailer parsing
 
 # Monitoring & Logging
 prometheus-client==0.23.1
-sentry-sdk[fastapi]==2.44.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
+sentry-sdk[fastapi]==2.45.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
 
 # Testing
 pytest==9.0.0
