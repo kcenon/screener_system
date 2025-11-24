@@ -22,7 +22,7 @@ httpx==0.25.2  # Async HTTP client
 
 # Cache
 # =============================================================================
-redis==5.0.1  # Redis client for caching
+redis==7.1.0  # Redis client for caching
 
 # Utilities
 # =============================================================================
