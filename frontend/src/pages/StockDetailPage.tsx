@@ -1,9 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useStockData } from '@/hooks/useStockData'
 import { usePriceChart } from '@/hooks/usePriceChart'
+import { useFreemiumAccess } from '@/hooks/useFreemiumAccess'
 import StockHeader from '@/components/stock/StockHeader'
 import PriceChart from '@/components/stock/PriceChart'
 import StockTabs from '@/components/stock/StockTabs'
+import { FreemiumBanner } from '@/components/freemium'
 
 /**
  * Stock Detail Page
@@ -36,6 +38,9 @@ export default function StockDetailPage() {
     timeframe,
     setTimeframe,
   } = usePriceChart(code, '1M')
+
+  // Freemium access control
+  const { isAuthenticated, canViewFinancials, canViewAllTechnicals } = useFreemiumAccess()
 
   // Loading state
   if (stockLoading) {
@@ -131,6 +136,11 @@ export default function StockDetailPage() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Freemium Banner for unauthenticated users */}
+        {!isAuthenticated && (
+          <FreemiumBanner type="stock-detail" />
+        )}
+
         {/* Breadcrumb */}
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -200,7 +210,11 @@ export default function StockDetailPage() {
         />
 
         {/* Stock Tabs */}
-        <StockTabs stock={stock} />
+        <StockTabs
+          stock={stock}
+          canViewFinancials={canViewFinancials}
+          canViewAllTechnicals={canViewAllTechnicals}
+        />
       </div>
     </div>
   )

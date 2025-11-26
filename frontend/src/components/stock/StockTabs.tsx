@@ -7,9 +7,14 @@ import ValuationTab from './ValuationTab'
 import TechnicalTab from './TechnicalTab'
 import OrderBook from './OrderBook'
 import { useOrderBook } from '@/hooks/useOrderBook'
+import { LockedContent } from '@/components/freemium'
 
 interface StockTabsProps {
   stock: StockDetail
+  /** Whether user can view financial statements (freemium) */
+  canViewFinancials?: boolean
+  /** Whether user can view all technical indicators (freemium) */
+  canViewAllTechnicals?: boolean
 }
 
 type TabValue = 'overview' | 'financials' | 'valuation' | 'technical' | 'orderbook'
@@ -29,7 +34,11 @@ type TabValue = 'overview' | 'financials' | 'valuation' | 'technical' | 'orderbo
  * <StockTabs stock={stockData} />
  * ```
  */
-export default function StockTabs({ stock }: StockTabsProps) {
+export default function StockTabs({
+  stock,
+  canViewFinancials = true,
+  canViewAllTechnicals = true,
+}: StockTabsProps) {
   const [activeTab, setActiveTab] = useState<TabValue>('overview')
 
   // OrderBook data (only fetch when orderbook tab is active)
@@ -82,7 +91,15 @@ export default function StockTabs({ stock }: StockTabsProps) {
       </Tabs.Content>
 
       <Tabs.Content value="financials" className="outline-none">
-        <FinancialsTab stock={stock} />
+        {canViewFinancials ? (
+          <FinancialsTab stock={stock} />
+        ) : (
+          <LockedContent
+            feature="재무제표"
+            description="손익계산서, 재무상태표, 현금흐름표 등 상세 재무 데이터를 확인하세요"
+            height={400}
+          />
+        )}
       </Tabs.Content>
 
       <Tabs.Content value="valuation" className="outline-none">
@@ -90,7 +107,15 @@ export default function StockTabs({ stock }: StockTabsProps) {
       </Tabs.Content>
 
       <Tabs.Content value="technical" className="outline-none">
-        <TechnicalTab stock={stock} />
+        {canViewAllTechnicals ? (
+          <TechnicalTab stock={stock} />
+        ) : (
+          <LockedContent
+            feature="기술적 지표"
+            description="이동평균선, RSI, MACD 등 고급 기술적 분석 지표를 확인하세요"
+            height={400}
+          />
+        )}
       </Tabs.Content>
 
       <Tabs.Content value="orderbook" className="outline-none">
