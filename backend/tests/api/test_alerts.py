@@ -423,7 +423,7 @@ class TestListAlerts:
 
 
 class TestGetAlert:
-    """Tests for GET /v1/alerts{id}"""
+    """Tests for GET /v1/alerts/{id}"""
 
     async def test_get_alert_success(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -440,7 +440,7 @@ class TestGetAlert:
         await db_session.refresh(alert)
 
         response = await client.get(
-            f"/v1/alerts{alert.id}", headers=auth_headers
+            f"/v1/alerts/{alert.id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -451,7 +451,7 @@ class TestGetAlert:
 
     async def test_get_alert_not_found(self, client, auth_headers):
         """Test getting non-existent alert returns 404."""
-        response = await client.get("/v1/alerts99999", headers=auth_headers)
+        response = await client.get("/v1/alerts/99999", headers=auth_headers)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -481,7 +481,7 @@ class TestGetAlert:
 
         # Try to get alert as test_user
         response = await client.get(
-            f"/v1/alerts{alert.id}", headers=auth_headers
+            f"/v1/alerts/{alert.id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -493,7 +493,7 @@ class TestGetAlert:
 
 
 class TestUpdateAlert:
-    """Tests for PUT /v1/alerts{id}"""
+    """Tests for PUT /v1/alerts/{id}"""
 
     async def test_update_alert_condition_value(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -512,14 +512,14 @@ class TestUpdateAlert:
         update_data = {"condition_value": 55000.00}
 
         response = await client.put(
-            f"/v1/alerts{alert.id}",
+            f"/v1/alerts/{alert.id}",
             json=update_data,
             headers=auth_headers,
         )
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
-        assert data["condition_value"] == 55000.00
+        assert float(data["condition_value"]) == 55000.00
 
     async def test_update_alert_is_recurring(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -539,7 +539,7 @@ class TestUpdateAlert:
         update_data = {"is_recurring": True}
 
         response = await client.put(
-            f"/v1/alerts{alert.id}",
+            f"/v1/alerts/{alert.id}",
             json=update_data,
             headers=auth_headers,
         )
@@ -555,7 +555,7 @@ class TestUpdateAlert:
         update_data = {"condition_value": 55000.00}
 
         response = await client.put(
-            "/v1/alerts99999",
+            "/v1/alerts/99999",
             json=update_data,
             headers=auth_headers,
         )
@@ -590,7 +590,7 @@ class TestUpdateAlert:
 
         # Try to update alert as test_user
         response = await client.put(
-            f"/v1/alerts{alert.id}",
+            f"/v1/alerts/{alert.id}",
             json=update_data,
             headers=auth_headers,
         )
@@ -604,7 +604,7 @@ class TestUpdateAlert:
 
 
 class TestDeleteAlert:
-    """Tests for DELETE /v1/alerts{id}"""
+    """Tests for DELETE /v1/alerts/{id}"""
 
     async def test_delete_alert_success(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -622,7 +622,7 @@ class TestDeleteAlert:
         alert_id = alert.id
 
         response = await client.delete(
-            f"/v1/alerts{alert_id}", headers=auth_headers
+            f"/v1/alerts/{alert_id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -636,7 +636,7 @@ class TestDeleteAlert:
     async def test_delete_alert_not_found(self, client, auth_headers):
         """Test deleting non-existent alert returns 404."""
         response = await client.delete(
-            "/v1/alerts99999", headers=auth_headers
+            "/v1/alerts/99999", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -667,7 +667,7 @@ class TestDeleteAlert:
 
         # Try to delete alert as test_user
         response = await client.delete(
-            f"/v1/alerts{alert.id}", headers=auth_headers
+            f"/v1/alerts/{alert.id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -679,7 +679,7 @@ class TestDeleteAlert:
 
 
 class TestToggleAlert:
-    """Tests for POST /v1/alerts{id}/toggle"""
+    """Tests for POST /v1/alerts/{id}/toggle"""
 
     async def test_toggle_alert_deactivate(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -697,7 +697,7 @@ class TestToggleAlert:
         await db_session.refresh(alert)
 
         response = await client.post(
-            f"/v1/alerts{alert.id}/toggle", headers=auth_headers
+            f"/v1/alerts/{alert.id}/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -720,7 +720,7 @@ class TestToggleAlert:
         await db_session.refresh(alert)
 
         response = await client.post(
-            f"/v1/alerts{alert.id}/toggle", headers=auth_headers
+            f"/v1/alerts/{alert.id}/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -730,7 +730,7 @@ class TestToggleAlert:
     async def test_toggle_alert_not_found(self, client, auth_headers):
         """Test toggling non-existent alert returns 404."""
         response = await client.post(
-            "/v1/alerts99999/toggle", headers=auth_headers
+            "/v1/alerts/99999/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -761,7 +761,7 @@ class TestToggleAlert:
 
         # Try to toggle alert as test_user
         response = await client.post(
-            f"/v1/alerts{alert.id}/toggle", headers=auth_headers
+            f"/v1/alerts/{alert.id}/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
