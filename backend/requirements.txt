@@ -34,7 +34,7 @@ numpy==1.26.2
 
 # HTTP Requests
 httpx==0.25.2
-aiohttp==3.12.14  # Security: Fixed request smuggling in chunked trailer parsing (GHSA-9548-qrrj-x5pj, CVE-2025-53643)
+aiohttp==3.13.2  # Security: Fixed request smuggling in chunked trailer parsing (GHSA-9548-qrrj-x5pj, CVE-2025-53643)
 
 # Monitoring & Logging
 prometheus-client==0.23.1
