@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import (CheckConstraint, Column, DateTime, ForeignKey, Index,
-                        String)
+                        Integer, String)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -26,7 +26,7 @@ class OAuthState(Base):
     __tablename__ = "oauth_states"
 
     # Primary key
-    id = Column("id", primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     # State token (random string)
     state = Column(String(255), unique=True, nullable=False, index=True)
