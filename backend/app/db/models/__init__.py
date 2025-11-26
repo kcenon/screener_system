@@ -11,12 +11,18 @@ from app.db.models.notification import Notification
 from app.db.models.notification_preference import NotificationPreference
 from app.db.models.oauth_state import OAuthState
 from app.db.models.password_reset_token import PasswordResetToken
+from app.db.models.payment import Payment, PaymentStatus, PaymentType
+from app.db.models.payment_method import PaymentMethod, PaymentMethodType
 from app.db.models.portfolio import Portfolio
 from app.db.models.social_account import OAuthProvider, SocialAccount
 from app.db.models.stock import Stock
+from app.db.models.stripe_webhook_event import StripeWebhookEvent
+from app.db.models.subscription_plan import SubscriptionPlan
 from app.db.models.transaction import Transaction, TransactionType
+from app.db.models.usage_tracking import PeriodType, ResourceType, UsageTracking
 from app.db.models.user import User
 from app.db.models.user_session import UserSession
+from app.db.models.user_subscription import BillingCycle, SubscriptionStatus, UserSubscription
 from app.db.models.watchlist import (
     UserActivity,
     UserPreferences,
@@ -26,6 +32,7 @@ from app.db.models.watchlist import (
 
 __all__ = [
     "Alert",
+    "BillingCycle",
     "CalculatedIndicator",
     "DailyPrice",
     "EmailVerificationToken",
@@ -37,15 +44,27 @@ __all__ = [
     "OAuthProvider",
     "OAuthState",
     "PasswordResetToken",
+    "Payment",
+    "PaymentMethod",
+    "PaymentMethodType",
+    "PaymentStatus",
+    "PaymentType",
+    "PeriodType",
     "Portfolio",
+    "ResourceType",
     "SocialAccount",
     "Stock",
+    "StripeWebhookEvent",
+    "SubscriptionPlan",
+    "SubscriptionStatus",
     "Transaction",
     "TransactionType",
+    "UsageTracking",
     "User",
     "UserActivity",
     "UserPreferences",
     "UserSession",
+    "UserSubscription",
     "Watchlist",
     "WatchlistStock",
 ]

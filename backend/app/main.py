@@ -46,7 +46,9 @@ from app.api.v1.endpoints import (
     portfolios,
     screening,
     stocks,
+    subscriptions,
     users,
+    webhooks,
     websocket,
 )
 from app.core.cache import cache_manager
@@ -224,6 +226,12 @@ app.include_router(alerts.router, prefix="/v1")
 
 # Include notification routes
 app.include_router(notifications.router, prefix="/v1")
+
+# Include subscription routes
+app.include_router(subscriptions.router, prefix="/v1")
+
+# Include webhook routes (no /v1 prefix for Stripe webhooks)
+app.include_router(webhooks.router, prefix="/v1")
 
 # Include stock routes
 app.include_router(stocks.router, prefix="/v1")

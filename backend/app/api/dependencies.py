@@ -10,7 +10,8 @@ from app.core.exceptions import UnauthorizedException
 from app.db.models import User
 from app.db.session import get_db
 from app.services import (AuthService, EmailVerificationService,
-                          OAuthService, PasswordResetService)
+                          OAuthService, PasswordResetService,
+                          StripeService, SubscriptionService)
 from app.services.watchlist_service import WatchlistService
 
 # HTTP Bearer token scheme
@@ -50,6 +51,20 @@ async def get_oauth_service(
 ) -> OAuthService:
     """Get OAuthService instance with database session"""
     return OAuthService(db)
+
+
+async def get_stripe_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> StripeService:
+    """Get StripeService instance with database session"""
+    return StripeService(db)
+
+
+async def get_subscription_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> SubscriptionService:
+    """Get SubscriptionService instance with database session"""
+    return SubscriptionService(db)
 
 
 async def get_current_user(

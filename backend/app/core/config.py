@@ -168,6 +168,37 @@ class Settings(BaseSettings):
     SENTRY_DSN: str = ""
     SENTRY_ENVIRONMENT: str = "development"
 
+    # ========================================================================
+    # STRIPE (Payment Processing)
+    # ========================================================================
+
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_PUBLISHABLE_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+
+    # Stripe Price IDs (configured in Stripe Dashboard)
+    STRIPE_PRICE_PREMIUM_MONTHLY: str = ""
+    STRIPE_PRICE_PREMIUM_YEARLY: str = ""
+    STRIPE_PRICE_PRO_MONTHLY: str = ""
+    STRIPE_PRICE_PRO_YEARLY: str = ""
+
+    # ========================================================================
+    # SUBSCRIPTION SETTINGS
+    # ========================================================================
+
+    # Free tier limits
+    FREE_TIER_SCREENING_LIMIT: int = 20  # Results per query
+    FREE_TIER_SEARCHES_PER_DAY: int = 10
+
+    # Trial settings
+    TRIAL_PERIOD_DAYS: int = 14
+
+    # Pricing (for display, actual prices from Stripe)
+    PREMIUM_PRICE_MONTHLY: float = 9.99
+    PREMIUM_PRICE_YEARLY: float = 99.00
+    PRO_PRICE_MONTHLY: float = 29.99
+    PRO_PRICE_YEARLY: float = 299.00
+
     class Config:
         """Pydantic configuration"""
 

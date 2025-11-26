@@ -40,6 +40,9 @@ class User(BaseModel):
     # Activity tracking
     last_login_at = Column(DateTime(timezone=True))
 
+    # Stripe integration
+    stripe_customer_id = Column(String(255), unique=True, index=True)
+
     # Relationships
     sessions = relationship(
         "UserSession",
@@ -93,6 +96,31 @@ class User(BaseModel):
     )
     social_accounts = relationship(
         "SocialAccount",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    subscription = relationship(
+        "UserSubscription",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="select",
+    )
+    payments = relationship(
+        "Payment",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    payment_methods = relationship(
+        "PaymentMethod",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+    usage_records = relationship(
+        "UsageTracking",
         back_populates="user",
         cascade="all, delete-orphan",
         lazy="select",

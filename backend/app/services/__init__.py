@@ -7,6 +7,8 @@ from app.services.market_service import MarketService
 from app.services.notification_service import NotificationService
 from app.services.oauth_service import OAuthService
 from app.services.password_reset_service import PasswordResetService
+from app.services.stripe_service import StripeService
+from app.services.subscription_service import SubscriptionService
 
 __all__ = [
     "AlertEngine",
@@ -16,4 +18,6 @@ __all__ = [
     "NotificationService",
     "OAuthService",
     "PasswordResetService",
+    "StripeService",
+    "SubscriptionService",
 ]
