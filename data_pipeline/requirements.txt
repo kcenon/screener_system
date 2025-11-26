@@ -5,6 +5,10 @@
 # Airflow 3.1.2 fixes werkzeug and flask-appbuilder vulnerabilities
 apache-airflow[postgres,celery]==3.1.2  # Security: Latest stable, fixes werkzeug & flask-appbuilder CVEs
 
+# Security: Override Airflow's transitive starlette dependency
+# Airflow pulls starlette 0.48.0 which has HTTP Range DoS vulnerability (GHSA-7f5h-v6xp-fcq8)
+starlette>=0.49.1  # Security: Fixed HTTP Range DoS (GHSA-7f5h-v6xp-fcq8, CVE-2025-62727)
+
 # Database Drivers
 # =============================================================================
 asyncpg==0.30.0  # Async PostgreSQL driver

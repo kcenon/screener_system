@@ -347,12 +347,17 @@ class TestPasswordHashing:
         assert verify_password(password, hashed)
 
     def test_hash_password_very_long(self):
-        """Test hashing very long password"""
-        # Bcrypt has 72-byte limit, but our implementation should handle it
+        """Test hashing very long password (bcrypt 72-byte limit)"""
+        # bcrypt has 72-byte limit; our implementation truncates to 72 bytes
         long_password = "a" * 100
         hashed = get_password_hash(long_password)
 
+        # Verify full password works (both truncated internally to 72 bytes)
         assert verify_password(long_password, hashed)
+
+        # Verify truncated password (first 72 bytes) also works
+        truncated_password = "a" * 72
+        assert verify_password(truncated_password, hashed)
 
     def test_hash_uses_correct_rounds(self):
         """Test that hash uses configured bcrypt rounds"""
