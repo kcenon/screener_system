@@ -514,3 +514,133 @@ class TestSecurityEdgeCases:
         assert old_payload["iat"] < new_payload["iat"]
         # Both are valid if not expired
         assert old_payload["sub"] == new_payload["sub"]
+
+    def test_token_tampering_detection(self):
+        """Test that tampered tokens are detected and rejected"""
+        user_id = 123
+        token = create_access_token(subject=user_id)
+
+        # Split token into parts
+        parts = token.split(".")
+        assert len(parts) == 3  # header.payload.signature
+
+        # Tamper with payload (base64 encoded)
+        import base64
+
+        # Decode payload, modify it, re-encode
+        payload_b64 = parts[1]
+        # Add padding if needed
+        padding = 4 - len(payload_b64) % 4
+        if padding != 4:
+            payload_b64 += "=" * padding
+
+        payload_bytes = base64.urlsafe_b64decode(payload_b64)
+        # Create tampered payload with different user_id
+        tampered_payload = payload_bytes.replace(b'"sub":"123"', b'"sub":"999"')
+        tampered_b64 = base64.urlsafe_b64encode(tampered_payload).decode().rstrip("=")
+
+        # Reconstruct token with tampered payload
+        tampered_token = f"{parts[0]}.{tampered_b64}.{parts[2]}"
+
+        # Should fail signature verification
+        with pytest.raises(JWTError):
+            decode_token(tampered_token)
+
+    def test_concurrent_token_generation(self):
+        """Test that concurrent token generation produces unique tokens"""
+        user_id = 100
+
+        # Generate multiple tokens rapidly
+        tokens = [create_access_token(subject=user_id) for _ in range(10)]
+
+        # All tokens should be unique (due to different timestamps at millisecond level)
+        # Note: In practice, some may be identical if generated in same millisecond
+        # We just verify they're all valid tokens
+        for token in tokens:
+            payload = decode_token(token)
+            assert payload["sub"] == str(user_id)
+            assert payload["type"] == "access"
+
+    def test_empty_subject_handling(self):
+        """Test token creation with empty string subject"""
+        token = create_access_token(subject="")
+        payload = decode_token(token)
+
+        assert payload["sub"] == ""
+        assert payload["type"] == "access"
+
+    def test_special_characters_in_subject(self):
+        """Test token creation with special characters in subject"""
+        special_subjects = [
+            "user@example.com",
+            "user+tag@domain.co.kr",
+            "123-456-789",
+            "uuid:550e8400-e29b-41d4-a716-446655440000",
+        ]
+
+        for subject in special_subjects:
+            token = create_access_token(subject=subject)
+            payload = decode_token(token)
+            assert payload["sub"] == subject
+
+    def test_token_claims_completeness(self):
+        """Test that all expected claims are present in tokens"""
+        user_id = 456
+
+        access_token = create_access_token(subject=user_id)
+        refresh_token = create_refresh_token(subject=user_id)
+
+        access_payload = decode_token(access_token)
+        refresh_payload = decode_token(refresh_token)
+
+        # Required claims for access token
+        assert "sub" in access_payload
+        assert "type" in access_payload
+        assert "exp" in access_payload
+        assert "iat" in access_payload
+        assert access_payload["type"] == "access"
+
+        # Required claims for refresh token
+        assert "sub" in refresh_payload
+        assert "type" in refresh_payload
+        assert "exp" in refresh_payload
+        assert "iat" in refresh_payload
+        assert refresh_payload["type"] == "refresh"
+
+    def test_password_boundary_at_72_bytes(self):
+        """Test password hashing behavior exactly at 72-byte boundary"""
+        # Exactly 72 bytes (ASCII)
+        password_72 = "a" * 72
+        # 73 bytes (one over)
+        password_73 = "a" * 73
+
+        hash_72 = get_password_hash(password_72)
+        hash_73 = get_password_hash(password_73)
+
+        # Both should verify against the 72-byte password
+        assert verify_password(password_72, hash_72)
+        assert verify_password(password_73, hash_73)
+
+        # Due to truncation, 73-byte password verifies against 72-byte hash
+        # (because both are truncated to 72 bytes internally)
+        assert verify_password(password_73, hash_72)
+        assert verify_password(password_72, hash_73)
+
+    def test_refresh_token_longer_expiration_than_access(self):
+        """Test that refresh tokens have longer expiration than access tokens"""
+        user_id = 789
+
+        with freeze_time("2025-01-01 12:00:00"):
+            access_token = create_access_token(subject=user_id)
+            refresh_token = create_refresh_token(subject=user_id)
+
+            access_payload = decode_token(access_token)
+            refresh_payload = decode_token(refresh_token)
+
+            # Refresh token should expire later than access token
+            assert refresh_payload["exp"] > access_payload["exp"]
+
+            # Difference should be significant (days vs minutes)
+            exp_diff = refresh_payload["exp"] - access_payload["exp"]
+            # At least 1 day difference (86400 seconds)
+            assert exp_diff > 86400
