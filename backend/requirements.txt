@@ -15,7 +15,7 @@ alembic==1.17.1
 psycopg2-binary==2.9.11
 
 # Cache
-redis[hiredis]==5.0.1
+redis[hiredis]==7.1.0
 
 # Authentication & Security
 python-jose[cryptography]==3.4.0  # Security: Fixed algorithm confusion and JWT bomb (PYSEC-2024-232, PYSEC-2024-233)
