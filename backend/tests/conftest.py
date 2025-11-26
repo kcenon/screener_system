@@ -98,10 +98,8 @@ async def test_user(db: AsyncSession):
 
     user = User(
         email="test@example.com",
-        username="testuser",
-        hashed_password=get_password_hash("testpassword"),
-        is_active=True,
-        is_superuser=False,
+        name="testuser",
+        password_hash=get_password_hash("testpassword"),
     )
     db.add(user)
     await db.commit()
@@ -134,7 +132,6 @@ async def auth_headers(test_user):
 
     access_token = create_access_token(
         subject=test_user.id,
-        username=test_user.username,
     )
     return {"Authorization": f"Bearer {access_token}"}
 

@@ -383,9 +383,8 @@ class TestListAlerts:
         # Create another user
         other_user = User(
             email="other@example.com",
-            username="otheruser",
-            hashed_password="hashedpassword",
-            is_active=True,
+            name="otheruser",
+            password_hash="hashedpassword",
         )
         db_session.add(other_user)
         await db_session.flush()
@@ -463,9 +462,8 @@ class TestGetAlert:
         # Create another user
         other_user = User(
             email="other@example.com",
-            username="otheruser",
-            hashed_password="hashedpassword",
-            is_active=True,
+            name="otheruser",
+            password_hash="hashedpassword",
         )
         db_session.add(other_user)
         await db_session.flush()
@@ -571,9 +569,8 @@ class TestUpdateAlert:
         # Create another user
         other_user = User(
             email="other@example.com",
-            username="otheruser",
-            hashed_password="hashedpassword",
-            is_active=True,
+            name="otheruser",
+            password_hash="hashedpassword",
         )
         db_session.add(other_user)
         await db_session.flush()
@@ -651,9 +648,8 @@ class TestDeleteAlert:
         # Create another user
         other_user = User(
             email="other@example.com",
-            username="otheruser",
-            hashed_password="hashedpassword",
-            is_active=True,
+            name="otheruser",
+            password_hash="hashedpassword",
         )
         db_session.add(other_user)
         await db_session.flush()
@@ -746,9 +742,8 @@ class TestToggleAlert:
         # Create another user
         other_user = User(
             email="other@example.com",
-            username="otheruser",
-            hashed_password="hashedpassword",
-            is_active=True,
+            name="otheruser",
+            password_hash="hashedpassword",
         )
         db_session.add(other_user)
         await db_session.flush()
