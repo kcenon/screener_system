@@ -50,8 +50,8 @@ class OAuthState(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
 
-    # Additional metadata
-    metadata = Column(JSONB, default=dict, nullable=False)
+    # Additional data (avoid 'metadata' - reserved in SQLAlchemy)
+    extra_data = Column(JSONB, default=dict, nullable=False)
 
     # Relationships
     user = relationship("User")
@@ -90,7 +90,7 @@ class OAuthState(Base):
         redirect_url: Optional[str] = None,
         user_id: Optional[int] = None,
         expiry_minutes: int = 10,
-        metadata: Optional[dict] = None,
+        extra_data: Optional[dict] = None,
     ) -> "OAuthState":
         """
         Factory method to create a new OAuth state.
@@ -101,7 +101,7 @@ class OAuthState(Base):
             redirect_url: URL to redirect after OAuth
             user_id: User ID for account linking (None for login/signup)
             expiry_minutes: State token expiration in minutes
-            metadata: Additional flow metadata
+            extra_data: Additional flow data
 
         Returns:
             New OAuthState instance
@@ -114,5 +114,5 @@ class OAuthState(Base):
             redirect_url=redirect_url,
             user_id=user_id,
             expires_at=expires_at,
-            metadata=metadata or {},
+            extra_data=extra_data or {},
         )

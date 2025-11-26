@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS oauth_states (
     -- Timestamps
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
-    -- Additional metadata
-    metadata JSONB DEFAULT '{}'::JSONB
+    -- Additional data
+    extra_data JSONB DEFAULT '{}'::JSONB
 );
 
 COMMENT ON TABLE oauth_states IS 'Temporary state tokens for OAuth CSRF protection';
@@ -90,7 +90,7 @@ COMMENT ON COLUMN oauth_states.state IS 'Random state token sent to OAuth provid
 COMMENT ON COLUMN oauth_states.redirect_url IS 'URL to redirect after successful OAuth';
 COMMENT ON COLUMN oauth_states.user_id IS 'User ID for account linking flow (NULL for login/signup)';
 COMMENT ON COLUMN oauth_states.expires_at IS 'State expiration time (typically 10 minutes)';
-COMMENT ON COLUMN oauth_states.metadata IS 'Additional flow metadata as JSON';
+COMMENT ON COLUMN oauth_states.extra_data IS 'Additional flow data as JSON';
 
 -- Indexes for oauth_states
 CREATE INDEX idx_oauth_states_state ON oauth_states(state);
