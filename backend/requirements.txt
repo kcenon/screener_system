@@ -24,6 +24,9 @@ python-multipart==0.0.20  # Security: Fixed ReDoS vulnerabilities (GHSA-2jv5-9r8
 pydantic[email]==2.5.0
 pydantic-settings==2.1.0
 
+# Payment Processing
+stripe==11.3.0
+
 # Background Tasks
 # Note: Celery 5.4.0+ supports redis 5.0+
 celery[redis]==5.4.0
