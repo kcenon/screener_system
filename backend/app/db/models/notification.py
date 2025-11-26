@@ -12,6 +12,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    text,
 )
 from sqlalchemy.orm import relationship
 
@@ -78,7 +79,7 @@ class Notification(Base):
     created_at = Column(
         DateTime(timezone=True),
         nullable=False,
-        server_default="CURRENT_TIMESTAMP",
+        server_default=text("CURRENT_TIMESTAMP"),
         index=True,
     )
 
