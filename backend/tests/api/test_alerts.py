@@ -22,7 +22,7 @@ pytestmark = pytest.mark.asyncio
 
 
 class TestCreateAlert:
-    """Tests for POST /api/v1/alerts/"""
+    """Tests for POST /v1/alerts/"""
 
     async def test_create_price_above_alert_success(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -36,7 +36,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -63,7 +63,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -86,7 +86,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -108,7 +108,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -126,7 +126,7 @@ class TestCreateAlert:
             "condition_value": 50000.00,
         }
 
-        response = await client.post("/api/v1/alerts/", json=alert_data)
+        response = await client.post("/v1/alerts/", json=alert_data)
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -141,7 +141,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -160,7 +160,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -178,7 +178,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -196,7 +196,7 @@ class TestCreateAlert:
         }
 
         response = await client.post(
-            "/api/v1/alerts/",
+            "/v1/alerts/",
             json=alert_data,
             headers=auth_headers,
         )
@@ -210,11 +210,11 @@ class TestCreateAlert:
 
 
 class TestListAlerts:
-    """Tests for GET /api/v1/alerts/"""
+    """Tests for GET /v1/alerts/"""
 
     async def test_list_alerts_empty(self, client, auth_headers):
         """Test listing alerts when user has no alerts."""
-        response = await client.get("/api/v1/alerts/", headers=auth_headers)
+        response = await client.get("/v1/alerts/", headers=auth_headers)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -252,7 +252,7 @@ class TestListAlerts:
             db_session.add(alert)
         await db_session.commit()
 
-        response = await client.get("/api/v1/alerts/", headers=auth_headers)
+        response = await client.get("/v1/alerts/", headers=auth_headers)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -294,7 +294,7 @@ class TestListAlerts:
 
         # Filter by first stock
         response = await client.get(
-            f"/api/v1/alerts/?stock_code={test_stock.code}",
+            f"/v1/alerts/?stock_code={test_stock.code}",
             headers=auth_headers,
         )
 
@@ -327,7 +327,7 @@ class TestListAlerts:
 
         # Filter by active
         response = await client.get(
-            "/api/v1/alerts/?is_active=true", headers=auth_headers
+            "/v1/alerts/?is_active=true", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -352,7 +352,7 @@ class TestListAlerts:
 
         # Get first page
         response = await client.get(
-            "/api/v1/alerts/?skip=0&limit=10", headers=auth_headers
+            "/v1/alerts/?skip=0&limit=10", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -362,7 +362,7 @@ class TestListAlerts:
 
         # Get second page
         response = await client.get(
-            "/api/v1/alerts/?skip=10&limit=10", headers=auth_headers
+            "/v1/alerts/?skip=10&limit=10", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -372,7 +372,7 @@ class TestListAlerts:
 
     async def test_list_alerts_unauthorized(self, client):
         """Test listing alerts without authentication fails."""
-        response = await client.get("/api/v1/alerts/")
+        response = await client.get("/v1/alerts/")
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
@@ -409,7 +409,7 @@ class TestListAlerts:
         await db_session.commit()
 
         # List alerts as test_user
-        response = await client.get("/api/v1/alerts/", headers=auth_headers)
+        response = await client.get("/v1/alerts/", headers=auth_headers)
 
         assert response.status_code == status.HTTP_200_OK
         data = response.json()
@@ -423,7 +423,7 @@ class TestListAlerts:
 
 
 class TestGetAlert:
-    """Tests for GET /api/v1/alerts/{id}"""
+    """Tests for GET /v1/alerts/{id}"""
 
     async def test_get_alert_success(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -440,7 +440,7 @@ class TestGetAlert:
         await db_session.refresh(alert)
 
         response = await client.get(
-            f"/api/v1/alerts/{alert.id}", headers=auth_headers
+            f"/v1/alerts/{alert.id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -451,7 +451,7 @@ class TestGetAlert:
 
     async def test_get_alert_not_found(self, client, auth_headers):
         """Test getting non-existent alert returns 404."""
-        response = await client.get("/api/v1/alerts/99999", headers=auth_headers)
+        response = await client.get("/v1/alerts/99999", headers=auth_headers)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -481,7 +481,7 @@ class TestGetAlert:
 
         # Try to get alert as test_user
         response = await client.get(
-            f"/api/v1/alerts/{alert.id}", headers=auth_headers
+            f"/v1/alerts/{alert.id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -493,7 +493,7 @@ class TestGetAlert:
 
 
 class TestUpdateAlert:
-    """Tests for PUT /api/v1/alerts/{id}"""
+    """Tests for PUT /v1/alerts/{id}"""
 
     async def test_update_alert_condition_value(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -512,7 +512,7 @@ class TestUpdateAlert:
         update_data = {"condition_value": 55000.00}
 
         response = await client.put(
-            f"/api/v1/alerts/{alert.id}",
+            f"/v1/alerts/{alert.id}",
             json=update_data,
             headers=auth_headers,
         )
@@ -539,7 +539,7 @@ class TestUpdateAlert:
         update_data = {"is_recurring": True}
 
         response = await client.put(
-            f"/api/v1/alerts/{alert.id}",
+            f"/v1/alerts/{alert.id}",
             json=update_data,
             headers=auth_headers,
         )
@@ -555,7 +555,7 @@ class TestUpdateAlert:
         update_data = {"condition_value": 55000.00}
 
         response = await client.put(
-            "/api/v1/alerts/99999",
+            "/v1/alerts/99999",
             json=update_data,
             headers=auth_headers,
         )
@@ -590,7 +590,7 @@ class TestUpdateAlert:
 
         # Try to update alert as test_user
         response = await client.put(
-            f"/api/v1/alerts/{alert.id}",
+            f"/v1/alerts/{alert.id}",
             json=update_data,
             headers=auth_headers,
         )
@@ -604,7 +604,7 @@ class TestUpdateAlert:
 
 
 class TestDeleteAlert:
-    """Tests for DELETE /api/v1/alerts/{id}"""
+    """Tests for DELETE /v1/alerts/{id}"""
 
     async def test_delete_alert_success(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -622,7 +622,7 @@ class TestDeleteAlert:
         alert_id = alert.id
 
         response = await client.delete(
-            f"/api/v1/alerts/{alert_id}", headers=auth_headers
+            f"/v1/alerts/{alert_id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -636,7 +636,7 @@ class TestDeleteAlert:
     async def test_delete_alert_not_found(self, client, auth_headers):
         """Test deleting non-existent alert returns 404."""
         response = await client.delete(
-            "/api/v1/alerts/99999", headers=auth_headers
+            "/v1/alerts/99999", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -667,7 +667,7 @@ class TestDeleteAlert:
 
         # Try to delete alert as test_user
         response = await client.delete(
-            f"/api/v1/alerts/{alert.id}", headers=auth_headers
+            f"/v1/alerts/{alert.id}", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -679,7 +679,7 @@ class TestDeleteAlert:
 
 
 class TestToggleAlert:
-    """Tests for POST /api/v1/alerts/{id}/toggle"""
+    """Tests for POST /v1/alerts/{id}/toggle"""
 
     async def test_toggle_alert_deactivate(
         self, client, auth_headers, test_user, test_stock, db_session
@@ -697,7 +697,7 @@ class TestToggleAlert:
         await db_session.refresh(alert)
 
         response = await client.post(
-            f"/api/v1/alerts/{alert.id}/toggle", headers=auth_headers
+            f"/v1/alerts/{alert.id}/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -720,7 +720,7 @@ class TestToggleAlert:
         await db_session.refresh(alert)
 
         response = await client.post(
-            f"/api/v1/alerts/{alert.id}/toggle", headers=auth_headers
+            f"/v1/alerts/{alert.id}/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_200_OK
@@ -730,7 +730,7 @@ class TestToggleAlert:
     async def test_toggle_alert_not_found(self, client, auth_headers):
         """Test toggling non-existent alert returns 404."""
         response = await client.post(
-            "/api/v1/alerts/99999/toggle", headers=auth_headers
+            "/v1/alerts/99999/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -761,7 +761,7 @@ class TestToggleAlert:
 
         # Try to toggle alert as test_user
         response = await client.post(
-            f"/api/v1/alerts/{alert.id}/toggle", headers=auth_headers
+            f"/v1/alerts/{alert.id}/toggle", headers=auth_headers
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
