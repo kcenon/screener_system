@@ -85,9 +85,15 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         True if password matches
     """
+    # bcrypt has a 72-byte limit; truncate for bcrypt 5.0+ compatibility
+    password_bytes = plain_password.encode("utf-8")[:72]
     return bcrypt.checkpw(
-        plain_password.encode('utf-8'),
-        hashed_password.encode('utf-8') if isinstance(hashed_password, str) else hashed_password
+        password_bytes,
+        (
+            hashed_password.encode("utf-8")
+            if isinstance(hashed_password, str)
+            else hashed_password
+        ),
     )
 
 
@@ -100,10 +106,16 @@ def get_password_hash(password: str) -> str:
 
     Returns:
         Hashed password (as string)
+
+    Note:
+        bcrypt has a 72-byte limit. Passwords longer than 72 bytes are truncated
+        to maintain compatibility with bcrypt 5.0+ which enforces this limit.
     """
+    # bcrypt has a 72-byte limit; truncate for bcrypt 5.0+ compatibility
+    password_bytes = password.encode("utf-8")[:72]
     salt = bcrypt.gensalt(rounds=BCRYPT_ROUNDS)
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
-    return hashed.decode('utf-8')
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode("utf-8")
 
 
 def decode_token(token: str) -> Dict[str, Any]:
