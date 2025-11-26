@@ -89,8 +89,8 @@ class Payment(BaseModel):
     # Timestamps
     paid_at = Column(DateTime(timezone=True))
 
-    # Additional metadata
-    metadata = Column(JSONB, default=dict)
+    # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
+    payment_metadata = Column(JSONB, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="payments")

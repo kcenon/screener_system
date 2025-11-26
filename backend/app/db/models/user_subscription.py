@@ -76,8 +76,8 @@ class UserSubscription(BaseModel):
     stripe_customer_id = Column(String(255), index=True)
     stripe_price_id = Column(String(255))
 
-    # Additional metadata
-    metadata = Column(JSONB, default=dict)
+    # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
+    subscription_metadata = Column(JSONB, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="subscription")

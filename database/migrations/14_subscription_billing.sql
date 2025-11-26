@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS user_subscriptions (
     stripe_subscription_id VARCHAR(255) UNIQUE,
     stripe_customer_id VARCHAR(255),
     stripe_price_id VARCHAR(255),
-    metadata JSONB DEFAULT '{}',
+    subscription_metadata JSONB DEFAULT '{}',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS payments (
     refund_amount DECIMAL(10, 2),
     refunded_at TIMESTAMP WITH TIME ZONE,
     paid_at TIMESTAMP WITH TIME ZONE,
-    metadata JSONB DEFAULT '{}',
+    payment_metadata JSONB DEFAULT '{}',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS usage_tracking (
     count INTEGER NOT NULL DEFAULT 1,
     period_start DATE NOT NULL,
     period_type VARCHAR(20) NOT NULL DEFAULT 'daily',  -- daily, monthly
-    metadata JSONB DEFAULT '{}',
+    tracking_metadata JSONB DEFAULT '{}',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS payment_methods (
     card_exp_year INTEGER,
     billing_name VARCHAR(255),
     billing_email VARCHAR(255),
-    metadata JSONB DEFAULT '{}',
+    method_metadata JSONB DEFAULT '{}',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
 

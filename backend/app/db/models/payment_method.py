@@ -60,8 +60,8 @@ class PaymentMethod(BaseModel):
     billing_name = Column(String(255))
     billing_email = Column(String(255))
 
-    # Additional metadata
-    metadata = Column(JSONB, default=dict)
+    # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
+    method_metadata = Column(JSONB, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="payment_methods")

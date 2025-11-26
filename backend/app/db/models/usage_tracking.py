@@ -59,8 +59,8 @@ class UsageTracking(BaseModel):
         default=PeriodType.DAILY.value,
     )
 
-    # Additional metadata
-    metadata = Column(JSONB, default=dict)
+    # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
+    tracking_metadata = Column(JSONB, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="usage_records")
