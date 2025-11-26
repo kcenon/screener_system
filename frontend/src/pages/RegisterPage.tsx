@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { useRegister } from '@/hooks/useAuth'
+import SocialLoginButtons from '@/components/auth/SocialLoginButtons'
 import type { RegisterRequest } from '@/types'
 
 interface RegisterFormData extends RegisterRequest {
@@ -306,6 +307,9 @@ export default function RegisterPage() {
             </button>
           </div>
         </form>
+
+        {/* Social Login Buttons */}
+        <SocialLoginButtons mode="login" className="mt-6" />
       </div>
     </div>
   )

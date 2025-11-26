@@ -42,6 +42,7 @@ from app.api.v1.endpoints import (
     health,
     market,
     notifications,
+    oauth,
     portfolios,
     screening,
     stocks,
@@ -208,6 +209,9 @@ app.include_router(health.router, prefix="/v1")
 
 # Include authentication routes
 app.include_router(auth.router, prefix="/v1")
+
+# Include OAuth routes
+app.include_router(oauth.router, prefix="/v1")
 
 # Include user routes
 app.include_router(users.router, prefix="/v1")

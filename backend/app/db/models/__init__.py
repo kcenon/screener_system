@@ -9,8 +9,10 @@ from app.db.models.holding import Holding
 from app.db.models.market_index import MarketIndex
 from app.db.models.notification import Notification
 from app.db.models.notification_preference import NotificationPreference
+from app.db.models.oauth_state import OAuthState
 from app.db.models.password_reset_token import PasswordResetToken
 from app.db.models.portfolio import Portfolio
+from app.db.models.social_account import OAuthProvider, SocialAccount
 from app.db.models.stock import Stock
 from app.db.models.transaction import Transaction, TransactionType
 from app.db.models.user import User
@@ -32,8 +34,11 @@ __all__ = [
     "MarketIndex",
     "Notification",
     "NotificationPreference",
+    "OAuthProvider",
+    "OAuthState",
     "PasswordResetToken",
     "Portfolio",
+    "SocialAccount",
     "Stock",
     "Transaction",
     "TransactionType",

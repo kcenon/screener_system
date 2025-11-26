@@ -10,7 +10,7 @@ from app.core.exceptions import UnauthorizedException
 from app.db.models import User
 from app.db.session import get_db
 from app.services import (AuthService, EmailVerificationService,
-                          PasswordResetService)
+                          OAuthService, PasswordResetService)
 from app.services.watchlist_service import WatchlistService
 
 # HTTP Bearer token scheme
@@ -43,6 +43,13 @@ async def get_password_reset_service(
 ) -> PasswordResetService:
     """Get PasswordResetService instance with database session"""
     return PasswordResetService(db)
+
+
+async def get_oauth_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> OAuthService:
+    """Get OAuthService instance with database session"""
+    return OAuthService(db)
 
 
 async def get_current_user(

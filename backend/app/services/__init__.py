@@ -5,6 +5,7 @@ from app.services.auth_service import AuthService
 from app.services.email_verification_service import EmailVerificationService
 from app.services.market_service import MarketService
 from app.services.notification_service import NotificationService
+from app.services.oauth_service import OAuthService
 from app.services.password_reset_service import PasswordResetService
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "EmailVerificationService",
     "MarketService",
     "NotificationService",
+    "OAuthService",
     "PasswordResetService",
 ]

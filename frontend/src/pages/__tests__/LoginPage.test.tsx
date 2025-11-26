@@ -72,7 +72,7 @@ describe('LoginPage', () => {
       expect(screen.getByRole('heading', { name: /sign in to your account/i })).toBeInTheDocument()
       expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /^sign in$/i })).toBeInTheDocument()
     })
 
     it('renders email input field with correct attributes', () => {
@@ -95,7 +95,7 @@ describe('LoginPage', () => {
     it('renders login button', () => {
       renderLoginPage()
 
-      const loginButton = screen.getByRole('button', { name: /sign in/i })
+      const loginButton = screen.getByRole('button', { name: /^sign in$/i })
       expect(loginButton).toBeInTheDocument()
       expect(loginButton).toHaveAttribute('type', 'submit')
     })
@@ -140,7 +140,7 @@ describe('LoginPage', () => {
 
       const emailInput = screen.getByLabelText(/email address/i)
       const passwordInput = screen.getByLabelText(/^password$/i)
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'password123')
@@ -158,7 +158,7 @@ describe('LoginPage', () => {
 
       await user.type(screen.getByLabelText(/email address/i), 'user@test.com')
       await user.type(screen.getByLabelText(/^password$/i), 'securepass')
-      await user.click(screen.getByRole('button', { name: /sign in/i }))
+      await user.click(screen.getByRole('button', { name: /^sign in$/i }))
 
       expect(mockLogin).toHaveBeenCalledTimes(1)
       expect(mockLogin).toHaveBeenCalledWith({
@@ -297,7 +297,7 @@ describe('LoginPage', () => {
       renderLoginPage()
 
       const emailInput = screen.getByLabelText(/email address/i)
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
 
       // Type invalid email
       await user.type(emailInput, 'invalid-email')
@@ -319,7 +319,7 @@ describe('LoginPage', () => {
       renderLoginPage()
 
       const passwordInput = screen.getByLabelText(/^password$/i)
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
 
       await user.type(passwordInput, 'password123')
       await user.click(submitButton)
@@ -336,7 +336,7 @@ describe('LoginPage', () => {
       renderLoginPage()
 
       const emailInput = screen.getByLabelText(/email address/i)
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
 
       await user.type(emailInput, 'test@example.com')
       await user.click(submitButton)
@@ -354,7 +354,7 @@ describe('LoginPage', () => {
 
       const emailInput = screen.getByLabelText(/email address/i)
       const passwordInput = screen.getByLabelText(/^password$/i)
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'short')
@@ -371,7 +371,7 @@ describe('LoginPage', () => {
       const user = userEvent.setup()
       renderLoginPage()
 
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
 
       await user.click(submitButton)
 
@@ -386,7 +386,7 @@ describe('LoginPage', () => {
       renderLoginPage()
 
       const emailInput = screen.getByLabelText(/email address/i)
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
 
       await user.click(submitButton)
 
@@ -453,7 +453,7 @@ describe('LoginPage', () => {
     it('submit button has correct type attribute', () => {
       renderLoginPage()
 
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
       expect(submitButton).toHaveAttribute('type', 'submit')
     })
 
@@ -461,7 +461,7 @@ describe('LoginPage', () => {
       const user = userEvent.setup()
       renderLoginPage()
 
-      await user.click(screen.getByRole('button', { name: /sign in/i }))
+      await user.click(screen.getByRole('button', { name: /^sign in$/i }))
 
       await waitFor(() => {
         const emailError = screen.getByText(/email is required/i)
@@ -485,16 +485,20 @@ describe('LoginPage', () => {
       expect(screen.queryByText(/invalid email or password/i)).not.toBeInTheDocument()
     })
 
-    it('shows OAuth login coming soon message', () => {
+    it('renders social login buttons', () => {
       renderLoginPage()
 
-      expect(screen.getByText(/oauth login coming soon/i)).toBeInTheDocument()
+      // Check for social login buttons (Google, Kakao, Naver)
+      expect(screen.getByRole('button', { name: /sign in with google/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /sign in with kakao/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /sign in with naver/i })).toBeInTheDocument()
+      expect(screen.getByText(/or continue with/i)).toBeInTheDocument()
     })
 
     it('has proper visual styling for submit button', () => {
       renderLoginPage()
 
-      const submitButton = screen.getByRole('button', { name: /sign in/i })
+      const submitButton = screen.getByRole('button', { name: /^sign in$/i })
       expect(submitButton).toHaveClass('bg-blue-600')
       expect(submitButton).toHaveClass('text-white')
     })

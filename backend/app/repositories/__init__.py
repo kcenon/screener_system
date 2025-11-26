@@ -1,6 +1,10 @@
 """Repository layer package"""
 
 from app.repositories.market_repository import MarketRepository
+from app.repositories.oauth_repository import (
+    OAuthStateRepository,
+    SocialAccountRepository,
+)
 from app.repositories.portfolio_repository import (
     HoldingRepository,
     PortfolioRepository,
@@ -28,4 +32,6 @@ __all__ = [
     "PortfolioRepository",
     "HoldingRepository",
     "TransactionRepository",
+    "SocialAccountRepository",
+    "OAuthStateRepository",
 ]

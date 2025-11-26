@@ -48,6 +48,29 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
     # ========================================================================
+    # OAUTH
+    # ========================================================================
+
+    # Google OAuth
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = ""
+
+    # Kakao OAuth
+    KAKAO_CLIENT_ID: str = ""
+    KAKAO_CLIENT_SECRET: str = ""
+    KAKAO_REDIRECT_URI: str = ""
+
+    # Naver OAuth
+    NAVER_CLIENT_ID: str = ""
+    NAVER_CLIENT_SECRET: str = ""
+    NAVER_REDIRECT_URI: str = ""
+
+    # OAuth security
+    OAUTH_STATE_EXPIRY_MINUTES: int = 10
+    OAUTH_FRONTEND_CALLBACK_URL: str = "http://localhost:5173/auth/callback"
+
+    # ========================================================================
     # CORS
     # ========================================================================
 

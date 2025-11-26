@@ -16,7 +16,7 @@ class User(BaseModel):
 
     # Authentication
     email = Column(String(255), unique=True, nullable=False, index=True)
-    password_hash = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=True)  # Nullable for OAuth-only users
     name = Column(String(100))
 
     # Subscription
@@ -89,6 +89,12 @@ class User(BaseModel):
         back_populates="user",
         cascade="all, delete-orphan",
         uselist=False,
+        lazy="select",
+    )
+    social_accounts = relationship(
+        "SocialAccount",
+        back_populates="user",
+        cascade="all, delete-orphan",
         lazy="select",
     )
 

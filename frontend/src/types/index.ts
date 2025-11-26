@@ -113,3 +113,6 @@ export * from './watchlist'
 
 // Dashboard types
 export * from './dashboard'
+
+// OAuth types
+export * from './oauth'

@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage'
 import EmailVerificationPage from './pages/EmailVerificationPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import ScreenerPage from './pages/ScreenerPage'
 import StockDetailPage from './pages/StockDetailPage'
 import StockComparisonPage from './pages/StockComparisonPage'
@@ -91,6 +92,14 @@ export const router = createBrowserRouter([
       {
         path: 'reset-password',
         element: <ResetPasswordPage />,
+      },
+      {
+        path: 'oauth/callback',
+        element: <OAuthCallbackPage />,
+      },
+      {
+        path: 'oauth/callback/:provider',
+        element: <OAuthCallbackPage />,
       },
       {
         path: '*',

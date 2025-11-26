@@ -65,6 +65,18 @@ from app.schemas.user import (EmailVerificationRequest, PasswordResetConfirm,
                               SuccessResponse, TokenPayload, TokenResponse,
                               UserCreate, UserLogin, UserResponse, UserUpdate,
                               VerificationStatusResponse)
+from app.schemas.oauth import (
+    OAuthAuthorizationResponse,
+    OAuthCallbackRequest,
+    OAuthErrorResponse,
+    OAuthLinkRequest,
+    OAuthProviderEnum,
+    OAuthTokenResponse,
+    OAuthUnlinkResponse,
+    OAuthUserInfo,
+    SocialAccountResponse,
+    SocialAccountsListResponse,
+)
 from app.schemas.watchlist import (
     DashboardSummary,
     ScreeningQuota,
@@ -187,4 +199,15 @@ __all__ = [
     "TransactionCreate",
     "TransactionResponse",
     "TransactionListResponse",
+    # OAuth schemas
+    "OAuthProviderEnum",
+    "OAuthAuthorizationResponse",
+    "OAuthCallbackRequest",
+    "OAuthUserInfo",
+    "OAuthTokenResponse",
+    "OAuthErrorResponse",
+    "OAuthLinkRequest",
+    "OAuthUnlinkResponse",
+    "SocialAccountResponse",
+    "SocialAccountsListResponse",
 ]
