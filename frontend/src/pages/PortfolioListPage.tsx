@@ -211,14 +211,15 @@ export default function PortfolioListPage() {
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
+  // Set page title - must be called before any conditional returns
+  useEffect(() => {
+    document.title = 'Portfolios | Stock Screener'
+  }, [])
+
   // Redirect if not authenticated
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />
   }
-
-  useEffect(() => {
-    document.title = 'Portfolios | Stock Screener'
-  }, [])
 
   const handleCreatePortfolio = async (data: PortfolioCreate) => {
     await createPortfolio.mutateAsync(data)

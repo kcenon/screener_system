@@ -317,16 +317,17 @@ export default function PortfolioDetailPage() {
   const { performance, allocation, isLoading: isPerfLoading } = usePortfolioPerformance(portfolioId)
   const { transactions, isLoading: isTransLoading } = useTransactions(portfolioId, 0, 10)
 
-  // Redirect if not authenticated
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />
-  }
-
+  // Set page title - must be called before any conditional returns
   useEffect(() => {
     if (portfolio) {
       document.title = `${portfolio.name} | Stock Screener`
     }
   }, [portfolio])
+
+  // Redirect if not authenticated
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />
+  }
 
   if (isLoading || isPerfLoading) {
     return (

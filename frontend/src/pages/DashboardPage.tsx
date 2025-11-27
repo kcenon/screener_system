@@ -45,15 +45,15 @@ export default function DashboardPage() {
   const { user, isAuthenticated } = useAuthStore()
   const { data, isLoading, error } = useDashboard()
 
+  // Set page title - must be called before any conditional returns
+  useEffect(() => {
+    document.title = 'Dashboard | Stock Screener'
+  }, [])
+
   // Redirect to login if not authenticated
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />
   }
-
-  useEffect(() => {
-    // Set page title
-    document.title = 'Dashboard | Stock Screener'
-  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">

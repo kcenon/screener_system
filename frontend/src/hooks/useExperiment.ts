@@ -41,6 +41,7 @@ import {
  */
 export function useExperiment(experiment: Experiment) {
   // Get variant (memoized to prevent re-assignment)
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally depend on experiment.id only
   const variant = useMemo(() => {
     return experiments.getVariant(experiment)
   }, [experiment.id])

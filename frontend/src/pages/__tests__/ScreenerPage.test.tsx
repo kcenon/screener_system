@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck - Type errors to be fixed in TEST-008-FOLLOWUP
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -310,7 +311,7 @@ describe('ScreenerPage', () => {
 
   describe('Sort Functionality', () => {
     it('handles sort column click', async () => {
-      const user = userEvent.setup()
+      const _user = userEvent.setup()
       renderScreenerPage()
 
       // Note: This test depends on ResultsTable exposing sortable columns
@@ -331,7 +332,7 @@ describe('ScreenerPage', () => {
 
   describe('Pagination', () => {
     it('handles page change', async () => {
-      const user = userEvent.setup()
+      const _user = userEvent.setup()
       renderScreenerPage()
 
       // Find and click next page
@@ -353,7 +354,7 @@ describe('ScreenerPage', () => {
     })
 
     it('resets to first page when filters change', async () => {
-      const user = userEvent.setup()
+      const _user = userEvent.setup()
       renderScreenerPage()
 
       // Apply filter

@@ -404,7 +404,7 @@ test.describe('Logout Flow', () => {
 
   test('logout clears local storage tokens', async ({ page }) => {
     // Verify token exists before logout
-    const tokenBefore = await page.evaluate(() => {
+    const _tokenBefore = await page.evaluate(() => {
       return (
         localStorage.getItem('token') ||
         localStorage.getItem('access_token') ||
