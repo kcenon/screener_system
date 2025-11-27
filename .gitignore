@@ -144,3 +144,5 @@ celerybeat.pid
 *.zip
 *.war
 *.jar
+scripts/sbom/.venv-sbom/
+/sbom/

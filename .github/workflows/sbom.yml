@@ -1,0 +1,289 @@
+name: Generate SBOM
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      attach_to_release:
+        description: 'Attach SBOM to latest release'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+  packages: read
+
+env:
+  SBOM_OUTPUT_DIR: sbom
+
+jobs:
+  generate-frontend-sbom:
+    name: Frontend SBOM (npm)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Generate Frontend SBOM
+        working-directory: frontend
+        run: |
+          mkdir -p ../${{ env.SBOM_OUTPUT_DIR }}
+          npx @cyclonedx/cyclonedx-npm \
+            --output-file ../${{ env.SBOM_OUTPUT_DIR }}/sbom-frontend.json \
+            --output-format JSON \
+            --spec-version 1.5 \
+            --mc-type application \
+            --package-lock-only
+
+      - name: Validate SBOM
+        run: |
+          if [ -f "${{ env.SBOM_OUTPUT_DIR }}/sbom-frontend.json" ]; then
+            COMPONENTS=$(jq '.components | length' ${{ env.SBOM_OUTPUT_DIR }}/sbom-frontend.json)
+            echo "Frontend SBOM generated with $COMPONENTS components"
+          else
+            echo "Error: Frontend SBOM not generated"
+            exit 1
+          fi
+
+      - name: Upload Frontend SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-frontend
+          path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-frontend.json
+          retention-days: 90
+
+  generate-backend-sbom:
+    name: Backend SBOM (Python)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install cyclonedx-bom
+        run: pip install cyclonedx-bom
+
+      - name: Generate Backend SBOM
+        working-directory: backend
+        run: |
+          mkdir -p ../${{ env.SBOM_OUTPUT_DIR }}
+          python -m cyclonedx_py requirements \
+            requirements.txt \
+            -o ../${{ env.SBOM_OUTPUT_DIR }}/sbom-backend.json \
+            --of JSON \
+            --sv 1.5 \
+            --mc-type application
+
+      - name: Validate SBOM
+        run: |
+          if [ -f "${{ env.SBOM_OUTPUT_DIR }}/sbom-backend.json" ]; then
+            COMPONENTS=$(jq '.components | length' ${{ env.SBOM_OUTPUT_DIR }}/sbom-backend.json)
+            echo "Backend SBOM generated with $COMPONENTS components"
+          else
+            echo "Error: Backend SBOM not generated"
+            exit 1
+          fi
+
+      - name: Upload Backend SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-backend
+          path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-backend.json
+          retention-days: 90
+
+  generate-pipeline-sbom:
+    name: Data Pipeline SBOM (Python)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install cyclonedx-bom
+        run: pip install cyclonedx-bom
+
+      - name: Generate Data Pipeline SBOM
+        working-directory: data_pipeline
+        run: |
+          mkdir -p ../${{ env.SBOM_OUTPUT_DIR }}
+          if [ -f requirements.txt ]; then
+            python -m cyclonedx_py requirements \
+              requirements.txt \
+              -o ../${{ env.SBOM_OUTPUT_DIR }}/sbom-datapipeline.json \
+              --of JSON \
+              --sv 1.5 \
+              --mc-type application
+          else
+            echo "No requirements.txt found, creating empty SBOM"
+            echo '{"bomFormat":"CycloneDX","specVersion":"1.5","version":1,"components":[]}' > ../${{ env.SBOM_OUTPUT_DIR }}/sbom-datapipeline.json
+          fi
+
+      - name: Upload Data Pipeline SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-datapipeline
+          path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-datapipeline.json
+          retention-days: 90
+
+  merge-and-publish:
+    name: Merge and Publish SBOMs
+    runs-on: ubuntu-latest
+    needs: [generate-frontend-sbom, generate-backend-sbom, generate-pipeline-sbom]
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all SBOM artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.SBOM_OUTPUT_DIR }}
+          pattern: sbom-*
+          merge-multiple: true
+
+      - name: List downloaded SBOMs
+        run: |
+          echo "Downloaded SBOM files:"
+          ls -la ${{ env.SBOM_OUTPUT_DIR }}/
+
+      - name: Merge SBOMs
+        run: |
+          cd ${{ env.SBOM_OUTPUT_DIR }}
+
+          # Create merged SBOM header
+          cat > sbom-complete.json << 'EOF'
+          {
+            "bomFormat": "CycloneDX",
+            "specVersion": "1.5",
+            "version": 1,
+            "metadata": {
+              "timestamp": "TIMESTAMP_PLACEHOLDER",
+              "tools": [
+                {
+                  "vendor": "screener_system",
+                  "name": "sbom-generator",
+                  "version": "1.0.0"
+                }
+              ],
+              "component": {
+                "type": "application",
+                "name": "screener_system",
+                "version": "VERSION_PLACEHOLDER"
+              }
+            },
+            "components": []
+          }
+          EOF
+
+          # Replace placeholders
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          VERSION="${{ github.ref_name }}"
+          [ -z "$VERSION" ] && VERSION="dev"
+
+          sed -i "s/TIMESTAMP_PLACEHOLDER/$TIMESTAMP/g" sbom-complete.json
+          sed -i "s/VERSION_PLACEHOLDER/$VERSION/g" sbom-complete.json
+
+          # Merge components from each SBOM
+          for f in sbom-frontend.json sbom-backend.json sbom-datapipeline.json; do
+            if [ -f "$f" ]; then
+              echo "Merging components from $f..."
+              COMPONENTS=$(jq -c '.components // []' "$f")
+              jq --argjson new "$COMPONENTS" '.components += $new' sbom-complete.json > tmp.json && mv tmp.json sbom-complete.json
+            fi
+          done
+
+          # Remove duplicate components
+          jq '.components |= unique_by(.purl // .name)' sbom-complete.json > tmp.json && mv tmp.json sbom-complete.json
+
+          # Print summary
+          TOTAL=$(jq '.components | length' sbom-complete.json)
+          echo "Merged SBOM created with $TOTAL total components"
+
+      - name: Scan SBOM for vulnerabilities
+        continue-on-error: true
+        run: |
+          # Install grype for vulnerability scanning
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+          echo "=== Vulnerability Scan Results ==="
+          grype sbom:${{ env.SBOM_OUTPUT_DIR }}/sbom-complete.json --output table || true
+
+      - name: Upload merged SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-complete
+          path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-complete.json
+          retention-days: 90
+
+      - name: Attach SBOMs to Release
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.attach_to_release == 'true')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ env.SBOM_OUTPUT_DIR }}/sbom-complete.json
+            ${{ env.SBOM_OUTPUT_DIR }}/sbom-frontend.json
+            ${{ env.SBOM_OUTPUT_DIR }}/sbom-backend.json
+            ${{ env.SBOM_OUTPUT_DIR }}/sbom-datapipeline.json
+          tag_name: ${{ github.event.release.tag_name || github.ref_name }}
+
+      - name: Generate SBOM Summary
+        run: |
+          echo "# SBOM Generation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Format**: CycloneDX v1.5" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Component Counts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          for f in ${{ env.SBOM_OUTPUT_DIR }}/sbom-*.json; do
+            if [ -f "$f" ]; then
+              NAME=$(basename "$f" .json | sed 's/sbom-//')
+              COUNT=$(jq '.components | length' "$f")
+              SIZE=$(ls -lh "$f" | awk '{print $5}')
+              echo "- **$NAME**: $COUNT components ($SIZE)" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Files Generated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+          for f in ${{ env.SBOM_OUTPUT_DIR }}/sbom-*.json; do
+            if [ -f "$f" ]; then
+              NAME=$(basename "$f")
+              SIZE=$(ls -lh "$f" | awk '{print $5}')
+              echo "| $NAME | $SIZE |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
