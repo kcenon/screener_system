@@ -25,6 +25,8 @@ if [ ! -f "package-lock.json" ]; then
 fi
 
 # Generate SBOM (npx will download the package temporarily if not cached)
+# Note: @cyclonedx/cyclonedx-npm is NOT added to devDependencies due to
+# critical vulnerability in libxmljs2 (GHSA-78h3-pg4x-j8cv)
 echo "Generating CycloneDX SBOM..."
 npx @cyclonedx/cyclonedx-npm \
     --output-file "$OUTPUT_DIR/sbom-frontend.json" \
