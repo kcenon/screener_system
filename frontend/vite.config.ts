@@ -104,11 +104,31 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    // Target chunk size warning threshold (in KB)
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
+        // Split chunks for better caching and loading performance
         manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          charts: ['lightweight-charts', 'recharts'],
+          // Core React libraries - rarely change
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // Data fetching and state management
+          'vendor-query': ['@tanstack/react-query', 'zustand', 'axios'],
+          // Chart libraries - large, only needed on specific pages
+          'vendor-charts': ['lightweight-charts', 'recharts'],
+          // UI component libraries
+          'vendor-ui': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-select',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-accordion',
+          ],
+          // Internationalization
+          'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+          // Utilities
+          'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge', 'class-variance-authority'],
         },
       },
     },
