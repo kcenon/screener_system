@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useStockData } from '@/hooks/useStockData'
 import { usePriceChart } from '@/hooks/usePriceChart'
 import { useFreemiumAccess } from '@/hooks/useFreemiumAccess'
 import StockHeader from '@/components/stock/StockHeader'
 import PriceChart from '@/components/stock/PriceChart'
+import { AdvancedChartContainer } from '@/components/charts'
 import StockTabs from '@/components/stock/StockTabs'
 import { FreemiumBanner } from '@/components/freemium'
 
@@ -23,6 +25,9 @@ import { FreemiumBanner } from '@/components/freemium'
 export default function StockDetailPage() {
   const { code } = useParams<{ code: string }>()
   const navigate = useNavigate()
+
+  // Chart mode state (basic or advanced)
+  const [useAdvancedChart, setUseAdvancedChart] = useState(true)
 
   // Fetch stock data
   const {
@@ -201,13 +206,49 @@ export default function StockDetailPage() {
           </ol>
         </nav>
 
+        {/* Chart Mode Toggle */}
+        <div className="flex items-center justify-end gap-2">
+          <span className="text-sm text-gray-600 dark:text-gray-400">차트 모드:</span>
+          <button
+            onClick={() => setUseAdvancedChart(false)}
+            className={`px-3 py-1 text-sm rounded-l-md border ${
+              !useAdvancedChart
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+            }`}
+          >
+            기본
+          </button>
+          <button
+            onClick={() => setUseAdvancedChart(true)}
+            className={`px-3 py-1 text-sm rounded-r-md border-t border-b border-r ${
+              useAdvancedChart
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+            }`}
+          >
+            고급
+          </button>
+        </div>
+
         {/* Price Chart */}
-        <PriceChart
-          data={priceData}
-          loading={chartLoading}
-          timeframe={timeframe}
-          onTimeframeChange={setTimeframe}
-        />
+        {useAdvancedChart ? (
+          <AdvancedChartContainer
+            symbol={code || ''}
+            data={priceData}
+            loading={chartLoading}
+            timeframe={timeframe}
+            onTimeframeChange={setTimeframe}
+            height={500}
+          />
+        ) : (
+          <PriceChart
+            data={priceData}
+            loading={chartLoading}
+            timeframe={timeframe}
+            onTimeframeChange={setTimeframe}
+          />
+        )}
 
         {/* Stock Tabs */}
         <StockTabs
