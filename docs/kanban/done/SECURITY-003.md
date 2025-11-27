@@ -77,7 +77,7 @@ Implement automated Software Bill of Materials (SBOM) generation for supply chai
 ### Subtasks
 
 #### 1. Tool Installation and Configuration (1h)
-- [x] Add `@cyclonedx/cyclonedx-npm` to frontend devDependencies
+- [x] Use `npx @cyclonedx/cyclonedx-npm` for SBOM generation (not added to devDependencies due to libxmljs2 vulnerability)
 - [x] Scripts use isolated venv for cyclonedx-bom (no requirements-dev.txt needed)
 - [x] Create SBOM output directory structure
 
@@ -137,9 +137,10 @@ sbom/
 
 ### Modified Files
 ```
-frontend/package.json          # Added @cyclonedx/cyclonedx-npm devDependency
 docs/SECURITY_AUDIT.md         # Added SBOM section
 ```
+
+**Note**: `@cyclonedx/cyclonedx-npm` is NOT added to devDependencies due to transitive vulnerability in `libxmljs2`. The script uses `npx` to run it temporarily without installing.
 
 ---
 
