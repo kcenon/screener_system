@@ -11,7 +11,7 @@
 - **Dependencies**: IMPROVEMENT-004 ✅
 - **Blocks**: None
 - **Related**: [UI/UX Improvements Document](../../improvements/finviz-inspired-ui-improvements.md)
-- **PR**: TBD
+- **PR**: https://github.com/kcenon/screener_system/pull/184
 
 ## Description
 Complete the deferred visual enhancement features from IMPROVEMENT-004 Phase 3, including in-cell sparklines for price trends and additional visual analytics components. This ticket focuses on adding micro-visualizations that provide instant insight without requiring users to navigate to detailed views.
