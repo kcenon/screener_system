@@ -189,7 +189,7 @@ class TestCreateWatchlist:
             new_callable=AsyncMock,
             return_value=None,  # Stock doesn't exist
         ):
-            data = WatchlistCreate(name="Test Watchlist", stock_codes=["INVALID"])
+            data = WatchlistCreate(name="Test Watchlist", stock_codes=["999999"])
 
             with pytest.raises(ValueError, match="does not exist"):
                 await watchlist_service.create_watchlist(user_id=1, data=data)
@@ -486,7 +486,7 @@ class TestAddStockToWatchlist:
         ):
             with pytest.raises(ValueError, match="does not exist"):
                 await watchlist_service.add_stock_to_watchlist(
-                    watchlist_id=uuid4(), user_id=1, stock_code="INVALID"
+                    watchlist_id=uuid4(), user_id=1, stock_code="999999"
                 )
 
 
