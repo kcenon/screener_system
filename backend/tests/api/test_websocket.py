@@ -539,3 +539,266 @@ class TestPhase4Features:
 
         # Queue should be empty (flushed by loop)
         assert len(connection_manager._message_queues.get(conn_id, [])) == 0
+
+
+class TestVerifyToken:
+    """Test JWT token verification for WebSocket"""
+
+    @pytest.mark.asyncio
+    async def test_verify_token_none(self):
+        """Test verify_token with None token"""
+        from app.api.v1.endpoints.websocket import verify_token
+
+        result = await verify_token(None)
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_verify_token_empty_string(self):
+        """Test verify_token with empty string"""
+        from app.api.v1.endpoints.websocket import verify_token
+
+        result = await verify_token("")
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_verify_token_invalid_jwt(self):
+        """Test verify_token with invalid JWT"""
+        from app.api.v1.endpoints.websocket import verify_token
+
+        result = await verify_token("invalid_token")
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_verify_token_valid_jwt(self):
+        """Test verify_token with valid JWT"""
+        from app.api.v1.endpoints.websocket import verify_token
+        from app.core.security import create_access_token
+
+        token = create_access_token(subject="test-user-123")
+        result = await verify_token(token)
+        assert result == "test-user-123"
+
+    @pytest.mark.asyncio
+    async def test_verify_token_expired_jwt(self):
+        """Test verify_token with expired JWT"""
+        from datetime import timedelta
+        from app.api.v1.endpoints.websocket import verify_token
+        from app.core.security import create_access_token
+
+        # Create expired token
+        token = create_access_token(
+            subject="test-user-123",
+            expires_delta=timedelta(seconds=-1)
+        )
+        result = await verify_token(token)
+        assert result is None
+
+
+class TestWebSocketSubscriptionLimits:
+    """Test WebSocket subscription limits (DoS protection)"""
+
+    def test_subscribe_too_many_targets(self, client):
+        """Test subscribing with too many targets at once"""
+        with client.websocket_connect("/v1/ws") as websocket:
+            # Try to subscribe to more than MAX_TARGETS_PER_SUBSCRIPTION
+            targets = [f"00{i:04d}" for i in range(100)]
+            subscribe_msg = {
+                "type": "subscribe",
+                "subscription_type": "stock",
+                "targets": targets,
+            }
+            websocket.send_json(subscribe_msg)
+
+            response = websocket.receive_json()
+            assert response["type"] == "error"
+            assert response["code"] == "TOO_MANY_TARGETS"
+
+    def test_subscribe_exceeds_total_limit(self, client):
+        """Test exceeding total subscription limit"""
+        with client.websocket_connect("/v1/ws") as websocket:
+            # Subscribe multiple times to reach limit
+            for batch in range(3):
+                targets = [f"00{batch}{i:03d}" for i in range(40)]
+                subscribe_msg = {
+                    "type": "subscribe",
+                    "subscription_type": "stock",
+                    "targets": targets,
+                }
+                websocket.send_json(subscribe_msg)
+                response = websocket.receive_json()
+
+                # Third batch should fail due to total limit
+                if batch == 2:
+                    assert response["type"] == "error"
+                    assert response["code"] == "SUBSCRIPTION_LIMIT_EXCEEDED"
+                else:
+                    assert response["type"] == "subscribed"
+
+
+class TestWebSocketLargeMessage:
+    """Test WebSocket large message handling"""
+
+    def test_message_too_large(self, client):
+        """Test sending message larger than MAX_MESSAGE_SIZE"""
+        with client.websocket_connect("/v1/ws") as websocket:
+            # Create a large message exceeding limit
+            large_data = "x" * 100000  # 100KB
+            websocket.send_text(large_data)
+
+            response = websocket.receive_json()
+            assert response["type"] == "error"
+            assert response["code"] == "MESSAGE_TOO_LARGE"
+
+
+class TestWebSocketReconnectEndpoint:
+    """Test WebSocket reconnect endpoint behavior"""
+
+    def test_reconnect_message_type_not_supported(self, client):
+        """Test RECONNECT message type returns error"""
+        with client.websocket_connect("/v1/ws") as websocket:
+            websocket.send_json({"type": "reconnect"})
+
+            response = websocket.receive_json()
+            assert response["type"] == "error"
+            assert response["code"] == "RECONNECT_NOT_SUPPORTED_HERE"
+
+
+class TestHandleSubscribe:
+    """Test handle_subscribe function"""
+
+    @pytest.mark.asyncio
+    async def test_handle_subscribe_invalid_request(self):
+        """Test handle_subscribe with invalid request data"""
+        from unittest.mock import AsyncMock, patch
+        from app.api.v1.endpoints.websocket import handle_subscribe
+
+        with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
+            mock_cm.send_error = AsyncMock()
+            mock_cm.get_connection_info.return_value = None
+
+            # Invalid subscription type
+            await handle_subscribe("test-conn", {"type": "subscribe", "invalid": "data"})
+
+            mock_cm.send_error.assert_called_once()
+
+
+class TestHandleUnsubscribe:
+    """Test handle_unsubscribe function"""
+
+    @pytest.mark.asyncio
+    async def test_handle_unsubscribe_success(self):
+        """Test handle_unsubscribe success"""
+        from unittest.mock import AsyncMock, MagicMock, patch
+        from app.api.v1.endpoints.websocket import handle_unsubscribe
+
+        with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
+            mock_cm.unsubscribe = MagicMock()
+            mock_cm.send_message = AsyncMock()
+
+            message = {
+                "type": "unsubscribe",
+                "subscription_type": "stock",
+                "targets": ["005930"],
+            }
+
+            await handle_unsubscribe("test-conn", message)
+
+            mock_cm.unsubscribe.assert_called_once()
+            mock_cm.send_message.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_handle_unsubscribe_error(self):
+        """Test handle_unsubscribe with invalid data"""
+        from unittest.mock import AsyncMock, patch
+        from app.api.v1.endpoints.websocket import handle_unsubscribe
+
+        with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
+            mock_cm.send_error = AsyncMock()
+
+            # Invalid data
+            await handle_unsubscribe("test-conn", {"type": "unsubscribe"})
+
+            mock_cm.send_error.assert_called_once()
+
+
+class TestHandleRefreshToken:
+    """Test handle_refresh_token function"""
+
+    @pytest.mark.asyncio
+    async def test_handle_refresh_token_invalid_request(self):
+        """Test handle_refresh_token with invalid request"""
+        from unittest.mock import AsyncMock, patch
+        from app.api.v1.endpoints.websocket import handle_refresh_token
+
+        with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
+            mock_cm.send_error = AsyncMock()
+
+            await handle_refresh_token("test-conn", {"type": "refresh_token"})
+
+            mock_cm.send_error.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_handle_refresh_token_not_refresh_type(self):
+        """Test handle_refresh_token with access token (not refresh)"""
+        from unittest.mock import AsyncMock, patch
+        from app.api.v1.endpoints.websocket import handle_refresh_token
+        from app.core.security import create_access_token
+
+        access_token = create_access_token(subject="test-user")
+
+        with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
+            mock_cm.send_error = AsyncMock()
+
+            await handle_refresh_token(
+                "test-conn",
+                {"type": "refresh_token", "refresh_token": access_token}
+            )
+
+            mock_cm.send_error.assert_called()
+            # Should get INVALID_TOKEN_TYPE or similar error
+
+    @pytest.mark.asyncio
+    async def test_handle_refresh_token_expired(self):
+        """Test handle_refresh_token with expired token"""
+        from unittest.mock import AsyncMock, patch
+        from app.api.v1.endpoints.websocket import handle_refresh_token
+
+        with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
+            mock_cm.send_error = AsyncMock()
+
+            await handle_refresh_token(
+                "test-conn",
+                {"type": "refresh_token", "refresh_token": "expired_token"}
+            )
+
+            mock_cm.send_error.assert_called()
+
+
+class TestWebSocketEndpointWithToken:
+    """Test WebSocket endpoint with authentication"""
+
+    def test_websocket_with_valid_token(self, client):
+        """Test WebSocket connection with valid token"""
+        from app.core.security import create_access_token
+
+        token = create_access_token(subject="test-user-id")
+
+        with client.websocket_connect(f"/v1/ws?token={token}") as websocket:
+            websocket.send_json({"type": "ping"})
+            response = websocket.receive_json()
+            assert response["type"] == "pong"
+
+    def test_websocket_reconnect_with_session_id(self, client):
+        """Test WebSocket reconnection with session_id"""
+        # First connection
+        with client.websocket_connect("/v1/ws") as websocket:
+            websocket.send_json({"type": "ping"})
+            websocket.receive_json()
+
+        # Try reconnect with fake session (should still work, just not restore)
+        with client.websocket_connect("/v1/ws?session_id=fake-session") as websocket:
+            # Connection should work, but may get error about session restoration
+            websocket.send_json({"type": "ping"})
+            response = websocket.receive_json()
+            # Should either be error (session restoration failed) or pong
+            assert response["type"] in ["error", "pong"]
