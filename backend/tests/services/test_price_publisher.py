@@ -273,7 +273,7 @@ class TestMockPublisher:
     async def test_stop_mock_publisher(self, publisher: PricePublisher):
         """Test stopping mock publisher"""
         publisher._running = True
-        publisher._publish_task = AsyncMock()
+        publisher._publish_task = MagicMock()
 
         await publisher.stop_mock_publisher()
 
