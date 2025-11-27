@@ -10,11 +10,11 @@ export default function NavMenu({ className }: NavMenuProps) {
     <nav className={className}>
       <ul className="flex items-center gap-1">
         {navigationConfig.map((item) => (
-          <li key={item.path || item.label}>
+          <li key={item.path || item.labelKey}>
             {item.path && (
               <NavLink
                 to={item.path}
-                label={item.label}
+                labelKey={item.labelKey}
                 icon={item.icon}
               />
             )}

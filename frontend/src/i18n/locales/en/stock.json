@@ -1,0 +1,126 @@
+{
+  "detail": {
+    "title": "Stock Detail",
+    "overview": "Overview",
+    "chart": "Chart",
+    "financials": "Financials",
+    "technicals": "Technicals",
+    "news": "News",
+    "analysis": "Analysis"
+  },
+  "info": {
+    "code": "Stock Code",
+    "name": "Name",
+    "nameEn": "English Name",
+    "market": "Market",
+    "sector": "Sector",
+    "industry": "Industry",
+    "listingDate": "Listed Date",
+    "fiscalYearEnd": "Fiscal Year End"
+  },
+  "price": {
+    "current": "Current Price",
+    "change": "Change",
+    "changePercent": "Change %",
+    "open": "Open",
+    "high": "High",
+    "low": "Low",
+    "prevClose": "Prev Close",
+    "volume": "Volume",
+    "value": "Value",
+    "high52w": "52W High",
+    "low52w": "52W Low",
+    "avgVolume": "Avg Volume"
+  },
+  "valuation": {
+    "title": "Valuation",
+    "marketCap": "Market Cap",
+    "per": "P/E Ratio",
+    "pbr": "P/B Ratio",
+    "psr": "P/S Ratio",
+    "eps": "EPS",
+    "bps": "BPS",
+    "roe": "ROE",
+    "roa": "ROA",
+    "dividend": "Dividend Yield",
+    "dividendPayout": "Payout Ratio"
+  },
+  "financials": {
+    "title": "Financial Statements",
+    "revenue": "Revenue",
+    "operatingProfit": "Operating Profit",
+    "netIncome": "Net Income",
+    "assets": "Total Assets",
+    "liabilities": "Total Liabilities",
+    "equity": "Total Equity",
+    "debtRatio": "Debt Ratio",
+    "currentRatio": "Current Ratio"
+  },
+  "chart": {
+    "timeframes": {
+      "1d": "1D",
+      "1w": "1W",
+      "1m": "1M",
+      "3m": "3M",
+      "6m": "6M",
+      "1y": "1Y",
+      "5y": "5Y",
+      "max": "Max"
+    },
+    "types": {
+      "line": "Line",
+      "candle": "Candle",
+      "area": "Area"
+    },
+    "indicators": {
+      "title": "Indicators",
+      "sma": "SMA",
+      "ema": "EMA",
+      "bollinger": "Bollinger Bands",
+      "volume": "Volume",
+      "rsi": "RSI",
+      "macd": "MACD",
+      "stochastic": "Stochastic"
+    },
+    "drawing": {
+      "title": "Drawing Tools",
+      "trendline": "Trend Line",
+      "horizontal": "Horizontal Line",
+      "fibonacci": "Fibonacci",
+      "rectangle": "Rectangle",
+      "clear": "Clear"
+    }
+  },
+  "technicals": {
+    "title": "Technical Indicators",
+    "rsi": "RSI (14)",
+    "macd": "MACD",
+    "stochastic": "Stochastic",
+    "adx": "ADX",
+    "cci": "CCI",
+    "atr": "ATR",
+    "ma20": "MA 20",
+    "ma50": "MA 50",
+    "ma200": "MA 200",
+    "signal": {
+      "buy": "Buy",
+      "sell": "Sell",
+      "hold": "Hold",
+      "strongBuy": "Strong Buy",
+      "strongSell": "Strong Sell"
+    }
+  },
+  "watchlist": {
+    "add": "Add to Watchlist",
+    "remove": "Remove from Watchlist",
+    "added": "Added to watchlist",
+    "removed": "Removed from watchlist"
+  },
+  "alert": {
+    "create": "Create Alert",
+    "priceAbove": "When price is above {{price}}",
+    "priceBelow": "When price is below {{price}}",
+    "changeAbove": "When up more than {{percent}}%",
+    "changeBelow": "When down more than {{percent}}%"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "Stock Screener",
+    "tagline": "한국 주식 스크리닝 플랫폼"
+  },
+  "nav": {
+    "home": "홈",
+    "market": "시장",
+    "screener": "스크리너",
+    "watchlists": "관심종목",
+    "compare": "비교",
+    "portfolio": "포트폴리오",
+    "alerts": "알림",
+    "settings": "설정",
+    "login": "로그인",
+    "logout": "로그아웃",
+    "signup": "회원가입",
+    "profile": "프로필"
+  },
+  "actions": {
+    "save": "저장",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "수정",
+    "search": "검색",
+    "filter": "필터",
+    "export": "내보내기",
+    "import": "가져오기",
+    "refresh": "새로고침",
+    "reset": "초기화",
+    "apply": "적용",
+    "confirm": "확인",
+    "close": "닫기",
+    "add": "추가",
+    "remove": "제거",
+    "view": "보기",
+    "download": "다운로드",
+    "upload": "업로드",
+    "share": "공유",
+    "copy": "복사",
+    "retry": "재시도",
+    "back": "뒤로",
+    "next": "다음",
+    "previous": "이전",
+    "submit": "제출",
+    "create": "생성",
+    "update": "업데이트",
+    "loadMore": "더 보기"
+  },
+  "status": {
+    "loading": "로딩 중...",
+    "saving": "저장 중...",
+    "error": "오류가 발생했습니다",
+    "success": "성공",
+    "noData": "데이터가 없습니다",
+    "noResults": "결과가 없습니다",
+    "offline": "오프라인 상태입니다",
+    "online": "온라인 상태입니다",
+    "connecting": "연결 중...",
+    "disconnected": "연결이 끊어졌습니다"
+  },
+  "time": {
+    "today": "오늘",
+    "yesterday": "어제",
+    "thisWeek": "이번 주",
+    "thisMonth": "이번 달",
+    "thisYear": "올해",
+    "days": "{{count}}일",
+    "hours": "{{count}}시간",
+    "minutes": "{{count}}분",
+    "seconds": "{{count}}초",
+    "ago": "전"
+  },
+  "pagination": {
+    "page": "페이지 {{current}} / {{total}}",
+    "showing": "{{start}}-{{end}} / {{total}}개 표시",
+    "perPage": "페이지당 {{count}}개",
+    "goToPage": "페이지로 이동"
+  },
+  "search": {
+    "placeholder": "종목명 또는 코드 검색...",
+    "noResults": "검색 결과가 없습니다",
+    "recent": "최근 검색",
+    "clear": "검색 기록 삭제"
+  },
+  "theme": {
+    "light": "라이트 모드",
+    "dark": "다크 모드",
+    "system": "시스템 설정"
+  },
+  "language": {
+    "title": "언어",
+    "select": "언어 선택",
+    "ko": "한국어",
+    "en": "English"
+  },
+  "errors": {
+    "generic": "오류가 발생했습니다. 다시 시도해주세요.",
+    "network": "네트워크 오류가 발생했습니다.",
+    "notFound": "페이지를 찾을 수 없습니다.",
+    "unauthorized": "로그인이 필요합니다.",
+    "forbidden": "접근 권한이 없습니다.",
+    "serverError": "서버 오류가 발생했습니다.",
+    "validation": "입력 값을 확인해주세요."
+  },
+  "confirmation": {
+    "delete": "정말 삭제하시겠습니까?",
+    "unsavedChanges": "저장하지 않은 변경사항이 있습니다. 페이지를 나가시겠습니까?",
+    "logout": "로그아웃 하시겠습니까?"
+  }
+}

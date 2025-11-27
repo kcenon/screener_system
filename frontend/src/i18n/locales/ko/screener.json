@@ -1,0 +1,114 @@
+{
+  "title": "주식 스크리너",
+  "description": "다양한 조건으로 종목을 검색하세요",
+  "filters": {
+    "title": "필터",
+    "apply": "필터 적용",
+    "reset": "필터 초기화",
+    "save": "필터 저장",
+    "load": "필터 불러오기",
+    "delete": "필터 삭제",
+    "savedFilters": "저장된 필터",
+    "noSavedFilters": "저장된 필터가 없습니다",
+    "filterName": "필터 이름",
+    "enterFilterName": "필터 이름을 입력하세요",
+    "market": {
+      "title": "시장",
+      "kospi": "KOSPI",
+      "kosdaq": "KOSDAQ",
+      "all": "전체"
+    },
+    "sector": {
+      "title": "섹터",
+      "all": "전체 섹터",
+      "placeholder": "섹터 선택"
+    },
+    "marketCap": {
+      "title": "시가총액",
+      "min": "최소",
+      "max": "최대",
+      "unit": "억원"
+    },
+    "price": {
+      "title": "주가",
+      "min": "최소",
+      "max": "최대",
+      "unit": "원"
+    },
+    "change": {
+      "title": "등락률",
+      "positive": "상승",
+      "negative": "하락",
+      "neutral": "보합"
+    },
+    "volume": {
+      "title": "거래량",
+      "min": "최소",
+      "aboveAverage": "평균 이상"
+    },
+    "pe": {
+      "title": "PER",
+      "min": "최소",
+      "max": "최대"
+    },
+    "pb": {
+      "title": "PBR",
+      "min": "최소",
+      "max": "최대"
+    },
+    "dividend": {
+      "title": "배당수익률",
+      "min": "최소 (%)"
+    },
+    "rsi": {
+      "title": "RSI",
+      "oversold": "과매도 (30 이하)",
+      "overbought": "과매수 (70 이상)"
+    },
+    "ma": {
+      "title": "이동평균",
+      "above20": "20일선 위",
+      "above50": "50일선 위",
+      "above200": "200일선 위",
+      "goldenCross": "골든크로스"
+    }
+  },
+  "results": {
+    "title": "검색 결과",
+    "count": "{{count}}개 종목",
+    "noResults": "조건에 맞는 종목이 없습니다",
+    "loading": "종목을 검색 중입니다...",
+    "sortBy": "정렬",
+    "columns": "컬럼 설정",
+    "export": {
+      "title": "내보내기",
+      "csv": "CSV로 내보내기",
+      "excel": "Excel로 내보내기"
+    }
+  },
+  "table": {
+    "code": "종목코드",
+    "name": "종목명",
+    "price": "현재가",
+    "change": "등락",
+    "changePercent": "등락률",
+    "volume": "거래량",
+    "marketCap": "시가총액",
+    "per": "PER",
+    "pbr": "PBR",
+    "dividend": "배당률",
+    "sector": "섹터",
+    "market": "시장",
+    "trend": "추세"
+  },
+  "quickFilters": {
+    "title": "빠른 필터",
+    "topGainers": "상승 상위",
+    "topLosers": "하락 상위",
+    "mostActive": "거래 활발",
+    "highDividend": "고배당",
+    "lowPER": "저PER",
+    "newHigh": "신고가",
+    "newLow": "신저가"
+  }
+}

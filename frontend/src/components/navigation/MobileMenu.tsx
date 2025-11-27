@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { navigationConfig } from '@/config/navigation'
 import { useAuthStatus, useLogout } from '@/hooks/useAuth'
 import clsx from 'clsx'
 
 export default function MobileMenu() {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const location = useLocation()
   const { user } = useAuthStatus()
@@ -46,7 +48,7 @@ export default function MobileMenu() {
           <div className="fixed top-0 left-0 bottom-0 w-64 bg-white dark:bg-gray-800 shadow-xl z-50 lg:hidden overflow-y-auto transition-colors">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Menu</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('app.name')}</h2>
               <button
                 onClick={closeMenu}
                 className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors"
@@ -76,7 +78,7 @@ export default function MobileMenu() {
                         )}
                       >
                         {Icon && <Icon size={20} />}
-                        <span>{item.label}</span>
+                        <span>{t(item.labelKey)}</span>
                       </Link>
                     </li>
                   )
@@ -101,7 +103,7 @@ export default function MobileMenu() {
                     onClick={handleLogout}
                     className="w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 rounded-md transition-colors"
                   >
-                    Logout
+                    {t('nav.logout')}
                   </button>
                 </>
               ) : (
@@ -111,14 +113,14 @@ export default function MobileMenu() {
                     onClick={closeMenu}
                     className="block w-full px-3 py-2 text-sm font-medium text-center text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-md transition-colors"
                   >
-                    Login
+                    {t('nav.login')}
                   </Link>
                   <Link
                     to="/register"
                     onClick={closeMenu}
                     className="block w-full px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-md transition-colors"
                   >
-                    Sign Up
+                    {t('nav.signup')}
                   </Link>
                 </div>
               )}

@@ -1,7 +1,8 @@
 import { LucideIcon, TrendingUp, Filter, ListTodo, BarChart3 } from 'lucide-react'
 
 export interface NavigationItem {
-  label: string
+  /** Translation key for the label (e.g., 'nav.market') */
+  labelKey: string
   path?: string
   icon?: LucideIcon
   auth?: boolean
@@ -11,22 +12,22 @@ export interface NavigationItem {
 
 export const navigationConfig: NavigationItem[] = [
   {
-    label: 'Market',
+    labelKey: 'nav.market',
     path: '/market',
     icon: BarChart3,
   },
   {
-    label: 'Screener',
+    labelKey: 'nav.screener',
     path: '/screener',
     icon: Filter,
   },
   {
-    label: 'Watchlists',
+    labelKey: 'nav.watchlists',
     path: '/watchlists',
     icon: ListTodo,
   },
   {
-    label: 'Compare',
+    labelKey: 'nav.compare',
     path: '/compare',
     icon: TrendingUp,
   },
@@ -34,11 +35,11 @@ export const navigationConfig: NavigationItem[] = [
 
 export const userMenuConfig: NavigationItem[] = [
   {
-    label: 'Login',
+    labelKey: 'nav.login',
     path: '/login',
   },
   {
-    label: 'Register',
+    labelKey: 'nav.signup',
     path: '/register',
   },
 ]

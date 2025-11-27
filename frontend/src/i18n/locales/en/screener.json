@@ -1,0 +1,114 @@
+{
+  "title": "Stock Screener",
+  "description": "Find stocks with various criteria",
+  "filters": {
+    "title": "Filters",
+    "apply": "Apply Filters",
+    "reset": "Reset Filters",
+    "save": "Save Filter",
+    "load": "Load Filter",
+    "delete": "Delete Filter",
+    "savedFilters": "Saved Filters",
+    "noSavedFilters": "No saved filters",
+    "filterName": "Filter Name",
+    "enterFilterName": "Enter filter name",
+    "market": {
+      "title": "Market",
+      "kospi": "KOSPI",
+      "kosdaq": "KOSDAQ",
+      "all": "All"
+    },
+    "sector": {
+      "title": "Sector",
+      "all": "All Sectors",
+      "placeholder": "Select sector"
+    },
+    "marketCap": {
+      "title": "Market Cap",
+      "min": "Min",
+      "max": "Max",
+      "unit": "M KRW"
+    },
+    "price": {
+      "title": "Price",
+      "min": "Min",
+      "max": "Max",
+      "unit": "KRW"
+    },
+    "change": {
+      "title": "Change",
+      "positive": "Gainers",
+      "negative": "Losers",
+      "neutral": "Unchanged"
+    },
+    "volume": {
+      "title": "Volume",
+      "min": "Min",
+      "aboveAverage": "Above Average"
+    },
+    "pe": {
+      "title": "P/E Ratio",
+      "min": "Min",
+      "max": "Max"
+    },
+    "pb": {
+      "title": "P/B Ratio",
+      "min": "Min",
+      "max": "Max"
+    },
+    "dividend": {
+      "title": "Dividend Yield",
+      "min": "Min (%)"
+    },
+    "rsi": {
+      "title": "RSI",
+      "oversold": "Oversold (Below 30)",
+      "overbought": "Overbought (Above 70)"
+    },
+    "ma": {
+      "title": "Moving Average",
+      "above20": "Above 20 MA",
+      "above50": "Above 50 MA",
+      "above200": "Above 200 MA",
+      "goldenCross": "Golden Cross"
+    }
+  },
+  "results": {
+    "title": "Results",
+    "count": "{{count}} stocks",
+    "noResults": "No stocks match your criteria",
+    "loading": "Searching stocks...",
+    "sortBy": "Sort by",
+    "columns": "Columns",
+    "export": {
+      "title": "Export",
+      "csv": "Export to CSV",
+      "excel": "Export to Excel"
+    }
+  },
+  "table": {
+    "code": "Code",
+    "name": "Name",
+    "price": "Price",
+    "change": "Change",
+    "changePercent": "Change %",
+    "volume": "Volume",
+    "marketCap": "Market Cap",
+    "per": "P/E",
+    "pbr": "P/B",
+    "dividend": "Div Yield",
+    "sector": "Sector",
+    "market": "Market",
+    "trend": "Trend"
+  },
+  "quickFilters": {
+    "title": "Quick Filters",
+    "topGainers": "Top Gainers",
+    "topLosers": "Top Losers",
+    "mostActive": "Most Active",
+    "highDividend": "High Dividend",
+    "lowPER": "Low P/E",
+    "newHigh": "52W High",
+    "newLow": "52W Low"
+  }
+}

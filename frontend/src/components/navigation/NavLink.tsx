@@ -1,16 +1,19 @@
 import { Link, useLocation } from 'react-router-dom'
 import { LucideIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
 
 interface NavLinkProps {
   to: string
-  label: string
+  /** Translation key for the label (e.g., 'nav.market') */
+  labelKey: string
   icon?: LucideIcon
   onClick?: () => void
   className?: string
 }
 
-export default function NavLink({ to, label, icon: Icon, onClick, className }: NavLinkProps) {
+export default function NavLink({ to, labelKey, icon: Icon, onClick, className }: NavLinkProps) {
+  const { t } = useTranslation()
   const location = useLocation()
   const isActive = location.pathname === to || location.pathname.startsWith(to + '/')
 
@@ -27,7 +30,7 @@ export default function NavLink({ to, label, icon: Icon, onClick, className }: N
       )}
     >
       {Icon && <Icon size={18} />}
-      <span>{label}</span>
+      <span>{t(labelKey)}</span>
     </Link>
   )
 }

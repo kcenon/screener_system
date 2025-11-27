@@ -4,6 +4,10 @@ import { RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { router } from './router'
 import { analytics } from './services/analytics'
+
+// Initialize i18n before rendering
+import './i18n'
+
 import './index.css'
 
 // Initialize analytics

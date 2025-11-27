@@ -1,0 +1,94 @@
+{
+  "title": "Portfolio",
+  "subtitle": "Manage your investment portfolio",
+  "list": {
+    "title": "My Portfolios",
+    "empty": "No portfolios yet",
+    "create": "Create Portfolio",
+    "total": "{{count}} portfolios"
+  },
+  "create": {
+    "title": "New Portfolio",
+    "name": "Portfolio Name",
+    "namePlaceholder": "Enter portfolio name",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter description (optional)",
+    "currency": "Base Currency",
+    "submit": "Create Portfolio",
+    "success": "Portfolio created"
+  },
+  "detail": {
+    "overview": "Overview",
+    "holdings": "Holdings",
+    "transactions": "Transactions",
+    "performance": "Performance",
+    "allocation": "Allocation"
+  },
+  "overview": {
+    "totalValue": "Total Value",
+    "totalCost": "Total Cost",
+    "totalGain": "Total Gain",
+    "gainPercent": "Return",
+    "dayChange": "Day Change",
+    "dayChangePercent": "Day Return"
+  },
+  "holdings": {
+    "title": "Holdings",
+    "empty": "No holdings",
+    "add": "Add Stock",
+    "stock": "Stock",
+    "quantity": "Quantity",
+    "avgPrice": "Avg Price",
+    "currentPrice": "Current",
+    "value": "Value",
+    "gain": "Gain",
+    "gainPercent": "Return",
+    "weight": "Weight"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "empty": "No transactions",
+    "add": "Add Transaction",
+    "buy": "Buy",
+    "sell": "Sell",
+    "dividend": "Dividend",
+    "date": "Date",
+    "type": "Type",
+    "stock": "Stock",
+    "quantity": "Quantity",
+    "price": "Price",
+    "total": "Total",
+    "fee": "Fee",
+    "note": "Note"
+  },
+  "performance": {
+    "title": "Performance",
+    "period": {
+      "1w": "1W",
+      "1m": "1M",
+      "3m": "3M",
+      "6m": "6M",
+      "1y": "1Y",
+      "ytd": "YTD",
+      "all": "All"
+    },
+    "return": "Return",
+    "benchmark": "vs Benchmark"
+  },
+  "allocation": {
+    "title": "Allocation",
+    "byStock": "By Stock",
+    "bySector": "By Sector",
+    "byMarket": "By Market"
+  },
+  "edit": {
+    "title": "Edit Portfolio",
+    "success": "Portfolio updated"
+  },
+  "delete": {
+    "title": "Delete Portfolio",
+    "confirm": "Are you sure you want to delete this portfolio?",
+    "warning": "This action cannot be undone. All holdings and transactions will be lost.",
+    "success": "Portfolio deleted"
+  }
+}

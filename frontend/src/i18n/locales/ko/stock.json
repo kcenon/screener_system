@@ -1,0 +1,126 @@
+{
+  "detail": {
+    "title": "종목 상세",
+    "overview": "개요",
+    "chart": "차트",
+    "financials": "재무정보",
+    "technicals": "기술적 분석",
+    "news": "뉴스",
+    "analysis": "분석"
+  },
+  "info": {
+    "code": "종목코드",
+    "name": "종목명",
+    "nameEn": "영문명",
+    "market": "시장",
+    "sector": "섹터",
+    "industry": "업종",
+    "listingDate": "상장일",
+    "fiscalYearEnd": "결산월"
+  },
+  "price": {
+    "current": "현재가",
+    "change": "등락",
+    "changePercent": "등락률",
+    "open": "시가",
+    "high": "고가",
+    "low": "저가",
+    "prevClose": "전일종가",
+    "volume": "거래량",
+    "value": "거래대금",
+    "high52w": "52주 최고",
+    "low52w": "52주 최저",
+    "avgVolume": "평균거래량"
+  },
+  "valuation": {
+    "title": "밸류에이션",
+    "marketCap": "시가총액",
+    "per": "PER",
+    "pbr": "PBR",
+    "psr": "PSR",
+    "eps": "EPS",
+    "bps": "BPS",
+    "roe": "ROE",
+    "roa": "ROA",
+    "dividend": "배당수익률",
+    "dividendPayout": "배당성향"
+  },
+  "financials": {
+    "title": "재무제표",
+    "revenue": "매출액",
+    "operatingProfit": "영업이익",
+    "netIncome": "당기순이익",
+    "assets": "총자산",
+    "liabilities": "총부채",
+    "equity": "자본총계",
+    "debtRatio": "부채비율",
+    "currentRatio": "유동비율"
+  },
+  "chart": {
+    "timeframes": {
+      "1d": "1일",
+      "1w": "1주",
+      "1m": "1개월",
+      "3m": "3개월",
+      "6m": "6개월",
+      "1y": "1년",
+      "5y": "5년",
+      "max": "전체"
+    },
+    "types": {
+      "line": "라인",
+      "candle": "캔들",
+      "area": "영역"
+    },
+    "indicators": {
+      "title": "지표",
+      "sma": "단순이동평균",
+      "ema": "지수이동평균",
+      "bollinger": "볼린저밴드",
+      "volume": "거래량",
+      "rsi": "RSI",
+      "macd": "MACD",
+      "stochastic": "스토캐스틱"
+    },
+    "drawing": {
+      "title": "그리기 도구",
+      "trendline": "추세선",
+      "horizontal": "수평선",
+      "fibonacci": "피보나치",
+      "rectangle": "사각형",
+      "clear": "지우기"
+    }
+  },
+  "technicals": {
+    "title": "기술적 지표",
+    "rsi": "RSI (14)",
+    "macd": "MACD",
+    "stochastic": "스토캐스틱",
+    "adx": "ADX",
+    "cci": "CCI",
+    "atr": "ATR",
+    "ma20": "MA 20",
+    "ma50": "MA 50",
+    "ma200": "MA 200",
+    "signal": {
+      "buy": "매수",
+      "sell": "매도",
+      "hold": "보유",
+      "strongBuy": "강력 매수",
+      "strongSell": "강력 매도"
+    }
+  },
+  "watchlist": {
+    "add": "관심종목 추가",
+    "remove": "관심종목 제거",
+    "added": "관심종목에 추가되었습니다",
+    "removed": "관심종목에서 제거되었습니다"
+  },
+  "alert": {
+    "create": "알림 설정",
+    "priceAbove": "{{price}} 이상일 때",
+    "priceBelow": "{{price}} 이하일 때",
+    "changeAbove": "{{percent}}% 이상 상승 시",
+    "changeBelow": "{{percent}}% 이상 하락 시"
+  }
+}
