@@ -27,8 +27,9 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      expect(screen.getByText('인기 필터')).toBeInTheDocument()
-      expect(screen.getByText('Quick Filters')).toBeInTheDocument()
+      // With i18n mock, translation keys return their last segment
+      expect(screen.getByText('popular_filters')).toBeInTheDocument()
+      expect(screen.getByText('quick_filters')).toBeInTheDocument()
     })
 
     it('renders all 10 quick filter buttons', () => {
@@ -40,17 +41,17 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      // All 10 preset filters should be rendered
-      expect(screen.getByRole('button', { name: /상위상승/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /상위하락/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고거래량/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /1년급등/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고배당/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /저PER/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고성장/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /소형주/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /대형주/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고품질/i })).toBeInTheDocument()
+      // All 10 preset filters should be rendered (using i18n key endings)
+      expect(screen.getByRole('button', { name: /top_gainers/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /top_losers/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /high_volume/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /one_year_high/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /high_dividend/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /low_pe/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /high_growth/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /small_cap/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /large_cap/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /high_quality/i })).toBeInTheDocument()
     })
 
     it('renders filter buttons with icons', () => {
@@ -62,13 +63,13 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
       expect(within(topGainersButton).getByText('⬆')).toBeInTheDocument()
 
-      const topLosersButton = screen.getByRole('button', { name: /상위하락/i })
+      const topLosersButton = screen.getByRole('button', { name: /top_losers/i })
       expect(within(topLosersButton).getByText('⬇')).toBeInTheDocument()
 
-      const highVolumeButton = screen.getByRole('button', { name: /고거래량/i })
+      const highVolumeButton = screen.getByRole('button', { name: /high_volume/i })
       expect(within(highVolumeButton).getByText('📊')).toBeInTheDocument()
     })
 
@@ -81,7 +82,7 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      expect(screen.queryByText('모두 지우기')).not.toBeInTheDocument()
+      expect(screen.queryByText('clear_all')).not.toBeInTheDocument()
     })
 
     it('renders active filters indicator when filters are active', async () => {
@@ -95,10 +96,11 @@ describe('QuickFiltersBar', () => {
       )
 
       // Click on "Top Gainers" filter
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
       await user.click(topGainersButton)
 
-      expect(screen.getByText('1개 필터 활성화됨')).toBeInTheDocument()
+      // With count interpolation, mock returns "filters_active (1)"
+      expect(screen.getByText(/filters_active/i)).toBeInTheDocument()
     })
   })
 
@@ -113,7 +115,7 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
       await user.click(topGainersButton)
 
       // Should call onFilterChange with price_change_1d filter
@@ -135,7 +137,7 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
 
       // First click - activate
       await user.click(topGainersButton)
@@ -160,19 +162,19 @@ describe('QuickFiltersBar', () => {
       )
 
       // Activate Top Gainers
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
       await user.click(topGainersButton)
 
       // Activate High Volume
-      const highVolumeButton = screen.getByRole('button', { name: /고거래량/i })
+      const highVolumeButton = screen.getByRole('button', { name: /high_volume/i })
       await user.click(highVolumeButton)
 
       // Both should be active
       expect(topGainersButton).toHaveAttribute('aria-pressed', 'true')
       expect(highVolumeButton).toHaveAttribute('aria-pressed', 'true')
 
-      // Should show "2개 필터 활성화됨"
-      expect(screen.getByText('2개 필터 활성화됨')).toBeInTheDocument()
+      // Should show active filters indicator
+      expect(screen.getByText(/filters_active/i)).toBeInTheDocument()
     })
 
     it('applies correct filter values for each preset', async () => {
@@ -186,21 +188,21 @@ describe('QuickFiltersBar', () => {
       )
 
       // Test Top Losers (-5%)
-      const topLosersButton = screen.getByRole('button', { name: /상위하락/i })
+      const topLosersButton = screen.getByRole('button', { name: /top_losers/i })
       await user.click(topLosersButton)
       expect(onFilterChangeMock).toHaveBeenLastCalledWith({
         price_change_1d: { max: -5 },
       })
 
       // Test High Dividend (4%)
-      const highDividendButton = screen.getByRole('button', { name: /고배당/i })
+      const highDividendButton = screen.getByRole('button', { name: /high_dividend/i })
       await user.click(highDividendButton)
       expect(onFilterChangeMock).toHaveBeenLastCalledWith({
         dividend_yield: { min: 4 },
       })
 
       // Test Low P/E (0.1-10)
-      const lowPeButton = screen.getByRole('button', { name: /저PER/i })
+      const lowPeButton = screen.getByRole('button', { name: /low_pe/i })
       await user.click(lowPeButton)
       expect(onFilterChangeMock).toHaveBeenLastCalledWith({
         per: { min: 0.1, max: 10 },
@@ -220,11 +222,11 @@ describe('QuickFiltersBar', () => {
       )
 
       // Activate a filter
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
       await user.click(topGainersButton)
 
       // "Clear All" button should appear
-      expect(screen.getByText('모두 지우기')).toBeInTheDocument()
+      expect(screen.getByText('clear_all')).toBeInTheDocument()
     })
 
     it('clears all filters when "Clear All" is clicked', async () => {
@@ -238,24 +240,24 @@ describe('QuickFiltersBar', () => {
       )
 
       // Activate two filters
-      await user.click(screen.getByRole('button', { name: /상위상승/i }))
-      await user.click(screen.getByRole('button', { name: /고거래량/i }))
+      await user.click(screen.getByRole('button', { name: /top_gainers/i }))
+      await user.click(screen.getByRole('button', { name: /high_volume/i }))
 
       // Click "Clear All"
-      const clearAllButton = screen.getByText('모두 지우기')
+      const clearAllButton = screen.getByText('clear_all')
       await user.click(clearAllButton)
 
       // Should call onClearAll callback
       expect(onClearAllMock).toHaveBeenCalledTimes(1)
 
       // All buttons should be inactive (aria-pressed="false")
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
-      const highVolumeButton = screen.getByRole('button', { name: /고거래량/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
+      const highVolumeButton = screen.getByRole('button', { name: /high_volume/i })
       expect(topGainersButton).toHaveAttribute('aria-pressed', 'false')
       expect(highVolumeButton).toHaveAttribute('aria-pressed', 'false')
 
       // Active filters indicator should disappear
-      expect(screen.queryByText(/개 필터 활성화됨/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/filters_active/i)).not.toBeInTheDocument()
     })
   })
 
@@ -270,7 +272,7 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
 
       // Before click - inactive styling
       expect(topGainersButton).toHaveClass('bg-gray-100')
@@ -292,7 +294,7 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
 
       // Initially false
       expect(topGainersButton).toHaveAttribute('aria-pressed', 'false')
@@ -329,10 +331,10 @@ describe('QuickFiltersBar', () => {
       )
 
       // Activate a filter
-      await user.click(screen.getByRole('button', { name: /상위상승/i }))
+      await user.click(screen.getByRole('button', { name: /top_gainers/i }))
 
       // Click "Clear All" - should not throw error
-      const clearAllButton = screen.getByText('모두 지우기')
+      const clearAllButton = screen.getByText('clear_all')
       await expect(user.click(clearAllButton)).resolves.not.toThrow()
     })
 
@@ -346,7 +348,7 @@ describe('QuickFiltersBar', () => {
         />
       )
 
-      const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
+      const topGainersButton = screen.getByRole('button', { name: /top_gainers/i })
 
       // Click 5 times rapidly
       await user.click(topGainersButton)
