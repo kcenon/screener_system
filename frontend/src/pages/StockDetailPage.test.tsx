@@ -59,6 +59,31 @@ vi.mock('@/components/stock/PriceChart', () => ({
   ),
 }))
 
+vi.mock('@/components/charts', () => ({
+  AdvancedChartContainer: ({ data, loading, timeframe, onTimeframeChange }: {
+    symbol: string
+    data: PriceHistoryResponse | undefined
+    loading: boolean
+    timeframe: string
+    onTimeframeChange: (tf: string) => void
+    height?: number
+  }) => (
+    <div data-testid="advanced-chart">
+      {loading ? (
+        <div data-testid="chart-loading">Loading chart...</div>
+      ) : data ? (
+        <>
+          <div data-testid="chart-data">Chart with {data.candles.length} candles</div>
+          <div data-testid="chart-timeframe">{timeframe}</div>
+          <button onClick={() => onTimeframeChange('1Y')}>1Y</button>
+        </>
+      ) : (
+        <div data-testid="chart-no-data">No chart data</div>
+      )}
+    </div>
+  ),
+}))
+
 vi.mock('@/components/stock/StockTabs', () => ({
   default: ({ stock }: { stock: StockDetail }) => (
     <div data-testid="stock-tabs">
@@ -230,8 +255,8 @@ describe('StockDetailPage Rendering', () => {
       expect(stockNames.length).toBeGreaterThan(0)
       expect(screen.getByTestId('stock-code')).toHaveTextContent('005930')
 
-      // Price chart should be rendered
-      expect(screen.getByTestId('price-chart')).toBeInTheDocument()
+      // Advanced chart should be rendered (default mode)
+      expect(screen.getByTestId('advanced-chart')).toBeInTheDocument()
       expect(screen.getByTestId('chart-data')).toHaveTextContent('Chart with 2 candles')
 
       // Stock tabs should be rendered
@@ -345,7 +370,7 @@ describe('StockDetailPage Chart', () => {
     vi.resetAllMocks()
   })
 
-  test('renders price chart with historical data', async () => {
+  test('renders advanced chart with historical data', async () => {
     vi.mocked(useStockDataModule.useStockData).mockReturnValue({
       data: mockStockDetail,
       isLoading: false,
@@ -362,7 +387,7 @@ describe('StockDetailPage Chart', () => {
     renderWithProviders('005930')
 
     await waitFor(() => {
-      expect(screen.getByTestId('price-chart')).toBeInTheDocument()
+      expect(screen.getByTestId('advanced-chart')).toBeInTheDocument()
       expect(screen.getByTestId('chart-data')).toHaveTextContent('Chart with 2 candles')
     })
   })
