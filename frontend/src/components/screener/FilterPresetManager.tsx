@@ -71,9 +71,12 @@ export default function FilterPresetManager({
           <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 transition-colors" />
             <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md z-50 transition-colors">
-              <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Save Filter Preset
               </Dialog.Title>
+              <Dialog.Description className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                Enter a name for your filter preset to save it for future use.
+              </Dialog.Description>
 
               <div className="space-y-4">
                 <div>
