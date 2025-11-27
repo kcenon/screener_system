@@ -94,7 +94,17 @@ class TestRedisPubSubDisconnect:
     @pytest.mark.asyncio
     async def test_disconnect_cancels_listener_task(self, pubsub_client: RedisPubSubClient):
         """Test disconnect cancels listener task"""
-        mock_task = MagicMock()
+        # Create a mock task that is both cancellable and awaitable
+        # Real tasks raise CancelledError when awaited after cancel()
+        class CancelledTaskMock:
+            def __init__(self):
+                self.cancel = MagicMock()
+
+            def __await__(self):
+                raise asyncio.CancelledError()
+                yield  # pragma: no cover
+
+        mock_task = CancelledTaskMock()
 
         pubsub_client._listener_task = mock_task
         pubsub_client._redis = None

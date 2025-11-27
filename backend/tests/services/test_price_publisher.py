@@ -272,13 +272,24 @@ class TestMockPublisher:
     @pytest.mark.asyncio
     async def test_stop_mock_publisher(self, publisher: PricePublisher):
         """Test stopping mock publisher"""
+        # Create a mock task that is both cancellable and awaitable
+        # Real tasks raise CancelledError when awaited after cancel()
+        class CancelledTaskMock:
+            def __init__(self):
+                self.cancel = MagicMock()
+
+            def __await__(self):
+                raise asyncio.CancelledError()
+                yield  # pragma: no cover
+
+        mock_task = CancelledTaskMock()
         publisher._running = True
-        publisher._publish_task = MagicMock()
+        publisher._publish_task = mock_task
 
         await publisher.stop_mock_publisher()
 
         assert publisher._running is False
-        publisher._publish_task.cancel.assert_called_once()
+        mock_task.cancel.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_stop_mock_publisher_when_not_running(self, publisher: PricePublisher):
