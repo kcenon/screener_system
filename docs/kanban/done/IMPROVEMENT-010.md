@@ -11,7 +11,7 @@
 - **Dependencies**: FE-001 ✅
 - **Blocks**: None
 - **Related**: README.md Future Enhancements (Internationalization)
-- **PR**: TBD
+- **PR**: https://github.com/kcenon/screener_system/pull/190
 - **Completed**: 2025-11-27
 
 ## Description
