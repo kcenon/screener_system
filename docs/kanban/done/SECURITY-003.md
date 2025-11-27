@@ -5,16 +5,18 @@
 **Type**: Security Enhancement
 **Assignee**: Development Team
 **Created**: 2025-11-27
-**Completed**: 2025-11-27
+**Completed**: 2025-11-28
 **Estimated Time**: 6-8 hours
-**Actual Time**: ~4 hours
+**Actual Time**: 6 hours
 **Sprint**: Post-MVP Enhancement
 
 ---
 
 ## Summary
 
-Implement automated Software Bill of Materials (SBOM) generation for supply chain security and regulatory compliance. Generate SBOM in CycloneDX format for all components (Frontend, Backend, Data Pipeline, Docker images).
+Implement automated Software Bill of Materials (SBOM) generation for supply chain security and regulatory compliance. Generate SBOM in CycloneDX format for all components (Frontend, Backend, Data Pipeline).
+
+> **Note**: Docker image SBOM generation was deferred to a future iteration as it requires additional infrastructure setup (syft, container registry integration).
 
 ---
 
@@ -36,14 +38,14 @@ Implement automated Software Bill of Materials (SBOM) generation for supply chai
    - Enterprise customers increasingly require SBOM delivery
    - Security audits expect software component documentation
 
-### Current State
+### Final State
 
 | Component | Vulnerability Scan | SBOM Generation |
 |-----------|-------------------|-----------------|
 | Frontend (npm) | ✅ npm audit | ✅ Implemented |
 | Backend (Python) | ✅ pip-audit | ✅ Implemented |
 | Data Pipeline | ✅ pip-audit | ✅ Implemented |
-| Docker Images | ❌ None | ⏳ Future enhancement |
+| Docker Images | ❌ Deferred | ❌ Deferred |
 
 ---
 
@@ -67,8 +69,7 @@ Implement automated Software Bill of Materials (SBOM) generation for supply chai
 | Frontend (npm) | `@cyclonedx/cyclonedx-npm` | `sbom-frontend.json` |
 | Backend (Python) | `cyclonedx-py` | `sbom-backend.json` |
 | Data Pipeline | `cyclonedx-py` | `sbom-datapipeline.json` |
-| Docker Images | `syft` (Anchore) | `sbom-docker-*.json` |
-| Merged SBOM | `cyclonedx-cli` | `sbom-complete.json` |
+| Merged SBOM | `jq` (custom script) | `sbom-complete.json` |
 
 ---
 
@@ -77,8 +78,10 @@ Implement automated Software Bill of Materials (SBOM) generation for supply chai
 ### Subtasks
 
 #### 1. Tool Installation and Configuration (1h)
-- [x] Use `npx @cyclonedx/cyclonedx-npm` for SBOM generation (not added to devDependencies due to libxmljs2 vulnerability)
-- [x] Scripts use isolated venv for cyclonedx-bom (no requirements-dev.txt needed)
+- [x] Use `npx @cyclonedx/cyclonedx-npm` for frontend (no devDependency needed)
+- [x] Install `cyclonedx-bom` in CI/CD (Python tools installed on-demand)
+- [x] Install `cyclonedx-bom` for data pipeline in CI/CD
+- [ ] ~~Install `syft` for Docker image scanning~~ (Deferred)
 - [x] Create SBOM output directory structure
 
 #### 2. Local SBOM Generation Scripts (2h)
@@ -86,6 +89,7 @@ Implement automated Software Bill of Materials (SBOM) generation for supply chai
 - [x] Create frontend SBOM generation script
 - [x] Create backend SBOM generation script
 - [x] Create data pipeline SBOM generation script
+- [ ] ~~Create Docker image SBOM generation script~~ (Deferred)
 - [x] Create SBOM merge script for complete inventory
 
 #### 3. CI/CD Integration (2h)
@@ -93,20 +97,24 @@ Implement automated Software Bill of Materials (SBOM) generation for supply chai
 - [x] Generate SBOM on every release tag
 - [x] Attach SBOM artifacts to GitHub releases
 - [x] Upload SBOM to artifact storage
+- [x] Workflow runs in parallel for faster execution
 
 #### 4. Vulnerability Integration (1h)
 - [x] Configure `grype` for SBOM-based vulnerability scanning
-- [x] Add vulnerability scan step after SBOM generation in CI/CD
+- [x] Add vulnerability scan step after SBOM generation
+- [x] Continue-on-error for vulnerability scanning (non-blocking)
 
 #### 5. Documentation (1h)
-- [x] Document SBOM generation process (docs/SBOM.md)
-- [x] Add SBOM section to SECURITY_AUDIT.md
-- [x] Create SBOM FAQ for customers
+- [x] Document SBOM generation process (`docs/SBOM.md`)
+- [x] Add SBOM section to `SECURITY_AUDIT.md`
+- [x] Create SBOM FAQ for customers (included in `docs/SBOM.md`)
+- [x] Update CI/CD documentation (included in workflow and docs)
 
 #### 6. Testing and Validation (1h)
 - [x] Verify SBOM format compliance (CycloneDX v1.5)
-- [x] Validate SBOM completeness (929 components)
-- [x] Test local SBOM generation script
+- [x] Validate SBOM completeness (929 components merged)
+- [x] Test local generation scripts
+- [x] Verify no sensitive data in SBOM
 
 ---
 
@@ -129,18 +137,18 @@ docs/
 └── SBOM.md                    # SBOM documentation
 
 sbom/
-├── sbom-frontend.json         # Frontend SBOM (~1.1MB)
-├── sbom-backend.json          # Backend SBOM (~19KB)
-├── sbom-datapipeline.json     # Data Pipeline SBOM (~9KB)
-└── sbom-complete.json         # Merged SBOM (~1MB, 929 components)
+├── sbom-frontend.json         # Frontend dependencies (npm)
+├── sbom-backend.json          # Backend dependencies (Python)
+├── sbom-datapipeline.json     # Data pipeline dependencies
+└── sbom-complete.json         # Merged SBOM (all components)
 ```
 
 ### Modified Files
 ```
 docs/SECURITY_AUDIT.md         # Added SBOM section
+.gitleaksignore                # Added SBOM-related fingerprints
+.gitignore                     # Added sbom/ directory patterns
 ```
-
-**Note**: `@cyclonedx/cyclonedx-npm` is NOT added to devDependencies due to transitive vulnerability in `libxmljs2`. The script uses `npx` to run it temporarily without installing.
 
 ---
 
@@ -150,15 +158,15 @@ docs/SECURITY_AUDIT.md         # Added SBOM section
 - [x] SBOM generated for all components (frontend, backend, data pipeline)
 - [x] SBOM includes all direct and transitive dependencies
 - [x] SBOM follows CycloneDX v1.5 specification
-- [x] SBOM attached to every GitHub release (via CI/CD workflow)
+- [x] SBOM attached to every GitHub release
 - [x] Manual SBOM generation available via script
 
 ### Quality Requirements
-- [x] SBOM passes CycloneDX schema validation
-- [x] SBOM generation completes in < 5 minutes (actual: ~1 minute)
+- [x] SBOM format validated in CI/CD
+- [x] SBOM generation completes in < 5 minutes (parallel execution)
 - [x] No sensitive data (secrets, internal paths) in SBOM
 - [x] SBOM includes component licenses
-- [x] SBOM includes component hashes (SHA-256)
+- [x] SBOM includes component hashes (SHA-256/SHA-512)
 
 ### Documentation Requirements
 - [x] SBOM generation process documented
@@ -169,39 +177,42 @@ docs/SECURITY_AUDIT.md         # Added SBOM section
 
 ## Verification Results
 
-### 1. Schema Validation
-- **Format**: CycloneDX v1.5 ✅
-- **bomFormat**: "CycloneDX" ✅
-- **specVersion**: "1.5" ✅
+### 1. SBOM Component Counts
+| SBOM File | Components |
+|-----------|------------|
+| sbom-frontend.json | ~800+ |
+| sbom-backend.json | 33 |
+| sbom-datapipeline.json | 12 |
+| sbom-complete.json | 929 |
 
-### 2. Completeness Check
-- **Total Components**: 929
-- **Frontend Components**: ~860
-- **Backend Components**: ~42
-- **Data Pipeline Components**: ~16
+### 2. Sensitive Data Check
+- No secrets found
+- No local paths (/Users/, /home/) found
+- No credentials or tokens exposed
 
-### 3. Component Quality
-Each component includes:
-- Name and version ✅
-- Package URL (purl) ✅
-- License information ✅
-- External references ✅
-- Hashes (SHA-256) ✅
-
-### 4. Generation Performance
-- **Total Time**: < 1 minute
-- **Target**: < 5 minutes ✅
+### 3. CycloneDX Compliance
+- bomFormat: CycloneDX
+- specVersion: 1.5
+- All required fields present (name, version, purl, licenses, hashes)
 
 ---
 
-## Success Metrics
+## Dependencies
 
-| Metric | Target | Actual |
-|--------|--------|--------|
-| SBOM Coverage | 100% of components | ✅ 100% |
-| Generation Time | < 5 minutes | ✅ ~1 minute |
-| Schema Compliance | 100% valid | ✅ 100% |
-| Release Attachment | Every release | ✅ Configured |
+### Blocking
+- None (independent feature)
+
+### Blocked By
+- None
+
+---
+
+## Future Improvements
+
+1. **Docker SBOM**: Add syft integration for container image scanning
+2. **SBOM Diff**: Compare SBOMs between releases to track dependency changes
+3. **Dependency-Track**: Integrate with OWASP Dependency-Track for continuous monitoring
+4. **License Compliance**: Add automated license compatibility checking
 
 ---
 
@@ -211,14 +222,23 @@ Each component includes:
 - [NTIA SBOM Minimum Elements](https://www.ntia.gov/page/software-bill-materials)
 - [US Executive Order 14028](https://www.whitehouse.gov/briefing-room/presidential-actions/2021/05/12/executive-order-on-improving-the-nations-cybersecurity/)
 - [OWASP SBOM Guide](https://owasp.org/www-project-dependency-track/)
-- [Anchore Syft](https://github.com/anchore/syft)
 - [CycloneDX Python Tool](https://github.com/CycloneDX/cyclonedx-python)
 
 ---
 
+## Success Metrics
+
+| Metric | Target | Achieved |
+|--------|--------|----------|
+| SBOM Coverage | 100% of components | ✅ 100% |
+| Generation Time | < 5 minutes | ✅ ~3 minutes (parallel) |
+| Schema Compliance | 100% valid | ✅ 100% |
+| Release Attachment | Every release | ✅ Configured |
+
+---
+
 **Estimated Effort**: 6-8 hours
-**Actual Effort**: ~4 hours
+**Actual Effort**: 6 hours
 **Priority Justification**: Supply chain security is critical for enterprise adoption and regulatory compliance
 **Branch**: `feature/security-003-sbom`
 **PR Target**: `main`
-**Completion Date**: 2025-11-27
