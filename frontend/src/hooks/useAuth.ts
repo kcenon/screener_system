@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { authService } from '@/services/authService'
 import { useAuthStore } from '@/store/authStore'
+import { analytics, AnalyticsEvents } from '@/services/analytics'
 import type { LoginRequest, RegisterRequest } from '@/types'
 
 /**
@@ -14,8 +15,25 @@ export function useLogin() {
   return useMutation({
     mutationFn: (data: LoginRequest) => authService.login(data),
     onSuccess: (response) => {
+      // Track successful login
+      analytics.identify(String(response.user.id), {
+        email: response.user.email,
+        tier: (response.user.tier as 'free' | 'premium' | 'pro') || 'free',
+        email_verified: response.user.email_verified,
+      })
+      analytics.track(AnalyticsEvents.USER_LOGGED_IN, {
+        login_method: 'email',
+      })
+
       login(response.user, response.access_token, response.refresh_token)
       navigate('/')
+    },
+    onError: (error) => {
+      analytics.track(AnalyticsEvents.ERROR_OCCURRED, {
+        error_type: 'login_failed',
+        error_message: error.message || 'Login failed',
+        component: 'LoginPage',
+      })
     },
   })
 }
@@ -30,8 +48,25 @@ export function useRegister() {
   return useMutation({
     mutationFn: (data: RegisterRequest) => authService.register(data),
     onSuccess: (response) => {
+      // Track successful signup
+      analytics.identify(String(response.user.id), {
+        email: response.user.email,
+        tier: 'free',
+        created_at: new Date().toISOString(),
+      })
+      analytics.track(AnalyticsEvents.USER_SIGNED_UP, {
+        signup_source: 'email',
+      })
+
       login(response.user, response.access_token, response.refresh_token)
       navigate('/')
+    },
+    onError: (error) => {
+      analytics.track(AnalyticsEvents.ERROR_OCCURRED, {
+        error_type: 'signup_failed',
+        error_message: error.message || 'Signup failed',
+        component: 'RegisterPage',
+      })
     },
   })
 }
@@ -47,6 +82,10 @@ export function useLogout() {
   return useMutation({
     mutationFn: () => authService.logout(),
     onSuccess: () => {
+      // Track logout
+      analytics.track(AnalyticsEvents.USER_LOGGED_OUT)
+      analytics.reset()
+
       logout()
       queryClient.clear()
       navigate('/login')

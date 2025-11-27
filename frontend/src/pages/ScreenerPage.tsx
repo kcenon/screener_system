@@ -4,6 +4,7 @@ import { useScreening } from '@/hooks/useScreening'
 import { useFilterPresets } from '@/hooks/useFilterPresets'
 import { useURLSync } from '@/hooks/useURLSync'
 import { useFreemiumAccess } from '@/hooks/useFreemiumAccess'
+import { useEventTracking } from '@/hooks/useAnalytics'
 import FilterPanel from '@/components/screener/FilterPanel'
 import { QuickFiltersBar } from '@/components/screener/QuickFiltersBar'
 import ResultsTable from '@/components/screener/ResultsTable'
@@ -27,6 +28,8 @@ import type { ScreeningSortField, StockScreeningResult } from '@/types/screening
  */
 export default function ScreenerPage() {
   const navigate = useNavigate()
+  const { trackSort, trackStockView, trackPagination, trackFilterCleared, trackConversion } =
+    useEventTracking()
   const {
     data,
     isLoading,
@@ -60,9 +63,15 @@ export default function ScreenerPage() {
 
   // Handle sort column click
   const handleSort = (field: ScreeningSortField) => {
+    const newOrder =
+      sort.sortBy === field ? (sort.order === 'asc' ? 'desc' : 'asc') : 'desc'
+
+    // Track sort event
+    trackSort(field, newOrder)
+
     if (sort.sortBy === field) {
       // Toggle order if same field
-      setSort({ sortBy: field, order: sort.order === 'asc' ? 'desc' : 'asc' })
+      setSort({ sortBy: field, order: newOrder })
     } else {
       // Default to descending for new field
       setSort({ sortBy: field, order: 'desc' })
@@ -71,22 +80,36 @@ export default function ScreenerPage() {
 
   // Handle page change
   const handlePageChange = (page: number) => {
+    // Track pagination event
+    trackPagination(page, pagination.limit, data?.meta.total || 0)
     setPagination({ ...pagination, offset: (page - 1) * pagination.limit })
   }
 
   // Handle page size change
   const handlePageSizeChange = (pageSize: number) => {
+    trackPagination(1, pageSize, data?.meta.total || 0)
     setPagination({ offset: 0, limit: pageSize })
   }
 
   // Handle clear all filters
   const handleClearFilters = () => {
+    trackFilterCleared()
     setFilters({ market: 'ALL' })
   }
 
   // Handle row click - navigate to stock detail
   const handleRowClick = (stock: StockScreeningResult) => {
+    trackStockView(stock.code, stock.name, 'screener')
     navigate(`/stocks/${stock.code}`)
+  }
+
+  // Handle signup CTA click from limited results notice
+  const handleSignupClick = () => {
+    trackConversion('screener_limited_results', {
+      currentTier: 'public',
+      featureBlocked: 'full_results',
+    })
+    navigate('/register')
   }
 
   // Calculate current page (1-indexed)
@@ -222,7 +245,7 @@ export default function ScreenerPage() {
                 </p>
                 <div className="flex gap-2 justify-center">
                   <button
-                    onClick={() => navigate('/register')}
+                    onClick={handleSignupClick}
                     className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                   >
                     Sign Up Free

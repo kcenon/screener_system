@@ -7,9 +7,13 @@ import { OfflineIndicator } from './components/common/OfflineIndicator'
 import { PWAUpdatePrompt } from './components/common/PWAUpdatePrompt'
 import { PWAInstallPrompt } from './components/common/PWAInstallPrompt'
 import { useTheme } from './hooks/useTheme'
+import { usePageTracking } from './hooks/useAnalytics'
 import { initializeCSSVariables } from './design-system/tokens'
 
 function App() {
+  // Track page views automatically
+  usePageTracking()
+
   // Initialize theme and CSS variables on mount
   useEffect(() => {
     const { initTheme, resolvedTheme } = useTheme.getState()
