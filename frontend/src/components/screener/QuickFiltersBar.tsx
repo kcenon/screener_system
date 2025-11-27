@@ -20,6 +20,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import type { ScreeningFilters } from '@/types/screening'
 
@@ -28,103 +29,104 @@ import type { ScreeningFilters } from '@/types/screening'
  */
 export interface QuickFilter {
   id: string
-  label: string
+  labelKey: string
   icon: string
-  tooltip: string
+  tooltipKey: string
   filters: Partial<ScreeningFilters>
 }
 
 /**
  * Preset filter definitions
  * Based on IMPROVEMENT-004 specification, adjusted for actual ScreeningFilters type
+ * Uses i18n keys for labels and tooltips
  */
 const QUICK_FILTERS: QuickFilter[] = [
   {
     id: 'top-gainers',
-    label: '상위상승',
+    labelKey: 'filters.top_gainers',
     icon: '⬆',
-    tooltip: '등락률 +5% 이상인 종목 (1일)',
+    tooltipKey: 'filters.top_gainers_tooltip',
     filters: {
       price_change_1d: { min: 5 },
     },
   },
   {
     id: 'top-losers',
-    label: '상위하락',
+    labelKey: 'filters.top_losers',
     icon: '⬇',
-    tooltip: '등락률 -5% 이하인 종목 (1일)',
+    tooltipKey: 'filters.top_losers_tooltip',
     filters: {
       price_change_1d: { max: -5 },
     },
   },
   {
     id: 'high-volume',
-    label: '고거래량',
+    labelKey: 'filters.high_volume',
     icon: '📊',
-    tooltip: '거래량 급증 100% 이상',
+    tooltipKey: 'filters.high_volume_tooltip',
     filters: {
       volume_surge_pct: { min: 100 },
     },
   },
   {
     id: '52w-high',
-    label: '1년급등',
+    labelKey: 'filters.one_year_high',
     icon: '🏔',
-    tooltip: '1년 수익률 50% 이상',
+    tooltipKey: 'filters.one_year_high_tooltip',
     filters: {
       price_change_1y: { min: 50 },
     },
   },
   {
     id: 'high-dividend',
-    label: '고배당',
+    labelKey: 'filters.high_dividend',
     icon: '💰',
-    tooltip: '배당수익률 4% 이상',
+    tooltipKey: 'filters.high_dividend_tooltip',
     filters: {
       dividend_yield: { min: 4 },
     },
   },
   {
     id: 'low-pe',
-    label: '저PER',
+    labelKey: 'filters.low_pe',
     icon: '💎',
-    tooltip: 'PER 10 이하 (저평가 가능)',
+    tooltipKey: 'filters.low_pe_tooltip',
     filters: {
       per: { min: 0.1, max: 10 },
     },
   },
   {
     id: 'high-growth',
-    label: '고성장',
+    labelKey: 'filters.high_growth',
     icon: '📈',
-    tooltip: '매출성장률 20% 이상',
+    tooltipKey: 'filters.high_growth_tooltip',
     filters: {
       revenue_growth_yoy: { min: 20 },
     },
   },
   {
     id: 'small-cap',
-    label: '소형주',
+    labelKey: 'filters.small_cap',
     icon: '🐣',
-    tooltip: '시가총액 1조 미만',
+    tooltipKey: 'filters.small_cap_tooltip',
     filters: {
       market_cap: { max: 1000 }, // billion KRW
     },
   },
   {
     id: 'large-cap',
-    label: '대형주',
+    labelKey: 'filters.large_cap',
     icon: '🦁',
-    tooltip: '시가총액 10조 이상',
+    tooltipKey: 'filters.large_cap_tooltip',
     filters: {
       market_cap: { min: 10000 }, // billion KRW
     },
   },
   {
     id: 'high-quality',
-    label: '고품질',
+    labelKey: 'filters.high_quality',
     icon: '✨',
-    tooltip: '전체 점수 80점 이상',
+    tooltipKey: 'filters.high_quality_tooltip',
     filters: {
       overall_score: { min: 80 },
     },
@@ -163,6 +165,7 @@ export function QuickFiltersBar({
   onClearAll,
   className = '',
 }: QuickFiltersBarProps) {
+  const { t } = useTranslation('screener')
   const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set())
 
   // Note: Filter activation is managed through state
@@ -214,7 +217,7 @@ export function QuickFiltersBar({
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 transition-colors">
-            인기 필터 <span className="text-xs font-normal text-gray-500 dark:text-gray-400">Quick Filters</span>
+            {t('popular_filters')} <span className="text-xs font-normal text-gray-500 dark:text-gray-400">{t('quick_filters')}</span>
           </h3>
 
           {activeFilters.size > 0 && (
@@ -222,7 +225,7 @@ export function QuickFiltersBar({
               onClick={handleClearAll}
               className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors"
             >
-              모두 지우기
+              {t('actions.clear_all', { ns: 'common' })}
             </button>
           )}
         </div>
@@ -248,7 +251,7 @@ export function QuickFiltersBar({
                     aria-pressed={isActive}
                   >
                     <span>{filter.icon}</span>
-                    <span>{filter.label}</span>
+                    <span>{t(filter.labelKey)}</span>
                   </button>
                 </Tooltip.Trigger>
 
@@ -257,7 +260,7 @@ export function QuickFiltersBar({
                     className="z-50 max-w-xs rounded-lg bg-gray-900 dark:bg-gray-950 px-3 py-2 text-sm text-white shadow-lg"
                     sideOffset={5}
                   >
-                    {filter.tooltip}
+                    {t(filter.tooltipKey)}
                     <Tooltip.Arrow className="fill-gray-900 dark:fill-gray-950" />
                   </Tooltip.Content>
                 </Tooltip.Portal>
@@ -269,7 +272,7 @@ export function QuickFiltersBar({
         {/* Active filters indicator */}
         {activeFilters.size > 0 && (
           <div className="mt-3 text-xs text-gray-600 dark:text-gray-400 transition-colors">
-            {activeFilters.size}개 필터 활성화됨
+            {t('filters_active', { count: activeFilters.size })}
           </div>
         )}
       </div>

@@ -1,0 +1,54 @@
+{
+  "title": "스크리너",
+  "subtitle": "원하는 조건의 종목을 검색하세요",
+  "popular_filters": "인기 필터",
+  "quick_filters": "빠른 필터",
+  "filters_active": "{{count}}개 필터 활성화됨",
+  "filters": {
+    "top_gainers": "상위상승",
+    "top_gainers_tooltip": "등락률 +5% 이상인 종목 (1일)",
+    "top_losers": "상위하락",
+    "top_losers_tooltip": "등락률 -5% 이하인 종목 (1일)",
+    "high_volume": "고거래량",
+    "high_volume_tooltip": "거래량 급증 100% 이상",
+    "one_year_high": "1년급등",
+    "one_year_high_tooltip": "1년 수익률 50% 이상",
+    "high_dividend": "고배당",
+    "high_dividend_tooltip": "배당수익률 4% 이상",
+    "low_pe": "저PER",
+    "low_pe_tooltip": "PER 10 이하 (저평가 가능)",
+    "high_growth": "고성장",
+    "high_growth_tooltip": "매출성장률 20% 이상",
+    "small_cap": "소형주",
+    "small_cap_tooltip": "시가총액 1조 미만",
+    "large_cap": "대형주",
+    "large_cap_tooltip": "시가총액 10조 이상",
+    "high_quality": "고품질",
+    "high_quality_tooltip": "전체 점수 80점 이상"
+  },
+  "results": {
+    "title": "검색 결과",
+    "count": "{{count}}개 종목",
+    "no_results": "조건에 맞는 종목이 없습니다",
+    "loading": "검색 중..."
+  },
+  "table": {
+    "code": "종목코드",
+    "name": "종목명",
+    "price": "현재가",
+    "change": "등락",
+    "change_pct": "등락률",
+    "volume": "거래량",
+    "market_cap": "시가총액",
+    "per": "PER",
+    "pbr": "PBR",
+    "dividend_yield": "배당률",
+    "sector": "섹터",
+    "52w_high": "52주최고",
+    "52w_low": "52주최저"
+  },
+  "sort": {
+    "asc": "오름차순",
+    "desc": "내림차순"
+  }
+}

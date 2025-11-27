@@ -1,0 +1,94 @@
+{
+  "layout": {
+    "market_data_loading": "시장 데이터 로딩중...",
+    "market_data_empty": "시장 데이터 없음",
+    "market_sentiment_label": "시장심리:",
+    "sentiment_label_mobile": "심리:"
+  },
+  "sentiment": {
+    "bullish": "강세",
+    "neutral": "중립",
+    "bearish": "약세"
+  },
+  "overview": {
+    "title": "시장 현황",
+    "subtitle": "한국 주식 시장의 실시간 현황과 섹터 분석을 한눈에 확인하세요",
+    "tip": "<strong>Tip:</strong> 섹터를 클릭하면 해당 섹터의 종목 목록을 확인할 수 있으며, 종목명을 클릭하면 상세 정보를 볼 수 있습니다."
+  },
+  "dashboard": {
+    "screener": "스크리너",
+    "heatmap": "히트맵",
+    "movers": "상승/하락",
+    "sectors": "섹터분석"
+  },
+  "indices": {
+    "title": "시장 지수",
+    "subtitle": "Market Indices",
+    "kospi": "코스피",
+    "kosdaq": "코스닥",
+    "high_label": "고",
+    "low_label": "저"
+  },
+  "breadth": {
+    "title": "시장 폭",
+    "subtitle": "Market Breadth",
+    "advancing": "상승",
+    "declining": "하락",
+    "unchanged": "보합",
+    "advancing_count": "상승:",
+    "declining_count": "하락:",
+    "unchanged_count": "보합:",
+    "ad_ratio": "A/D 비율"
+  },
+  "movers": {
+    "title": "시장 주도주",
+    "subtitle": "Market Movers",
+    "top_gainers": "상승률 TOP",
+    "top_losers": "하락률 TOP",
+    "no_data": "데이터가 없습니다",
+    "fire_emoji_legend": "🔥 = 10% 이상 변동",
+    "click_for_details": "클릭하여 상세 정보 보기"
+  },
+  "trend": {
+    "title": "시장 추세",
+    "subtitle": "Market Trend",
+    "data_load_error": "데이터를 불러오는 중 오류가 발생했습니다.",
+    "chart_loading": "차트 로딩 중..."
+  },
+  "sector": {
+    "performance_title": "섹터 성과",
+    "performance_subtitle": "Sector Performance",
+    "performance_map_title": "섹터 성과 맵",
+    "performance_map_subtitle": "Sector Performance Map",
+    "stock_count": "{{count}}개",
+    "change_rate_label": "변동률:",
+    "stock_count_label": "종목 수:",
+    "market_cap_label": "시가총액:",
+    "click_to_view_stocks": "클릭하여 종목 보기 →",
+    "positive_threshold_2pct": "+2% 이상",
+    "negative_threshold_2pct": "-2% 이하",
+    "positive_threshold_3pct": "+3% 이상",
+    "negative_threshold_3pct": "-3% 이하",
+    "heatmap_tip": "섹터를 클릭하면 해당 섹터의 종목 목록을 볼 수 있습니다",
+    "heatmap_advanced_tip": "크기는 시가총액에 비례하며, 색상은 성과를 나타냅니다. 섹터를 클릭하면 해당 종목 목록을 볼 수 있습니다."
+  },
+  "most_active": {
+    "title": "거래 상위 종목",
+    "subtitle": "Most Active",
+    "table_rank": "순위",
+    "table_name": "종목명",
+    "table_price": "현재가",
+    "table_change_pct": "등락률",
+    "table_volume": "거래량",
+    "table_volume_amount": "거래대금",
+    "tip": "종목명을 클릭하면 상세 정보를 볼 수 있습니다"
+  },
+  "timeframe": {
+    "1d": "1일",
+    "1w": "1주",
+    "1m": "1개월",
+    "3m": "3개월",
+    "6m": "6개월",
+    "1y": "1년"
+  }
+}

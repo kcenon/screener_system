@@ -1,0 +1,81 @@
+{
+  "navigation": {
+    "home": "홈",
+    "market": "시장",
+    "screener": "스크리너",
+    "portfolio": "포트폴리오",
+    "watchlist": "관심종목",
+    "settings": "설정",
+    "login": "로그인",
+    "logout": "로그아웃",
+    "signup": "회원가입"
+  },
+  "actions": {
+    "search": "검색",
+    "filter": "필터",
+    "sort": "정렬",
+    "export": "내보내기",
+    "save": "저장",
+    "cancel": "취소",
+    "apply": "적용",
+    "clear": "초기화",
+    "clear_all": "모두 지우기",
+    "back": "뒤로",
+    "close": "닫기",
+    "confirm": "확인",
+    "delete": "삭제",
+    "edit": "수정",
+    "add": "추가",
+    "remove": "제거",
+    "refresh": "새로고침"
+  },
+  "status": {
+    "loading": "로딩중",
+    "loading_ellipsis": "로딩중...",
+    "error": "오류",
+    "success": "성공",
+    "no_data": "데이터 없음",
+    "unknown_error": "알 수 없는 오류가 발생했습니다."
+  },
+  "time": {
+    "last_update": "마지막 업데이트:",
+    "kst": "KST",
+    "auto_refresh": "자동 새로고침",
+    "refresh_interval_1min": "(1분마다)"
+  },
+  "units": {
+    "won": "원",
+    "trillion_won": "조 원",
+    "hundred_million_won": "억 원",
+    "hundred_million": "억",
+    "multiple": "배",
+    "percent": "%",
+    "count": "개"
+  },
+  "footer": {
+    "features": "기능",
+    "screener": "스크리너",
+    "market": "시장 현황",
+    "pricing": "가격",
+    "api_docs": "API 문서",
+    "guide": "사용 가이드",
+    "faq": "자주 묻는 질문",
+    "updates": "업데이트 노트",
+    "about": "회사 소개",
+    "blog": "블로그",
+    "careers": "채용",
+    "contact": "문의하기",
+    "terms": "이용약관",
+    "privacy": "개인정보처리방침",
+    "cookies": "쿠키 정책",
+    "disclaimer": "면책 조항",
+    "company_tagline": "스톡 스크리너",
+    "company_description": "한국 주식 시장의 데이터 기반 투자 분석 플랫폼",
+    "section_platform": "플랫폼",
+    "section_resources": "리소스",
+    "section_company": "회사",
+    "section_legal": "법적 고지",
+    "investment_disclaimer_title": "투자 유의사항:",
+    "investment_disclaimer_text": "본 플랫폼에서 제공하는 정보는 투자 참고용이며, 투자 권유를 목적으로 하지 않습니다. 모든 투자 결정은 투자자 본인의 책임 하에 이루어져야 하며, 투자로 인한 손실에 대해서는 당사가 책임지지 않습니다. 과거 성과가 미래 수익을 보장하지 않습니다."
+  }
+}

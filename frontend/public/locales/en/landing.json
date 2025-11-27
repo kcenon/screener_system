@@ -1,0 +1,61 @@
+{
+  "hero": {
+    "main_line1": "Korean Stock Market,",
+    "main_line2": "Analyze with Data",
+    "subline1": "With 200+ technical indicators, real-time data, and advanced screening",
+    "subline2": "Discover optimal investment opportunities",
+    "feature_stocks": "2,400+ Stocks Analyzed",
+    "feature_indicators": "200+ Technical Indicators",
+    "feature_performance": "Sub-500ms Query Performance",
+    "cta_free": "Start Free",
+    "cta_explore": "Explore Market",
+    "trust1": "No signup required",
+    "trust2": "No credit card",
+    "trust3": "Start instantly"
+  },
+  "features": {
+    "screening_title": "Advanced Screening",
+    "screening_desc": "Search for stocks with precise criteria using 200+ technical indicators and filters. Streamline your workflow with saved filter presets.",
+    "realtime_title": "Real-time Data",
+    "realtime_desc": "View order books, prices, and volumes instantly with WebSocket-based real-time streaming. Enjoy sub-500ms query performance.",
+    "technical_title": "Technical Analysis",
+    "technical_desc": "Access 200+ technical indicators including MACD, RSI, and Bollinger Bands with professional-grade charts powered by TradingView.",
+    "comparison_title": "Stock Comparison",
+    "comparison_desc": "Compare up to 5 stocks simultaneously for optimal investment decisions. View financials, valuations, and technicals side by side.",
+    "portfolio_title": "Portfolio Management",
+    "portfolio_desc": "Add stocks to your watchlist and monitor them in real-time. Organize and manage stocks with multiple watchlists.",
+    "alerts_title": "Price Alerts",
+    "alerts_desc": "Get notified when prices reach your targets. Support for email, web push, and various notification methods."
+  },
+  "showcase": {
+    "title": "Powerful Features",
+    "subtitle_line1": "From professional to individual investors,",
+    "subtitle_line2": "A comprehensive stock analysis platform for everyone",
+    "cta_desc": "Try all features for free. No credit card required.",
+    "cta_button": "Get Started"
+  },
+  "market": {
+    "realtime_title": "Real-time Market Status",
+    "last_update": "Last update:",
+    "flow_title": "Market Flow",
+    "advancing": "Advancing",
+    "declining": "Declining",
+    "unchanged": "Unchanged",
+    "bullish": "Bullish",
+    "bearish": "Bearish",
+    "realtime_note": "* Real-time data is automatically updated via WebSocket"
+  },
+  "stats": {
+    "stocks": "Analyzable Stocks",
+    "indicators": "Technical Indicators",
+    "performance": "Query Performance",
+    "realtime": "Real-time Updates",
+    "title": "Platform Statistics",
+    "subtitle": "Reliable data with fast performance",
+    "sources_title": "Data Sources",
+    "sources_desc": "We use trusted official data sources",
+    "source_krx": "Korea Exchange (KRX)",
+    "source_fnguide": "FnGuide",
+    "source_kis": "Korea Investment & Securities API"
+  }
+}

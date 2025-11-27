@@ -1,0 +1,94 @@
+{
+  "layout": {
+    "market_data_loading": "Loading market data...",
+    "market_data_empty": "No market data",
+    "market_sentiment_label": "Sentiment:",
+    "sentiment_label_mobile": "Sent:"
+  },
+  "sentiment": {
+    "bullish": "Bullish",
+    "neutral": "Neutral",
+    "bearish": "Bearish"
+  },
+  "overview": {
+    "title": "Market Overview",
+    "subtitle": "View real-time market status and sector analysis of the Korean stock market at a glance",
+    "tip": "<strong>Tip:</strong> Click on a sector to see its stock list, or click on a stock name to view detailed information."
+  },
+  "dashboard": {
+    "screener": "Screener",
+    "heatmap": "Heatmap",
+    "movers": "Movers",
+    "sectors": "Sectors"
+  },
+  "indices": {
+    "title": "Market Indices",
+    "subtitle": "Market Indices",
+    "kospi": "KOSPI",
+    "kosdaq": "KOSDAQ",
+    "high_label": "H",
+    "low_label": "L"
+  },
+  "breadth": {
+    "title": "Market Breadth",
+    "subtitle": "Market Breadth",
+    "advancing": "Advancing",
+    "declining": "Declining",
+    "unchanged": "Unchanged",
+    "advancing_count": "Adv:",
+    "declining_count": "Dec:",
+    "unchanged_count": "Unc:",
+    "ad_ratio": "A/D Ratio"
+  },
+  "movers": {
+    "title": "Market Movers",
+    "subtitle": "Market Movers",
+    "top_gainers": "Top Gainers",
+    "top_losers": "Top Losers",
+    "no_data": "No data available",
+    "fire_emoji_legend": "🔥 = 10%+ change",
+    "click_for_details": "Click for details"
+  },
+  "trend": {
+    "title": "Market Trend",
+    "subtitle": "Market Trend",
+    "data_load_error": "Error loading data.",
+    "chart_loading": "Loading chart..."
+  },
+  "sector": {
+    "performance_title": "Sector Performance",
+    "performance_subtitle": "Sector Performance",
+    "performance_map_title": "Sector Performance Map",
+    "performance_map_subtitle": "Sector Performance Map",
+    "stock_count": "{{count}}",
+    "change_rate_label": "Change:",
+    "stock_count_label": "Stocks:",
+    "market_cap_label": "Market Cap:",
+    "click_to_view_stocks": "Click to view stocks →",
+    "positive_threshold_2pct": "+2% or more",
+    "negative_threshold_2pct": "-2% or less",
+    "positive_threshold_3pct": "+3% or more",
+    "negative_threshold_3pct": "-3% or less",
+    "heatmap_tip": "Click on a sector to see its stock list",
+    "heatmap_advanced_tip": "Size represents market cap, color indicates performance. Click on a sector to see its stocks."
+  },
+  "most_active": {
+    "title": "Most Active",
+    "subtitle": "Most Active",
+    "table_rank": "Rank",
+    "table_name": "Name",
+    "table_price": "Price",
+    "table_change_pct": "Change %",
+    "table_volume": "Volume",
+    "table_volume_amount": "Value",
+    "tip": "Click on a stock name to view details"
+  },
+  "timeframe": {
+    "1d": "1D",
+    "1w": "1W",
+    "1m": "1M",
+    "3m": "3M",
+    "6m": "6M",
+    "1y": "1Y"
+  }
+}

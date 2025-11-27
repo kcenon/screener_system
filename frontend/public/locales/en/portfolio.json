@@ -1,0 +1,36 @@
+{
+  "title": "Portfolio",
+  "watchlist": {
+    "title": "Watchlist",
+    "add": "Add to Watchlist",
+    "remove": "Remove from Watchlist",
+    "empty": "No stocks in watchlist",
+    "create": "Create New Watchlist",
+    "delete": "Delete Watchlist",
+    "rename": "Rename Watchlist"
+  },
+  "holdings": {
+    "title": "Holdings",
+    "add": "Add Holding",
+    "edit": "Edit Holding",
+    "remove": "Remove Holding",
+    "empty": "No holdings"
+  },
+  "transaction": {
+    "title": "Transactions",
+    "buy": "Buy",
+    "sell": "Sell",
+    "date": "Date",
+    "quantity": "Quantity",
+    "price": "Price",
+    "total": "Total"
+  },
+  "performance": {
+    "title": "Performance",
+    "total_value": "Total Value",
+    "total_return": "Total Return",
+    "daily_return": "Daily Return",
+    "unrealized_gain": "Unrealized Gain",
+    "realized_gain": "Realized Gain"
+  }
+}

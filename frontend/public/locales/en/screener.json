@@ -1,0 +1,54 @@
+{
+  "title": "Screener",
+  "subtitle": "Search for stocks that match your criteria",
+  "popular_filters": "Popular Filters",
+  "quick_filters": "Quick Filters",
+  "filters_active": "{{count}} filters active",
+  "filters": {
+    "top_gainers": "Top Gainers",
+    "top_gainers_tooltip": "Stocks with +5% or more change (1D)",
+    "top_losers": "Top Losers",
+    "top_losers_tooltip": "Stocks with -5% or less change (1D)",
+    "high_volume": "High Volume",
+    "high_volume_tooltip": "Volume surge 100%+",
+    "one_year_high": "1Y High",
+    "one_year_high_tooltip": "1 year return 50%+",
+    "high_dividend": "High Dividend",
+    "high_dividend_tooltip": "Dividend yield 4%+",
+    "low_pe": "Low P/E",
+    "low_pe_tooltip": "P/E ratio 10 or below (potentially undervalued)",
+    "high_growth": "High Growth",
+    "high_growth_tooltip": "Revenue growth 20%+",
+    "small_cap": "Small Cap",
+    "small_cap_tooltip": "Market cap under 1T KRW",
+    "large_cap": "Large Cap",
+    "large_cap_tooltip": "Market cap 10T KRW+",
+    "high_quality": "High Quality",
+    "high_quality_tooltip": "Overall score 80+"
+  },
+  "results": {
+    "title": "Results",
+    "count": "{{count}} stocks",
+    "no_results": "No stocks match your criteria",
+    "loading": "Searching..."
+  },
+  "table": {
+    "code": "Code",
+    "name": "Name",
+    "price": "Price",
+    "change": "Change",
+    "change_pct": "Change %",
+    "volume": "Volume",
+    "market_cap": "Market Cap",
+    "per": "P/E",
+    "pbr": "P/B",
+    "dividend_yield": "Div Yield",
+    "sector": "Sector",
+    "52w_high": "52W High",
+    "52w_low": "52W Low"
+  },
+  "sort": {
+    "asc": "Ascending",
+    "desc": "Descending"
+  }
+}

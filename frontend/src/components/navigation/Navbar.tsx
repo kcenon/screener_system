@@ -5,6 +5,7 @@ import MobileMenu from './MobileMenu'
 import UserMenu from './UserMenu'
 import GlobalSearch from './GlobalSearch'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher'
 
 export default function Navbar() {
   return (
@@ -28,6 +29,9 @@ export default function Navbar() {
             <div className="hidden md:block">
               <GlobalSearch />
             </div>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher variant="compact" />
 
             {/* Theme Toggle */}
             <ThemeToggle />

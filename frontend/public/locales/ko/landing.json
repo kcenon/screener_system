@@ -1,0 +1,61 @@
+{
+  "hero": {
+    "main_line1": "한국 주식 시장,",
+    "main_line2": "데이터로 분석하세요",
+    "subline1": "200+ 기술 지표, 실시간 데이터, 고급 스크리닝으로",
+    "subline2": "최적의 투자 기회를 발견하세요",
+    "feature_stocks": "2,400+ 종목 분석",
+    "feature_indicators": "200+ 기술 지표",
+    "feature_performance": "500ms 이하 쿼리 성능",
+    "cta_free": "무료로 시작하기",
+    "cta_explore": "시장 둘러보기",
+    "trust1": "회원가입 불필요",
+    "trust2": "신용카드 불필요",
+    "trust3": "즉시 사용 가능"
+  },
+  "features": {
+    "screening_title": "고급 스크리닝",
+    "screening_desc": "200+ 기술 지표와 필터로 원하는 조건의 종목을 정확하게 검색하세요. 저장된 필터 프리셋으로 반복 작업을 간소화하세요.",
+    "realtime_title": "실시간 데이터",
+    "realtime_desc": "WebSocket 기반 실시간 시세 스트리밍으로 호가창, 체결가, 거래량을 즉시 확인하세요. 500ms 이하의 빠른 쿼리 성능을 제공합니다.",
+    "technical_title": "기술적 분석",
+    "technical_desc": "MACD, RSI, 볼린저 밴드 등 200+ 기술 지표를 차트와 함께 제공합니다. TradingView 라이브러리 기반의 전문가급 차트를 사용하세요.",
+    "comparison_title": "종목 비교 분석",
+    "comparison_desc": "최대 5개 종목을 동시에 비교하여 최적의 투자 선택을 하세요. 재무제표, 밸류에이션, 기술적 지표를 한눈에 비교합니다.",
+    "portfolio_title": "포트폴리오 관리",
+    "portfolio_desc": "관심 종목을 워치리스트에 추가하고 실시간으로 모니터링하세요. 여러 개의 워치리스트로 종목을 분류하고 관리할 수 있습니다.",
+    "alerts_title": "가격 알림",
+    "alerts_desc": "원하는 가격에 도달하면 알림을 받으세요. 이메일, 웹 푸시 등 다양한 알림 방식을 지원합니다."
+  },
+  "showcase": {
+    "title": "강력한 기능들",
+    "subtitle_line1": "전문 투자자부터 개인 투자자까지,",
+    "subtitle_line2": "모두를 위한 종합 주식 분석 플랫폼",
+    "cta_desc": "모든 기능을 무료로 사용해보세요. 신용카드 필요 없습니다.",
+    "cta_button": "지금 시작하기"
+  },
+  "market": {
+    "realtime_title": "실시간 시장 현황",
+    "last_update": "마지막 업데이트:",
+    "flow_title": "시장 흐름",
+    "advancing": "상승",
+    "declining": "하락",
+    "unchanged": "보합",
+    "bullish": "강세장",
+    "bearish": "약세장",
+    "realtime_note": "* 실시간 데이터는 WebSocket을 통해 자동으로 업데이트됩니다"
+  },
+  "stats": {
+    "stocks": "분석 가능한 종목",
+    "indicators": "기술 지표",
+    "performance": "쿼리 성능",
+    "realtime": "실시간 업데이트",
+    "title": "플랫폼 통계",
+    "subtitle": "신뢰할 수 있는 데이터와 빠른 성능",
+    "sources_title": "데이터 출처",
+    "sources_desc": "신뢰할 수 있는 공식 데이터를 사용합니다",
+    "source_krx": "한국거래소 (KRX)",
+    "source_fnguide": "에프앤가이드 (F&Guide)",
+    "source_kis": "한국투자증권 (KIS) API"
+  }
+}

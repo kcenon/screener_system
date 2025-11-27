@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useMarketIndices } from '../../hooks/useMarketIndices'
 import { useMarketBreadth } from '../../hooks/useMarketBreadth'
 import { getMarketColor, getChangeArrow, getMarketSentiment } from '../../config/theme'
@@ -24,6 +25,8 @@ import type { MarketIndex } from '../../types/market'
  * Displays real-time market overview with auto-refresh
  */
 export function GlobalMarketBar() {
+  const { t } = useTranslation('market')
+
   // Fetch market indices (30 second refresh)
   const { data: indicesData, isLoading: isLoadingIndices } = useMarketIndices({
     refetchInterval: 30000, // 30 seconds
@@ -59,15 +62,15 @@ export function GlobalMarketBar() {
 
   // Get market sentiment display
   const getSentimentDisplay = () => {
-    if (!breadthData) return { text: '로딩중', icon: '⏳', color: 'text-gray-600' }
+    if (!breadthData) return { text: t('status.loading', { ns: 'common' }), icon: '⏳', color: 'text-gray-600' }
 
     const sentiment = breadthData.sentiment
     const colors = getMarketSentiment(sentiment)
 
     const sentimentMap = {
-      bullish: { text: '강세', icon: colors.icon },
-      neutral: { text: '중립', icon: colors.icon },
-      bearish: { text: '약세', icon: colors.icon },
+      bullish: { text: t('sentiment.bullish'), icon: colors.icon },
+      neutral: { text: t('sentiment.neutral'), icon: colors.icon },
+      bearish: { text: t('sentiment.bearish'), icon: colors.icon },
     }
 
     return {
@@ -101,7 +104,7 @@ export function GlobalMarketBar() {
       <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
-            시장 데이터 로딩중...
+            {t('layout.market_data_loading')}
           </div>
         </div>
       </div>
@@ -114,7 +117,7 @@ export function GlobalMarketBar() {
       <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
-            시장 데이터 없음
+            {t('layout.market_data_empty')}
           </div>
         </div>
       </div>
@@ -139,7 +142,7 @@ export function GlobalMarketBar() {
           <div className="flex items-center gap-6">
             {/* Market Sentiment */}
             <div className="flex items-center gap-2">
-              <span className="text-gray-600 dark:text-gray-400">시장심리:</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('layout.market_sentiment_label')}</span>
               <span className={`${sentiment.color} font-medium flex items-center gap-1`}>
                 <span>{sentiment.icon}</span>
                 <span>{sentiment.text}</span>
@@ -149,7 +152,7 @@ export function GlobalMarketBar() {
             {/* Current Time (KST) */}
             <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
               <span>{formatTime(currentTime)}</span>
-              <span className="text-xs">KST</span>
+              <span className="text-xs">{t('time.kst', { ns: 'common' })}</span>
             </div>
           </div>
         </div>
@@ -165,7 +168,7 @@ export function GlobalMarketBar() {
           {/* Row 2: Sentiment & Time */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-gray-600 dark:text-gray-400">심리:</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('layout.sentiment_label_mobile')}</span>
               <span className={`${sentiment.color} font-medium flex items-center gap-1`}>
                 <span>{sentiment.icon}</span>
                 <span>{sentiment.text}</span>
@@ -174,7 +177,7 @@ export function GlobalMarketBar() {
 
             <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
               <span>{formatTime(currentTime)}</span>
-              <span className="text-xs">KST</span>
+              <span className="text-xs">{t('time.kst', { ns: 'common' })}</span>
             </div>
           </div>
         </div>

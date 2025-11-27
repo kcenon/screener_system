@@ -1,0 +1,43 @@
+{
+  "type": {
+    "candlestick": "캔들스틱",
+    "line": "라인",
+    "area": "영역",
+    "heikin_ashi": "하이킨아시"
+  },
+  "tool": {
+    "none": "선택",
+    "trendline": "추세선",
+    "horizontal": "수평선",
+    "fibonacci": "피보나치",
+    "rectangle": "사각형",
+    "text": "텍스트"
+  },
+  "toolbar": {
+    "type": "차트 타입",
+    "drawing": "그리기 도구",
+    "indicators": "지표",
+    "zoomin": "확대",
+    "zoomout": "축소",
+    "reset": "초기화",
+    "export": "내보내기",
+    "fullscreen": "전체화면"
+  },
+  "advanced": {
+    "title": "고급 차트",
+    "data_points": "{{count}}개",
+    "show_volume": "거래량 표시",
+    "active_indicators": "활성 지표:",
+    "drawings": "그리기:",
+    "drawing_count": "그리기 ({{count}})"
+  },
+  "indicator": {
+    "title": "기술적 지표",
+    "active": "활성 지표",
+    "overlay": "오버레이 지표",
+    "oscillator": "오실레이터 지표",
+    "quick_setup": "빠른 설정",
+    "quick_moving_average": "📊 이동평균선 (SMA + EMA)",
+    "quick_bollinger": "📈 볼린저밴드 + RSI"
+  }
+}

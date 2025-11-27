@@ -1,0 +1,36 @@
+{
+  "title": "포트폴리오",
+  "watchlist": {
+    "title": "관심종목",
+    "add": "관심종목 추가",
+    "remove": "관심종목 삭제",
+    "empty": "관심종목이 없습니다",
+    "create": "새 관심목록 만들기",
+    "delete": "관심목록 삭제",
+    "rename": "관심목록 이름 변경"
+  },
+  "holdings": {
+    "title": "보유종목",
+    "add": "보유종목 추가",
+    "edit": "보유종목 수정",
+    "remove": "보유종목 삭제",
+    "empty": "보유종목이 없습니다"
+  },
+  "transaction": {
+    "title": "거래내역",
+    "buy": "매수",
+    "sell": "매도",
+    "date": "거래일",
+    "quantity": "수량",
+    "price": "가격",
+    "total": "총액"
+  },
+  "performance": {
+    "title": "수익률",
+    "total_value": "총 평가금액",
+    "total_return": "총 수익률",
+    "daily_return": "일간 수익률",
+    "unrealized_gain": "평가손익",
+    "realized_gain": "실현손익"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "navigation": {
+    "home": "Home",
+    "market": "Market",
+    "screener": "Screener",
+    "portfolio": "Portfolio",
+    "watchlist": "Watchlist",
+    "settings": "Settings",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up"
+  },
+  "actions": {
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "export": "Export",
+    "save": "Save",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "clear": "Clear",
+    "clear_all": "Clear All",
+    "back": "Back",
+    "close": "Close",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "refresh": "Refresh"
+  },
+  "status": {
+    "loading": "Loading",
+    "loading_ellipsis": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "no_data": "No data",
+    "unknown_error": "An unknown error occurred."
+  },
+  "time": {
+    "last_update": "Last update:",
+    "kst": "KST",
+    "auto_refresh": "Auto refresh",
+    "refresh_interval_1min": "(every 1 min)"
+  },
+  "units": {
+    "won": "KRW",
+    "trillion_won": "T KRW",
+    "hundred_million_won": "100M KRW",
+    "hundred_million": "100M",
+    "multiple": "x",
+    "percent": "%",
+    "count": ""
+  },
+  "footer": {
+    "features": "Features",
+    "screener": "Screener",
+    "market": "Market Overview",
+    "pricing": "Pricing",
+    "api_docs": "API Docs",
+    "guide": "User Guide",
+    "faq": "FAQ",
+    "updates": "Release Notes",
+    "about": "About Us",
+    "blog": "Blog",
+    "careers": "Careers",
+    "contact": "Contact",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "disclaimer": "Disclaimer",
+    "company_tagline": "Stock Screener",
+    "company_description": "Data-driven investment analysis platform for Korean stock market",
+    "section_platform": "Platform",
+    "section_resources": "Resources",
+    "section_company": "Company",
+    "section_legal": "Legal",
+    "investment_disclaimer_title": "Investment Disclaimer:",
+    "investment_disclaimer_text": "The information provided on this platform is for reference purposes only and is not intended as investment advice. All investment decisions should be made under your own responsibility, and we are not liable for any losses resulting from investments. Past performance does not guarantee future results."
+  }
+}

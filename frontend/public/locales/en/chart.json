@@ -1,0 +1,43 @@
+{
+  "type": {
+    "candlestick": "Candlestick",
+    "line": "Line",
+    "area": "Area",
+    "heikin_ashi": "Heikin Ashi"
+  },
+  "tool": {
+    "none": "Select",
+    "trendline": "Trendline",
+    "horizontal": "Horizontal",
+    "fibonacci": "Fibonacci",
+    "rectangle": "Rectangle",
+    "text": "Text"
+  },
+  "toolbar": {
+    "type": "Chart Type",
+    "drawing": "Drawing Tools",
+    "indicators": "Indicators",
+    "zoomin": "Zoom In",
+    "zoomout": "Zoom Out",
+    "reset": "Reset",
+    "export": "Export",
+    "fullscreen": "Fullscreen"
+  },
+  "advanced": {
+    "title": "Advanced Chart",
+    "data_points": "{{count}}",
+    "show_volume": "Show Volume",
+    "active_indicators": "Active:",
+    "drawings": "Drawings:",
+    "drawing_count": "Drawings ({{count}})"
+  },
+  "indicator": {
+    "title": "Technical Indicators",
+    "active": "Active Indicators",
+    "overlay": "Overlay Indicators",
+    "oscillator": "Oscillators",
+    "quick_setup": "Quick Setup",
+    "quick_moving_average": "📊 Moving Averages (SMA + EMA)",
+    "quick_bollinger": "📈 Bollinger Bands + RSI"
+  }
+}
