@@ -335,8 +335,70 @@ jobs:
 
 ---
 
+## Software Bill of Materials (SBOM)
+
+### Overview
+
+The Stock Screening Platform generates Software Bill of Materials (SBOM) in CycloneDX v1.5 format for supply chain security and regulatory compliance.
+
+### SBOM Status
+
+| Component | Status | Tool |
+|-----------|--------|------|
+| Frontend (npm) | ✅ Implemented | `@cyclonedx/cyclonedx-npm` |
+| Backend (Python) | ✅ Implemented | `cyclonedx-bom` |
+| Data Pipeline (Python) | ✅ Implemented | `cyclonedx-bom` |
+| CI/CD Integration | ✅ Implemented | GitHub Actions |
+| Vulnerability Scanning | ✅ Implemented | Grype |
+
+### Generated SBOMs
+
+- `sbom-frontend.json` - Frontend npm dependencies
+- `sbom-backend.json` - Backend Python dependencies
+- `sbom-datapipeline.json` - Data Pipeline Python dependencies
+- `sbom-complete.json` - Merged SBOM with all components
+
+### CI/CD Integration
+
+SBOMs are automatically generated:
+- **On Release**: Attached to GitHub releases as artifacts
+- **Manual Trigger**: Via `gh workflow run sbom.yml`
+
+### Local Generation
+
+```bash
+# Generate all SBOMs
+./scripts/generate-sbom.sh
+
+# Output directory: ./sbom/
+```
+
+### Vulnerability Scanning
+
+SBOMs are scanned for vulnerabilities using Grype:
+
+```bash
+# Scan locally
+grype sbom:sbom/sbom-complete.json
+```
+
+### Compliance
+
+This SBOM implementation supports:
+- US Executive Order 14028
+- NTIA SBOM Minimum Elements
+- EU Cyber Resilience Act
+- PCI DSS 4.0
+
+### Documentation
+
+Full SBOM documentation available in [docs/SBOM.md](./SBOM.md)
+
+---
+
 **Report Generated**: 2025-11-11
-**Completion Date**: 2025-11-11
+**SBOM Implementation**: 2025-11-27
+**Completion Date**: 2025-11-27
 **Next Review**: 2026-02-11 (quarterly or when Dependabot alerts trigger)
 **Auditor**: Development Team
 **Status**: ✅ **All Critical and High Vulnerabilities Resolved**
