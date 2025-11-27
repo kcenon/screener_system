@@ -3,6 +3,9 @@ import { Outlet } from 'react-router-dom'
 import { Navbar, Breadcrumb } from './components/navigation'
 import { GlobalMarketBar } from './components/layout'
 import EmailVerificationBanner from './components/auth/EmailVerificationBanner'
+import { OfflineIndicator } from './components/common/OfflineIndicator'
+import { PWAUpdatePrompt } from './components/common/PWAUpdatePrompt'
+import { PWAInstallPrompt } from './components/common/PWAInstallPrompt'
 import { useTheme } from './hooks/useTheme'
 import { initializeCSSVariables } from './design-system/tokens'
 
@@ -25,6 +28,11 @@ function App() {
       <main>
         <Outlet />
       </main>
+
+      {/* PWA Components */}
+      <OfflineIndicator />
+      <PWAUpdatePrompt />
+      <PWAInstallPrompt />
     </div>
   )
 }
