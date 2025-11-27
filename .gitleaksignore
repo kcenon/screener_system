@@ -1,20 +1,17 @@
 # Gitleaks ignore file
-# Ignore false positives in documentation examples
+# Format: <commit>:<file>:<rule>:<line>
 
 # API documentation examples with placeholder tokens (including git history)
-# Original commit 38917bacf06157619ed0e6518060e5aaedc44af6 contained JWT example
 38917bacf06157619ed0e6518060e5aaedc44af6:docs-site/docs/api/intro.md:generic-api-key:48
-docs-site/docs/api/intro.md:48
-docs-site/docs/api/intro.md:60
-
-# Tutorial and example files may contain fake credentials
-docs-site/docs/tutorial-*/**
-docs-site/blog/**
 
 # Documentation templates contain example API tokens and credentials (not real secrets)
 80f695e235f408dd2db881e60b0d8ebc8fb2a80d:docs-site/docs/08-contributing/templates/api-documentation-template.md:curl-auth-header:190
 c539dca88d0e0f39ea1fb65ef4e0cefb1b0bb6f8:docs-site/docs/08-contributing/templates/api-documentation-template.md:curl-auth-header:190
+a00daa41b862014c84f06b52c871ef5742c0b57d:docs-site/docs/08-contributing/templates/api-documentation-template.md:curl-auth-header:190
 
 # Test files contain intentional test secrets (not real credentials)
 90cd5f9ea6d70926fc11c7f5047bb04a35f37ae4:backend/tests/core/test_security.py:generic-api-key:189
-backend/tests/core/test_security.py:*
+cbcf6a2376e9b768fd2200a95f25dd7c87181076:backend/tests/core/test_security.py:generic-api-key:189
+
+# Documentation testing examples with placeholder Algolia keys
+48ebcb89d1651df78ccee2830518584507fb7bd1:docs/TESTING.md:curl-auth-header:840
