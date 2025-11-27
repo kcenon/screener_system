@@ -8,6 +8,11 @@ import {
   formatCompactMarketCap,
   formatChangePercentage,
 } from '@/utils/formatNumber'
+import { InCellSparkline } from './InCellSparkline'
+import { VolumeBar } from './VolumeBar'
+// RangeIndicator is available but requires 52-week high/low data from backend
+// import { RangeIndicator } from './RangeIndicator'
+import { TrendBadge } from './TrendBadge'
 
 /**
  * Sort configuration
@@ -98,7 +103,7 @@ const formatPrice = (value: string | number | null | undefined): string => {
 }
 
 /**
- * Column definitions
+ * Column definitions with visual analytics columns
  */
 const columns: Column[] = [
   { key: 'code', label: 'Code', sortable: true, align: 'left' },
@@ -112,6 +117,12 @@ const columns: Column[] = [
   },
   {
     key: 'price_change_1d',
+    label: 'Trend',
+    sortable: true,
+    align: 'center',
+  },
+  {
+    key: 'price_change_1d' as ScreeningSortField,
     label: 'Change%',
     sortable: true,
     align: 'right',
@@ -308,7 +319,7 @@ export default function ResultsTable({
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
-                  {columns.map((column) => {
+                  {columns.map((column, colIndex) => {
                     // Special handling for Actions column
                     if (column.label === 'Actions') {
                       return (
@@ -333,26 +344,89 @@ export default function ResultsTable({
                       )
                     }
 
-                    // Special handling for Volume column with icon
+                    // Trend column with TrendBadge and optional Sparkline
+                    if (column.label === 'Trend') {
+                      return (
+                        <td
+                          key={`trend-${colIndex}`}
+                          className="px-2.5 py-1 whitespace-nowrap text-center"
+                        >
+                          <div className="flex items-center justify-center gap-1">
+                            {/* Sparkline (if price history available) */}
+                            {stock.price_history_7d && stock.price_history_7d.length >= 2 && (
+                              <InCellSparkline
+                                data={stock.price_history_7d}
+                                width={36}
+                                height={16}
+                                color="auto"
+                              />
+                            )}
+                            {/* Trend Badge */}
+                            <TrendBadge
+                              shortTermChange={stock.price_change_1w}
+                              longTermChange={stock.price_change_1m}
+                              size="sm"
+                            />
+                          </div>
+                        </td>
+                      )
+                    }
+
+                    // Price column with optional sparkline
+                    if (column.label === 'Price') {
+                      return (
+                        <td
+                          key={column.key}
+                          className="px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap text-right transition-colors"
+                        >
+                          <div className="flex items-center justify-end gap-1">
+                            <span>{formatPrice(stock.current_price)}</span>
+                          </div>
+                        </td>
+                      )
+                    }
+
+                    // Volume column with VolumeBar
                     if (column.label === 'Volume') {
                       const volume = stock.current_volume
-                      const formattedValue = formatVolumeWithIcon(volume)
+                      const avgVolume = stock.average_volume
+                      const volumeSurge = stock.volume_surge_pct
+
+                      // If we have volume surge percentage, calculate implied average
+                      const impliedAvgVolume = volumeSurge && volume
+                        ? volume / (1 + volumeSurge / 100)
+                        : avgVolume
 
                       return (
                         <td
                           key={column.key}
                           className="px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap text-right transition-colors"
                         >
-                          {formattedValue}
+                          <div className="flex items-center justify-end gap-1">
+                            {impliedAvgVolume ? (
+                              <VolumeBar
+                                volume={volume}
+                                averageVolume={impliedAvgVolume}
+                                maxWidth={40}
+                                height={10}
+                                showRatio={false}
+                              />
+                            ) : null}
+                            <span>{formatVolumeWithIcon(volume)}</span>
+                          </div>
                         </td>
                       )
                     }
 
                     const value = stock[column.key as keyof StockScreeningResult]
-                    let formattedValue = column.format ? column.format(value) : value
+                    // Skip array values (like price_history_7d) for text formatting
+                    const displayValue = Array.isArray(value) ? null : value
+                    let formattedValue: string | number | null | undefined = column.format
+                      ? column.format(displayValue as string | number | null | undefined)
+                      : displayValue
 
-                    // Add change icon for price_change_1d
-                    if (column.key === 'price_change_1d' && typeof value === 'number') {
+                    // Add change icon for Change% column
+                    if (column.label === 'Change%' && typeof value === 'number') {
                       const icon = getChangeIcon(value)
                       formattedValue = `${icon} ${formattedValue}`
                     }
@@ -364,23 +438,23 @@ export default function ResultsTable({
                       }
                     }
 
-                    // Special styling for change%
+                    // Special styling for Change%
                     let cellClassName = 'px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap transition-colors'
-                    if (column.key === 'price_change_1d' && typeof value === 'number') {
+                    if (column.label === 'Change%' && typeof value === 'number') {
                       cellClassName += value > 0 ? ' text-green-600 dark:text-green-400' : value < 0 ? ' text-red-600 dark:text-red-400' : ''
                     }
 
                     // Conditional formatting: bold for top/bottom performers
-                    if (column.key === 'price_change_1d' && typeof value === 'number') {
+                    if (column.label === 'Change%' && typeof value === 'number') {
                       if (Math.abs(value) > 5) {
                         cellClassName += ' font-bold'
                       }
                     }
 
                     // Fade low volume stocks (less than 100K shares)
-                    const volume = stock.current_volume
+                    const currentVolume = stock.current_volume
                     const LOW_VOLUME_THRESHOLD = 100_000 // 100K shares
-                    if (volume && typeof volume === 'number' && volume < LOW_VOLUME_THRESHOLD) {
+                    if (currentVolume && typeof currentVolume === 'number' && currentVolume < LOW_VOLUME_THRESHOLD) {
                       cellClassName += ' opacity-70'
                     }
 
@@ -388,7 +462,7 @@ export default function ResultsTable({
                     if (column.align === 'center') cellClassName += ' text-center'
 
                     return (
-                      <td key={column.key} className={cellClassName}>
+                      <td key={`${column.key}-${colIndex}`} className={cellClassName}>
                         {formattedValue}
                       </td>
                     )

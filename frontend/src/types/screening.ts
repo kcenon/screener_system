@@ -199,6 +199,15 @@ export interface StockScreeningResult {
   price_change_6m?: number | null
   price_change_1y?: number | null
   volume_surge_pct?: number | null
+  average_volume?: number | null
+
+  // 52-week range (for RangeIndicator)
+  high_52w?: number | null
+  low_52w?: number | null
+
+  // Price history for sparklines (7 data points recommended)
+  price_history_7d?: number[] | null
+
   quality_score?: number | null
   value_score?: number | null
   growth_score?: number | null
