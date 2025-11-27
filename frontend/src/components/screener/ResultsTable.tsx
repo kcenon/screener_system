@@ -42,7 +42,10 @@ interface ResultsTableProps {
  * Column definition
  */
 interface Column {
-  key: ScreeningSortField
+  /** Unique identifier for React key (must be unique across all columns) */
+  id: string
+  /** Field name used for sorting */
+  sortField: ScreeningSortField
   label: string
   sortable: boolean
   align?: 'left' | 'right' | 'center'
@@ -104,68 +107,78 @@ const formatPrice = (value: string | number | null | undefined): string => {
 
 /**
  * Column definitions with visual analytics columns
+ * Note: 'id' must be unique for React keys, 'sortField' is used for sorting
  */
 const columns: Column[] = [
-  { key: 'code', label: 'Code', sortable: true, align: 'left' },
-  { key: 'name', label: 'Name', sortable: true, align: 'left' },
+  { id: 'col-code', sortField: 'code', label: 'Code', sortable: true, align: 'left' },
+  { id: 'col-name', sortField: 'name', label: 'Name', sortable: true, align: 'left' },
   {
-    key: 'current_price',
+    id: 'col-price',
+    sortField: 'current_price',
     label: 'Price',
     sortable: true,
     align: 'right',
     format: formatPrice,
   },
   {
-    key: 'price_change_1d',
+    id: 'col-trend',
+    sortField: 'price_change_1d',
     label: 'Trend',
     sortable: true,
     align: 'center',
   },
   {
-    key: 'price_change_1d' as ScreeningSortField,
+    id: 'col-change',
+    sortField: 'price_change_1d',
     label: 'Change%',
     sortable: true,
     align: 'right',
     format: formatPercent,
   },
   {
-    key: 'current_volume' as ScreeningSortField,
+    id: 'col-volume',
+    sortField: 'current_volume' as ScreeningSortField,
     label: 'Volume',
     sortable: true,
     align: 'right',
   },
   {
-    key: 'market_cap' as ScreeningSortField,
+    id: 'col-market-cap',
+    sortField: 'market_cap',
     label: 'Market Cap',
     sortable: true,
     align: 'right',
     format: formatMarketCapValue,
   },
-  { key: 'per', label: 'PER', sortable: true, align: 'right', format: formatNumber },
-  { key: 'pbr', label: 'PBR', sortable: true, align: 'right', format: formatNumber },
+  { id: 'col-per', sortField: 'per', label: 'PER', sortable: true, align: 'right', format: formatNumber },
+  { id: 'col-pbr', sortField: 'pbr', label: 'PBR', sortable: true, align: 'right', format: formatNumber },
   {
-    key: 'roe',
+    id: 'col-roe',
+    sortField: 'roe',
     label: 'ROE%',
     sortable: true,
     align: 'right',
     format: (v) => formatNumber(v, 1),
   },
   {
-    key: 'dividend_yield',
+    id: 'col-dividend',
+    sortField: 'dividend_yield',
     label: 'Div%',
     sortable: true,
     align: 'right',
     format: (v) => formatNumber(v, 2),
   },
   {
-    key: 'quality_score',
+    id: 'col-quality',
+    sortField: 'quality_score',
     label: 'Quality',
     sortable: true,
     align: 'right',
     format: (v) => formatNumber(v, 0),
   },
   {
-    key: 'code' as ScreeningSortField, // Non-sortable actions column
+    id: 'col-actions',
+    sortField: 'code', // Not used for sorting
     label: 'Actions',
     sortable: false,
     align: 'center',
@@ -241,8 +254,8 @@ export default function ResultsTable({
   }
 
   // Render sort icon
-  const renderSortIcon = (columnKey: ScreeningSortField) => {
-    if (currentSort.field !== columnKey) {
+  const renderSortIcon = (sortField: ScreeningSortField) => {
+    if (currentSort.field !== sortField) {
       return (
         <svg className="h-4 w-4 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -274,7 +287,7 @@ export default function ResultsTable({
             <tr>
               {columns.map((column) => (
                 <th
-                  key={column.key}
+                  key={column.id}
                   scope="col"
                   className={`px-2.5 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider transition-colors ${
                     column.align === 'right'
@@ -286,11 +299,11 @@ export default function ResultsTable({
                 >
                   {column.sortable ? (
                     <button
-                      onClick={() => onSort(column.key)}
+                      onClick={() => onSort(column.sortField)}
                       className="flex items-center space-x-1 hover:text-gray-900 dark:hover:text-gray-100 transition-colors group w-full justify-between"
                     >
                       <span>{column.label}</span>
-                      {renderSortIcon(column.key)}
+                      {renderSortIcon(column.sortField)}
                     </button>
                   ) : (
                     <span>{column.label}</span>
@@ -319,7 +332,7 @@ export default function ResultsTable({
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
-                  {columns.map((column, colIndex) => {
+                  {columns.map((column) => {
                     // Special handling for Actions column
                     if (column.label === 'Actions') {
                       return (
@@ -348,7 +361,7 @@ export default function ResultsTable({
                     if (column.label === 'Trend') {
                       return (
                         <td
-                          key={`trend-${colIndex}`}
+                          key={column.id}
                           className="px-2.5 py-1 whitespace-nowrap text-center"
                         >
                           <div className="flex items-center justify-center gap-1">
@@ -376,7 +389,7 @@ export default function ResultsTable({
                     if (column.label === 'Price') {
                       return (
                         <td
-                          key={column.key}
+                          key={column.id}
                           className="px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap text-right transition-colors"
                         >
                           <div className="flex items-center justify-end gap-1">
@@ -399,7 +412,7 @@ export default function ResultsTable({
 
                       return (
                         <td
-                          key={column.key}
+                          key={column.id}
                           className="px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap text-right transition-colors"
                         >
                           <div className="flex items-center justify-end gap-1">
@@ -418,7 +431,7 @@ export default function ResultsTable({
                       )
                     }
 
-                    const value = stock[column.key as keyof StockScreeningResult]
+                    const value = stock[column.sortField as keyof StockScreeningResult]
                     // Skip array values (like price_history_7d) for text formatting
                     const displayValue = Array.isArray(value) ? null : value
                     let formattedValue: string | number | null | undefined = column.format
@@ -432,7 +445,7 @@ export default function ResultsTable({
                     }
 
                     // Add value indicator for PER
-                    if (column.key === 'per' && typeof value === 'number') {
+                    if (column.sortField === 'per' && typeof value === 'number') {
                       if (value > 0 && value < 10) {
                         formattedValue = `${formattedValue} 💎` // Low P/E indicator
                       }
@@ -462,7 +475,7 @@ export default function ResultsTable({
                     if (column.align === 'center') cellClassName += ' text-center'
 
                     return (
-                      <td key={`${column.key}-${colIndex}`} className={cellClassName}>
+                      <td key={column.id} className={cellClassName}>
                         {formattedValue}
                       </td>
                     )
