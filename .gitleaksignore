@@ -15,3 +15,7 @@ cbcf6a2376e9b768fd2200a95f25dd7c87181076:backend/tests/core/test_security.py:gen
 
 # Documentation testing examples with placeholder Algolia keys
 48ebcb89d1651df78ccee2830518584507fb7bd1:docs/TESTING.md:curl-auth-header:840
+
+# WebSocket schema documentation examples (not real tokens)
+57034a8cf0920809bc953111b6703298f77a550a:backend/app/schemas/websocket.py:generic-api-key:249
+57034a8cf0920809bc953111b6703298f77a550a:backend/app/schemas/websocket.py:generic-api-key:265
