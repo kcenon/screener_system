@@ -478,36 +478,130 @@ No tickets currently in review.
 
 ---
 
-### Backlog (Post-Sprint 5)
-**Status: Phase 4 Enhancement Sprint Initialized** ✅
+### Backlog (Phase 2 Enhancement - 50 tickets)
+**Status: Phase 2 Enhancement Sprint Initialized** 🚀
 
-🆕 **2025-11-27**: Created 5 new improvement tickets for Phase 4:
-- IMPROVEMENT-007 to IMPROVEMENT-011 added to Todo
-- Focus: UI/UX polish, mobile experience, platform expansion
-- Total estimated effort: 56-68 hours
+🆕 **2025-11-30**: Created 50 new improvement tickets for Phase 2:
+- Total estimated effort: ~580 hours
+- Organized into 9 Epics across 5 sprints (Sprint 5-9)
+- All tickets in `docs/kanban/backlog/` directory
 
-✅ **Gap Analysis Resolution** (2025-11-27):
-All identified implementation gaps have been resolved.
+---
 
-**Completed Quality Sprint Tickets** (3 tickets, 13h total):
-- ✅ **BUGFIX-013**: Add Missing OrderBook Component Tests (4h actual)
-  - 90 tests added, 94-98% coverage achieved
-  - PR #181 merged
+#### 🤖 Epic 1: AI/Machine Learning Features (8 tickets, ~104h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| AI-001 | ML Feature Engineering Pipeline | P0 | 16h | Sprint 5 |
+| AI-002a | Stock Prediction Model - Training | P0 | 12h | Sprint 5 |
+| AI-002b | Stock Prediction Model - Serving & API | P0 | 12h | Sprint 5 |
+| AI-003a | Chart Pattern Recognition - Data & Model | P1 | 12h | Sprint 6 |
+| AI-003b | Chart Pattern Recognition - Service & UI | P1 | 8h | Sprint 6 |
+| AI-004 | AI Screening Recommendations | P1 | 16h | Sprint 6 |
+| AI-005a | LLM Integration - Backend Service | P2 | 12h | Sprint 7 |
+| AI-005b | LLM Integration - NL Query & Frontend | P2 | 8h | Sprint 7 |
 
-- ✅ **BUGFIX-014**: Complete Freemium Integration for Stock Detail (1h actual)
-  - StockDetailPage fully integrated with freemium access control
-  - PR #180 merged
+---
 
-- ✅ **BUGFIX-015**: Increase Backend Test Coverage to 80% (8h actual)
-  - 150+ new tests, coverage target achieved
-  - PR #182 merged
+#### 📊 Epic 2: Backtesting Engine (7 tickets, ~80h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| BT-001a | Backtesting Simulation Engine | P0 | 12h | Sprint 5 |
+| BT-001b | Backtesting Data & Storage | P0 | 12h | Sprint 5 |
+| BT-002 | Performance Metrics Calculator | P0 | 12h | Sprint 5 |
+| BT-003 | Backtesting API Endpoints | P0 | 8h | Sprint 5 |
+| BT-004a | Backtesting Frontend - Config UI | P1 | 8h | Sprint 6 |
+| BT-004b | Backtesting Frontend - Results Viz | P1 | 8h | Sprint 6 |
+| BT-005 | Walk-Forward Analysis | P2 | 12h | Sprint 7 |
 
-**Sprint 4 & 5 (Complete)**:
-- ✅ BUGFIX-006 to BUGFIX-015 - All DONE
-- ✅ All P0/P1 features implemented
-- ✅ 89 tickets completed
+---
 
-**Note**: IMPROVEMENT-002~006 and TEST-001~010 tickets already in `done/` folder.
+#### 📱 Epic 3: Mobile Application (7 tickets, ~88h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| MOB-001 | Mobile Project Setup (Expo) | P0 | 8h | Sprint 5 |
+| MOB-002 | Core Navigation & Auth | P0 | 12h | Sprint 5 |
+| MOB-003 | Stock Screener Screen | P0 | 16h | Sprint 6 |
+| MOB-004 | Stock Detail Screen | P0 | 16h | Sprint 6 |
+| MOB-005 | Push Notifications | P1 | 12h | Sprint 6 |
+| MOB-006 | Portfolio & Watchlist | P1 | 12h | Sprint 7 |
+| MOB-007 | App Store Submission | P1 | 12h | Sprint 8 |
+
+---
+
+#### 👥 Epic 4: Social & Community Features (5 tickets, ~64h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| SOC-001 | Strategy Publishing System | P1 | 16h | Sprint 7 |
+| SOC-002 | User Follow System | P2 | 12h | Sprint 7 |
+| SOC-003 | Community Feed | P2 | 16h | Sprint 8 |
+| SOC-004 | Leaderboard | P2 | 12h | Sprint 8 |
+| SOC-005 | Copy Trading (MVP) | P3 | 8h | Sprint 9 |
+
+---
+
+#### 📈 Epic 5: Extended Indicators (3 tickets, ~48h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| IND-001 | Advanced Technical Indicators | P1 | 16h | Sprint 5 |
+| IND-002 | Advanced Fundamental Indicators | P1 | 16h | Sprint 5 |
+| IND-003 | Supply-Demand (수급) Indicators | P1 | 16h | Sprint 6 |
+
+---
+
+#### 🔌 Epic 6: Developer API (5 tickets, ~56h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| API-001 | Public API Infrastructure | P1 | 12h | Sprint 7 |
+| API-002 | Public API Endpoints | P1 | 16h | Sprint 7 |
+| API-003 | API Documentation Portal | P1 | 12h | Sprint 8 |
+| API-004 | Python SDK | P2 | 8h | Sprint 8 |
+| API-005 | JavaScript SDK | P2 | 8h | Sprint 8 |
+
+---
+
+#### 🎨 Epic 7: UX/UI Enhancements (5 tickets, ~48h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| UX-001 | Market Heatmap | P1 | 12h | Sprint 6 |
+| UX-002 | Dark Mode | P1 | 8h | Sprint 6 |
+| UX-003 | Keyboard Shortcuts | P2 | 8h | Sprint 7 |
+| UX-004 | Advanced Chart Features | P2 | 16h | Sprint 7 |
+| UX-005 | Drag-and-Drop Watchlist | P3 | 4h | Sprint 8 |
+
+---
+
+#### 🇰🇷 Epic 8: Korea Market Specialization (4 tickets, ~48h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| KR-001 | DART Integration | P0 | 16h | Sprint 6 |
+| KR-002 | Theme Stock Categorization | P1 | 12h | Sprint 7 |
+| KR-003 | Insider Trading Monitor | P2 | 12h | Sprint 7 |
+| KR-004 | IPO Analysis | P2 | 8h | Sprint 8 |
+
+---
+
+#### ⚡ Epic 9: Performance & Scalability (6 tickets, ~44h)
+| ID | Title | Priority | Hours | Sprint |
+|----|-------|----------|-------|--------|
+| PERF-001a | GraphQL Schema Design | P2 | 8h | Sprint 8 |
+| PERF-001b | GraphQL Frontend Integration | P2 | 8h | Sprint 8 |
+| PERF-002 | CDN and Static Caching | P1 | 8h | Sprint 6 |
+| PERF-003 | Database Read Replicas | P1 | 8h | Sprint 7 |
+| PERF-004 | Connection Pooling (PgBouncer) | P1 | 4h | Sprint 6 |
+| PERF-005 | Query Optimization Audit | P2 | 8h | Sprint 7 |
+
+---
+
+**Sprint Planning Summary**:
+| Sprint | Focus | Hours | Tickets |
+|--------|-------|-------|---------|
+| Sprint 5 | Foundation (AI, BT, Mobile, IND) | ~136h | 11 |
+| Sprint 6 | Core Features | ~160h | 14 |
+| Sprint 7 | Advanced Features | ~164h | 14 |
+| Sprint 8 | Polish & Release | ~96h | 10 |
+| Sprint 9 | Enhancement | ~48h | 1 |
+
+**Reference**: [IMPROVEMENT_TICKETS.md](../IMPROVEMENT_TICKETS.md) for detailed specifications
 
 ### 🧪 Test Improvement Initiative - Phase 1 Critical Tests
 **Total Effort**: 30 hours across 10 tickets
@@ -774,7 +868,31 @@ Each team member answers:
 
 ## Recent Updates
 
-**2025-11-28 (Latest - SECURITY-003 SBOM COMPLETE!)**: 🔒✅
+**2025-11-30 (Latest - PHASE 2 ENHANCEMENT TICKETS CREATED!)**: 📋🚀
+- 🆕 **50 New Tickets Created** for Phase 2 Enhancement:
+  - Split `docs/IMPROVEMENT_TICKETS.md` into individual ticket files
+  - Created `docs/kanban/backlog/` directory with all tickets
+  - Total estimated effort: ~580 hours across 5 sprints
+- 📊 **9 Epics Organized**:
+  - 🤖 AI/Machine Learning Features (8 tickets, ~104h)
+  - 📊 Backtesting Engine (7 tickets, ~80h)
+  - 📱 Mobile Application (7 tickets, ~88h)
+  - 👥 Social & Community Features (5 tickets, ~64h)
+  - 📈 Extended Indicators (3 tickets, ~48h)
+  - 🔌 Developer API (5 tickets, ~56h)
+  - 🎨 UX/UI Enhancements (5 tickets, ~48h)
+  - 🇰🇷 Korea Market Specialization (4 tickets, ~48h)
+  - ⚡ Performance & Scalability (6 tickets, ~44h)
+- 📝 **Ticket Format Standardized**:
+  - Metadata table with ID, Title, Priority, Estimate, Sprint, Epic
+  - Description, Acceptance Criteria, Technical Notes, Dependencies
+  - References to parent IMPROVEMENT_TICKETS.md document
+- 🎯 **Sprint Planning**:
+  - Sprint 5-9 planned with progressive feature rollout
+  - P0 tickets prioritized for early sprints
+  - Buffer time included in Sprint 9
+
+**2025-11-28 (SECURITY-003 SBOM COMPLETE!)**: 🔒✅
 - 🏆 **SECURITY-003 Completed**: SBOM (Software Bill of Materials) Generation
   - ✅ CycloneDX v1.5 format SBOM for all components
   - ✅ 929 components cataloged across frontend, backend, and data pipeline
@@ -1072,7 +1190,7 @@ Each team member answers:
 
 ---
 
-Last Updated: 2025-11-28 (SECURITY-003 COMPLETE - 100 tickets done, 0 todo, SBOM & Supply Chain Security Complete! 🔒🏆)
+Last Updated: 2025-11-30 (PHASE 2 ENHANCEMENT - 100 done, 50 backlog tickets, Phase 2 Sprint Planning Complete! 📋🚀)
 
 ---
 
