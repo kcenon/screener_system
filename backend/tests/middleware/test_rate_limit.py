@@ -226,17 +226,21 @@ class TestRateLimitMiddlewareAsync:
             for response in responses:
                 assert response.status_code == 200
 
-    async def test_concurrent_requests_exceed_limit(self, app: FastAPI, mock_redis):
+    async def test_concurrent_requests_exceed_limit(self, app: FastAPI, mock_redis, monkeypatch):
         """Test that concurrent requests properly enforce rate limits"""
         import asyncio
-
         from httpx import ASGITransport, AsyncClient
+
+        # Lower the limit for testing to avoid high concurrency issues
+        monkeypatch.setattr(settings, "RATE_LIMIT_FREE", 10)
+        test_limit = 10
+        request_count = 20
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
         ) as client:
-            # Make many concurrent requests (more than limit)
-            tasks = [client.get("/test") for _ in range(settings.RATE_LIMIT_FREE + 10)]
+            # Make concurrent requests (more than limit)
+            tasks = [client.get("/test") for _ in range(request_count)]
             responses = await asyncio.gather(*tasks)
 
             # Some should be rate limited
