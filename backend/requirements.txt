@@ -41,7 +41,7 @@ optuna==4.6.0
 mlflow==2.9.2
 
 # HTTP Requests
-httpx==0.25.2
+httpx==0.28.1
 aiohttp==3.13.2  # Security: Fixed request smuggling in chunked trailer parsing (GHSA-9548-qrrj-x5pj, CVE-2025-53643)
 
 # Monitoring & Logging
