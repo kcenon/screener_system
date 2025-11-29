@@ -123,6 +123,7 @@ coverage/
 .hypothesis/
 .pytest_cache/
 htmlcov/
+coverage.xml
 
 # MyPy
 .mypy_cache/
