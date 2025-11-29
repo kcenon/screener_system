@@ -38,6 +38,7 @@ from app.api.error_handlers import (app_exception_handler,
                                     validation_exception_handler)
 from app.api.v1.endpoints import (
     alerts,
+    ai,
     auth,
     health,
     market,
@@ -208,6 +209,9 @@ app.add_exception_handler(Exception, generic_exception_handler)
 
 # Include health check routes
 app.include_router(health.router, prefix="/v1")
+
+# Include AI routes
+app.include_router(ai.router, prefix="/v1")
 
 # Include authentication routes
 app.include_router(auth.router, prefix="/v1")
