@@ -1,6 +1,7 @@
 """Database models package"""
 
 from app.db.models.alert import Alert
+from app.db.models.ml_feature import MLFeature
 from app.db.models.calculated_indicator import CalculatedIndicator
 from app.db.models.daily_price import DailyPrice
 from app.db.models.email_verification_token import EmailVerificationToken
@@ -32,6 +33,7 @@ from app.db.models.watchlist import (
 
 __all__ = [
     "Alert",
+    "MLFeature",
     "BillingCycle",
     "CalculatedIndicator",
     "DailyPrice",

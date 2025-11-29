@@ -4,7 +4,7 @@ from functools import lru_cache
 from typing import List, Union
 
 from pydantic import field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -199,11 +199,11 @@ class Settings(BaseSettings):
     PRO_PRICE_MONTHLY: float = 29.99
     PRO_PRICE_YEARLY: float = 299.00
 
-    class Config:
-        """Pydantic configuration"""
-
-        env_file = ".env"
-        case_sensitive = True
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore"
+    )
 
 
 @lru_cache()
