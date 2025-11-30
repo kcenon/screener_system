@@ -45,6 +45,7 @@ from app.api.v1.endpoints import (
     notifications,
     oauth,
     portfolios,
+    recommendation, # Added recommendation
     screening,
     stocks,
     subscriptions,
@@ -211,7 +212,8 @@ app.add_exception_handler(Exception, generic_exception_handler)
 app.include_router(health.router, prefix="/v1")
 
 # Include AI routes
-app.include_router(ai.router, prefix="/v1")
+app.include_router(ai.router, prefix=settings.API_V1_STR)
+app.include_router(recommendation.router, prefix=settings.API_V1_STR)
 
 # Include authentication routes
 app.include_router(auth.router, prefix="/v1")

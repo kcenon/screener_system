@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     PROJECT_NAME: str = "Stock Screening Platform"
     VERSION: str = "0.1.0"
+    API_V1_STR: str = "/v1"
 
     # ========================================================================
     # DATABASE
