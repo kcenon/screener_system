@@ -48,9 +48,13 @@ def get_user_tier(current_user: CurrentUser) -> str:
 @router.get("/", response_model=PortfolioListResponse, status_code=status.HTTP_200_OK)
 async def list_portfolios(
     current_user: CurrentUser,
+    portfolio_service: Annotated[
+        PortfolioService, Depends(get_portfolio_service)
+    ],
     skip: int = Query(0, ge=0, description="Number of items to skip"),
-    limit: int = Query(10, ge=1, le=100, description="Maximum number of items to return"),
-    service: PortfolioService = Depends(get_portfolio_service),
+    limit: int = Query(
+        10, ge=1, le=100, description="Maximum number of items to return"
+    ),
 ) -> PortfolioListResponse:
     """
     List all portfolios for the current user
@@ -65,7 +69,7 @@ async def list_portfolios(
     - List of portfolios with summary information
     - Total count for pagination
     """
-    portfolios, total = await service.get_user_portfolios(
+    portfolios, total = await portfolio_service.get_user_portfolios(
         user_id=current_user.id, skip=skip, limit=limit, load_holdings=False
     )
 
@@ -133,11 +137,17 @@ async def create_portfolio(
     )
 
 
-@router.get("/{portfolio_id}", response_model=PortfolioSummary, status_code=status.HTTP_200_OK)
+@router.get(
+    "/{portfolio_id}",
+    response_model=PortfolioSummary,
+    status_code=status.HTTP_200_OK
+)
 async def get_portfolio(
     portfolio_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    service: PortfolioService = Depends(get_portfolio_service),
+    portfolio_service: Annotated[
+        PortfolioService, Depends(get_portfolio_service)
+    ],
 ) -> PortfolioSummary:
     """
     Get portfolio details with holdings and performance
@@ -153,7 +163,7 @@ async def get_portfolio(
     **Errors:**
     - 404: Portfolio not found or not owned by user
     """
-    portfolio = await service.get_portfolio_by_id(
+    portfolio = await portfolio_service.get_portfolio_by_id(
         portfolio_id=portfolio_id, user_id=current_user.id, load_holdings=True
     )
 
@@ -164,16 +174,20 @@ async def get_portfolio(
         )
 
     # Get holdings with current prices
-    holdings = await service.get_portfolio_holdings(portfolio_id=portfolio_id)
+    holdings = await portfolio_service.get_portfolio_holdings(portfolio_id=portfolio_id)
 
     # Get performance metrics
-    performance = await service.get_portfolio_performance(portfolio_id=portfolio_id)
+    performance = await portfolio_service.get_portfolio_performance(
+        portfolio_id=portfolio_id
+    )
 
     # Get allocation
-    allocation = await service.get_portfolio_allocation(portfolio_id=portfolio_id)
+    allocation = await portfolio_service.get_portfolio_allocation(
+        portfolio_id=portfolio_id
+    )
 
     # Get recent transactions (last 10)
-    recent_txns, _ = await service.get_portfolio_transactions(
+    recent_txns, _ = await portfolio_service.get_portfolio_transactions(
         portfolio_id=portfolio_id, skip=0, limit=10
     )
 
@@ -212,12 +226,18 @@ async def get_portfolio(
     )
 
 
-@router.put("/{portfolio_id}", response_model=PortfolioResponse, status_code=status.HTTP_200_OK)
+@router.put(
+    "/{portfolio_id}",
+    response_model=PortfolioResponse,
+    status_code=status.HTTP_200_OK
+)
 async def update_portfolio(
     portfolio_id: Annotated[int, Path(gt=0)],
     data: PortfolioUpdate,
     current_user: CurrentUser,
-    service: PortfolioService = Depends(get_portfolio_service),
+    portfolio_service: Annotated[
+        PortfolioService, Depends(get_portfolio_service)
+    ],
 ) -> PortfolioResponse:
     """
     Update portfolio information
@@ -240,7 +260,7 @@ async def update_portfolio(
     - 400: Portfolio name already exists
     """
     try:
-        portfolio = await service.update_portfolio(
+        portfolio = await portfolio_service.update_portfolio(
             portfolio_id=portfolio_id, user_id=current_user.id, data=data
         )
     except ValueError as e:
@@ -269,7 +289,9 @@ async def update_portfolio(
 async def delete_portfolio(
     portfolio_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    service: PortfolioService = Depends(get_portfolio_service),
+    portfolio_service: Annotated[
+        PortfolioService, Depends(get_portfolio_service)
+    ],
 ) -> None:
     """
     Delete a portfolio
@@ -284,7 +306,9 @@ async def delete_portfolio(
     **Errors:**
     - 404: Portfolio not found or not owned by user
     """
-    success = await service.delete_portfolio(portfolio_id=portfolio_id, user_id=current_user.id)
+    success = await portfolio_service.delete_portfolio(
+        portfolio_id=portfolio_id, user_id=current_user.id
+    )
 
     if not success:
         raise HTTPException(
@@ -438,7 +462,9 @@ async def list_holdings(
     holdings = await service.get_portfolio_holdings(portfolio_id=portfolio_id)
 
     total_cost = sum(h.total_cost for h in holdings)
-    total_value = sum(h.current_value for h in holdings if h.current_value) if holdings else None
+    total_value = sum(
+        h.current_value for h in holdings if h.current_value
+    ) if holdings else None
     total_gain = (total_value - total_cost) if total_value else None
 
     return HoldingListResponse(
@@ -552,12 +578,17 @@ async def update_holding(
     return holding_response
 
 
-@router.delete("/{portfolio_id}/holdings/{holding_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{portfolio_id}/holdings/{holding_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 async def delete_holding(
     portfolio_id: Annotated[int, Path(gt=0)],
     holding_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    service: PortfolioService = Depends(get_portfolio_service),
+    portfolio_service: Annotated[
+        PortfolioService, Depends(get_portfolio_service)
+    ],
 ) -> None:
     """
     Delete a holding
@@ -571,8 +602,10 @@ async def delete_holding(
     **Errors:**
     - 404: Portfolio or holding not found or not owned by user
     """
-    success = await service.delete_holding(
-        holding_id=holding_id, portfolio_id=portfolio_id, user_id=current_user.id
+    success = await portfolio_service.delete_holding(
+        holding_id=holding_id,
+        portfolio_id=portfolio_id,
+        user_id=current_user.id
     )
 
     if not success:
@@ -723,7 +756,9 @@ async def delete_transaction(
     portfolio_id: Annotated[int, Path(gt=0)],
     transaction_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    service: PortfolioService = Depends(get_portfolio_service),
+    portfolio_service: Annotated[
+        PortfolioService, Depends(get_portfolio_service)
+    ],
 ) -> None:
     """
     Delete a transaction
@@ -740,8 +775,10 @@ async def delete_transaction(
     **Errors:**
     - 404: Portfolio or transaction not found or not owned by user
     """
-    success = await service.delete_transaction(
-        transaction_id=transaction_id, portfolio_id=portfolio_id, user_id=current_user.id
+    success = await portfolio_service.delete_transaction(
+        transaction_id=transaction_id,
+        portfolio_id=portfolio_id,
+        user_id=current_user.id
     )
 
     if not success:
