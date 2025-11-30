@@ -29,6 +29,16 @@ class Settings(BaseSettings):
     DB_MAX_OVERFLOW: int = 10
     DB_ECHO: bool = False
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: str) -> str:
+        """Ensure asyncpg driver is used"""
+        if v and v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://")
+        if v and v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql+asyncpg://")
+        return v
+
     # ========================================================================
     # REDIS
     # ========================================================================
