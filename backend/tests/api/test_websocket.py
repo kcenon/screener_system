@@ -610,6 +610,10 @@ class TestWebSocketSubscriptionLimits:
             websocket.send_json(subscribe_msg)
 
             response = websocket.receive_json()
+            # Ignore pongs
+            while response.get("type") == "pong":
+                response = websocket.receive_json()
+                
             assert response["type"] == "error"
             assert response["code"] == "TOO_MANY_TARGETS"
 
@@ -632,6 +636,9 @@ class TestWebSocketSubscriptionLimits:
                     assert response["type"] == "error"
                     assert response["code"] == "SUBSCRIPTION_LIMIT_EXCEEDED"
                 else:
+                    # Wait for subscription confirmation, ignoring pongs if any
+                    while response.get("type") == "pong":
+                        response = websocket.receive_json()
                     assert response["type"] == "subscribed"
 
 

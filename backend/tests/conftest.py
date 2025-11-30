@@ -34,6 +34,27 @@ TEST_DATABASE_URL = DEFAULT_TEST_DB_URL
 
 
 
+
+@pytest.fixture(scope="function")
+def event_loop():
+    """Create an instance of the default event loop for each test case."""
+    loop = asyncio.new_event_loop()
+    yield loop
+    
+    # Clean up pending tasks
+    pending = asyncio.all_tasks(loop)
+    for task in pending:
+        task.cancel()
+        
+    # Allow tasks to cancel
+    if pending:
+        try:
+            loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+        except Exception:
+            pass
+            
+    loop.close()
+
 @pytest_asyncio.fixture
 async def db_engine():
     """Create test database engine"""
