@@ -43,7 +43,9 @@ class UserSubscription(BaseModel):
     __tablename__ = "user_subscriptions"
 
     # Foreign keys
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     plan_id = Column(Integer, ForeignKey("subscription_plans.id"), nullable=False)
 
     # Subscription details
@@ -92,7 +94,8 @@ class UserSubscription(BaseModel):
     # Constraints
     __table_args__ = (
         CheckConstraint(
-            "status IN ('active', 'canceled', 'expired', 'trial', 'past_due', 'incomplete')",
+            "status IN ('active', 'canceled', 'expired', 'trial', 'past_due', "
+            "'incomplete')",
             name="valid_subscription_status",
         ),
         CheckConstraint(
@@ -111,7 +114,10 @@ class UserSubscription(BaseModel):
     @property
     def is_active(self) -> bool:
         """Check if subscription is currently active"""
-        return self.status in (SubscriptionStatus.ACTIVE.value, SubscriptionStatus.TRIAL.value)
+        return self.status in (
+            SubscriptionStatus.ACTIVE.value,
+            SubscriptionStatus.TRIAL.value,
+        )
 
     @property
     def is_trial(self) -> bool:
@@ -127,7 +133,10 @@ class UserSubscription(BaseModel):
     def is_expired(self) -> bool:
         """Check if subscription has expired"""
         now = datetime.now(timezone.utc)
-        return self.current_period_end < now or self.status == SubscriptionStatus.EXPIRED.value
+        return (
+            self.current_period_end < now
+            or self.status == SubscriptionStatus.EXPIRED.value
+        )
 
     @property
     def days_until_renewal(self) -> int:

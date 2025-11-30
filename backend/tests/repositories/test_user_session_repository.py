@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 from unittest.mock import AsyncMock, Mock
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession

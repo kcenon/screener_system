@@ -2,14 +2,26 @@ import pytest
 from app.services.pattern_recognition_service import PatternRecognitionService
 from app.schemas.pattern import AlertConfigCreate
 
+
 @pytest.fixture
 def service():
     return PatternRecognitionService()
+
 
 @pytest.mark.asyncio
 async def test_get_patterns_empty(service):
     patterns = await service.get_patterns("AAPL")
     assert patterns == []
+
+
+@pytest.mark.asyncio
+async def test_detect_patterns(service):
+    patterns = await service.detect_patterns(stock_code="005930")
+
+    assert len(patterns) > 0
+    assert patterns[0].pattern_type == "double_bottom"
+    assert patterns[0].confidence > 0.8
+
 
 @pytest.mark.asyncio
 async def test_create_and_get_alert(service):
@@ -20,15 +32,16 @@ async def test_create_and_get_alert(service):
         min_confidence=0.8,
         notification_methods=["email"]
     )
-    
+
     alert = await service.create_alert(config)
     assert alert.alert_id is not None
     assert alert.stock_code == "AAPL"
     assert alert.status == "active"
-    
+
     alerts = await service.get_alerts("user123")
     assert len(alerts) == 1
     assert alerts[0].alert_id == alert.alert_id
+
 
 @pytest.mark.asyncio
 async def test_get_patterns_filtering(service):
@@ -51,7 +64,7 @@ async def test_get_patterns_filtering(service):
             "pattern_id": "p2"
         }
     ]
-    
+
     patterns = await service.get_patterns("AAPL", min_confidence=0.8)
     assert len(patterns) == 1
     assert patterns[0].pattern_type == "Head and Shoulders"

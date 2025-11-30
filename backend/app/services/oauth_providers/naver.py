@@ -58,7 +58,8 @@ class NaverOAuthProvider(BaseOAuthProvider):
         # Naver returns error in response body, not HTTP status
         if "error" in token_data:
             raise ValueError(
-                f"Naver OAuth error: {token_data.get('error_description', token_data['error'])}"
+                f"Naver OAuth error: "
+                f"{token_data.get('error_description', token_data['error'])}"
             )
 
         return OAuthTokenResponse(
@@ -89,10 +90,15 @@ class NaverOAuthProvider(BaseOAuthProvider):
         # Naver has nested response structure
         response = user_data.get("response", {})
 
+        email = response.get("email")
         return OAuthUserInfo(
             provider=OAuthProviderEnum.NAVER,
             provider_user_id=response["id"],
-            email=response.get("email"),
-            name=response.get("name") or response.get("nickname"),
+            email=email,
+            name=(
+                response.get("name")
+                or response.get("nickname")
+                or (email.split("@")[0] if email else None)
+            ),
             picture=response.get("profile_image"),
         )

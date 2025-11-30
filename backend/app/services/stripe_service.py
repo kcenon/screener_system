@@ -9,7 +9,7 @@ import stripe
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.exceptions import BadRequestException, NotFoundException
+from app.core.exceptions import BadRequestException
 from app.db.models import (
     Payment,
     PaymentMethod,
@@ -144,7 +144,9 @@ class StripeService:
             await self.session.flush()
             await self.session.refresh(payment_method)
 
-            logger.info(f"Attached payment method {payment_method_id} for user {user.id}")
+            logger.info(
+                f"Attached payment method {payment_method_id} for user {user.id}"
+            )
             return payment_method
 
         except stripe.error.StripeError as e:
@@ -192,7 +194,9 @@ class StripeService:
         # Get Stripe price ID
         price_id = self._get_price_id(plan.name, billing_cycle)
         if not price_id:
-            raise BadRequestException(f"Price not configured for {plan.name} {billing_cycle}")
+            raise BadRequestException(
+                f"Price not configured for {plan.name} {billing_cycle}"
+            )
 
         try:
             subscription_params: Dict[str, Any] = {
@@ -354,7 +358,9 @@ class StripeService:
 
         try:
             # Get current subscription from Stripe
-            stripe_sub = stripe.Subscription.retrieve(subscription.stripe_subscription_id)
+            stripe_sub = stripe.Subscription.retrieve(
+                subscription.stripe_subscription_id
+            )
 
             # Update subscription
             stripe.Subscription.modify(
@@ -424,7 +430,9 @@ class StripeService:
         price_id = self._get_price_id(plan.name, billing_cycle)
 
         if not price_id:
-            raise BadRequestException(f"Price not configured for {plan.name} {billing_cycle}")
+            raise BadRequestException(
+                f"Price not configured for {plan.name} {billing_cycle}"
+            )
 
         try:
             session = stripe.checkout.Session.create(

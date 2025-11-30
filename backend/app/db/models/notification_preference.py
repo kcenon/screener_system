@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from app.db.base import BaseModel
 
 if TYPE_CHECKING:
-    from app.db.models.user import User
+    from app.db.models.user import User  # noqa: F401
 
 
 class NotificationPreference(BaseModel):
@@ -114,7 +114,8 @@ class NotificationPreference(BaseModel):
         Check if email should be sent for given notification type
 
         Args:
-            notification_type: Type of notification (ALERT, MARKET_EVENT, SYSTEM, PORTFOLIO)
+            notification_type: Type of notification
+            (ALERT, MARKET_EVENT, SYSTEM, PORTFOLIO)
 
         Returns:
             True if email should be sent
@@ -153,8 +154,6 @@ class NotificationPreference(BaseModel):
             return False
 
         if current_time is None:
-            from datetime import datetime
-
             from app.db.base import utc_now
 
             current_time = utc_now().time()

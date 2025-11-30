@@ -6,7 +6,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import UserActivity, UserPreferences, Watchlist, WatchlistStock
+from app.db.models import UserActivity, Watchlist, WatchlistStock
 from app.repositories import (
     UserActivityRepository,
     UserPreferencesRepository,
@@ -16,8 +16,6 @@ from app.repositories.stock_repository import StockRepository
 from app.schemas.watchlist import (
     DashboardSummary,
     ScreeningQuota,
-    UserActivityCreate,
-    UserPreferencesCreate,
     WatchlistCreate,
     WatchlistUpdate,
 )
@@ -248,7 +246,10 @@ class WatchlistService:
             user_id=user_id,
             activity_type="stock_add",
             description=f"Added {stock.name} ({stock_code}) to watchlist",
-            activity_metadata={"watchlist_id": str(watchlist_id), "stock_code": stock_code},
+            activity_metadata={
+                "watchlist_id": str(watchlist_id),
+                "stock_code": stock_code,
+            },
         )
 
         await self.session.commit()
@@ -275,7 +276,10 @@ class WatchlistService:
             user_id=user_id,
             activity_type="stock_remove",
             description=f"Removed {stock_code} from watchlist",
-            activity_metadata={"watchlist_id": str(watchlist_id), "stock_code": stock_code},
+            activity_metadata={
+                "watchlist_id": str(watchlist_id),
+                "stock_code": stock_code,
+            },
         )
 
         await self.session.commit()
@@ -308,7 +312,9 @@ class WatchlistService:
         )
         return activities, total
 
-    async def get_dashboard_summary(self, user_id: int, user_tier: str) -> DashboardSummary:
+    async def get_dashboard_summary(
+        self, user_id: int, user_tier: str
+    ) -> DashboardSummary:
         """
         Get dashboard summary for user
 
@@ -344,7 +350,9 @@ class WatchlistService:
         prefs = await prefs_repo.get_by_user_id(user_id)
         quota_used = prefs.screening_quota_used if prefs else 0
         quota_reset_at = (
-            prefs.screening_quota_reset_at if prefs else datetime.now() + timedelta(days=30)
+            prefs.screening_quota_reset_at
+            if prefs
+            else datetime.now() + timedelta(days=30)
         )
 
         # Build screening quota

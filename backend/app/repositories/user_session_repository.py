@@ -20,14 +20,19 @@ class UserSessionRepository:
     async def get_by_id(self, session_id: UUID) -> Optional[UserSession]:
         """Get session by UUID"""
         result = await self.session.execute(
-            select(UserSession).where(UserSession.id == session_id)
+            select(UserSession).where(
+                UserSession.id == session_id
+            )
         )
         return result.scalar_one_or_none()
 
     async def get_by_refresh_token(self, refresh_token: str) -> Optional[UserSession]:
         """Get session by refresh token"""
         result = await self.session.execute(
-            select(UserSession).where(UserSession.refresh_token == refresh_token)
+            select(UserSession).where(
+                UserSession.refresh_token == refresh_token,
+                UserSession.is_active == True,  # noqa: E712
+            )
         )
         return result.scalar_one_or_none()
 
@@ -65,7 +70,10 @@ class UserSessionRepository:
         return user_session
 
     async def revoke_by_refresh_token(self, refresh_token: str) -> bool:
-        """Revoke session by refresh token. Returns True if session was found and revoked."""
+        """
+        Revoke session by refresh token.
+        Returns True if session was found and revoked.
+        """
         user_session = await self.get_by_refresh_token(refresh_token)
         if user_session:
             await self.revoke(user_session)

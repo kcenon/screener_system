@@ -2,7 +2,7 @@
 
 import secrets
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -385,10 +385,13 @@ class OAuthService:
 
         # Create new user
         user = User(
-            email=user_info.email or f"{provider.lower()}_{user_info.provider_user_id}@oauth.local",
+            email=user_info.email
+            or f"{provider.lower()}_{user_info.provider_user_id}@oauth.local",
             password_hash=None,  # OAuth-only user
             name=user_info.name,
-            email_verified=True if user_info.email else False,  # Auto-verify if email from provider
+            email_verified=True
+            if user_info.email
+            else False,  # Auto-verify if email from provider
         )
         await self.user_repo.create(user)
 

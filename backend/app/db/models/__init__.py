@@ -9,7 +9,9 @@ from app.db.models.financial_statement import FinancialStatement
 from app.db.models.holding import Holding
 from app.db.models.market_index import MarketIndex
 from app.db.models.notification import Notification
-from app.db.models.notification_preference import NotificationPreference
+from app.db.models.notification_preference import (
+    NotificationPreference,
+)
 from app.db.models.oauth_state import OAuthState
 from app.db.models.password_reset_token import PasswordResetToken
 from app.db.models.payment import Payment, PaymentStatus, PaymentType
@@ -23,7 +25,11 @@ from app.db.models.transaction import Transaction, TransactionType
 from app.db.models.usage_tracking import PeriodType, ResourceType, UsageTracking
 from app.db.models.user import User
 from app.db.models.user_session import UserSession
-from app.db.models.user_subscription import BillingCycle, SubscriptionStatus, UserSubscription
+from app.db.models.user_subscription import (
+    BillingCycle,
+    SubscriptionStatus,
+    UserSubscription,
+)
 from app.db.models.watchlist import (
     UserActivity,
     UserPreferences,

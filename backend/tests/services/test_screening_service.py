@@ -42,10 +42,10 @@ class TestScreeningService:
 
     def test_init(self, mock_session, mock_cache):
         """Test service initialization"""
-        service = ScreeningService(session=mock_session, cache=mock_cache)
-        assert service.session == mock_session
-        assert service.cache == mock_cache
-        assert service.screening_repo is not None
+        screening_service = ScreeningService(session=mock_session, cache=mock_cache)
+        assert screening_service.session == mock_session
+        assert screening_service.cache == mock_cache
+        assert screening_service.screening_repo is not None
 
     def test_build_cache_key(self, service):
         """Test cache key generation with SHA-256 and API version"""
@@ -426,7 +426,13 @@ class TestScreeningService:
         # First iteration: returns cursor=1 and some keys
         # Second iteration: returns cursor=0 (done) and more keys
         mock_redis.scan.side_effect = [
-            (1, ["screening:v1:abc123:field:asc:1:50", "screening:v1:def456:field:desc:2:50"]),
+            (
+                1,
+                [
+                    "screening:v1:abc123:field:asc:1:50",
+                    "screening:v1:def456:field:desc:2:50",
+                ],
+            ),
             (0, ["screening:v1:ghi789:field:asc:1:100"]),
         ]
 

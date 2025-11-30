@@ -218,7 +218,8 @@ class KISQuotaManager:
         # Wait for request to be processed (simplified, needs proper implementation)
         # In production, use asyncio.Event or similar for proper waiting
         logger.warning(
-            "Queue processing not fully implemented. Request queued but may not execute."
+            "Queue processing not fully implemented. "
+            "Request queued but may not execute."
         )
         return None
 
@@ -239,7 +240,11 @@ class KISQuotaManager:
                     continue
 
                 # Process in priority order (HIGH -> MEDIUM -> LOW)
-                for priority in [RequestPriority.HIGH, RequestPriority.MEDIUM, RequestPriority.LOW]:
+                for priority in [
+                    RequestPriority.HIGH,
+                    RequestPriority.MEDIUM,
+                    RequestPriority.LOW,
+                ]:
                     queue = self.queues[priority]
 
                     if not queue:
@@ -251,7 +256,8 @@ class KISQuotaManager:
                     # Check if request expired
                     if time.time() - request.timestamp > request.timeout:
                         logger.warning(
-                            f"Dropping expired request (waited {time.time() - request.timestamp:.2f}s)"
+                            f"Dropping expired request "
+                            f"(waited {time.time() - request.timestamp:.2f}s)"
                         )
                         continue
 

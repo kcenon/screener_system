@@ -85,8 +85,10 @@ class PricePublisher:
 
         Args:
             stock_code: Stock code
-            bids: List of bid levels [{"price": 100, "quantity": 1000, "orders": 5}, ...]
-            asks: List of ask levels [{"price": 101, "quantity": 800, "orders": 3}, ...]
+            bids: List of bid levels
+                [{"price": 100, "quantity": 1000, "orders": 5}, ...]
+            asks: List of ask levels
+                [{"price": 101, "quantity": 800, "orders": 3}, ...]
         """
         try:
             # Convert to OrderBookLevel models

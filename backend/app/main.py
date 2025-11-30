@@ -39,7 +39,7 @@ from app.api.error_handlers import (app_exception_handler,
 from app.api.v1.endpoints import (
     alerts,
     ai,
-    ai_analysis, # Added ai_analysis
+    ai_analysis,  # Added ai_analysis
     auth,
     health,
     market,
@@ -214,8 +214,16 @@ app.include_router(health.router, prefix="/v1")
 
 # Include AI routes
 app.include_router(ai.router, prefix=settings.API_V1_STR)
-app.include_router(recommendation.router, prefix=settings.API_V1_STR + "/recommendations", tags=["recommendations"])
-app.include_router(ai_analysis.router, prefix=settings.API_V1_STR + "/ai", tags=["ai-analysis"])
+app.include_router(
+    recommendation.router,
+    prefix=settings.API_V1_STR + "/recommendations",
+    tags=["recommendations"],
+)
+app.include_router(
+    ai_analysis.router,
+    prefix=settings.API_V1_STR + "/ai",
+    tags=["ai-analysis"],
+)
 
 # Include authentication routes
 app.include_router(auth.router, prefix="/v1")

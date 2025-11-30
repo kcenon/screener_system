@@ -1,7 +1,8 @@
-from typing import List, Dict, Any
+from typing import List
 from sqlalchemy.orm import Session
 from app.db.models.user_behavior import UserBehaviorEvent
 from app.schemas.recommendation import UserBehaviorEventCreate, RecommendationResponse
+
 
 class RecommendationService:
     def __init__(self, db: Session):
@@ -20,7 +21,9 @@ class RecommendationService:
         self.db.refresh(db_event)
         return db_event
 
-    async def get_recommendations(self, user_id: int, top_k: int = 10) -> List[RecommendationResponse]:
+    async def get_recommendations(
+        self, user_id: int, top_k: int = 10
+    ) -> List[RecommendationResponse]:
         """
         Generate personalized recommendations.
         Currently returns mock data until the engine is fully implemented.

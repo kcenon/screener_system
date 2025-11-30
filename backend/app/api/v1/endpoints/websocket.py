@@ -1,18 +1,24 @@
 """WebSocket endpoints for real-time updates"""
 
 import json
+from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, status
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+# from fastapi import Depends, status  # Unused
 from jose import JWTError, jwt
 
 from app.core.config import settings
 from app.core.logging import logger
 from app.core.websocket import connection_manager
-from app.schemas.websocket import (ErrorMessage, MessageType, PingMessage,
-                                   PongMessage, SubscribeRequest,
-                                   SubscriptionResponse, SubscriptionType,
-                                   UnsubscribeRequest)
+from app.schemas.websocket import (
+    MessageType,
+    PongMessage,
+    SubscribeRequest,
+    SubscriptionResponse,
+    UnsubscribeRequest,
+)
+# from app.schemas.websocket import ErrorMessage  # Unused
 
 router = APIRouter(tags=["websocket"])
 
@@ -31,7 +37,9 @@ async def verify_token(token: Optional[str]) -> Optional[str]:
         return None
 
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
         user_id: str = payload.get("sub")
         return user_id
     except JWTError as e:
@@ -49,7 +57,8 @@ async def websocket_endpoint(
     Main WebSocket endpoint for real-time stock updates.
 
     Connection URL: ws://localhost:8000/v1/ws?token=<jwt_token>
-    Reconnection URL: ws://localhost:8000/v1/ws?token=<jwt_token>&session_id=<old_connection_id>
+    Reconnection URL:
+    ws://localhost:8000/v1/ws?token=<jwt_token>&session_id=<old_connection_id>
 
     The WebSocket connection supports:
     - Real-time price updates
@@ -59,29 +68,6 @@ async def websocket_endpoint(
     - Subscription management
     - Token refresh (Phase 3)
     - Session restoration on reconnection (Phase 3)
-
-    Message Format (Client -> Server):
-    ```json
-    {
-        "type": "subscribe",
-        "subscription_type": "stock",
-        "targets": ["005930", "000660"]
-    }
-    ```
-
-    Message Format (Server -> Client):
-    ```json
-    {
-        "type": "price_update",
-        "stock_code": "005930",
-        "price": 72500.0,
-        "change": 500.0,
-        "change_percent": 0.69,
-        "volume": 15234567,
-        "timestamp": "2025-11-10T12:00:00Z",
-        "sequence": 1234
-    }
-    ```
     """
     # Verify authentication (optional, allows anonymous connections)
     user_id = await verify_token(token)
@@ -110,7 +96,8 @@ async def websocket_endpoint(
 
             logger.info(
                 f"Client reconnected: {session_id} -> {connection_id} "
-                f"(restored {sum(len(v) for v in restored_subscriptions.values())} subscriptions)"
+                f"(restored {sum(len(v) for v in restored_subscriptions.values())} "
+                f"subscriptions)"
             )
 
         except ValueError as e:
@@ -146,7 +133,10 @@ async def websocket_endpoint(
                     await connection_manager.send_error(
                         connection_id,
                         code="MESSAGE_TOO_LARGE",
-                        message=f"Message exceeds maximum size of {settings.WEBSOCKET_MAX_MESSAGE_SIZE} bytes",
+                        message=(
+                            f"Message exceeds maximum size of "
+                            f"{settings.WEBSOCKET_MAX_MESSAGE_SIZE} bytes"
+                        ),
                     )
                     continue
 
@@ -246,7 +236,10 @@ async def handle_subscribe(connection_id: str, message: dict):
             await connection_manager.send_error(
                 connection_id,
                 code="TOO_MANY_TARGETS",
-                message=f"Cannot subscribe to more than {settings.WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION} targets at once",
+                message=(
+                    f"Cannot subscribe to more than "
+                    f"{settings.WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION} targets at once"
+                ),
             )
             return
 
@@ -256,11 +249,17 @@ async def handle_subscribe(connection_id: str, message: dict):
             current_subscriptions = sum(
                 len(targets) for targets in conn_info.subscriptions.values()
             )
-            if current_subscriptions + len(request.targets) > settings.WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION:
+            if (
+                current_subscriptions + len(request.targets)
+                > settings.WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION
+            ):
                 await connection_manager.send_error(
                     connection_id,
                     code="SUBSCRIPTION_LIMIT_EXCEEDED",
-                    message=f"Maximum {settings.WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION} subscriptions per connection",
+                    message=(
+                        f"Maximum {settings.WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION}"
+                        " subscriptions per connection"
+                    ),
                 )
                 return
 
@@ -351,7 +350,9 @@ async def handle_refresh_token(connection_id: str, message: dict):
         # Verify refresh token and generate new access token
         try:
             payload = jwt.decode(
-                request.refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+                request.refresh_token,
+                settings.SECRET_KEY,
+                algorithms=[settings.ALGORITHM],
             )
 
             # Check if this is a refresh token

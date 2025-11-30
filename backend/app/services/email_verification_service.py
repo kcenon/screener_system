@@ -1,14 +1,13 @@
 """Email verification service for user registration"""
 
 import secrets
-from datetime import datetime
-from typing import Optional
+
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import BadRequestException, NotFoundException
-from app.db.models import EmailVerificationToken, User
+from app.db.models import EmailVerificationToken
 from app.repositories import UserRepository
 
 

@@ -15,9 +15,12 @@ class PasswordResetToken(BaseModel):
     __tablename__ = "password_reset_tokens"
 
     # Foreign key
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-
-    # Token data
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     token = Column(String(255), unique=True, nullable=False, index=True)
     expires_at = Column(DateTime(timezone=True), nullable=False)
     used_at = Column(DateTime(timezone=True))
@@ -27,7 +30,10 @@ class PasswordResetToken(BaseModel):
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<PasswordResetToken(id={self.id}, user_id={self.user_id}, used={'Yes' if self.used_at else 'No'})>"
+        return (
+            f"<PasswordResetToken(id={self.id}, user_id={self.user_id}, "
+            f"used={'Yes' if self.used_at else 'No'})>"
+        )
 
     @property
     def is_valid(self) -> bool:

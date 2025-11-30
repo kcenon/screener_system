@@ -1,12 +1,9 @@
 """Unit tests for Watchlist Repository"""
-
-import uuid
 from datetime import datetime, timedelta
 
 import pytest
-from sqlalchemy import select
-
-from app.db.models import Stock, User, UserActivity, UserPreferences, Watchlist, WatchlistStock
+from app.db.models import Stock, User, UserActivity, UserPreferences
+from app.db.models.watchlist import Watchlist
 from app.repositories.watchlist_repository import (
     UserActivityRepository,
     UserPreferencesRepository,
@@ -250,7 +247,9 @@ class TestWatchlistRepository:
 
         assert removed_count == 0
 
-    async def test_get_watchlist_stocks(self, db, watchlist_repo, test_user, test_stocks):
+    async def test_get_watchlist_stocks(
+        self, db, watchlist_repo, test_user, test_stocks
+    ):
         """Test getting all stocks in a watchlist"""
         watchlist = Watchlist(user_id=test_user.id, name="Test")
         created = await watchlist_repo.create(watchlist)

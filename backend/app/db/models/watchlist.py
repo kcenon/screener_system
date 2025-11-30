@@ -19,8 +19,8 @@ from sqlalchemy.orm import relationship
 from app.db.base import Base, TimestampMixin
 
 if TYPE_CHECKING:
-    from app.db.models.stock import Stock
-    from app.db.models.user import User
+    from app.db.models.stock import Stock  # noqa: F401
+    from app.db.models.user import User  # noqa: F401
 
 
 class Watchlist(Base, TimestampMixin):
@@ -93,7 +93,10 @@ class WatchlistStock(Base):
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<WatchlistStock(watchlist_id={self.watchlist_id}, stock_code={self.stock_code})>"
+        return (
+            f"<WatchlistStock(watchlist_id={self.watchlist_id}, "
+            f"stock_code={self.stock_code})>"
+        )
 
 
 class UserActivity(Base):
@@ -125,14 +128,18 @@ class UserActivity(Base):
     __table_args__ = (
         CheckConstraint(
             "activity_type IN ('screening', 'watchlist_create', 'watchlist_update', "
-            "'watchlist_delete', 'stock_add', 'stock_remove', 'stock_view', 'login', 'logout')",
+            "'watchlist_delete', 'stock_add', 'stock_remove', 'stock_view', "
+            "'login', 'logout')",
             name="valid_activity_type",
         ),
     )
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<UserActivity(id={self.id}, type='{self.activity_type}', user_id={self.user_id})>"
+        return (
+            f"<UserActivity(id={self.id}, type='{self.activity_type}', "
+            f"user_id={self.user_id})>"
+        )
 
 
 class UserPreferences(Base, TimestampMixin):
@@ -177,4 +184,7 @@ class UserPreferences(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<UserPreferences(user_id={self.user_id}, quota_used={self.screening_quota_used})>"
+        return (
+            f"<UserPreferences(user_id={self.user_id}, "
+            f"quota_used={self.screening_quota_used})>"
+        )

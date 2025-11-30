@@ -1,7 +1,7 @@
 """Tests for KIS API quota manager"""
 
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -55,7 +55,9 @@ class TestCircuitBreaker:
         assert await quota_manager._check_circuit() is False
 
     @pytest.mark.asyncio
-    async def test_circuit_half_open_after_timeout(self, quota_manager: KISQuotaManager):
+    async def test_circuit_half_open_after_timeout(
+        self, quota_manager: KISQuotaManager
+    ):
         """Test circuit breaker enters HALF_OPEN after timeout"""
         from app.core.config import settings
 
@@ -83,8 +85,6 @@ class TestCircuitBreaker:
         self, quota_manager: KISQuotaManager, clear_redis
     ):
         """Test circuit breaker closes after successful request in HALF_OPEN"""
-        from app.core.config import settings
-
         # Manually set to HALF_OPEN
         quota_manager.circuit_state = CircuitState.HALF_OPEN
 
@@ -233,7 +233,7 @@ class TestPriorityQueue:
             return "queued_success"
 
         # Note: This will queue but not wait for execution in current implementation
-        result = await quota_manager._queue_request(
+        await quota_manager._queue_request(
             mock_callback, RequestPriority.HIGH, 30
         )
 
@@ -243,7 +243,12 @@ class TestPriorityQueue:
     def test_priority_queue_ordering(self, quota_manager: KISQuotaManager):
         """Test requests processed in priority order"""
         # Add requests with different priorities
-        for priority in [RequestPriority.LOW, RequestPriority.HIGH, RequestPriority.MEDIUM]:
+        # Add requests with different priorities
+        for priority in [
+            RequestPriority.LOW,
+            RequestPriority.HIGH,
+            RequestPriority.MEDIUM,
+        ]:
             for i in range(3):
                 from app.services.kis_quota import QueuedRequest
                 import time

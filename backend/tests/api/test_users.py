@@ -522,7 +522,13 @@ class TestDashboardEndpoints:
         assert data["subscription_tier"] == "free"
 
     async def test_dashboard_summary_with_data(
-        self, client: AsyncClient, auth_headers, db, test_user, test_user_preferences, test_stocks
+        self,
+        client: AsyncClient,
+        auth_headers,
+        db,
+        test_user,
+        test_user_preferences,
+        test_stocks,
     ):
         """Test dashboard summary with actual data"""
         # Create watchlist with stocks

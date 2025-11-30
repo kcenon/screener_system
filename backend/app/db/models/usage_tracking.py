@@ -1,8 +1,7 @@
 """Usage tracking database model"""
 
-from datetime import date, datetime
+from datetime import date
 from enum import Enum
-from typing import Optional
 
 from sqlalchemy import (
     CheckConstraint,

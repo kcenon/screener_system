@@ -1,12 +1,13 @@
+import io
 
 import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import numpy as np
 from PIL import Image
-import io
-import os
+
+matplotlib.use("Agg")
+import matplotlib.patches as mpatches  # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402
+
 
 class ChartImageGenerator:
     """Generate candlestick chart images from OHLCV data"""
@@ -65,7 +66,6 @@ class ChartImageGenerator:
         """Plot candlestick chart"""
         # Calculate width of each candle
         width = 0.6
-        
         for i, (open_, high, low, close) in enumerate(ohlc_data):
             color = 'green' if close >= open_ else 'red'
 
@@ -78,21 +78,20 @@ class ChartImageGenerator:
             # Ensure minimum height for visibility
             if height == 0:
                 height = (high - low) * 0.01 if high != low else 0.01
-                
+
             rect = mpatches.Rectangle(
                 (i - width/2, bottom), width, height,
                 facecolor=color, edgecolor=color
             )
             ax.add_patch(rect)
-
         ax.set_xlim(-1, len(ohlc_data))
-        
         # Set Y limits with some padding
         min_price = ohlc_data[:, 2].min()
         max_price = ohlc_data[:, 1].max()
         padding = (max_price - min_price) * 0.05
-        if padding == 0: padding = 1.0
-        
+        if padding == 0:
+            padding = 1.0
+
         ax.set_ylim(min_price - padding, max_price + padding)
 
     def _plot_volume(self, ax, volume_data):
@@ -117,7 +116,7 @@ class ChartImageGenerator:
             end_date: End date (YYYY-MM-DD)
             output_dir: Directory to save images
         """
-        # This would typically import from repository, but to keep this class independent
-        # we'll assume data fetching is handled outside or injected.
+        # This would typically import from repository, but to keep this class
+        # independent we'll assume data fetching is handled outside or injected.
         # For now, this is a placeholder for the batch generation logic.
         pass

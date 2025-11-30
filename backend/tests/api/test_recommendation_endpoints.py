@@ -4,11 +4,14 @@ from app.main import app
 from app.api.dependencies import get_current_user
 
 # Mock user
+
+
 async def mock_get_current_user():
     class MockUser:
         id = 1
         email = "test@example.com"
     return MockUser()
+
 
 @pytest.fixture(autouse=True)
 def override_auth():
@@ -16,10 +19,14 @@ def override_auth():
     yield
     app.dependency_overrides = {}
 
+
 @pytest.fixture
 async def client():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
         yield ac
+
 
 @pytest.mark.asyncio
 async def test_get_daily_recommendations(client: AsyncClient):
@@ -29,6 +36,7 @@ async def test_get_daily_recommendations(client: AsyncClient):
     assert isinstance(data, list)
     assert len(data) > 0
     assert data[0]["stock_code"] == "AAPL"
+
 
 @pytest.mark.asyncio
 async def test_submit_feedback(client: AsyncClient):

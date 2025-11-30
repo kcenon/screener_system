@@ -5,7 +5,7 @@ covering CRUD operations, validation, authorization, and edge cases.
 """
 
 import pytest
-from datetime import datetime, timedelta
+
 from decimal import Decimal
 from fastapi import status
 from sqlalchemy import select
@@ -128,7 +128,10 @@ class TestCreateAlert:
 
         response = await client.post("/v1/alerts", json=alert_data)
 
-        assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+        assert response.status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        )
 
     async def test_create_alert_invalid_stock_code(
         self, client, auth_headers
@@ -374,7 +377,10 @@ class TestListAlerts:
         """Test listing alerts without authentication fails."""
         response = await client.get("/v1/alerts")
 
-        assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+        assert response.status_code in (
+            status.HTTP_401_UNAUTHORIZED,
+            status.HTTP_403_FORBIDDEN,
+        )
 
     async def test_list_alerts_only_own_alerts(
         self, client, auth_headers, test_user, test_stock, db_session

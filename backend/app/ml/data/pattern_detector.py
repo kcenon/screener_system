@@ -1,9 +1,9 @@
 
+from typing import Optional
+
 import numpy as np
 from scipy.signal import find_peaks
-from typing import Optional, Dict, List
-import os
-from PIL import Image
+
 
 class PatternDetector:
     """Detect technical chart patterns in OHLCV data"""
@@ -28,11 +28,15 @@ class PatternDetector:
         # We look at the last 3 peaks found in the window
         if len(peaks) >= 3:
             left_peak, head, right_peak = peaks[-3:]
-            
+
             # Basic H&S logic: Head > Shoulders
-            if prices[head] > prices[left_peak] and prices[head] > prices[right_peak]:
+            if (prices[head] > prices[left_peak] and
+                    prices[head] > prices[right_peak]):
                 # Check shoulders at similar level (within 5% tolerance)
-                if abs(prices[left_peak] - prices[right_peak]) / prices[left_peak] < 0.05:
+                if (
+                    abs(prices[left_peak] - prices[right_peak]) / prices[left_peak]
+                    < 0.05
+                ):
                     return True
 
         return False
@@ -52,7 +56,7 @@ class PatternDetector:
             # Check trough between peaks
             # Find minimum between the two peaks
             trough_idx = np.argmin(prices[peak1:peak2]) + peak1
-            
+
             # Trough should be significantly lower (e.g., > 5% drop from peak)
             avg_peak_price = (prices[peak1] + prices[peak2]) / 2
             if prices[trough_idx] < avg_peak_price * 0.95:
@@ -121,7 +125,7 @@ class PatternDetector:
             end_date: End date
             output_dir: Output directory
         """
-        # This implementation requires dependencies like ChartImageGenerator and data fetching
-        # which we will mock or assume available in integration.
+        # This implementation requires dependencies like ChartImageGenerator
+        # and data fetching which we will mock or assume available in integration.
         # For unit testing purposes, we focus on the detection logic above.
         pass

@@ -423,7 +423,9 @@ class TestPasswordVerification:
             assert verify_password(password + "x", hashed) is False
 
     def test_verify_password_timing_attack_resistance(self):
-        """Test that password verification has consistent timing (timing attack prevention)"""
+        """Test that password verification has consistent timing
+        (timing attack prevention)
+        """
         import time
 
         password = "test_password_for_timing"

@@ -152,8 +152,12 @@ class Settings(BaseSettings):
 
     # WebSocket limits (DoS protection)
     WEBSOCKET_MAX_MESSAGE_SIZE: int = 65536  # 64KB max message size
-    WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION: int = 100  # Max subscriptions per connection
-    WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION: int = 50  # Max targets per subscribe request
+    WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION: int = (
+        100  # Max subscriptions per connection
+    )
+    WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION: int = (
+        50  # Max targets per subscribe request
+    )
 
     # ========================================================================
     # EXTERNAL APIs

@@ -1,9 +1,9 @@
 """Integration tests for health check endpoints"""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-import pytest_asyncio
+
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -66,7 +66,8 @@ class TestDatabaseHealthCheck:
 
     @pytest.mark.asyncio
     async def test_health_db_disconnected(self, client: AsyncClient):
-        """Test /health/db returns 200 with unhealthy status when database unreachable"""
+        """Test /health/db returns 200 with unhealthy status
+        when database unreachable"""
         # Mock database session that raises exception
         async def mock_get_db_failing():
             mock_session = AsyncMock(spec=AsyncSession)
@@ -147,7 +148,8 @@ class TestRedisHealthCheck:
 
     @pytest.mark.asyncio
     async def test_health_redis_disconnected(self, client: AsyncClient):
-        """Test /health/redis returns 200 with unhealthy status when Redis unreachable"""
+        """Test /health/redis returns 200 with unhealthy status
+        when Redis unreachable"""
         # Mock cache manager with failed Redis connection
         mock_cache = MagicMock(spec=CacheManager)
         mock_redis = AsyncMock()

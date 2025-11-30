@@ -10,7 +10,7 @@ Metrics are categorized into:
 """
 
 from prometheus_client import Counter, Histogram, Gauge, Info
-from prometheus_client import REGISTRY, CollectorRegistry
+from prometheus_client import REGISTRY
 from typing import Dict, Any
 
 # ============================================================================
@@ -91,7 +91,9 @@ db_query_errors_total = Counter(
 cache_operations_total = Counter(
     name='cache_operations_total',
     documentation='Total cache operations',
-    labelnames=['operation', 'result'],  # operation: get/set/delete, result: hit/miss/error
+    labelnames=[
+        'operation', 'result'
+    ],  # operation: get/set/delete, result: hit/miss/error
     registry=REGISTRY
 )
 
@@ -172,7 +174,9 @@ websocket_connections_active = Gauge(
 websocket_messages_total = Counter(
     name='websocket_messages_total',
     documentation='Total WebSocket messages',
-    labelnames=['direction', 'message_type'],  # direction: sent/received, type: price/orderbook/etc
+    labelnames=[
+        'direction', 'message_type'
+    ],  # direction: sent/received, type: price/orderbook/etc
     registry=REGISTRY
 )
 
@@ -196,6 +200,7 @@ app_info.info({
 # ============================================================================
 # Helper Functions
 # ============================================================================
+
 
 def update_cache_hit_ratio() -> None:
     """Calculate and update cache hit ratio based on operation counters"""

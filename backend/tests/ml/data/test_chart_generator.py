@@ -1,7 +1,9 @@
 
 import pytest
 import numpy as np
+import pandas as pd
 from app.ml.data.chart_generator import ChartImageGenerator
+
 
 class TestChartImageGenerator:
 
@@ -17,8 +19,8 @@ class TestChartImageGenerator:
         prices = np.zeros(60)
         prices[0] = 100
         for i in range(1, 60):
-            prices[i] = prices[i-1] + np.random.randn()
-            
+            prices[i] = prices[i - 1] + np.random.randn()
+
         # Create OHLC from close prices (simplified)
         ohlcv = np.zeros((60, 5))
         for i in range(60):
@@ -28,7 +30,7 @@ class TestChartImageGenerator:
             low = min(open_, close) - abs(np.random.randn() * 0.5)
             volume = abs(np.random.randn() * 1000) + 100
             ohlcv[i] = [open_, high, low, close, volume]
-            
+
         return ohlcv
 
     def test_generate_chart_dimensions(self, generator, sample_ohlcv):
@@ -59,3 +61,28 @@ class TestChartImageGenerator:
         img2 = generator.generate_chart(data2)
 
         assert not np.array_equal(img1, img2)
+
+    def test_create_chart_image(self, generator):
+        """Test chart image creation from DataFrame"""
+        # Create dummy data
+        dates = pd.date_range(start="2023-01-01", periods=30)
+        data = {
+            "open": np.linspace(100, 200, 30),
+            "high": np.linspace(110, 210, 30),
+            "low": np.linspace(90, 190, 30),
+            "close": np.linspace(105, 205, 30),
+            "volume": np.random.randint(1000, 10000, 30),
+        }
+        df = pd.DataFrame(data, index=dates)
+
+        # Generate image
+        image_bytes = generator.create_chart_image(df)
+
+        assert isinstance(image_bytes, bytes)
+        assert len(image_bytes) > 0
+
+    def test_create_chart_image_empty(self, generator):
+        """Test chart image creation with empty data"""
+        df = pd.DataFrame()
+        with pytest.raises(ValueError):
+            generator.create_chart_image(df)

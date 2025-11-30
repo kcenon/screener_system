@@ -10,7 +10,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+# from sqlalchemy.orm import joinedload  # Unused
+# from sqlalchemy.orm import Session  # Unused
 
 from app.api.dependencies import get_current_user
 from app.db.models import Alert, User

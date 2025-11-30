@@ -154,7 +154,8 @@ class TestScreeningEndpoints:
     async def test_get_screening_templates(self, client: AsyncClient):
         """Test GET /v1/screen/templates"""
         with patch(
-            "app.repositories.screening_repository.ScreeningRepository.get_screening_templates"
+            "app.repositories.screening_repository.ScreeningRepository"
+            ".get_screening_templates"
         ) as mock_templates:
             mock_templates.return_value = [
                 {
@@ -179,7 +180,8 @@ class TestScreeningEndpoints:
     async def test_apply_screening_template(self, client: AsyncClient):
         """Test POST /v1/screen/templates/{template_id}"""
         with patch(
-            "app.repositories.screening_repository.ScreeningRepository.get_screening_templates"
+            "app.repositories.screening_repository.ScreeningRepository"
+            ".get_screening_templates"
         ) as mock_templates, patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
         ) as mock_screen:
@@ -228,7 +230,8 @@ class TestScreeningEndpoints:
     async def test_apply_screening_template_not_found(self, client: AsyncClient):
         """Test POST /v1/screen/templates/{template_id} with non-existent template"""
         with patch(
-            "app.repositories.screening_repository.ScreeningRepository.get_screening_templates"
+            "app.repositories.screening_repository.ScreeningRepository"
+            ".get_screening_templates"
         ) as mock_templates:
             mock_templates.return_value = []
 
@@ -242,7 +245,8 @@ class TestScreeningEndpoints:
     ):
         """Test POST /v1/screen/templates/{template_id} with custom pagination"""
         with patch(
-            "app.repositories.screening_repository.ScreeningRepository.get_screening_templates"
+            "app.repositories.screening_repository.ScreeningRepository"
+            ".get_screening_templates"
         ) as mock_templates, patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
         ) as mock_screen:

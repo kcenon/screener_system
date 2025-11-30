@@ -9,8 +9,8 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import get_stripe_service
-from app.core.config import settings
+# from app.api.dependencies import get_stripe_service  # Unused
+# from app.core.config import settings  # Unused
 from app.core.exceptions import BadRequestException
 from app.db.models import (
     Payment,
@@ -316,7 +316,9 @@ async def _handle_subscription_updated(db: AsyncSession, subscription: dict) -> 
     user_subscription.current_period_end = datetime.fromtimestamp(
         subscription.get("current_period_end"), tz=timezone.utc
     )
-    user_subscription.cancel_at_period_end = subscription.get("cancel_at_period_end", False)
+    user_subscription.cancel_at_period_end = subscription.get(
+        "cancel_at_period_end", False
+    )
 
     if subscription.get("canceled_at"):
         user_subscription.canceled_at = datetime.fromtimestamp(
@@ -383,7 +385,7 @@ async def _handle_subscription_deleted(db: AsyncSession, subscription: dict) -> 
 async def _handle_trial_will_end(db: AsyncSession, subscription: dict) -> None:
     """Handle trial ending soon notification"""
     stripe_subscription_id = subscription.get("id")
-    trial_end = subscription.get("trial_end")
+    # trial_end = subscription.get("trial_end")
 
     logger.info(f"Trial will end for subscription {stripe_subscription_id}")
 
@@ -395,11 +397,13 @@ async def _handle_trial_will_end(db: AsyncSession, subscription: dict) -> None:
 # =============================================================================
 
 
-async def _handle_payment_intent_succeeded(db: AsyncSession, payment_intent: dict) -> None:
+async def _handle_payment_intent_succeeded(
+    db: AsyncSession, payment_intent: dict
+) -> None:
     """Handle successful payment"""
     payment_intent_id = payment_intent.get("id")
-    customer_id = payment_intent.get("customer")
-    amount = payment_intent.get("amount", 0) / 100
+    # customer_id = payment_intent.get("customer")
+    # amount = payment_intent.get("amount", 0) / 100
 
     logger.info(f"Payment intent succeeded: {payment_intent_id}")
 
@@ -501,7 +505,7 @@ async def _handle_checkout_session_completed(db: AsyncSession, session: dict) ->
             user = result.scalar_one_or_none()
 
     if not user:
-        logger.warning(f"User not found for checkout session")
+        logger.warning("User not found for checkout session")
         return
 
     # Update user's Stripe customer ID if not set
@@ -522,4 +526,4 @@ async def _handle_checkout_session_completed(db: AsyncSession, session: dict) ->
         return
 
     # The subscription details will be synced via subscription.created webhook
-    logger.info(f"Checkout completed, waiting for subscription.created webhook")
+    logger.info("Checkout completed, waiting for subscription.created webhook")

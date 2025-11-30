@@ -58,7 +58,9 @@ def test_app():
     # Test routes that raise exceptions
     @app.get("/test/app-exception")
     async def raise_app_exception():
-        raise AppException("Test app exception", status_code=500, detail={"key": "value"})
+        raise AppException(
+            "Test app exception", status_code=500, detail={"key": "value"}
+        )
 
     @app.get("/test/not-found")
     async def raise_not_found():
@@ -393,19 +395,25 @@ class TestExceptionHandlerIntegration:
         """Test app_exception_handler function directly."""
         # Create a mock request
         app = FastAPI()
-        request = Request(scope={"type": "http", "app": app, "method": "GET", "path": "/"})
+        request = Request(
+            scope={"type": "http", "app": app, "method": "GET", "path": "/"}
+        )
 
         exc = AppException("Test error", status_code=418, detail={"info": "test"})
         response = await app_exception_handler(request, exc)
 
         assert response.status_code == 418
-        assert response.body == b'{"success":false,"message":"Test error","detail":{"info":"test"}}'
+        assert response.body == (
+            b'{"success":false,"message":"Test error","detail":{"info":"test"}}'
+        )
 
     @pytest.mark.asyncio
     async def test_generic_exception_handler_direct(self):
         """Test generic_exception_handler function directly."""
         app = FastAPI(debug=False)
-        request = Request(scope={"type": "http", "app": app, "method": "GET", "path": "/"})
+        request = Request(
+            scope={"type": "http", "app": app, "method": "GET", "path": "/"}
+        )
 
         exc = ValueError("Unexpected error")
         response = await generic_exception_handler(request, exc)
@@ -490,7 +498,9 @@ class TestEdgeCases:
     def test_multiple_validation_errors(self, client):
         """Test validation error with multiple fields."""
         # Invalid data: wrong type for age
-        response = client.post("/test/validation-error", json={"name": "John", "age": "invalid"})
+        response = client.post(
+            "/test/validation-error", json={"name": "John", "age": "invalid"}
+        )
 
         assert response.status_code == 422
         data = response.json()

@@ -1,7 +1,7 @@
 """Unit and integration tests for stock repository"""
 
 from datetime import date
-from unittest.mock import AsyncMock, Mock, MagicMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -337,7 +337,9 @@ class TestStockRepository:
         assert mock_session.execute.called
 
     @pytest.mark.asyncio
-    async def test_get_price_history_no_dates(self, repository, mock_session, sample_price):
+    async def test_get_price_history_no_dates(
+        self, repository, mock_session, sample_price
+    ):
         """Test get_price_history without date filters"""
         # Setup mock
         mock_result = Mock()
@@ -350,7 +352,6 @@ class TestStockRepository:
         # Assert
         assert len(result) == 1
         assert result[0] == sample_price
-
 
     @pytest.mark.asyncio
     async def test_get_financials(self, repository, mock_session):

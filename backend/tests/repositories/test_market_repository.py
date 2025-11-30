@@ -158,7 +158,9 @@ class TestGetMarketBreadth:
         assert result["unchanged"] == 0
 
     @pytest.mark.asyncio
-    async def test_get_market_breadth_with_market_filter(self, market_repo, mock_session):
+    async def test_get_market_breadth_with_market_filter(
+        self, market_repo, mock_session
+    ):
         """Test get_market_breadth with market filter"""
         mock_row = MagicMock()
         mock_row.advancing = 300

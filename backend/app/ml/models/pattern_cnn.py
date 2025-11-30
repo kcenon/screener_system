@@ -1,9 +1,7 @@
-
-import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
-from tensorflow.keras.applications import ResNet50, EfficientNetB0
-import os
+from tensorflow.keras.applications import EfficientNetB0, ResNet50
+
 
 class PatternRecognitionCNN:
     """CNN model for chart pattern recognition"""

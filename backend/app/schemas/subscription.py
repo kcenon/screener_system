@@ -3,7 +3,7 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -80,8 +80,12 @@ class SubscriptionPlanResponse(SubscriptionPlanBase):
     id: int
     price_monthly: Decimal = Field(..., description="Monthly price")
     price_yearly: Decimal = Field(..., description="Yearly price")
-    yearly_discount_percent: float = Field(0.0, description="Discount percentage for yearly billing")
-    features: Dict[str, bool] = Field(default_factory=dict, description="Available features")
+    yearly_discount_percent: float = Field(
+        0.0, description="Discount percentage for yearly billing"
+    )
+    features: Dict[str, bool] = Field(
+        default_factory=dict, description="Available features"
+    )
     limits: Dict[str, int] = Field(default_factory=dict, description="Usage limits")
     is_active: bool = True
 
@@ -306,8 +310,12 @@ class CreateCheckoutSessionRequest(BaseModel):
         BillingCycleEnum.MONTHLY,
         description="Billing cycle",
     )
-    success_url: str = Field(..., description="URL to redirect after successful checkout")
-    cancel_url: str = Field(..., description="URL to redirect after canceled checkout")
+    success_url: str = Field(
+        ..., description="URL to redirect after successful checkout"
+    )
+    cancel_url: str = Field(
+        ..., description="URL to redirect after canceled checkout"
+    )
 
 
 class CheckoutSessionResponse(BaseModel):

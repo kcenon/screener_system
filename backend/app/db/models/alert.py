@@ -19,9 +19,9 @@ from sqlalchemy.orm import relationship
 from app.db.base import BaseModel
 
 if TYPE_CHECKING:
-    from app.db.models.notification import Notification
-    from app.db.models.stock import Stock
-    from app.db.models.user import User
+    from app.db.models.notification import Notification  # noqa: F401
+    from app.db.models.stock import Stock  # noqa: F401
+    from app.db.models.user import User  # noqa: F401
 
 
 class Alert(BaseModel):

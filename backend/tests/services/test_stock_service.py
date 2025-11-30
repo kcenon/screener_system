@@ -1,7 +1,7 @@
 """Unit tests for stock service"""
 
 from datetime import date
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -315,8 +315,8 @@ class TestStockService:
         mock_cache.get.return_value = None
         service.stock_repo.search_stocks = AsyncMock(return_value=[sample_stock])
 
-        # Execute with invalid limit (should be clamped to 50)
-        result = await service.search_stocks("삼성", limit=100)
+        # Execute
+        await service.search_stocks("삼성", limit=100)
 
         # Assert
         call_args = service.stock_repo.search_stocks.call_args

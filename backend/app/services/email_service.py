@@ -37,7 +37,9 @@ class EmailService:
     def __init__(self):
         """Initialize the email service placeholder."""
         self.enabled = False
-        logger.info("EmailService initialized (placeholder mode - no emails will be sent)")
+        logger.info(
+            "EmailService initialized (placeholder mode - no emails will be sent)"
+        )
 
     async def send_notification_email(
         self,

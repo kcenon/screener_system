@@ -103,7 +103,9 @@ def get_screening_service(
             "description": "Successful screening with stocks and metadata",
             "headers": {
                 "X-RateLimit-Limit": {
-                    "description": "Maximum requests allowed per hour for this endpoint",
+                    "description": (
+                        "Maximum requests allowed per hour for this endpoint"
+                    ),
                     "schema": {"type": "integer", "example": 50}
                 },
                 "X-RateLimit-Remaining": {
@@ -111,7 +113,10 @@ def get_screening_service(
                     "schema": {"type": "integer", "example": 45}
                 },
                 "X-RateLimit-Reset": {
-                    "description": "Seconds until rate limit resets (always 3600 for 1-hour window)",
+                    "description": (
+                        "Seconds until rate limit resets "
+                        "(always 3600 for 1-hour window)"
+                    ),
                     "schema": {"type": "integer", "example": 3600}
                 },
                 "X-RateLimit-Endpoint": {
@@ -127,7 +132,7 @@ def get_screening_service(
                     "example": {
                         "success": False,
                         "message": "Endpoint rate limit exceeded",
-                        "detail": "Maximum 50 requests per hour allowed for /v1/screen"
+                        "detail": "Upgrade required for advanced screening",
                     }
                 }
             },

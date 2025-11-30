@@ -1,31 +1,47 @@
 """Subscription plan database model"""
 
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict
 
-from sqlalchemy import Boolean, Column, Integer, Numeric, String, Text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Float,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
 
+if TYPE_CHECKING:
+    from app.db.models.user_subscription import UserSubscription  # noqa: F401
+
 
 class SubscriptionPlan(BaseModel):
-    """Subscription plan model defining available plans and their features"""
+    """Subscription plan model"""
 
     __tablename__ = "subscription_plans"
 
-    # Plan identification
+    id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), unique=True, nullable=False, index=True)
-    display_name = Column(String(100), nullable=False)
     description = Column(Text)
 
     # Pricing
-    price_monthly = Column(Numeric(10, 2), nullable=False, default=0.00)
-    price_yearly = Column(Numeric(10, 2), nullable=False, default=0.00)
+    price_monthly = Column(
+        Float, nullable=False
+    )  # Price in smallest currency unit (e.g., cents)
+    price_yearly = Column(Float, nullable=False, default=0.00)
 
     # Features and limits stored as JSON
     features = Column(JSONB, nullable=False, default=dict)
     limits = Column(JSONB, nullable=False, default=dict)
+
+    # Stripe integration
+    stripe_product_id = Column(String(255), unique=True, index=True)
+    stripe_price_id_monthly = Column(String(255))
+    stripe_price_id_yearly = Column(String(255))
 
     # Status
     is_active = Column(Boolean, default=True)
@@ -33,14 +49,15 @@ class SubscriptionPlan(BaseModel):
 
     # Relationships
     subscriptions = relationship(
-        "UserSubscription",
-        back_populates="plan",
-        lazy="select",
+        "UserSubscription", back_populates="plan", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<SubscriptionPlan(name={self.name}, price_monthly={self.price_monthly})>"
+        return (
+            f"<SubscriptionPlan(name={self.name}, "
+            f"price_monthly={self.price_monthly})>"
+        )
 
     @property
     def yearly_discount_percent(self) -> float:

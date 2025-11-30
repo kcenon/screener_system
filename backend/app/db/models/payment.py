@@ -99,7 +99,8 @@ class Payment(BaseModel):
     # Constraints
     __table_args__ = (
         CheckConstraint(
-            "status IN ('pending', 'processing', 'succeeded', 'failed', 'refunded', 'canceled')",
+            "status IN ('pending', 'processing', 'succeeded', 'failed', "
+            "'refunded', 'canceled')",
             name="valid_payment_status",
         ),
         CheckConstraint(
@@ -111,8 +112,8 @@ class Payment(BaseModel):
     def __repr__(self) -> str:
         """String representation"""
         return (
-            f"<Payment(id={self.id}, user_id={self.user_id}, "
-            f"amount={self.amount}, status={self.status})>"
+            f"<Payment(id={self.id}, user_id={self.user_id}, amount={self.amount}, "
+            f"status={self.status})>"
         )
 
     @property
@@ -128,7 +129,10 @@ class Payment(BaseModel):
     @property
     def is_pending(self) -> bool:
         """Check if payment is pending"""
-        return self.status in (PaymentStatus.PENDING.value, PaymentStatus.PROCESSING.value)
+        return self.status in (
+            PaymentStatus.PENDING.value,
+            PaymentStatus.PROCESSING.value,
+        )
 
     @property
     def amount_decimal(self) -> Decimal:
@@ -154,7 +158,9 @@ class Payment(BaseModel):
         self.status = PaymentStatus.SUCCEEDED.value
         self.paid_at = datetime.now(timezone.utc)
 
-    def mark_as_failed(self, code: Optional[str] = None, message: Optional[str] = None) -> None:
+    def mark_as_failed(
+        self, code: Optional[str] = None, message: Optional[str] = None
+    ) -> None:
         """Mark payment as failed with optional error details"""
         self.status = PaymentStatus.FAILED.value
         self.failure_code = code

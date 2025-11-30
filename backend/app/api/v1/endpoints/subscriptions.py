@@ -1,7 +1,8 @@
 """Subscription management endpoints"""
 
-from decimal import Decimal
-from typing import Annotated, List
+# from decimal import Decimal  # Unused
+# from typing import Annotated, List  # Unused
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -50,7 +51,9 @@ router = APIRouter(prefix="/subscriptions", tags=["Subscriptions"])
     description="Get all available subscription plans with pricing and features",
 )
 async def list_plans(
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> SubscriptionPlansListResponse:
     """Get all available subscription plans"""
     plans = await subscription_service.get_all_plans()
@@ -91,7 +94,9 @@ async def list_plans(
 )
 async def get_current_subscription(
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> SubscriptionResponse:
     """Get current user's subscription"""
     subscription = await subscription_service.get_user_subscription(current_user.id)
@@ -151,7 +156,9 @@ async def get_current_subscription(
 async def subscribe(
     request: SubscribeRequest,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> SubscriptionActionResponse:
     """Subscribe to a plan"""
     try:
@@ -206,7 +213,9 @@ async def subscribe(
 async def cancel_subscription(
     request: CancelSubscriptionRequest,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> SubscriptionActionResponse:
     """Cancel subscription"""
     try:
@@ -221,7 +230,10 @@ async def cancel_subscription(
         message = (
             "Subscription canceled immediately"
             if request.immediate
-            else f"Subscription will be canceled at the end of the billing period ({subscription.current_period_end.date()})"
+            else (
+                f"Subscription will be canceled at the end of the billing period "
+                f"({subscription.current_period_end.date()})"
+            )
         )
 
         return SubscriptionActionResponse(
@@ -264,7 +276,9 @@ async def cancel_subscription(
 async def upgrade_subscription(
     request: UpgradeSubscriptionRequest,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> SubscriptionActionResponse:
     """Upgrade or downgrade subscription"""
     try:
@@ -320,7 +334,9 @@ async def upgrade_subscription(
 )
 async def get_usage_stats(
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> UsageStatsResponse:
     """Get usage statistics"""
     stats = await subscription_service.get_usage_stats(current_user.id)
@@ -353,7 +369,9 @@ async def get_usage_stats(
 )
 async def get_feature_access(
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> FeatureAccessListResponse:
     """Get all feature access"""
     access = await subscription_service.get_feature_access_list(current_user.id)
@@ -373,7 +391,9 @@ async def get_feature_access(
 async def check_feature_access(
     feature_name: str,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> FeatureAccessCheck:
     """Check access to specific feature"""
     result = await subscription_service.check_feature_access(
@@ -400,7 +420,9 @@ async def check_feature_access(
 )
 async def list_payment_methods(
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> PaymentMethodsListResponse:
     """List payment methods"""
     methods = await subscription_service.get_payment_methods(current_user.id)
@@ -443,7 +465,9 @@ async def list_payment_methods(
 async def add_payment_method(
     request: AddPaymentMethodRequest,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> PaymentMethodResponse:
     """Add a new payment method"""
     try:
@@ -484,11 +508,15 @@ async def add_payment_method(
 async def remove_payment_method(
     payment_method_id: int,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> None:
     """Remove a payment method"""
     try:
-        await subscription_service.remove_payment_method(current_user, payment_method_id)
+        await subscription_service.remove_payment_method(
+            current_user, payment_method_id
+        )
     except (BadRequestException, NotFoundException) as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -509,13 +537,17 @@ async def remove_payment_method(
 )
 async def get_payment_history(
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
     limit: int = 20,
     offset: int = 0,
 ) -> PaymentHistoryResponse:
     """Get payment history"""
-    payments, total_count, total_amount = await subscription_service.get_payment_history(
-        current_user.id, limit, offset
+    payments, total_count, total_amount = (
+        await subscription_service.get_payment_history(
+            current_user.id, limit, offset
+        )
     )
 
     return PaymentHistoryResponse(
@@ -549,7 +581,9 @@ async def get_payment_history(
 async def retry_payment(
     request: RetryPaymentRequest,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> PaymentResponse:
     """Retry a failed payment"""
     try:
@@ -594,7 +628,9 @@ async def retry_payment(
 async def create_checkout_session(
     request: CreateCheckoutSessionRequest,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> CheckoutSessionResponse:
     """Create Stripe Checkout session"""
     try:
@@ -631,13 +667,17 @@ async def create_checkout_session(
 async def create_billing_portal_session(
     request: CreateBillingPortalSessionRequest,
     current_user: CurrentActiveUser,
-    subscription_service: Annotated[SubscriptionService, Depends(get_subscription_service)],
+    subscription_service: Annotated[
+        SubscriptionService, Depends(get_subscription_service)
+    ],
 ) -> BillingPortalSessionResponse:
     """Create Stripe Billing Portal session"""
     try:
-        url = await subscription_service.stripe_service.create_billing_portal_session(
-            user=current_user,
-            return_url=request.return_url,
+        url = (
+            await subscription_service.stripe_service.create_billing_portal_session(
+                user=current_user,
+                return_url=request.return_url,
+            )
         )
         return BillingPortalSessionResponse(url=url)
 

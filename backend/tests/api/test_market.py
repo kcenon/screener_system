@@ -2,11 +2,11 @@
 
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List
+from typing import List
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import delete, select
+from sqlalchemy import delete
 
 from app.db.models import DailyPrice, MarketIndex, Stock
 
@@ -214,9 +214,13 @@ async def test_stocks_with_sectors(db, clean_market_data) -> List[Stock]:
         )
         # Set open slightly different from close to show direction
         if change_pct > 0:
-            open_price = stock_data["close_price"] - abs(int(stock_data["close_price"] * 0.01))
+            open_price = stock_data["close_price"] - abs(
+                int(stock_data["close_price"] * 0.01)
+            )
         elif change_pct < 0:
-            open_price = stock_data["close_price"] + abs(int(stock_data["close_price"] * 0.01))
+            open_price = stock_data["close_price"] + abs(
+                int(stock_data["close_price"] * 0.01)
+            )
         else:
             open_price = stock_data["close_price"]
 
@@ -426,7 +430,9 @@ class TestMarketBreadthEndpoint:
         # Verify calculations
         assert data["advancing"] > 0
         assert data["declining"] > 0
-        assert data["total"] == data["advancing"] + data["declining"] + data["unchanged"]
+        assert (
+            data["total"] == data["advancing"] + data["declining"] + data["unchanged"]
+        )
 
         # Verify sentiment is valid
         assert data["sentiment"] in ["bullish", "neutral", "bearish"]

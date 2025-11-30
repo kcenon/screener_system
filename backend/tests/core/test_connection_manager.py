@@ -1,19 +1,16 @@
 """Unit tests for WebSocket ConnectionManager"""
 
 import asyncio
-from unittest.mock import AsyncMock, Mock, patch
-from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
 from app.core.websocket import ConnectionManager
 from app.schemas.websocket import (
-    ErrorMessage,
     MessageType,
     PongMessage,
     PriceUpdate,
     SubscriptionType,
-    WebSocketMessage,
 )
 
 
@@ -179,9 +176,9 @@ class TestMessageBroadcasting:
         mock_ws3.accept = AsyncMock()
         mock_ws3.send_json = AsyncMock()
 
-        conn_id1 = await manager.connect(mock_ws1)
-        conn_id2 = await manager.connect(mock_ws2)
-        conn_id3 = await manager.connect(mock_ws3)
+        await manager.connect(mock_ws1)
+        await manager.connect(mock_ws2)
+        await manager.connect(mock_ws3)
 
         # Broadcast message
         message = PongMessage()
@@ -208,9 +205,9 @@ class TestMessageBroadcasting:
         mock_ws3.accept = AsyncMock()
         mock_ws3.send_json = AsyncMock()
 
-        conn_id1 = await manager.connect(mock_ws1)
+        await manager.connect(mock_ws1)
         conn_id2 = await manager.connect(mock_ws2)
-        conn_id3 = await manager.connect(mock_ws3)
+        await manager.connect(mock_ws3)
 
         # Broadcast excluding conn_id2
         message = PongMessage()
@@ -258,7 +255,7 @@ class TestMessageBroadcasting:
         mock_ws3.send_json = AsyncMock()
 
         conn_id1 = await manager.connect(mock_ws1)
-        conn_id2 = await manager.connect(mock_ws2)
+        await manager.connect(mock_ws2)
         conn_id3 = await manager.connect(mock_ws3)
 
         # Subscribe conn_id1 and conn_id3 to Samsung Electronics
@@ -671,7 +668,9 @@ class TestSessionRestoration:
 
         # Try to reconnect with non-existent session
         with pytest.raises(ValueError, match="Session .* not found"):
-            await manager.reconnect(mock_ws, "non-existent-session", user_id="test-user")
+            await manager.reconnect(
+                mock_ws, "non-existent-session", user_id="test-user"
+            )
 
     @pytest.mark.asyncio
     async def test_reconnect_with_user_mismatch(self, manager):

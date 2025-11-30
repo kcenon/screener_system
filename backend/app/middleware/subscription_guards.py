@@ -7,7 +7,7 @@ from typing import Callable, List, Optional
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import get_current_active_user, get_subscription_service
+from app.api.dependencies import get_current_active_user
 from app.db.models import User
 from app.db.session import get_db
 from app.services import SubscriptionService
@@ -74,7 +74,10 @@ class SubscriptionGuard:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail={
                         "error": "subscription_required",
-                        "message": f"This feature requires a {self.required_plan} subscription",
+                        "message": (
+                            f"This feature requires a {self.required_plan} "
+                            "subscription"
+                        ),
                         "required_plan": self.required_plan,
                         "current_plan": plan.name,
                     },
@@ -91,7 +94,10 @@ class SubscriptionGuard:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail={
                         "error": "subscription_required",
-                        "message": f"This feature is available for: {', '.join(self.allowed_plans)}",
+                        "message": (
+                            "This feature is available for: "
+                            f"{', '.join(self.allowed_plans)}"
+                        ),
                         "allowed_plans": self.allowed_plans,
                         "current_plan": plan.name,
                     },
@@ -111,7 +117,10 @@ class SubscriptionGuard:
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail={
                         "error": "feature_not_available",
-                        "message": f"Feature '{self.required_feature}' is not available on your plan",
+                        "message": (
+                            f"Feature '{self.required_feature}' is not available "
+                            "on your plan"
+                        ),
                         "required_feature": self.required_feature,
                         "current_plan": plan.name,
                     },

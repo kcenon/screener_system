@@ -1,7 +1,7 @@
 """Integration tests for stock API endpoints"""
 
 from datetime import date, datetime, timedelta
-from typing import AsyncGenerator
+
 
 import pytest
 import pytest_asyncio
@@ -358,7 +358,10 @@ class TestStockDetailEndpoint:
     """Test stock detail endpoint"""
 
     async def test_get_stock_by_code(
-        self, client: AsyncClient, sample_stocks: list[Stock], sample_prices: list[DailyPrice]
+        self,
+        client: AsyncClient,
+        sample_stocks: list[Stock],
+        sample_prices: list[DailyPrice],
     ):
         """Test GET /stocks/{stock_code} returns stock details"""
         response = await client.get("/v1/stocks/005930")
@@ -373,7 +376,10 @@ class TestStockDetailEndpoint:
         assert data["sector"] == "Technology"
 
     async def test_get_stock_includes_all_fields(
-        self, client: AsyncClient, sample_stocks: list[Stock], sample_prices: list[DailyPrice]
+        self,
+        client: AsyncClient,
+        sample_stocks: list[Stock],
+        sample_prices: list[DailyPrice],
     ):
         """Test stock detail response includes all required fields"""
         response = await client.get("/v1/stocks/005930")
@@ -421,7 +427,10 @@ class TestPriceHistoryEndpoint:
     """Test price history endpoint"""
 
     async def test_get_stock_prices(
-        self, client: AsyncClient, sample_stocks: list[Stock], sample_prices: list[DailyPrice]
+        self,
+        client: AsyncClient,
+        sample_stocks: list[Stock],
+        sample_prices: list[DailyPrice],
     ):
         """Test GET /stocks/{stock_code}/prices returns price history"""
         response = await client.get("/v1/stocks/005930/prices")
@@ -449,7 +458,10 @@ class TestPriceHistoryEndpoint:
             assert field in price, f"Missing required field: {field}"
 
     async def test_get_stock_prices_date_range(
-        self, client: AsyncClient, sample_stocks: list[Stock], sample_prices: list[DailyPrice]
+        self,
+        client: AsyncClient,
+        sample_stocks: list[Stock],
+        sample_prices: list[DailyPrice],
     ):
         """Test GET /stocks/{stock_code}/prices with date range filter"""
         from_date = (date.today() - timedelta(days=30)).isoformat()
@@ -472,7 +484,10 @@ class TestPriceHistoryEndpoint:
             assert price_date <= date.fromisoformat(to_date)
 
     async def test_get_stock_prices_with_limit(
-        self, client: AsyncClient, sample_stocks: list[Stock], sample_prices: list[DailyPrice]
+        self,
+        client: AsyncClient,
+        sample_stocks: list[Stock],
+        sample_prices: list[DailyPrice],
     ):
         """Test GET /stocks/{stock_code}/prices with limit parameter"""
         response = await client.get("/v1/stocks/005930/prices?limit=10")
@@ -596,7 +611,9 @@ class TestFinancialDataEndpoint:
             assert financial["period_type"] == "annual"
 
         # Test quarterly financials
-        response = await client.get("/v1/stocks/005930/financials?period_type=quarterly")
+        response = await client.get(
+            "/v1/stocks/005930/financials?period_type=quarterly"
+        )
 
         assert response.status_code == 200
         data = response.json()

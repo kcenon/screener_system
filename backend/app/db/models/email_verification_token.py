@@ -15,19 +15,30 @@ class EmailVerificationToken(BaseModel):
     __tablename__ = "email_verification_tokens"
 
     # Foreign key
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
 
     # Token data
     token = Column(String(255), unique=True, nullable=False, index=True)
     expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
     used_at = Column(DateTime(timezone=True))
 
     # Relationships
-    user = relationship("User", backref="verification_tokens", lazy="select")
+    user = relationship(
+        "User", backref="verification_tokens", lazy="select"
+    )
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<EmailVerificationToken(id={self.id}, user_id={self.user_id}, used={'Yes' if self.used_at else 'No'})>"
+        return (
+            f"<EmailVerificationToken(id={self.id}, user_id={self.user_id}, "
+            f"token={self.token})>"
+        )
 
     @property
     def is_valid(self) -> bool:

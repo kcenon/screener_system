@@ -39,7 +39,7 @@ async def build_watchlist_response(
     Returns:
         WatchlistResponse with all stock data loaded
     """
-    from app.db.models import WatchlistStock
+    # from app.db.models import WatchlistStock  # Unused
     from app.db.models.stock import Stock
     from app.repositories.watchlist_repository import WatchlistRepository
     from sqlalchemy import select
@@ -231,7 +231,9 @@ async def get_watchlist(
             detail="Watchlist not found or access denied",
         )
 
-    return await build_watchlist_response(watchlist, watchlist_service, load_stocks=True)
+    return await build_watchlist_response(
+        watchlist, watchlist_service, load_stocks=True
+    )
 
 
 @router.put(

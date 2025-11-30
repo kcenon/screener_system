@@ -11,7 +11,7 @@ from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
-    from app.db.models.user import User
+    from app.db.models.user import User  # noqa: F401
 
 
 class OAuthState(Base):

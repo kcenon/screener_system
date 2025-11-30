@@ -23,14 +23,13 @@ Example:
 """
 
 import logging
-from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from app.db.models import Notification, NotificationPreference, User
+from app.db.models import Notification, NotificationPreference
 from app.services.email_service import EmailService
 
 logger = logging.getLogger(__name__)
@@ -427,41 +426,3 @@ class NotificationService:
         )
 
         return deleted_count
-
-
-class EmailService:
-    """Email service for sending notification emails.
-
-    This is a placeholder implementation that logs emails instead of sending them.
-    In production, this should integrate with SMTP service (SendGrid, AWS SES, etc.).
-    """
-
-    async def send_notification_email(
-        self,
-        to_email: str,
-        subject: str,
-        body: str,
-        notification_type: str = "SYSTEM",
-        priority: str = "NORMAL",
-    ) -> bool:
-        """Send notification email.
-
-        Args:
-            to_email: Recipient email address.
-            subject: Email subject.
-            body: Email body (plain text).
-            notification_type: Type of notification.
-            priority: Priority level.
-
-        Returns:
-            True if email was sent successfully.
-        """
-        # TODO: Implement actual email sending via SMTP
-        logger.info(
-            f"[EMAIL] To: {to_email}, Subject: {subject}, "
-            f"Type: {notification_type}, Priority: {priority}"
-        )
-        logger.debug(f"[EMAIL] Body: {body}")
-
-        # For now, just simulate success
-        return True

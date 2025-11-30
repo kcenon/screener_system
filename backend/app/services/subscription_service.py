@@ -9,7 +9,10 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.exceptions import BadRequestException, ForbiddenException, NotFoundException
+from app.core.exceptions import (
+    BadRequestException,
+    NotFoundException,
+)
 from app.db.models import (
     Payment,
     PaymentMethod,
@@ -40,7 +43,7 @@ class SubscriptionService:
         """Get all subscription plans"""
         query = select(SubscriptionPlan)
         if active_only:
-            query = query.where(SubscriptionPlan.is_active == True)
+            query = query.where(SubscriptionPlan.is_active.is_(True))
         query = query.order_by(SubscriptionPlan.sort_order)
 
         result = await self.session.execute(query)
@@ -252,7 +255,9 @@ class SubscriptionService:
             "feature_name": feature,
             "has_access": has_access,
             "required_plan": required_plan,
-            "message": None if has_access else f"Upgrade to {required_plan or 'Premium'} to access this feature",
+            "message": None
+            if has_access
+            else f"Upgrade to {required_plan or 'Premium'} to access this feature",
         }
 
     # =========================================================================
@@ -294,7 +299,9 @@ class SubscriptionService:
             return True, -1
 
         # Get current usage
-        current_usage = await self._get_current_usage(user_id, resource_type, period_type)
+        current_usage = await self._get_current_usage(
+            user_id, resource_type, period_type
+        )
 
         has_access = current_usage < limit_value
         remaining = max(0, limit_value - current_usage)
@@ -390,8 +397,12 @@ class SubscriptionService:
         return {
             "user_id": user_id,
             "plan_name": plan.name,
-            "period_start": datetime.combine(today, datetime.min.time()).replace(tzinfo=timezone.utc),
-            "period_end": datetime.combine(today, datetime.max.time()).replace(tzinfo=timezone.utc),
+            "period_start": datetime.combine(today, datetime.min.time()).replace(
+                tzinfo=timezone.utc
+            ),
+            "period_end": datetime.combine(today, datetime.max.time()).replace(
+                tzinfo=timezone.utc
+            ),
             "usage": usage_list,
             "total_searches_today": daily_usage.get("screening", 0),
             "total_api_calls_today": daily_usage.get("api_call", 0),
