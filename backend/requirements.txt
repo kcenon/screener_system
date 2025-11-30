@@ -21,8 +21,8 @@ redis[hiredis]==5.0.1
 python-jose[cryptography]==3.4.0  # Security: Fixed algorithm confusion and JWT bomb (PYSEC-2024-232, PYSEC-2024-233)
 bcrypt==5.0.0
 python-multipart==0.0.20  # Security: Fixed ReDoS vulnerabilities (GHSA-2jv5-9r88-3w3p, GHSA-59g5-xgcq-4qw3)
-pydantic[email]==2.5.0
-pydantic-settings==2.1.0
+pydantic[email]==2.11.7  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
+pydantic-settings==2.8.2  # Upgraded: Compatible with pydantic 2.11.7
 
 # Payment Processing
 stripe==11.3.0
@@ -68,5 +68,5 @@ mypy==1.18.2
 isort==7.0.0
 
 # Utilities
-python-dotenv==1.0.0
+python-dotenv==1.1.0  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
 pyyaml==6.0.1
