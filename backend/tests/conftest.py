@@ -10,6 +10,19 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
 
+import sys
+from unittest.mock import MagicMock
+
+# Mock ML dependencies if not installed (for local testing on incompatible platforms)
+for module_name in [
+    "mlflow", "mlflow.tracking", "numpy", "pandas", "lightgbm", "xgboost", "optuna",
+    "sklearn", "sklearn.metrics", "sklearn.model_selection", "scipy", "scipy.stats",
+    "tensorflow", "keras"
+]:
+    try:
+        __import__(module_name)
+    except ImportError:
+        sys.modules[module_name] = MagicMock()
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
