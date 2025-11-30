@@ -11,7 +11,7 @@ from app.db.models import User
 from app.db.session import get_db
 from app.services import (AuthService, EmailVerificationService,
                           OAuthService, PasswordResetService,
-                          StripeService, SubscriptionService)
+                          StripeService, SubscriptionService, AIService)
 from app.services.watchlist_service import WatchlistService
 
 # HTTP Bearer token scheme
@@ -65,6 +65,13 @@ async def get_subscription_service(
 ) -> SubscriptionService:
     """Get SubscriptionService instance with database session"""
     return SubscriptionService(db)
+
+
+async def get_ai_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> AIService:
+    """Get AIService instance with database session"""
+    return AIService()
 
 
 async def get_current_user(

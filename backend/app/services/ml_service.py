@@ -1,13 +1,15 @@
-import mlflow
-
-import numpy as np
-from typing import Dict, List, Optional
-from app.core.cache import cache_manager
-from app.core.config import settings
 import logging
 from datetime import datetime, timedelta
+from typing import Dict, List
+
+import mlflow
+import numpy as np
+
+from app.core.cache import cache_manager
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
+
 
 class ModelService:
     """ML model serving service with caching and versioning"""
@@ -23,38 +25,49 @@ class ModelService:
         try:
             # In a real scenario, we would connect to a remote MLflow server.
             # For this implementation, we assume local or configured URI.
-            if hasattr(settings, "MLFLOW_TRACKING_URI") and settings.MLFLOW_TRACKING_URI:
+            if (
+                hasattr(settings, "MLFLOW_TRACKING_URI")
+                and settings.MLFLOW_TRACKING_URI
+            ):
                 mlflow.set_tracking_uri(settings.MLFLOW_TRACKING_URI)
 
             # Get production model
             client = mlflow.tracking.MlflowClient()
-            # Note: This assumes a registered model named "stock_prediction_lstm" exists.
-            # If not, we should handle it gracefully or mock it for now.
+            # Note: This assumes a registered model named "stock_prediction_lstm"
+            # exists. If not, we should handle it gracefully or mock it for now.
             try:
-                versions = client.get_latest_versions("stock_prediction_lstm", stages=["Production"])
+                versions = client.get_latest_versions(
+                    "stock_prediction_lstm", stages=["Production"]
+                )
             except Exception:
-                logger.warning("No registered model 'stock_prediction_lstm' found. Skipping model load.")
+                logger.warning(
+                    "No registered model 'stock_prediction_lstm' found. "
+                    "Skipping model load."
+                )
                 return
 
             if not versions:
-                logger.warning("No production model found for 'stock_prediction_lstm'.")
+                logger.warning(
+                    "No production model found for 'stock_prediction_lstm'."
+                )
                 return
 
             version = versions[0]
             self.model_version = version.version
 
             # Load model
-            model_uri = f"models:/stock_prediction_lstm/Production"
-            # We use pyfunc for generic model loading, or specific flavor if known (e.g. keras, sklearn)
+            model_uri = "models:/stock_prediction_lstm/Production"
+            # We use pyfunc for generic model loading, or specific flavor if known
+            # (e.g. keras, sklearn)
             # Using pyfunc is safer for generic usage.
             self.model = mlflow.pyfunc.load_model(model_uri)
 
             # Load feature list from artifacts
-            run = client.get_run(version.run_id)
+            # run = client.get_run(version.run_id)
             # artifacts_uri = run.info.artifact_uri
-            # Here we would load features.json. For now, we'll use a placeholder or try to load.
-            # self.features = ... 
-            self.features = ["close", "volume", "rsi", "macd"] # Default placeholder
+            # Here we would load features.json. For now, we'll use a placeholder.
+            # self.features = ...
+            self.features = ["close", "volume", "rsi", "macd"]  # Default placeholder
 
             logger.info(f"Loaded production model version {self.model_version}")
 
@@ -86,7 +99,7 @@ class ModelService:
             # Try loading again?
             self.load_production_model()
             if self.model is None:
-                 # Mock response for development if no model available
+                # Mock response for development if no model available
                 logger.warning("Model not loaded, returning mock prediction")
                 return self._mock_prediction(stock_code, horizon)
 
@@ -94,18 +107,21 @@ class ModelService:
         # In a real app, we'd call FeatureService.
         # from app.services.feature_service import get_stock_features
         # features = await get_stock_features(stock_code, sequence_length=60)
-        
-        # Mock features for now
-        features = np.random.rand(1, 60, 4) # Batch size 1, seq len 60, 4 features
+        # Mock implementation for now
+        # In reality, this would load a model from disk or S3
+        features = np.random.rand(1, 60, 4)  # Batch size 1, seq len 60, 4 features
 
         # Generate prediction
         try:
             prediction_result = self.model.predict(features)
             # Handle different return types (numpy array, dataframe, list)
             if isinstance(prediction_result, np.ndarray):
-                prediction_proba = float(prediction_result[0]) if prediction_result.size == 1 else float(prediction_result[0][0])
+                if prediction_result.size == 1:
+                    prediction_proba = float(prediction_result[0])
+                else:
+                    prediction_proba = float(prediction_result[0][0])
             else:
-                prediction_proba = 0.5 # Fallback
+                prediction_proba = 0.5  # Fallback
         except Exception as e:
             logger.error(f"Prediction failed: {e}")
             return self._mock_prediction(stock_code, horizon)
@@ -135,7 +151,9 @@ class ModelService:
         ttl = self._calculate_ttl_to_next_trading_day()
         await cache_manager.set(cache_key, result, ttl=ttl)
 
-        logger.info(f"Generated prediction for {stock_code}: {prediction} ({confidence:.2f})")
+        logger.info(
+            f"Generated prediction for {stock_code}: {prediction} ({confidence:.2f})"
+        )
 
         return result
 
@@ -151,7 +169,9 @@ class ModelService:
             "horizon": horizon
         }
 
-    async def predict_batch(self, stock_codes: List[str], horizon: str = "1d") -> List[Dict]:
+    async def predict_batch(
+        self, stock_codes: List[str], horizon: str = "1d"
+    ) -> List[Dict]:
         """Generate predictions for multiple stocks"""
         results = []
         for code in stock_codes[:100]:  # Limit to 100
@@ -193,5 +213,8 @@ class ModelService:
         ttl = int((next_refresh - now).total_seconds())
         return ttl
 
-# Global model service instance
-model_service = ModelService()
+
+# Global instance
+ml_service = ModelService()
+
+model_service = ml_service
