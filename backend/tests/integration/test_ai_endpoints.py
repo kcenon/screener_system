@@ -8,25 +8,30 @@ from app.api.dependencies import get_current_user
 mock_user = MagicMock()
 mock_user.id = 1
 mock_user.email = "test@example.com"
+mock_user.is_active = True  # Ensure user is active
 
 # Override get_current_user
 async def override_get_current_user():
     return mock_user
 
-app.dependency_overrides[get_current_user] = override_get_current_user
-
 @pytest.fixture
 async def client_no_db():
     """Create test client without DB dependency"""
+    # Set dependency override inside fixture to avoid being cleared by other tests
+    app.dependency_overrides[get_current_user] = override_get_current_user
+
     # Mock Redis connection in lifespan
     with patch("app.core.cache.cache_manager.connect", new_callable=AsyncMock), \
          patch("app.core.cache.cache_manager.disconnect", new_callable=AsyncMock), \
          patch("app.core.websocket.connection_manager.initialize_redis", new_callable=AsyncMock), \
          patch("app.core.redis_pubsub.redis_pubsub.disconnect", new_callable=AsyncMock):
-        
+
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             yield ac
+
+    # Clean up override after test
+    app.dependency_overrides.pop(get_current_user, None)
 
 @pytest.mark.asyncio
 async def test_predict_endpoint(client_no_db):
