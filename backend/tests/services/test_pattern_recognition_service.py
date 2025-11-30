@@ -1,0 +1,57 @@
+import pytest
+from app.services.pattern_recognition_service import PatternRecognitionService
+from app.schemas.pattern import AlertConfigCreate
+
+@pytest.fixture
+def service():
+    return PatternRecognitionService()
+
+@pytest.mark.asyncio
+async def test_get_patterns_empty(service):
+    patterns = await service.get_patterns("AAPL")
+    assert patterns == []
+
+@pytest.mark.asyncio
+async def test_create_and_get_alert(service):
+    config = AlertConfigCreate(
+        user_id="user123",
+        stock_code="AAPL",
+        pattern_types=["Head and Shoulders"],
+        min_confidence=0.8,
+        notification_methods=["email"]
+    )
+    
+    alert = await service.create_alert(config)
+    assert alert.alert_id is not None
+    assert alert.stock_code == "AAPL"
+    assert alert.status == "active"
+    
+    alerts = await service.get_alerts("user123")
+    assert len(alerts) == 1
+    assert alerts[0].alert_id == alert.alert_id
+
+@pytest.mark.asyncio
+async def test_get_patterns_filtering(service):
+    # Manually inject data into mock cache
+    service._patterns_cache["AAPL:1D"] = [
+        {
+            "stock_code": "AAPL",
+            "pattern_type": "Head and Shoulders",
+            "confidence": 0.9,
+            "detected_at": "2023-01-01T00:00:00",
+            "timeframe": "1D",
+            "pattern_id": "p1"
+        },
+        {
+            "stock_code": "AAPL",
+            "pattern_type": "Triangle",
+            "confidence": 0.6,
+            "detected_at": "2023-01-01T00:00:00",
+            "timeframe": "1D",
+            "pattern_id": "p2"
+        }
+    ]
+    
+    patterns = await service.get_patterns("AAPL", min_confidence=0.8)
+    assert len(patterns) == 1
+    assert patterns[0].pattern_type == "Head and Shoulders"

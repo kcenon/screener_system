@@ -126,6 +126,13 @@ class User(BaseModel):
         lazy="select",
     )
 
+    behavior_events = relationship(
+        "UserBehaviorEvent",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+
     # Constraints
     __table_args__ = (
         CheckConstraint(

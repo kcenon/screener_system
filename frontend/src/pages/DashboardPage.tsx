@@ -18,6 +18,7 @@ import WatchlistWidget from '../components/dashboard/WatchlistWidget'
 import RecentActivityWidget from '../components/dashboard/RecentActivityWidget'
 import QuickActionsWidget from '../components/dashboard/QuickActionsWidget'
 import PlatformStatsWidget from '../components/dashboard/PlatformStatsWidget'
+import { RecommendationList } from '../components/recommendations/RecommendationList'
 import { AlertCircle } from 'lucide-react'
 
 /**
@@ -96,6 +97,12 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column (2/3 width on large screens) */}
           <div className="lg:col-span-2 space-y-8">
+            
+            {/* Recommendations Section */}
+            <section>
+              <RecommendationList />
+            </section>
+
             {/* Watchlist Widget */}
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">My Watchlists</h2>
