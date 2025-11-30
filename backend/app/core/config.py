@@ -1,7 +1,7 @@
 """Application configuration settings"""
 
 from functools import lru_cache
-from typing import List, Union
+from typing import List, Union, Optional
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -209,6 +209,12 @@ class Settings(BaseSettings):
     PREMIUM_PRICE_YEARLY: float = 99.00
     PRO_PRICE_MONTHLY: float = 29.99
     PRO_PRICE_YEARLY: float = 299.00
+
+    # AI / LLM
+    OPENAI_API_KEY: Optional[str] = None
+    ANTHROPIC_API_KEY: Optional[str] = None
+    LLM_MODEL_OPENAI: str = "gpt-4-turbo"
+    LLM_MODEL_ANTHROPIC: str = "claude-3-opus-20240229"
 
     model_config = SettingsConfigDict(
         env_file=".env",

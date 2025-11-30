@@ -1,0 +1,97 @@
+import anthropic
+from typing import List, AsyncIterator
+from app.services.llm.base import LLMProvider, LLMMessage, LLMResponse
+import logging
+
+logger = logging.getLogger(__name__)
+
+class AnthropicProvider(LLMProvider):
+    """Anthropic Claude provider implementation"""
+
+    def __init__(self, api_key: str, model: str = "claude-3-opus-20240229", **kwargs):
+        super().__init__(api_key, model, **kwargs)
+        self.client = anthropic.AsyncAnthropic(api_key=api_key)
+
+    async def generate(
+        self,
+        messages: List[LLMMessage],
+        temperature: float = 0.7,
+        max_tokens: int = 2000,
+        **kwargs
+    ) -> LLMResponse:
+        """Generate completion using Anthropic Claude"""
+        try:
+            # Separate system message from conversation
+            system_message = next(
+                (m.content for m in messages if m.role == "system"),
+                None
+            )
+            conversation = [
+                {"role": m.role, "content": m.content}
+                for m in messages if m.role != "system"
+            ]
+
+            response = await self.client.messages.create(
+                model=self.model,
+                system=system_message,
+                messages=conversation,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                **kwargs
+            )
+
+            return LLMResponse(
+                content=response.content[0].text,
+                model=response.model,
+                usage={
+                    "prompt_tokens": response.usage.input_tokens,
+                    "completion_tokens": response.usage.output_tokens,
+                    "total_tokens": response.usage.input_tokens + response.usage.output_tokens,
+                },
+                finish_reason=response.stop_reason,
+                provider="anthropic"
+            )
+
+        except Exception as e:
+            logger.error(f"Anthropic API error: {e}")
+            raise
+
+    async def generate_stream(
+        self,
+        messages: List[LLMMessage],
+        temperature: float = 0.7,
+        max_tokens: int = 2000,
+        **kwargs
+    ) -> AsyncIterator[str]:
+        """Generate completion with streaming"""
+        system_message = next(
+            (m.content for m in messages if m.role == "system"),
+            None
+        )
+        conversation = [
+            {"role": m.role, "content": m.content}
+            for m in messages if m.role != "system"
+        ]
+
+        async with self.client.messages.stream(
+            model=self.model,
+            system=system_message,
+            messages=conversation,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            **kwargs
+        ) as stream:
+            async for text in stream.text_stream:
+                yield text
+
+    async def health_check(self) -> bool:
+        """Check if Anthropic API is healthy"""
+        try:
+            # Simple test message
+            await self.generate(
+                messages=[LLMMessage(role="user", content="Hello")],
+                max_tokens=10
+            )
+            return True
+        except Exception:
+            return False
