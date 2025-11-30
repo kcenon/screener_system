@@ -22,7 +22,7 @@ python-jose[cryptography]==3.4.0  # Security: Fixed algorithm confusion and JWT 
 bcrypt==5.0.0
 python-multipart==0.0.20  # Security: Fixed ReDoS vulnerabilities (GHSA-2jv5-9r88-3w3p, GHSA-59g5-xgcq-4qw3)
 pydantic[email]==2.11.7  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
-pydantic-settings==2.8.2  # Upgraded: Compatible with pydantic 2.11.7
+pydantic-settings==2.8.1  # Upgraded: Compatible with pydantic 2.11.7
 
 # Payment Processing
 stripe==11.3.0
