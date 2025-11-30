@@ -2,20 +2,22 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock
 from app.services.stock_analysis_service import StockAnalysisService
 from app.services.llm.manager import LLMManager, LLMResponse
-from app.services.stock_service import StockService
+
 
 @pytest.fixture
 def mock_db():
     return MagicMock()
 
+
 @pytest.fixture
 def mock_llm_manager():
     return AsyncMock(spec=LLMManager)
 
+
 @pytest.mark.asyncio
 async def test_generate_report_success(mock_db, mock_llm_manager):
     service = StockAnalysisService(mock_db, mock_llm_manager)
-    
+
     # Mock LLM response
     mock_llm_response = LLMResponse(
         content='{"overall_rating": "Buy", "confidence": 80}',
@@ -34,10 +36,11 @@ async def test_generate_report_success(mock_db, mock_llm_manager):
     assert report["confidence"] == 80
     assert report["metadata"]["provider"] == "openai"
 
+
 @pytest.mark.asyncio
 async def test_generate_report_fallback_parsing(mock_db, mock_llm_manager):
     service = StockAnalysisService(mock_db, mock_llm_manager)
-    
+
     # Mock LLM response with invalid JSON
     mock_llm_response = LLMResponse(
         content='This is not JSON but a text report.',

@@ -6,10 +6,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class OpenAIProvider(LLMProvider):
     """OpenAI GPT-4 provider implementation"""
-
-    def __init__(self, api_key: str, model: str = "gpt-4-turbo", **kwargs):
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "gpt-4-turbo-preview",
+        **kwargs
+    ):
         super().__init__(api_key, model, **kwargs)
         self.client = openai.AsyncOpenAI(api_key=api_key)
 
@@ -29,7 +34,9 @@ class OpenAIProvider(LLMProvider):
         try:
             response = await self.client.chat.completions.create(
                 model=self.model,
-                messages=[{"role": m.role, "content": m.content} for m in messages],
+                messages=[
+                    {"role": m.role, "content": m.content} for m in messages
+                ],
                 temperature=temperature,
                 max_tokens=max_tokens,
                 **kwargs
@@ -39,9 +46,16 @@ class OpenAIProvider(LLMProvider):
                 content=response.choices[0].message.content or "",
                 model=response.model,
                 usage={
-                    "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
-                    "completion_tokens": response.usage.completion_tokens if response.usage else 0,
-                    "total_tokens": response.usage.total_tokens if response.usage else 0,
+                    "prompt_tokens": (
+                        response.usage.prompt_tokens if response.usage else 0
+                    ),
+                    "completion_tokens": (
+                        response.usage.completion_tokens
+                        if response.usage else 0
+                    ),
+                    "total_tokens": (
+                        response.usage.total_tokens if response.usage else 0
+                    ),
                 },
                 finish_reason=response.choices[0].finish_reason,
                 provider="openai"
@@ -62,7 +76,9 @@ class OpenAIProvider(LLMProvider):
         try:
             stream = await self.client.chat.completions.create(
                 model=self.model,
-                messages=[{"role": m.role, "content": m.content} for m in messages],
+                messages=[
+                    {"role": m.role, "content": m.content} for m in messages
+                ],
                 temperature=temperature,
                 max_tokens=max_tokens,
                 stream=True,

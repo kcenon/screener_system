@@ -1,34 +1,39 @@
-from typing import List, Optional, Dict, AsyncIterator
-from app.services.llm.base import LLMProvider, LLMMessage, LLMResponse
+from typing import Dict, List, Optional, Any, AsyncIterator
+import logging
+from app.services.llm.base import (
+    LLMProvider,
+    LLMMessage,
+    LLMResponse,
+    LLMProviderError
+)
 from app.services.llm.openai_provider import OpenAIProvider
 from app.services.llm.anthropic_provider import AnthropicProvider
-import logging
-
 logger = logging.getLogger(__name__)
 
-class LLMProviderError(Exception):
-    pass
 
 class LLMRateLimitError(LLMProviderError):
     pass
 
-class LLMManager:
-    """Manage multiple LLM providers with failover"""
 
-    def __init__(self, config: Dict):
+class LLMManager:
+    """Manager for handling multiple LLM providers with failover"""
+
+    def __init__(self, config: Dict[str, Any]):
         self.providers: Dict[str, LLMProvider] = {}
 
-        # Initialize providers
+        # Initialize providers based on config
         if config.get("openai"):
             self.providers["openai"] = OpenAIProvider(
                 api_key=config["openai"]["api_key"],
-                model=config["openai"].get("model", "gpt-4-turbo")
+                model=config["openai"].get("model", "gpt-4-turbo-preview")
             )
 
         if config.get("anthropic"):
             self.providers["anthropic"] = AnthropicProvider(
                 api_key=config["anthropic"]["api_key"],
-                model=config["anthropic"].get("model", "claude-3-opus-20240229")
+                model=config["anthropic"].get(
+                    "model", "claude-3-opus-20240229"
+                )
             )
 
     async def generate(
@@ -52,7 +57,9 @@ class LLMManager:
                 # Check provider health
                 is_healthy = await provider.health_check()
                 if not is_healthy:
-                    logger.warning(f"Provider {provider_name} unhealthy, skipping")
+                    logger.warning(
+                        f"Provider {provider_name} unhealthy, skipping"
+                    )
                     continue
 
                 # Generate response

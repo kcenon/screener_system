@@ -5,10 +5,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class AnthropicProvider(LLMProvider):
     """Anthropic Claude provider implementation"""
 
-    def __init__(self, api_key: str, model: str = "claude-3-opus-20240229", **kwargs):
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "claude-3-opus-20240229",
+        **kwargs
+    ):
         super().__init__(api_key, model, **kwargs)
         self.client = anthropic.AsyncAnthropic(api_key=api_key)
 
@@ -19,22 +25,24 @@ class AnthropicProvider(LLMProvider):
         max_tokens: int = 2000,
         **kwargs
     ) -> LLMResponse:
-        """Generate completion using Anthropic Claude"""
+        """Generate completion using Anthropic API"""
         try:
-            # Separate system message from conversation
-            system_message = next(
-                (m.content for m in messages if m.role == "system"),
-                None
-            )
-            conversation = [
-                {"role": m.role, "content": m.content}
-                for m in messages if m.role != "system"
-            ]
+            system_prompt = None
+            filtered_messages = []
+
+            for msg in messages:
+                if msg.role == "system":
+                    system_prompt = msg.content
+                else:
+                    filtered_messages.append({
+                        "role": msg.role,
+                        "content": msg.content
+                    })
 
             response = await self.client.messages.create(
                 model=self.model,
-                system=system_message,
-                messages=conversation,
+                system=system_prompt,
+                messages=filtered_messages,
                 temperature=temperature,
                 max_tokens=max_tokens,
                 **kwargs
@@ -44,9 +52,12 @@ class AnthropicProvider(LLMProvider):
                 content=response.content[0].text,
                 model=response.model,
                 usage={
-                    "prompt_tokens": response.usage.input_tokens,
-                    "completion_tokens": response.usage.output_tokens,
-                    "total_tokens": response.usage.input_tokens + response.usage.output_tokens,
+                    "input_tokens": response.usage.input_tokens,
+                    "output_tokens": response.usage.output_tokens,
+                    "total_tokens": (
+                        response.usage.input_tokens +
+                        response.usage.output_tokens
+                    )
                 },
                 finish_reason=response.stop_reason,
                 provider="anthropic"

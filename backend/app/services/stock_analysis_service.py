@@ -1,36 +1,39 @@
-from typing import Dict, Optional, Any
+from typing import Dict, Any
 import json
 import logging
 from datetime import datetime
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.services.llm.manager import LLMManager, LLMMessage
 from app.services.llm.prompt_templates import PromptTemplate
 from app.services.stock_service import StockService
-from app.core.config import settings
-# Assuming we have a Redis cache manager, if not we'll use a simple dict for MVP or mock it
-# from app.core.cache import CacheManager 
+
+# Assuming we have a Redis cache manager, if not we'll use a simple dict
+# or mock
+# from app.core.cache import CacheManager
 
 logger = logging.getLogger(__name__)
 
+
 class StockAnalysisError(Exception):
     pass
+
 
 class StockAnalysisService:
     """Generate AI-powered stock analysis reports"""
 
     def __init__(
         self,
-        db: Session,
+        db: AsyncSession,
         llm_manager: LLMManager,
         # cache_manager: CacheManager
     ):
         self.db = db
         self.llm = llm_manager
         # self.cache = cache_manager
-        
-        # Mock cache for StockService since we don't have it yet in this service
-        # In real implementation, we should inject it
+
+        # Mock cache for StockService since we don't have it yet in this
+        # service. In real implementation, we should inject it
         from unittest.mock import MagicMock
         mock_cache = MagicMock()
         self.stock_service = StockService(db, mock_cache)
@@ -50,19 +53,20 @@ class StockAnalysisService:
 
         try:
             # Gather stock data
-            # Note: StockService might need async methods or we run sync methods in threadpool
-            # For now assuming we can get data. In real implementation, we'd need to ensure
-            # StockService exposes necessary data or we fetch it here.
-            
-            # Mocking data gathering for now as StockService might not have all methods ready
-            # In a real scenario, we would call:
+            # Note: StockService might need async methods or we run sync
+            # methods in threadpool. For now assuming we can get data.
+            # In real implementation, we'd need to ensure StockService exposes
+            # necessary data or we fetch it here.
+
+            # Mocking data gathering for now as StockService might not have
+            # all methods ready. In a real scenario, we would call:
             # stock_info = await self.stock_service.get_stock_info(stock_code)
             # etc.
-            
+
             # Placeholder data
             context = {
                 "stock_code": stock_code,
-                "company_name": "Samsung Electronics", # Mock
+                "company_name": "Samsung Electronics",  # Mock
                 "sector": "Technology",
                 "current_price": 75000,
                 "per": 15.5,
@@ -76,7 +80,9 @@ class StockAnalysisService:
                 "return_1m": 5.2,
                 "return_3m": 12.1,
                 "return_6m": -3.5,
-                "ai_prediction": "AI predicts bullish movement with 85% confidence.",
+                "ai_prediction": (
+                    "AI predicts bullish movement with 85% confidence."
+                ),
             }
 
             # Render prompt
@@ -84,7 +90,10 @@ class StockAnalysisService:
 
             # Generate analysis with LLM
             messages = [
-                LLMMessage(role="system", content="You are an expert stock market analyst."),
+                LLMMessage(
+                    role="system",
+                    content="You are an expert stock market analyst."
+                ),
                 LLMMessage(role="user", content=prompt)
             ]
 
@@ -112,7 +121,12 @@ class StockAnalysisService:
             return analysis
 
         except Exception as e:
-            logger.error(f"Failed to generate analysis for {stock_code}: {e}", exc_info=True)
+            logger.error(
+                f"Failed to generate analysis for {stock_code}: {e}. "
+                f"LLM response: "
+                f"{response.content if 'response' in locals() else 'N/A'}",
+                exc_info=True
+            )
             raise StockAnalysisError(f"Analysis generation failed: {e}") from e
 
     def _parse_response(self, content: str) -> Dict[str, Any]:
@@ -126,7 +140,9 @@ class StockAnalysisService:
                 json_str = content[json_start:json_end]
                 return json.loads(json_str)
             else:
-                logger.warning("No JSON found in response, using fallback parser")
+                logger.warning(
+                    "No JSON found in response, using fallback parser"
+                )
                 return self._fallback_parse(content)
 
         except json.JSONDecodeError as e:

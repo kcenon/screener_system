@@ -1,10 +1,16 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, AsyncIterator, Any
+from typing import Dict, List, Optional, AsyncIterator
 from pydantic import BaseModel
+
+
+class LLMProviderError(Exception):
+    pass
+
 
 class LLMMessage(BaseModel):
     role: str  # "system", "user", "assistant"
     content: str
+
 
 class LLMResponse(BaseModel):
     content: str
@@ -12,6 +18,7 @@ class LLMResponse(BaseModel):
     usage: Dict[str, int]  # {"prompt_tokens": X, "completion_tokens": Y}
     finish_reason: Optional[str] = None
     provider: str
+
 
 class LLMProvider(ABC):
     """Abstract base class for LLM providers"""

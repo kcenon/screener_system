@@ -1,62 +1,53 @@
 from typing import Dict, Any
 from jinja2 import Template
 
+
 class PromptTemplate:
-    """Prompt template with variable substitution"""
+    """Collection of prompt templates"""
 
     STOCK_ANALYSIS_TEMPLATE = """
-You are a professional stock market analyst. Analyze the following stock and provide a comprehensive report.
+You are a professional stock market analyst. Analyze the following stock
+and provide a comprehensive report.
 
-**Stock Information:**
-- Company: {{ company_name }} ({{ stock_code }})
-- Sector: {{ sector }}
-- Current Price: ${{ current_price }}
+Stock Code: {{ stock_code }}
+Company: {{ company_name }}
+Sector: {{ sector }}
 
-**Fundamental Data:**
+## Financial Data
+- Current Price: {{ current_price }}
 - PER: {{ per }}
 - PBR: {{ pbr }}
 - ROE: {{ roe }}%
 - Debt Ratio: {{ debt_ratio }}%
 - Dividend Yield: {{ dividend_yield }}%
 
-**Technical Indicators:**
-- RSI (14): {{ rsi }}
-- MACD: {{ macd_status }}
-- Moving Averages: {{ ma_status }}
+## Technical Indicators
+- RSI: {{ rsi }}
+- MACD Status: {{ macd_status }}
+- Moving Average Status: {{ ma_status }}
+- Returns: 1M {{ return_1m }}%, 3M {{ return_3m }}%, 6M {{ return_6m }}%
 
-**Recent Performance:**
-- 1 Month: {{ return_1m }}%
-- 3 Months: {{ return_3m }}%
-- 6 Months: {{ return_6m }}%
-
-**AI Prediction:**
+## AI Prediction
 {{ ai_prediction }}
 
-Please provide:
-1. **Overall Rating** (Strong Buy / Buy / Hold / Sell / Strong Sell) with confidence percentage
+Please provide a detailed analysis including:
+1. **Overall Rating** (Strong Buy / Buy / Hold / Sell / Strong Sell)
+   with confidence percentage
 2. **Key Strengths** (3-5 bullet points)
 3. **Key Risks** (3-5 bullet points)
-4. **Technical Analysis** (brief summary of chart patterns and indicators)
-5. **Fundamental Assessment** (valuation and financial health)
-6. **Recommendation** (specific action with price targets)
+4. **Technical Analysis Summary**
+5. **Fundamental Analysis Summary**
+6. **Investment Recommendation**
 
-Format your response as JSON with the following structure:
-```json
-{
-  "overall_rating": "Buy",
-  "confidence": 75,
-  "strengths": ["...", "..."],
-  "risks": ["...", "..."],
-  "technical_summary": "...",
-  "fundamental_assessment": "...",
-  "recommendation": "...",
-  "price_targets": {
-    "conservative": 50.00,
-    "moderate": 55.00,
-    "optimistic": 60.00
-  }
-}
-```
+Format the output as a JSON object with the following keys:
+- overall_rating: string
+- confidence: number (0-100)
+- strengths: list of strings
+- risks: list of strings
+- technical_summary: string
+- fundamental_assessment: string
+- recommendation: string
+- price_targets: object (with conservative, moderate, optimistic keys)
 """
 
     @classmethod
