@@ -1,20 +1,28 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from typing import List, Optional
-from app.schemas.ai import PredictionResponse, BatchPredictionRequest, ModelInfoResponse
+from typing import List
+from app.schemas.ai import (
+    PredictionResponse,
+    BatchPredictionRequest,
+    ModelInfoResponse,
+    PortfolioAnalysisResponse,
+    PortfolioAnalysisRequest,
+)
 from app.services.ml_service import model_service
 from app.services.pattern_recognition_service import pattern_service
 from app.schemas.pattern import PatternResponse, AlertConfigCreate, AlertConfigResponse
-from app.api.dependencies import get_current_user
+from app.services.ai_service import AIService
+from app.api.dependencies import get_current_user, get_ai_service
 import logging
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/ai", tags=["ai"])
 
+
 @router.get("/predict/{stock_code}", response_model=PredictionResponse)
 async def predict_stock(
     stock_code: str,
     horizon: str = Query("1d", pattern="^(1d|5d|20d)$"),
-    current_user = Depends(get_current_user)  # Require authentication
+    current_user=Depends(get_current_user)  # Require authentication
 ):
     """
     Get AI prediction for next trading day movement
@@ -35,10 +43,32 @@ async def predict_stock(
         logger.error(f"Prediction error for {stock_code}: {e}")
         raise HTTPException(status_code=500, detail="Prediction service error")
 
+
+@router.post("/explain/portfolio", response_model=PortfolioAnalysisResponse)
+async def explain_portfolio(
+    request: PortfolioAnalysisRequest,
+    current_user=Depends(get_current_user),
+    service: AIService = Depends(get_ai_service)
+):
+    """
+    Explain the performance and characteristics of a user's portfolio.
+    """
+    try:
+        analysis = await service.analyze_portfolio(
+            request.stock_codes, request.start_date, request.end_date
+        )
+        return analysis
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Portfolio analysis error: {e}")
+        raise HTTPException(status_code=500, detail="Portfolio analysis service error")
+
+
 @router.post("/predict/batch", response_model=List[PredictionResponse])
 async def predict_batch(
     request: BatchPredictionRequest,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """
     Get AI predictions for multiple stocks (max 100)
@@ -54,15 +84,18 @@ async def predict_batch(
     """
     if len(request.stock_codes) > 100:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Batch size exceeds limit (max 100 stocks)"
         )
 
-    predictions = await model_service.predict_batch(request.stock_codes, request.horizon)
+    predictions = await model_service.predict_batch(
+        request.stock_codes, request.horizon
+    )
     return predictions
 
+
 @router.get("/model/info", response_model=ModelInfoResponse)
-async def get_model_info(current_user = Depends(get_current_user)):
+async def get_model_info(current_user=Depends(get_current_user)):
     """
     Get current production model information
 
@@ -71,22 +104,24 @@ async def get_model_info(current_user = Depends(get_current_user)):
     """
     return model_service.get_model_info()
 
+
 @router.get("/patterns/{stock_code}", response_model=List[PatternResponse])
 async def get_patterns(
     stock_code: str,
     timeframe: str = Query("1D", regex="^(1D|1W|1M)$"),
     min_confidence: float = Query(0.7, ge=0.0, le=1.0),
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """
     Retrieve detected chart patterns for a stock
     """
     return await pattern_service.get_patterns(stock_code, timeframe, min_confidence)
 
+
 @router.post("/patterns/alerts", response_model=AlertConfigResponse)
 async def create_pattern_alert(
     config: AlertConfigCreate,
-    current_user = Depends(get_current_user)
+    current_user=Depends(get_current_user)
 ):
     """
     Configure pattern detection alert
