@@ -63,7 +63,10 @@ export default function AdvancedChart({
   indicators = [],
   showVolume = true,
   loading = false,
-}: AdvancedChartProps) {
+  onChartReady,
+}: AdvancedChartProps & { 
+  onChartReady?: (chart: IChartApi, series: ISeriesApi<'Candlestick' | 'Line' | 'Area' | 'Bar'>) => void 
+}) {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const mainSeriesRef = useRef<ISeriesApi<'Candlestick' | 'Line' | 'Area' | 'Bar'> | null>(null)
@@ -259,7 +262,11 @@ export default function AdvancedChart({
 
     // Fit content
     chart.timeScale().fitContent()
-  }, [transformedData, chartType, chartTheme])
+    
+    if (onChartReady && mainSeriesRef.current) {
+        onChartReady(chart, mainSeriesRef.current)
+    }
+  }, [transformedData, chartType, chartTheme, onChartReady])
 
   // Add/update volume series
   useEffect(() => {

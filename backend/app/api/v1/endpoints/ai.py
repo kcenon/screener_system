@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Optional
 from app.schemas.ai import PredictionResponse, BatchPredictionRequest, ModelInfoResponse
 from app.services.ml_service import model_service
+from app.services.pattern_recognition_service import pattern_service
+from app.schemas.pattern import PatternResponse, AlertConfigCreate, AlertConfigResponse
 from app.api.dependencies import get_current_user
 import logging
 
@@ -68,3 +70,25 @@ async def get_model_info(current_user = Depends(get_current_user)):
         Model version, metrics, and metadata
     """
     return model_service.get_model_info()
+
+@router.get("/patterns/{stock_code}", response_model=List[PatternResponse])
+async def get_patterns(
+    stock_code: str,
+    timeframe: str = Query("1D", regex="^(1D|1W|1M)$"),
+    min_confidence: float = Query(0.7, ge=0.0, le=1.0),
+    current_user = Depends(get_current_user)
+):
+    """
+    Retrieve detected chart patterns for a stock
+    """
+    return await pattern_service.get_patterns(stock_code, timeframe, min_confidence)
+
+@router.post("/patterns/alerts", response_model=AlertConfigResponse)
+async def create_pattern_alert(
+    config: AlertConfigCreate,
+    current_user = Depends(get_current_user)
+):
+    """
+    Configure pattern detection alert
+    """
+    return await pattern_service.create_alert(config)
