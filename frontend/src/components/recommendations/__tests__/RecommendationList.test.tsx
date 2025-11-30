@@ -1,8 +1,7 @@
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { RecommendationList } from '../RecommendationList';
 import axios from 'axios';
-import { vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 
 vi.mock('axios');
 
