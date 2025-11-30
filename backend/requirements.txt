@@ -38,10 +38,11 @@ scikit-learn==1.7.2
 lightgbm==4.6.0
 xgboost==3.1.2
 optuna==4.6.0
-mlflow==2.16.2  # Upgraded: Supports gunicorn>=23, fixes dependency conflict
-tensorflow==2.15.0
+mlflow==3.5.0  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, path traversal, DoS)
+tensorflow==2.18.0  # Security: Uses keras 3.x with security fixes
+keras==3.8.0  # Security: Fixed arbitrary file write vulnerabilities (GHSA-cjgq-5qmw-rcj6)
 matplotlib==3.8.2
-pillow==10.2.0
+pillow==10.4.0  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
 scipy==1.11.4  # Upgraded: Supports gunicorn>=23, fixes dependency conflict
 
 # HTTP Requests
