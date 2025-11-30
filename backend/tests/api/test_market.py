@@ -2,11 +2,11 @@
 
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Any, Dict, List
+from typing import List
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import delete, select
+from sqlalchemy import delete
 
 from app.db.models import DailyPrice, MarketIndex, Stock
 
@@ -214,9 +214,13 @@ async def test_stocks_with_sectors(db, clean_market_data) -> List[Stock]:
         )
         # Set open slightly different from close to show direction
         if change_pct > 0:
-            open_price = stock_data["close_price"] - abs(int(stock_data["close_price"] * 0.01))
+            open_price = stock_data["close_price"] - abs(
+                int(stock_data["close_price"] * 0.01)
+            )
         elif change_pct < 0:
-            open_price = stock_data["close_price"] + abs(int(stock_data["close_price"] * 0.01))
+            open_price = stock_data["close_price"] + abs(
+                int(stock_data["close_price"] * 0.01)
+            )
         else:
             open_price = stock_data["close_price"]
 
@@ -373,7 +377,9 @@ class TestMarketTrendEndpoint:
         timeframes = ["1D", "5D", "1M", "3M"]
 
         for timeframe in timeframes:
-            response = await client.get(f"/v1/market/trend?timeframe={timeframe}")
+            response = await client.get(
+                f"/v1/market/trend?timeframe={timeframe}"
+            )
             assert response.status_code == 200
             data = response.json()
             assert data["timeframe"] == timeframe
@@ -426,7 +432,10 @@ class TestMarketBreadthEndpoint:
         # Verify calculations
         assert data["advancing"] > 0
         assert data["declining"] > 0
-        assert data["total"] == data["advancing"] + data["declining"] + data["unchanged"]
+        assert (
+            data["total"]
+            == data["advancing"] + data["declining"] + data["unchanged"]
+        )
 
         # Verify sentiment is valid
         assert data["sentiment"] in ["bullish", "neutral", "bearish"]
@@ -519,7 +528,9 @@ class TestSectorPerformanceEndpoint:
         timeframes = ["1D", "1W", "1M", "3M"]
 
         for timeframe in timeframes:
-            response = await client.get(f"/v1/market/sectors?timeframe={timeframe}")
+            response = await client.get(
+                f"/v1/market/sectors?timeframe={timeframe}"
+            )
             assert response.status_code == 200
             data = response.json()
             assert data["timeframe"] == timeframe
@@ -554,7 +565,10 @@ class TestMarketMoversEndpoint:
         stocks = data["stocks"]
         if len(stocks) > 1:
             for i in range(len(stocks) - 1):
-                assert stocks[i]["change_percent"] >= stocks[i + 1]["change_percent"]
+                assert (
+                    stocks[i]["change_percent"]
+                    >= stocks[i + 1]["change_percent"]
+                )
 
         # Verify stock structure
         for stock in stocks:
@@ -582,7 +596,10 @@ class TestMarketMoversEndpoint:
         stocks = data["stocks"]
         if len(stocks) > 1:
             for i in range(len(stocks) - 1):
-                assert stocks[i]["change_percent"] <= stocks[i + 1]["change_percent"]
+                assert (
+                    stocks[i]["change_percent"]
+                    <= stocks[i + 1]["change_percent"]
+                )
 
     async def test_get_movers_with_limit(
         self, client: AsyncClient, test_stocks_with_sectors, clean_market_data
@@ -598,7 +615,9 @@ class TestMarketMoversEndpoint:
         self, client: AsyncClient, test_stocks_with_sectors, clean_market_data
     ):
         """Test market movers for KOSPI only"""
-        response = await client.get("/v1/market/movers?type=gainers&market=KOSPI")
+        response = await client.get(
+            "/v1/market/movers?type=gainers&market=KOSPI"
+        )
 
         assert response.status_code == 200
         data = response.json()
@@ -616,7 +635,8 @@ class TestMarketMoversEndpoint:
 
         # API provides default value, so it should work
         # If you want it to be required, update the API endpoint
-        assert response.status_code in [200, 422]  # Either default or validation error
+        # Either default or validation error
+        assert response.status_code in [200, 422]
 
     async def test_get_movers_invalid_type(
         self, client: AsyncClient, test_stocks_with_sectors, clean_market_data

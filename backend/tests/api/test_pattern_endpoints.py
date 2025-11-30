@@ -7,6 +7,7 @@ from app.api.dependencies import get_current_user
 async def mock_get_current_user():
     return {"id": "test_user", "email": "test@example.com"}
 
+
 @pytest.fixture(autouse=True)
 def override_auth():
     app.dependency_overrides[get_current_user] = mock_get_current_user

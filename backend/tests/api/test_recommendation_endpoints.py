@@ -10,6 +10,7 @@ async def mock_get_current_user():
         email = "test@example.com"
     return MockUser()
 
+
 @pytest.fixture(autouse=True)
 def override_auth():
     app.dependency_overrides[get_current_user] = mock_get_current_user

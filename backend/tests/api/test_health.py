@@ -1,9 +1,8 @@
 """Integration tests for health check endpoints"""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-import pytest_asyncio
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -66,11 +65,13 @@ class TestDatabaseHealthCheck:
 
     @pytest.mark.asyncio
     async def test_health_db_disconnected(self, client: AsyncClient):
-        """Test /health/db returns 200 with unhealthy status when database unreachable"""
+        """Test /health/db returns 200 with unhealthy status"""
         # Mock database session that raises exception
         async def mock_get_db_failing():
             mock_session = AsyncMock(spec=AsyncSession)
-            mock_session.execute.side_effect = Exception("Database connection failed")
+            mock_session.execute.side_effect = Exception(
+                "Database connection failed"
+            )
             yield mock_session
 
         # Override the get_db dependency
@@ -147,7 +148,7 @@ class TestRedisHealthCheck:
 
     @pytest.mark.asyncio
     async def test_health_redis_disconnected(self, client: AsyncClient):
-        """Test /health/redis returns 200 with unhealthy status when Redis unreachable"""
+        """Test /health/redis returns 200 with unhealthy status"""
         # Mock cache manager with failed Redis connection
         mock_cache = MagicMock(spec=CacheManager)
         mock_redis = AsyncMock()
@@ -271,7 +272,9 @@ class TestMetricsEndpoint:
         assert response.headers["content-type"].startswith("text/plain")
 
     @pytest.mark.asyncio
-    async def test_metrics_endpoint_no_auth_required(self, client: AsyncClient):
+    async def test_metrics_endpoint_no_auth_required(
+        self, client: AsyncClient
+    ):
         """Test metrics endpoint accessible without authentication"""
         response = await client.get("/v1/metrics")
 
