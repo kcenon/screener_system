@@ -38,7 +38,7 @@ scikit-learn==1.7.2
 lightgbm==4.6.0
 xgboost==3.1.2
 optuna==4.6.0
-mlflow==2.9.2
+mlflow==2.16.2  # Upgraded: Supports gunicorn>=23, fixes dependency conflict
 tensorflow==2.15.0
 matplotlib==3.8.2
 pillow==10.2.0
