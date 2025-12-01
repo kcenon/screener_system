@@ -28,7 +28,7 @@ class UserSessionRepository:
         result = await self.session.execute(
             select(UserSession).where(
                 UserSession.refresh_token == refresh_token,
-                UserSession.is_active == True,  # noqa: E712
+                UserSession.revoked == False,  # noqa: E712
             )
         )
         return result.scalar_one_or_none()

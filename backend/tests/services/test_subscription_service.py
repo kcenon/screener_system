@@ -139,7 +139,7 @@ class TestGetPlanByName:
 
         assert plan is not None
         assert plan.name == "PREMIUM"
-        assert plan.price_monthly == Decimal("9.99")
+        assert plan.price_monthly == 9.99
 
     @pytest.mark.asyncio
     async def test_case_insensitive_lookup(

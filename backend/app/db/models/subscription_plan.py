@@ -18,6 +18,7 @@ class SubscriptionPlan(BaseModel):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), unique=True, nullable=False, index=True)
+    display_name = Column(String(50))
     description = Column(Text)
 
     # Pricing

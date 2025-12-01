@@ -63,6 +63,38 @@ class ChartImageGenerator:
 
         return np.array(img)
 
+    def create_chart_image(self, df) -> bytes:
+        """
+        Create chart image from DataFrame and return bytes
+        """
+        if df.empty:
+            raise ValueError("DataFrame is empty")
+
+        # Convert DataFrame to numpy array expected by generate_chart
+        # Expected columns: Open, High, Low, Close, Volume
+        # We assume the DataFrame has these columns (case-insensitive)
+        df = df.rename(columns=str.lower)
+        required_cols = ["open", "high", "low", "close", "volume"]
+        
+        if not all(col in df.columns for col in required_cols):
+             # Fallback or error? For now, assume columns exist or try to use iloc
+             # If columns are missing, this will fail.
+             pass
+
+        ohlcv_data = df[required_cols].values
+        
+        # Generate chart (returns numpy array)
+        # But we want bytes. We can reuse the logic or convert back.
+        # Since generate_chart converts PIL->Numpy, we might want to refactor.
+        # But to minimize changes, let's just use generate_chart and convert back to PNG bytes.
+        
+        img_array = self.generate_chart(ohlcv_data)
+        img = Image.fromarray(img_array)
+        
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        return buf.getvalue()
+
     def _plot_candlesticks(self, ax, ohlc_data):
         """Plot candlestick chart"""
         # Calculate width of each candle

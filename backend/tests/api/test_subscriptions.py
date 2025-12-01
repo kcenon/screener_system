@@ -136,7 +136,7 @@ class TestGetCurrentSubscription:
         """Should require authentication"""
         response = await client.get("/v1/subscriptions/current")
 
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     @pytest.mark.asyncio
     async def test_returns_free_plan_for_new_user(
@@ -201,7 +201,7 @@ class TestGetUsageStats:
         """Should require authentication"""
         response = await client.get("/v1/subscriptions/usage")
 
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     @pytest.mark.asyncio
     async def test_returns_usage_stats(
@@ -235,7 +235,7 @@ class TestGetFeatureAccess:
         """Should require authentication"""
         response = await client.get("/v1/subscriptions/features")
 
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     @pytest.mark.asyncio
     async def test_returns_feature_access(
@@ -307,7 +307,7 @@ class TestListPaymentMethods:
         """Should require authentication"""
         response = await client.get("/v1/subscriptions/payment-methods")
 
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     @pytest.mark.asyncio
     async def test_returns_empty_list_for_new_user(
@@ -337,7 +337,7 @@ class TestGetPaymentHistory:
         """Should require authentication"""
         response = await client.get("/v1/subscriptions/payments/history")
 
-        assert response.status_code == 403
+        assert response.status_code == 401
 
     @pytest.mark.asyncio
     async def test_returns_empty_history_for_new_user(

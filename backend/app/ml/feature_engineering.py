@@ -103,7 +103,7 @@ class FeatureEngineer:
         if df.empty:
             return df
 
-        features = ["per", "pbr", "roe"]
+        features = ["close", "per", "pbr", "roe"]
 
         for feature in features:
             if feature not in df.columns:

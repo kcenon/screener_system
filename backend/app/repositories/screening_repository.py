@@ -154,9 +154,7 @@ class ScreeningRepository:
         params = {}
 
         # Market filter (parameterized)
-        if filters.max_market_cap:
-            conditions.append("market_cap <= :max_market_cap")
-            params["max_market_cap"] = filters.max_market_cap
+
 
         if filters.market and filters.market != "ALL":
             conditions.append("market = :market")

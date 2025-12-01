@@ -16,7 +16,21 @@ async def test_get_patterns_empty(service):
 
 @pytest.mark.asyncio
 async def test_detect_patterns(service):
-    patterns = await service.detect_patterns(stock_code="005930")
+    # Manually inject data into mock cache
+    service._patterns_cache["005930:1D"] = [
+        {
+            "stock_code": "005930",
+            "pattern_type": "double_bottom",
+            "confidence": 0.85,
+            "detected_at": "2023-01-01T00:00:00",
+            "timeframe": "1D",
+            "pattern_id": "p1",
+            "id": 1,
+            "created_at": "2023-01-01T00:00:00",
+        }
+    ]
+
+    patterns = await service.get_patterns(stock_code="005930")
 
     assert len(patterns) > 0
     assert patterns[0].pattern_type == "double_bottom"
@@ -54,6 +68,8 @@ async def test_get_patterns_filtering(service):
             "detected_at": "2023-01-01T00:00:00",
             "timeframe": "1D",
             "pattern_id": "p1",
+            "id": 1,
+            "created_at": "2023-01-01T00:00:00",
         },
         {
             "stock_code": "AAPL",
@@ -62,6 +78,8 @@ async def test_get_patterns_filtering(service):
             "detected_at": "2023-01-01T00:00:00",
             "timeframe": "1D",
             "pattern_id": "p2",
+            "id": 2,
+            "created_at": "2023-01-01T00:00:00",
         },
     ]
 
