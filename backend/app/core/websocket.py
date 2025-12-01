@@ -4,7 +4,7 @@ import asyncio
 import uuid
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Union
 
 from app.core.logging import logger
 from app.schemas.websocket import (BatchMessage, ConnectionInfo, ErrorMessage,
@@ -466,9 +466,57 @@ class ConnectionManager:
             await self.disconnect(connection_id)
             return False
 
+            return False
+
         except Exception as e:
             logger.error(f"Error sending message to {connection_id}: {e}")
             return False
+
+    async def send_personal_message(
+        self, message: Union[Dict[str, Any], WebSocketMessage], user_id: str
+    ):
+        """
+        Send a message to all connections of a specific user.
+
+        Args:
+            message: Message to send (dict or WebSocketMessage)
+            user_id: Target user ID
+        """
+        # Find all connections for this user
+        target_connections = []
+        for conn_id, info in self.connection_info.items():
+            if info.user_id == user_id:
+                target_connections.append(conn_id)
+        
+        if not target_connections:
+            return
+
+        if isinstance(message, WebSocketMessage):
+            ws_message = message
+        else:
+            try:
+                # Check if it's an error message
+                if message.get("type") == "error":
+                    # Map payload to ErrorMessage fields if needed
+                    # ErrorMessage expects code, message, details
+                    # But the dict might be {"type": "error", "payload": {"message": ...}}
+                    payload = message.get("payload", {})
+                    if isinstance(payload, dict):
+                        ws_message = ErrorMessage(
+                            code=payload.get("code", "ERROR"),
+                            message=payload.get("message", "Unknown error"),
+                            details=payload.get("details")
+                        )
+                    else:
+                         ws_message = WebSocketMessage(**message)
+                else:
+                    ws_message = WebSocketMessage(**message)
+            except Exception:
+                msg_type = message.get("type", "message")
+                ws_message = WebSocketMessage(type=msg_type, payload=message.get("payload"))
+
+        for conn_id in target_connections:
+            await self.send_message(conn_id, ws_message, immediate=True)
 
     async def send_error(
         self,
@@ -489,17 +537,6 @@ class ConnectionManager:
             details: Optional error details
         """
         error_msg = ErrorMessage(code=code, message=message, details=details)
-        # The original instruction was "Break long lines", but the provided
-        # "Code Edit" snippet implies a change in logic, replacing the
-        # send_message call with a send_personal_message call.
-        # Assuming the user intended to replace the line with the new logic,
-        # and that `user_id` should be derived from `connection_id`.
-        # If `send_personal_message` is a new method, it would need to be defined.
-        # For now, I will replace the line as per the snippet, assuming `user_id`
-        # can be obtained or the method signature needs adjustment.
-        # Given the constraint to make the change faithfully, and without
-        # making unrelated edits, I will assume `user_id` is available
-        # or the user will add `send_personal_message` and handle `user_id`.
         # However, `user_id` is not directly available in `send_error`'s scope.
         # To make it syntactically correct and avoid an immediate NameError,
         # I will use `self.connection_info.get(connection_id).user_id` if info exists.

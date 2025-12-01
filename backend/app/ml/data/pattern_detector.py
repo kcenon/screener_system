@@ -62,6 +62,31 @@ class PatternDetector:
 
         return False
 
+    def detect_double_bottom(self, prices: np.ndarray) -> bool:
+        """Detect Double Bottom pattern"""
+        # Find troughs (local minima)
+        # find_peaks on inverted signal finds troughs
+        troughs, _ = find_peaks(-prices, distance=10)
+
+        if len(troughs) < 2:
+            return False
+
+        # Last two troughs
+        trough1, trough2 = troughs[-2:]
+
+        # Check troughs at similar level (within 2%)
+        if abs(prices[trough1] - prices[trough2]) / prices[trough1] < 0.02:
+            # Check peak between troughs
+            # Find maximum between the two troughs
+            peak_idx = np.argmax(prices[trough1:trough2]) + trough1
+
+            # Peak should be significantly higher (e.g., > 5% rise from trough)
+            avg_trough_price = (prices[trough1] + prices[trough2]) / 2
+            if prices[peak_idx] > avg_trough_price * 1.05:
+                return True
+
+        return False
+
     def detect_triangle(self, prices: np.ndarray) -> bool:
         """Detect Triangle pattern (Symmetrical)"""
         # Find highs and lows

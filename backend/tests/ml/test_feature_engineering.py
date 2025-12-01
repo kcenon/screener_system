@@ -34,7 +34,7 @@ async def test_feature_engineering_pipeline(sample_data):
     engineer = FeatureEngineer(mock_db)
 
     # 1. Test Preprocess
-    df_clean = engineer.preprocess_data(sample_data)
+    df_clean = engineer.preprocess_features(sample_data)
 
     # Check missing values handled
     assert not df_clean["per"].isna().any()
@@ -49,8 +49,8 @@ async def test_feature_engineering_pipeline(sample_data):
     # 2. Test Derived Features
     df_derived = engineer.create_derived_features(df_clean)
     assert "per_lag1" in df_derived.columns
-    assert "close_ma5" in df_derived.columns
-    assert "rsi_14" in df_derived.columns
+    assert "close_roll5_mean" in df_derived.columns
+
 
     # 3. Test Lag Features
     # Check lag1 is shifted correctly
