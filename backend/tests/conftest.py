@@ -10,7 +10,7 @@ import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.pool import StaticPool
+from sqlalchemy.pool import NullPool, StaticPool
 
 # Mock Redis connection to prevent startup failures
 from unittest.mock import AsyncMock
@@ -51,22 +51,25 @@ from app.db.base import Base  # noqa: E402
 from app.db.session import get_db  # noqa: E402
 from app.main import app  # noqa: E402
 
-# Test database URL (use PostgreSQL test database)
-# Use environment variable or default to test database
-# Support both Docker (screener_postgres) and CI (localhost/postgres) environments
+# Test database URL
+# 1. Use TEST_DATABASE_URL env var if set
+# 2. Use DATABASE_URL env var if set (CI/Docker)
+# 3. Fallback to SQLite in-memory for local testing
 DEFAULT_TEST_DB_URL = os.getenv(
     "TEST_DATABASE_URL",
     os.getenv(
         "DATABASE_URL",
-        "postgresql+asyncpg://screener_user:your_secure_password_here@"
-        "localhost:5432/screener_test",
+        "sqlite+aiosqlite:///:memory:"
     )
-    .replace("screener_db", "screener_test")
-    .replace("postgresql://", "postgresql+asyncpg://")
-    .replace("postgres://", "postgresql+asyncpg://"),
 )
 
-TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+# Handle Postgres URL format for asyncpg
+if DEFAULT_TEST_DB_URL.startswith("postgresql://"):
+    DEFAULT_TEST_DB_URL = DEFAULT_TEST_DB_URL.replace("postgresql://", "postgresql+asyncpg://")
+elif DEFAULT_TEST_DB_URL.startswith("postgres://"):
+    DEFAULT_TEST_DB_URL = DEFAULT_TEST_DB_URL.replace("postgres://", "postgresql+asyncpg://")
+
+TEST_DATABASE_URL = DEFAULT_TEST_DB_URL
 
 
 @pytest.fixture(scope="function")
@@ -93,11 +96,19 @@ def event_loop():
 @pytest_asyncio.fixture
 async def db_engine():
     """Create test database engine"""
+    # Use StaticPool for SQLite in-memory to persist data across connections
+    poolclass = NullPool
+    connect_args = {}
+
+    if "sqlite" in TEST_DATABASE_URL:
+        poolclass = StaticPool
+        connect_args = {"check_same_thread": False}
+
     engine = create_async_engine(
         TEST_DATABASE_URL,
         echo=False,
-        poolclass=StaticPool,
-        connect_args={"check_same_thread": False},
+        poolclass=poolclass,
+        connect_args=connect_args,
     )
 
     # Create tables

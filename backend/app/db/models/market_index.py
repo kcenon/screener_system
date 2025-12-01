@@ -1,7 +1,7 @@
 """Market Index database model"""
 
 from app.db.base import Base, TimestampMixin
-from sqlalchemy import BigInteger, CheckConstraint, Column, Numeric, String
+from sqlalchemy import BigInteger, CheckConstraint, Column, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 
 
@@ -11,7 +11,7 @@ class MarketIndex(Base, TimestampMixin):
     __tablename__ = "market_indices"
 
     # Primary Key
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     # Index Identification
     code = Column(String(20), nullable=False, index=True)
