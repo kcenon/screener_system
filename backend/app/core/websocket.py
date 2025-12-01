@@ -6,17 +6,11 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set
 
-from fastapi import WebSocket, WebSocketDisconnect
-
 from app.core.logging import logger
-from app.schemas.websocket import (
-    BatchMessage,
-    ConnectionInfo,
-    ErrorMessage,
-    PongMessage,
-    SubscriptionType,
-    WebSocketMessage,
-)
+from app.schemas.websocket import (BatchMessage, ConnectionInfo, ErrorMessage,
+                                   PongMessage, SubscriptionType,
+                                   WebSocketMessage)
+from fastapi import WebSocket, WebSocketDisconnect
 
 
 class ConnectionManager:
@@ -56,15 +50,15 @@ class ConnectionManager:
 
         # Subscriptions: subscription_type -> target -> Set[connection_id]
         # Example: {"stock": {"005930": {"conn1", "conn2"}}}
-        self.subscriptions: Dict[
-            SubscriptionType, Dict[str, Set[str]]
-        ] = defaultdict(lambda: defaultdict(set))
+        self.subscriptions: Dict[SubscriptionType, Dict[str, Set[str]]] = defaultdict(
+            lambda: defaultdict(set)
+        )
 
         # Reverse index: connection_id -> Dict[subscription_type, Set[targets]]
         # For fast unsubscribe on disconnect
-        self.connection_subscriptions: Dict[
-            str, Dict[SubscriptionType, Set[str]]
-        ] = defaultdict(lambda: defaultdict(set))
+        self.connection_subscriptions: Dict[str, Dict[SubscriptionType, Set[str]]] = (
+            defaultdict(lambda: defaultdict(set))
+        )
 
         # Message sequence counter for ordering
         self._sequence_counter = 0
@@ -299,9 +293,7 @@ class ConnectionManager:
         except Exception as e:
             logger.error(f"Error handling Redis message from {channel}: {e}")
 
-    async def connect(
-        self, websocket: WebSocket, user_id: Optional[str] = None
-    ) -> str:
+    async def connect(self, websocket: WebSocket, user_id: Optional[str] = None) -> str:
         """
         Accept and register a new WebSocket connection.
 
@@ -340,9 +332,8 @@ class ConnectionManager:
             self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
 
         # Phase 4: Start batch flush loop if enabled and not running
-        if (
-            self._enable_batching
-            and (self._batch_task is None or self._batch_task.done())
+        if self._enable_batching and (
+            self._batch_task is None or self._batch_task.done()
         ):
             self._batch_task = asyncio.create_task(self._batch_flush_loop())
 
@@ -450,7 +441,7 @@ class ConnectionManager:
             # Assuming message has a 'type' attribute for ping/pong handling
             # If message.type is not available, this will raise an AttributeError
             # and the original send_json will be executed in the `else` block.
-            if hasattr(message, 'type'):
+            if hasattr(message, "type"):
                 message_type = message.type
                 if message_type == "ping":
                     await websocket.send_json(
@@ -465,9 +456,7 @@ class ConnectionManager:
 
             # Update activity timestamp
             if connection_id in self.connection_info:
-                self.connection_info[connection_id].last_activity = (
-                    datetime.utcnow()
-                )
+                self.connection_info[connection_id].last_activity = datetime.utcnow()
                 self.connection_info[connection_id].message_count += 1
 
             return True
@@ -577,9 +566,7 @@ class ConnectionManager:
             return
 
         # Send to all subscribers
-        send_tasks = [
-            self.send_message(conn_id, message) for conn_id in subscribers
-        ]
+        send_tasks = [self.send_message(conn_id, message) for conn_id in subscribers]
 
         await asyncio.gather(*send_tasks, return_exceptions=True)
 
@@ -680,9 +667,7 @@ class ConnectionManager:
             del self.subscriptions[subscription_type][target]
 
         # Remove from reverse index
-        self.connection_subscriptions[connection_id][subscription_type].discard(
-            target
-        )
+        self.connection_subscriptions[connection_id][subscription_type].discard(target)
 
         # Update connection info
         if connection_id in self.connection_info:
@@ -742,13 +727,9 @@ class ConnectionManager:
                 for conn_id, websocket in self.active_connections.items():
                     try:
                         ping_msg = PongMessage()
-                        await websocket.send_json(
-                            ping_msg.model_dump(mode="json")
-                        )
+                        await websocket.send_json(ping_msg.model_dump(mode="json"))
                     except Exception as e:
-                        logger.warning(
-                            f"Heartbeat failed for {conn_id}: {e}"
-                        )
+                        logger.warning(f"Heartbeat failed for {conn_id}: {e}")
                         dead_connections.append(conn_id)
 
                 # Clean up dead connections
@@ -909,18 +890,14 @@ class ConnectionManager:
         # Phase 4: Batching stats
         total_queued = sum(len(q) for q in self._message_queues.values())
         queued_by_connection = {
-            conn_id: len(q)
-            for conn_id, q in self._message_queues.items()
-            if q
+            conn_id: len(q) for conn_id, q in self._message_queues.items() if q
         }
 
         return {
             "active_connections": len(self.active_connections),
             "total_subscriptions": total_subscriptions,
             "subscriptions_by_type": {
-                sub_type.value: sum(
-                    len(subs) for subs in targets.values()
-                )
+                sub_type.value: sum(len(subs) for subs in targets.values())
                 for sub_type, targets in self.subscriptions.items()
             },
             "messages_sent": self._sequence_counter,

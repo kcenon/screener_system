@@ -1,7 +1,9 @@
 from typing import List
-from sqlalchemy.orm import Session
+
 from app.db.models.user_behavior import UserBehaviorEvent
-from app.schemas.recommendation import UserBehaviorEventCreate, RecommendationResponse
+from app.schemas.recommendation import (RecommendationResponse,
+                                        UserBehaviorEventCreate)
+from sqlalchemy.orm import Session
 
 
 class RecommendationService:
@@ -14,7 +16,7 @@ class RecommendationService:
             user_id=user_id,
             event_type=event.event_type,
             stock_code=event.stock_code,
-            metadata_=event.metadata
+            metadata_=event.metadata,
         )
         self.db.add(db_event)
         self.db.commit()
@@ -39,6 +41,6 @@ class RecommendationService:
                 confidence=0.9,
                 reasons=["Similar users liked this", "AI predicts bullish"],
                 ai_prediction={"direction": "bullish", "probability": 0.85},
-                key_metrics={"per": 25.5, "pbr": 10.2, "dividend_yield": 0.5}
+                key_metrics={"per": 25.5, "pbr": 10.2, "dividend_yield": 0.5},
             )
         ]

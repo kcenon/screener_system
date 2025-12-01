@@ -3,10 +3,9 @@
 from datetime import time
 from typing import TYPE_CHECKING, Optional
 
+from app.db.base import BaseModel
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship
-
-from app.db.base import BaseModel
 
 if TYPE_CHECKING:
     from app.db.models.user import User  # noqa: F401

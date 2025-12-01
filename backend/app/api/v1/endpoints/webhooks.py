@@ -5,23 +5,17 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 # from app.api.dependencies import get_stripe_service  # Unused
 # from app.core.config import settings  # Unused
 from app.core.exceptions import BadRequestException
-from app.db.models import (
-    Payment,
-    PaymentStatus,
-    SubscriptionPlan,
-    User,
-    UserSubscription,
-)
+from app.db.models import (Payment, PaymentStatus, SubscriptionPlan, User,
+                           UserSubscription)
 from app.db.session import get_db
 from app.schemas import StripeWebhookResponse
 from app.services import StripeService
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -328,9 +322,7 @@ async def _handle_subscription_updated(db: AsyncSession, subscription: dict) -> 
     await db.flush()
 
     # Update user's subscription tier
-    result = await db.execute(
-        select(User).where(User.id == user_subscription.user_id)
-    )
+    result = await db.execute(select(User).where(User.id == user_subscription.user_id))
     user = result.scalar_one_or_none()
 
     if user:
@@ -499,9 +491,7 @@ async def _handle_checkout_session_completed(db: AsyncSession, session: dict) ->
         metadata = session.get("metadata", {})
         user_id = metadata.get("user_id")
         if user_id:
-            result = await db.execute(
-                select(User).where(User.id == int(user_id))
-            )
+            result = await db.execute(select(User).where(User.id == int(user_id)))
             user = result.scalar_one_or_none()
 
     if not user:

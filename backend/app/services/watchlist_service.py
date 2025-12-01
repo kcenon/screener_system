@@ -4,21 +4,13 @@ from datetime import datetime, timedelta
 from typing import Any, Optional
 from uuid import UUID
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.db.models import UserActivity, Watchlist, WatchlistStock
-from app.repositories import (
-    UserActivityRepository,
-    UserPreferencesRepository,
-    WatchlistRepository,
-)
+from app.repositories import (UserActivityRepository,
+                              UserPreferencesRepository, WatchlistRepository)
 from app.repositories.stock_repository import StockRepository
-from app.schemas.watchlist import (
-    DashboardSummary,
-    ScreeningQuota,
-    WatchlistCreate,
-    WatchlistUpdate,
-)
+from app.schemas.watchlist import (DashboardSummary, ScreeningQuota,
+                                   WatchlistCreate, WatchlistUpdate)
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class WatchlistService:
@@ -67,9 +59,7 @@ class WatchlistService:
             watchlist_id=watchlist_id, user_id=user_id, load_stocks=load_stocks
         )
 
-    async def create_watchlist(
-        self, user_id: int, data: WatchlistCreate
-    ) -> Watchlist:
+    async def create_watchlist(self, user_id: int, data: WatchlistCreate) -> Watchlist:
         """
         Create new watchlist
 
@@ -159,9 +149,7 @@ class WatchlistService:
                     raise ValueError(f"Stock code {code} does not exist")
 
                 # Check if already in watchlist
-                if not await self.watchlist_repo.stock_in_watchlist(
-                    watchlist_id, code
-                ):
+                if not await self.watchlist_repo.stock_in_watchlist(watchlist_id, code):
                     await self.watchlist_repo.add_stock(watchlist_id, code)
 
         # Remove stocks

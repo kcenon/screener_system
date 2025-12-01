@@ -2,12 +2,11 @@
 
 from typing import Any, Dict
 
-from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.cache import CacheManager, get_cache
 from app.db.session import get_db
 from app.services.market_service import MarketService
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/market", tags=["market"])
 

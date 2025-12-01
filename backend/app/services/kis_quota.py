@@ -294,9 +294,7 @@ class KISQuotaManager:
 
         # Open circuit if threshold exceeded
         if self.failure_count >= settings.KIS_API_CIRCUIT_BREAKER_THRESHOLD:
-            logger.error(
-                f"Circuit breaker opening after {self.failure_count} failures"
-            )
+            logger.error(f"Circuit breaker opening after {self.failure_count} failures")
             self.circuit_state = CircuitState.OPEN
             self.circuit_open_time = time.time()
 

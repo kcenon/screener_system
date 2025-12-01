@@ -2,31 +2,54 @@
 
 import asyncio
 import os
+import sys
 from typing import AsyncGenerator
+from unittest.mock import MagicMock
 
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.pool import NullPool, StaticPool
+from sqlalchemy.pool import StaticPool
 
-import sys
-from unittest.mock import MagicMock
+# Mock Redis connection to prevent startup failures
+from unittest.mock import AsyncMock
+
+from app.core.cache import cache_manager
+from app.core.redis_pubsub import redis_pubsub
+from app.core.websocket import connection_manager
+
+cache_manager.connect = AsyncMock()
+cache_manager.disconnect = AsyncMock()
+connection_manager.initialize_redis = AsyncMock()
+redis_pubsub.disconnect = AsyncMock()
 
 # Mock ML dependencies if not installed (for local testing on incompatible platforms)
 for module_name in [
-    "mlflow", "mlflow.tracking", "numpy", "pandas", "lightgbm", "xgboost", "optuna",
-    "sklearn", "sklearn.metrics", "sklearn.model_selection", "scipy", "scipy.stats",
-    "tensorflow", "keras"
+    "mlflow",
+    "mlflow.tracking",
+    "numpy",
+    "pandas",
+    "lightgbm",
+    "xgboost",
+    "optuna",
+    "sklearn",
+    "sklearn.metrics",
+    "sklearn.model_selection",
+    "scipy",
+    "scipy.stats",
+    "tensorflow",
+    "keras",
 ]:
     try:
         __import__(module_name)
     except ImportError:
         sys.modules[module_name] = MagicMock()
-from app.db.base import Base
-import app.db.models  # noqa: F401
-from app.db.session import get_db
-from app.main import app
+
+import app.db.models  # noqa: F401, E402
+from app.db.base import Base  # noqa: E402
+from app.db.session import get_db  # noqa: E402
+from app.main import app  # noqa: E402
 
 # Test database URL (use PostgreSQL test database)
 # Use environment variable or default to test database
@@ -37,23 +60,13 @@ DEFAULT_TEST_DB_URL = os.getenv(
         "DATABASE_URL",
         "postgresql+asyncpg://screener_user:your_secure_password_here@"
         "localhost:5432/screener_test",
-    ).replace("screener_db", "screener_test")
+    )
+    .replace("screener_db", "screener_test")
     .replace("postgresql://", "postgresql+asyncpg://")
     .replace("postgres://", "postgresql+asyncpg://"),
 )
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
-
-# Mock Redis connection to prevent startup failures
-from unittest.mock import AsyncMock
-from app.core.cache import cache_manager
-from app.core.websocket import connection_manager
-from app.core.redis_pubsub import redis_pubsub
-
-cache_manager.connect = AsyncMock()
-cache_manager.disconnect = AsyncMock()
-connection_manager.initialize_redis = AsyncMock()
-redis_pubsub.disconnect = AsyncMock()
 
 
 @pytest.fixture(scope="function")
@@ -132,8 +145,8 @@ async def db_session(db: AsyncSession) -> AsyncSession:
 @pytest_asyncio.fixture
 async def test_user(db: AsyncSession):
     """Create test user"""
-    from app.db.models import User
     from app.core.security import get_password_hash
+    from app.db.models import User
 
     user = User(
         email="test@example.com",
@@ -187,8 +200,7 @@ async def client(db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
 
     # Create client (httpx 0.28+ requires ASGITransport instead of app parameter)
     async with AsyncClient(
-        transport=ASGITransport(app=app),
-        base_url="http://test"
+        transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:
         yield ac
 

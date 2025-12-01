@@ -25,12 +25,11 @@ Example:
 import logging
 from typing import Optional
 
+from app.db.models import Notification, NotificationPreference
+from app.services.email_service import EmailService
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
-
-from app.db.models import Notification, NotificationPreference
-from app.services.email_service import EmailService
 
 logger = logging.getLogger(__name__)
 
@@ -404,9 +403,8 @@ class NotificationService:
         """
         from datetime import timedelta
 
-        from sqlalchemy import delete
-
         from app.db.base import utc_now
+        from sqlalchemy import delete
 
         cutoff_date = utc_now() - timedelta(days=days)
 
@@ -421,8 +419,7 @@ class NotificationService:
         await self.session.commit()
 
         logger.info(
-            f"Cleaned up {deleted_count} old notifications "
-            f"(older than {days} days)"
+            f"Cleaned up {deleted_count} old notifications " f"(older than {days} days)"
         )
 
         return deleted_count

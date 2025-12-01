@@ -6,19 +6,13 @@ import logging
 import time
 from typing import Any, Dict
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.cache import CacheManager
 from app.repositories.screening_repository import ScreeningRepository
-from app.schemas.screening import (
-    ScreenedStock,
-    ScreeningFilters,
-    ScreeningMetadata,
-    ScreeningRequest,
-    ScreeningResponse,
-    ScreeningTemplate,
-    ScreeningTemplateList,
-)
+from app.schemas.screening import (ScreenedStock, ScreeningFilters,
+                                   ScreeningMetadata, ScreeningRequest,
+                                   ScreeningResponse, ScreeningTemplate,
+                                   ScreeningTemplateList)
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -288,9 +282,7 @@ class ScreeningService:
         cursor = 0
         while True:
             # SCAN returns (cursor, keys) tuple
-            cursor, keys = await self.cache.redis.scan(
-                cursor, match=pattern, count=100
-            )
+            cursor, keys = await self.cache.redis.scan(cursor, match=pattern, count=100)
 
             # Delete keys if found
             if keys:

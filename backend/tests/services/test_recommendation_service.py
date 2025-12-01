@@ -1,8 +1,9 @@
-import pytest
 from unittest.mock import MagicMock
-from sqlalchemy.orm import Session
-from app.services.recommendation_service import RecommendationService
+
+import pytest
 from app.schemas.recommendation import UserBehaviorEventCreate
+from app.services.recommendation_service import RecommendationService
+from sqlalchemy.orm import Session
 
 
 @pytest.fixture
@@ -18,9 +19,7 @@ def service(mock_db):
 @pytest.mark.asyncio
 async def test_track_event(service, mock_db):
     event = UserBehaviorEventCreate(
-        event_type="view_stock",
-        stock_code="AAPL",
-        metadata={"source": "dashboard"}
+        event_type="view_stock", stock_code="AAPL", metadata={"source": "dashboard"}
     )
 
     await service.track_event(user_id=1, event=event)

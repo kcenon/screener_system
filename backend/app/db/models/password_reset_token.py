@@ -3,10 +3,9 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
+from app.db.base import BaseModel
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-
-from app.db.base import BaseModel
 
 
 class PasswordResetToken(BaseModel):

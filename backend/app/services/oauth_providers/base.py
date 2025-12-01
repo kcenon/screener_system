@@ -5,7 +5,6 @@ from typing import Optional
 from urllib.parse import urlencode
 
 import httpx
-
 from app.schemas.oauth import OAuthTokenResponse, OAuthUserInfo
 
 

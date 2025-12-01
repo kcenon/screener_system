@@ -3,11 +3,10 @@
 from datetime import date
 from typing import List, Optional, Tuple
 
-from sqlalchemy import and_, desc, func, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.db.models import (CalculatedIndicator, DailyPrice, FinancialStatement,
                            Stock)
+from sqlalchemy import and_, desc, func, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class StockRepository:

@@ -1,8 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-import numpy as np
-from app.services.ml_service import ModelService
 
+import numpy as np
+import pytest
+from app.services.ml_service import ModelService
 
 
 class TestModelService:
@@ -21,9 +21,9 @@ class TestModelService:
     async def test_predict_single_stock(self, model_service):
         """Test single stock prediction"""
         # Mock cache miss
-        with patch("app.services.ml_service.cache_manager.get",
-                   return_value=None), \
-             patch("app.services.ml_service.cache_manager.set") as mock_set:
+        with patch(
+            "app.services.ml_service.cache_manager.get", return_value=None
+        ), patch("app.services.ml_service.cache_manager.set") as mock_set:
 
             result = await model_service.predict("005930")
 
@@ -46,16 +46,15 @@ class TestModelService:
         assert result["prediction"] == "neutral"  # Default mock
         assert "confidence" in result
 
-
-
     @pytest.mark.asyncio
     async def test_predict_with_caching(self, model_service):
         """Test prediction caching"""
         cached_result = {"stock_code": "005930", "prediction": "up"}
 
         # Mock cache hit
-        with patch("app.services.ml_service.cache_manager.get",
-                   return_value=cached_result):
+        with patch(
+            "app.services.ml_service.cache_manager.get", return_value=cached_result
+        ):
             result = await model_service.predict("005930")
             assert result == cached_result
 
@@ -67,16 +66,8 @@ class TestModelService:
         # Mock individual predictions
         model_service.predict = AsyncMock(
             side_effect=[
-                {
-                    "stock_code": "005930",
-                    "prediction": "up",
-                    "confidence": 0.8
-                },
-                {
-                    "stock_code": "000660",
-                    "prediction": "down",
-                    "confidence": 0.7
-                }
+                {"stock_code": "005930", "prediction": "up", "confidence": 0.8},
+                {"stock_code": "000660", "prediction": "down", "confidence": 0.7},
             ]
         )
 

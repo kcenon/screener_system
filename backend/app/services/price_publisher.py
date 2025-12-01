@@ -4,14 +4,13 @@ import asyncio
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.logging import logger
 from app.core.redis_pubsub import redis_pubsub
 from app.db.models.stock import Stock
 from app.schemas.websocket import (MarketStatus, MessageType, OrderBookLevel,
                                    OrderBookUpdate, PriceUpdate)
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class PricePublisher:
@@ -114,9 +113,7 @@ class PricePublisher:
             logger.debug(f"Published order book update for {stock_code}")
 
         except Exception as e:
-            logger.error(
-                f"Error publishing order book update for {stock_code}: {e}"
-            )
+            logger.error(f"Error publishing order book update for {stock_code}: {e}")
 
     async def publish_market_status(
         self,
@@ -198,9 +195,7 @@ class PricePublisher:
             return
 
         self._running = True
-        self._publish_task = asyncio.create_task(
-            self._mock_publish_loop(db, interval)
-        )
+        self._publish_task = asyncio.create_task(self._mock_publish_loop(db, interval))
 
         logger.info(f"Started mock price publisher (interval: {interval}s)")
 

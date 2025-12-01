@@ -1,12 +1,12 @@
-from typing import Dict, Any
 import json
 import logging
 from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, Dict
 
 from app.services.llm.manager import LLMManager, LLMMessage
 from app.services.llm.prompt_templates import PromptTemplate
 from app.services.stock_service import StockService
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # Assuming we have a Redis cache manager, if not we'll use a simple dict
 # or mock
@@ -35,13 +35,12 @@ class StockAnalysisService:
         # Mock cache for StockService since we don't have it yet in this
         # service. In real implementation, we should inject it
         from unittest.mock import MagicMock
+
         mock_cache = MagicMock()
         self.stock_service = StockService(db, mock_cache)
 
     async def generate_report(
-        self,
-        stock_code: str,
-        use_cache: bool = True
+        self, stock_code: str, use_cache: bool = True
     ) -> Dict[str, Any]:
         """Generate comprehensive stock analysis report"""
         # TODO: Implement caching
@@ -80,9 +79,7 @@ class StockAnalysisService:
                 "return_1m": 5.2,
                 "return_3m": 12.1,
                 "return_6m": -3.5,
-                "ai_prediction": (
-                    "AI predicts bullish movement with 85% confidence."
-                ),
+                "ai_prediction": ("AI predicts bullish movement with 85% confidence."),
             }
 
             # Render prompt
@@ -91,17 +88,16 @@ class StockAnalysisService:
             # Generate analysis with LLM
             messages = [
                 LLMMessage(
-                    role="system",
-                    content="You are an expert stock market analyst."
+                    role="system", content="You are an expert stock market analyst."
                 ),
-                LLMMessage(role="user", content=prompt)
+                LLMMessage(role="user", content=prompt),
             ]
 
             response = await self.llm.generate(
                 messages=messages,
                 temperature=0.3,
                 max_tokens=2000,
-                provider_preference=["openai", "anthropic"]
+                provider_preference=["openai", "anthropic"],
             )
 
             # Parse response
@@ -125,7 +121,7 @@ class StockAnalysisService:
                 f"Failed to generate analysis for {stock_code}: {e}. "
                 f"LLM response: "
                 f"{response.content if 'response' in locals() else 'N/A'}",
-                exc_info=True
+                exc_info=True,
             )
             raise StockAnalysisError(f"Analysis generation failed: {e}") from e
 
@@ -140,9 +136,7 @@ class StockAnalysisService:
                 json_str = content[json_start:json_end]
                 return json.loads(json_str)
             else:
-                logger.warning(
-                    "No JSON found in response, using fallback parser"
-                )
+                logger.warning("No JSON found in response, using fallback parser")
                 return self._fallback_parse(content)
 
         except json.JSONDecodeError as e:

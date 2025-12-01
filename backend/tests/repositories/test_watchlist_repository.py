@@ -1,4 +1,5 @@
 """Unit tests for Watchlist Repository"""
+
 from datetime import datetime, timedelta
 
 import pytest

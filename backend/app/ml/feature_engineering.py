@@ -1,14 +1,13 @@
 from datetime import date
 from typing import List
 
-import pandas as pd
 import numpy as np
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.dialects.postgresql import insert
-
+import pandas as pd
 from app.db.models.calculated_indicator import CalculatedIndicator
 from app.db.models.ml_feature import MLFeature
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class FeatureEngineer:
@@ -20,10 +19,7 @@ class FeatureEngineer:
         self.db = db
 
     async def extract_features(
-        self,
-        stock_codes: List[str],
-        start_date: date,
-        end_date: date
+        self, stock_codes: List[str], start_date: date, end_date: date
     ) -> pd.DataFrame:
         """
         Fetch raw indicators from database.
@@ -52,18 +48,24 @@ class FeatureEngineer:
                 "per": float(ind.per) if ind.per is not None else None,
                 "pbr": float(ind.pbr) if ind.pbr is not None else None,
                 "roe": float(ind.roe) if ind.roe is not None else None,
-                "debt_to_equity": float(ind.debt_to_equity)
-                if ind.debt_to_equity is not None
-                else None,
-                "current_ratio": float(ind.current_ratio)
-                if ind.current_ratio is not None
-                else None,
-                "operating_margin": float(ind.operating_margin)
-                if ind.operating_margin is not None
-                else None,
-                "profit_growth_yoy": float(ind.profit_growth_yoy)
-                if ind.profit_growth_yoy is not None
-                else None,
+                "debt_to_equity": (
+                    float(ind.debt_to_equity)
+                    if ind.debt_to_equity is not None
+                    else None
+                ),
+                "current_ratio": (
+                    float(ind.current_ratio) if ind.current_ratio is not None else None
+                ),
+                "operating_margin": (
+                    float(ind.operating_margin)
+                    if ind.operating_margin is not None
+                    else None
+                ),
+                "profit_growth_yoy": (
+                    float(ind.profit_growth_yoy)
+                    if ind.profit_growth_yoy is not None
+                    else None
+                ),
             }
             for ind in indicators
         ]
@@ -178,11 +180,13 @@ class FeatureEngineer:
             # Convert numpy types to python types for JSON serialization
             feature_data = {k: float(v) for k, v in feature_data.items()}
 
-            values.append({
-                "stock_code": row["stock_code"],
-                "calculation_date": row["calculation_date"].date(),
-                "feature_data": feature_data
-            })
+            values.append(
+                {
+                    "stock_code": row["stock_code"],
+                    "calculation_date": row["calculation_date"].date(),
+                    "feature_data": feature_data,
+                }
+            )
 
         # Batch insert/upsert
         # Using chunks to avoid query too large
@@ -192,7 +196,7 @@ class FeatureEngineer:
             stmt = insert(MLFeature).values(chunk)
             stmt = stmt.on_conflict_do_update(
                 index_elements=["stock_code", "calculation_date"],
-                set_={"feature_data": stmt.excluded.feature_data}
+                set_={"feature_data": stmt.excluded.feature_data},
             )
             await self.db.execute(stmt)
         await self.db.commit()

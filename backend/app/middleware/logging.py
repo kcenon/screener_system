@@ -4,10 +4,9 @@ import time
 import uuid
 from typing import Callable
 
+from app.core.logging import logger
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-
-from app.core.logging import logger
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):

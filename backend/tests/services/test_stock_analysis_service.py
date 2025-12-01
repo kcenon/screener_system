@@ -1,7 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
-from app.services.stock_analysis_service import StockAnalysisService
+
+import pytest
 from app.services.llm.manager import LLMManager, LLMResponse
+from app.services.stock_analysis_service import StockAnalysisService
 
 
 @pytest.fixture
@@ -23,7 +24,7 @@ async def test_generate_report_success(mock_db, mock_llm_manager):
         content='{"overall_rating": "Buy", "confidence": 80}',
         model="gpt-4",
         usage={"total_tokens": 100},
-        provider="openai"
+        provider="openai",
     )
     mock_llm_manager.generate.return_value = mock_llm_response
 
@@ -43,10 +44,10 @@ async def test_generate_report_fallback_parsing(mock_db, mock_llm_manager):
 
     # Mock LLM response with invalid JSON
     mock_llm_response = LLMResponse(
-        content='This is not JSON but a text report.',
+        content="This is not JSON but a text report.",
         model="gpt-4",
         usage={"total_tokens": 100},
-        provider="openai"
+        provider="openai",
     )
     mock_llm_manager.generate.return_value = mock_llm_response
 

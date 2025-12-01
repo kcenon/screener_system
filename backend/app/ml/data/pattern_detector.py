@@ -1,4 +1,3 @@
-
 from typing import Optional
 
 import numpy as np
@@ -30,8 +29,7 @@ class PatternDetector:
             left_peak, head, right_peak = peaks[-3:]
 
             # Basic H&S logic: Head > Shoulders
-            if (prices[head] > prices[left_peak] and
-                    prices[head] > prices[right_peak]):
+            if prices[head] > prices[left_peak] and prices[head] > prices[right_peak]:
                 # Check shoulders at similar level (within 5% tolerance)
                 if (
                     abs(prices[left_peak] - prices[right_peak]) / prices[left_peak]
@@ -110,11 +108,7 @@ class PatternDetector:
         return None
 
     def build_labeled_dataset(
-        self,
-        stock_codes: list,
-        start_date: str,
-        end_date: str,
-        output_dir: str
+        self, stock_codes: list, start_date: str, end_date: str, output_dir: str
     ):
         """
         Generate labeled dataset for all patterns

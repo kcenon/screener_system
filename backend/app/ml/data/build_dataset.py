@@ -1,12 +1,10 @@
-
 import argparse
 import os
 import shutil
 
 import numpy as np
-from PIL import Image
-
 from app.ml.data.chart_generator import ChartImageGenerator
+from PIL import Image
 
 
 def generate_synthetic_data(pattern_type, length=60):
@@ -15,27 +13,27 @@ def generate_synthetic_data(pattern_type, length=60):
     prices = np.zeros(length)
     prices[0] = 100
     for i in range(1, length):
-        prices[i] = prices[i-1] + np.random.randn()
+        prices[i] = prices[i - 1] + np.random.randn()
 
     # Inject pattern at the end
     if pattern_type == "head_and_shoulders":
         # Inject H&S
         center = length - 15
-        prices[center-5] = prices[center-5] * 1.05  # Left shoulder
+        prices[center - 5] = prices[center - 5] * 1.05  # Left shoulder
         prices[center] = prices[center] * 1.10  # Head
-        prices[center+5] = prices[center+5] * 1.05  # Right shoulder
+        prices[center + 5] = prices[center + 5] * 1.05  # Right shoulder
     elif pattern_type == "double_top":
         center = length - 10
-        prices[center-5] = prices[center-5] * 1.10  # Peak 1
+        prices[center - 5] = prices[center - 5] * 1.10  # Peak 1
         prices[center] = prices[center] * 0.95  # Trough
-        prices[center+5] = prices[center+5] * 1.10  # Peak 2
+        prices[center + 5] = prices[center + 5] * 1.10  # Peak 2
 
     elif pattern_type == "triangle":
         # Converging
         start = length - 20
         for i in range(20):
             scale = (20 - i) / 20.0
-            prices[start+i] = 100 + np.sin(i) * scale * 5
+            prices[start + i] = 100 + np.sin(i) * scale * 5
 
     # Create OHLCV
     ohlcv = np.zeros((length, 5))

@@ -1,9 +1,11 @@
-from pydantic import BaseModel, Field
 from typing import Any, Dict, List
+
+from pydantic import BaseModel, Field
 
 
 class AIAnalysisRequest(BaseModel):
     """Request schema for AI analysis"""
+
     stock_code: str
     analysis_type: str = (
         "comprehensive"  # comprehensive, technical, fundamental, sentiment
@@ -12,6 +14,7 @@ class AIAnalysisRequest(BaseModel):
 
 class AIAnalysisResponse(BaseModel):
     """Response schema for AI analysis"""
+
     stock_code: str
     analysis_type: str
     summary: str
@@ -22,6 +25,7 @@ class AIAnalysisResponse(BaseModel):
 
 class SentimentAnalysisRequest(BaseModel):
     """Request schema for sentiment analysis"""
+
     text: str
     source: str = "news"  # news, social_media, report
 
@@ -46,7 +50,7 @@ class PredictionResponse(BaseModel):
                 "model_version": "3",
                 "predicted_at": "2025-11-30T10:00:00Z",
                 "features_used": ["price", "volume", "rsi", "macd"],
-                "horizon": "1d"
+                "horizon": "1d",
             }
         }
 

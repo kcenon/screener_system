@@ -1,7 +1,8 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
-from sqlalchemy.orm import relationship
+
 from app.db.base import BaseModel
+from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class UserBehaviorEvent(BaseModel):
@@ -15,9 +16,7 @@ class UserBehaviorEvent(BaseModel):
         String, nullable=False, index=True
     )  # e.g., 'view_stock', 'click_recommendation'
     stock_code = Column(String, nullable=True, index=True)
-    metadata_ = Column(
-        "metadata", JSON, default={}
-    )
+    metadata_ = Column("metadata", JSON, default={})
     # 'metadata' is reserved in some contexts, using metadata_ mapped to metadata column
     # if possible, or just metadata
     # if possible, or just metadata

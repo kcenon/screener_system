@@ -1,6 +1,5 @@
 """Tests for WebSocket endpoints"""
 
-
 from datetime import datetime
 
 import pytest
@@ -587,8 +586,7 @@ class TestVerifyToken:
 
         # Create expired token
         token = create_access_token(
-            subject="test-user-123",
-            expires_delta=timedelta(seconds=-1)
+            subject="test-user-123", expires_delta=timedelta(seconds=-1)
         )
         result = await verify_token(token)
         assert result is None
@@ -759,8 +757,7 @@ class TestHandleRefreshToken:
             mock_cm.send_error = AsyncMock()
 
             await handle_refresh_token(
-                "test-conn",
-                {"type": "refresh_token", "refresh_token": access_token}
+                "test-conn", {"type": "refresh_token", "refresh_token": access_token}
             )
 
             mock_cm.send_error.assert_called()
@@ -776,8 +773,7 @@ class TestHandleRefreshToken:
             mock_cm.send_error = AsyncMock()
 
             await handle_refresh_token(
-                "test-conn",
-                {"type": "refresh_token", "refresh_token": "expired_token"}
+                "test-conn", {"type": "refresh_token", "refresh_token": "expired_token"}
             )
 
             mock_cm.send_error.assert_called()

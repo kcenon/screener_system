@@ -1,7 +1,8 @@
-import anthropic
-from typing import List, AsyncIterator
-from app.services.llm.base import LLMProvider, LLMMessage, LLMResponse
 import logging
+from typing import AsyncIterator, List
+
+import anthropic
+from app.services.llm.base import LLMMessage, LLMProvider, LLMResponse
 
 logger = logging.getLogger(__name__)
 
@@ -9,12 +10,7 @@ logger = logging.getLogger(__name__)
 class AnthropicProvider(LLMProvider):
     """Anthropic Claude provider implementation"""
 
-    def __init__(
-        self,
-        api_key: str,
-        model: str = "claude-3-opus-20240229",
-        **kwargs
-    ):
+    def __init__(self, api_key: str, model: str = "claude-3-opus-20240229", **kwargs):
         super().__init__(api_key, model, **kwargs)
         self.client = anthropic.AsyncAnthropic(api_key=api_key)
 
@@ -23,7 +19,7 @@ class AnthropicProvider(LLMProvider):
         messages: List[LLMMessage],
         temperature: float = 0.7,
         max_tokens: int = 2000,
-        **kwargs
+        **kwargs,
     ) -> LLMResponse:
         """Generate completion using Anthropic API"""
         try:
@@ -34,10 +30,7 @@ class AnthropicProvider(LLMProvider):
                 if msg.role == "system":
                     system_prompt = msg.content
                 else:
-                    filtered_messages.append({
-                        "role": msg.role,
-                        "content": msg.content
-                    })
+                    filtered_messages.append({"role": msg.role, "content": msg.content})
 
             response = await self.client.messages.create(
                 model=self.model,
@@ -45,7 +38,7 @@ class AnthropicProvider(LLMProvider):
                 messages=filtered_messages,
                 temperature=temperature,
                 max_tokens=max_tokens,
-                **kwargs
+                **kwargs,
             )
 
             return LLMResponse(
@@ -55,12 +48,11 @@ class AnthropicProvider(LLMProvider):
                     "input_tokens": response.usage.input_tokens,
                     "output_tokens": response.usage.output_tokens,
                     "total_tokens": (
-                        response.usage.input_tokens +
-                        response.usage.output_tokens
-                    )
+                        response.usage.input_tokens + response.usage.output_tokens
+                    ),
                 },
                 finish_reason=response.stop_reason,
-                provider="anthropic"
+                provider="anthropic",
             )
 
         except Exception as e:
@@ -72,16 +64,14 @@ class AnthropicProvider(LLMProvider):
         messages: List[LLMMessage],
         temperature: float = 0.7,
         max_tokens: int = 2000,
-        **kwargs
+        **kwargs,
     ) -> AsyncIterator[str]:
         """Generate completion with streaming"""
-        system_message = next(
-            (m.content for m in messages if m.role == "system"),
-            None
-        )
+        system_message = next((m.content for m in messages if m.role == "system"), None)
         conversation = [
             {"role": m.role, "content": m.content}
-            for m in messages if m.role != "system"
+            for m in messages
+            if m.role != "system"
         ]
 
         stream_kwargs = {
@@ -91,7 +81,7 @@ class AnthropicProvider(LLMProvider):
             "max_tokens": max_tokens,
             **kwargs,
         }
-        
+
         if system_message:
             stream_kwargs["system"] = system_message
 
@@ -104,8 +94,7 @@ class AnthropicProvider(LLMProvider):
         try:
             # Simple test message
             await self.generate(
-                messages=[LLMMessage(role="user", content="Hello")],
-                max_tokens=10
+                messages=[LLMMessage(role="user", content="Hello")], max_tokens=10
             )
             return True
         except Exception:

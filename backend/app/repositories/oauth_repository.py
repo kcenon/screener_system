@@ -3,10 +3,9 @@
 from datetime import datetime, timezone
 from typing import List, Optional
 
+from app.db.models import OAuthState, SocialAccount
 from sqlalchemy import and_, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.db.models import OAuthState, SocialAccount
 
 
 class SocialAccountRepository:
@@ -96,9 +95,7 @@ class SocialAccountRepository:
         from sqlalchemy import func
 
         result = await self.session.execute(
-            select(func.count(SocialAccount.id)).where(
-                SocialAccount.user_id == user_id
-            )
+            select(func.count(SocialAccount.id)).where(SocialAccount.user_id == user_id)
         )
         return result.scalar_one()
 

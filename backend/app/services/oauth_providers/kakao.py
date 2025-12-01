@@ -1,6 +1,7 @@
 """Kakao OAuth provider implementation"""
 
-from app.schemas.oauth import OAuthProviderEnum, OAuthTokenResponse, OAuthUserInfo
+from app.schemas.oauth import (OAuthProviderEnum, OAuthTokenResponse,
+                               OAuthUserInfo)
 
 from .base import BaseOAuthProvider
 

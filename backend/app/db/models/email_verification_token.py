@@ -3,10 +3,9 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
+from app.db.base import BaseModel
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-
-from app.db.base import BaseModel
 
 
 class EmailVerificationToken(BaseModel):
@@ -29,9 +28,7 @@ class EmailVerificationToken(BaseModel):
     used_at = Column(DateTime(timezone=True))
 
     # Relationships
-    user = relationship(
-        "User", backref="verification_tokens", lazy="select"
-    )
+    user = relationship("User", backref="verification_tokens", lazy="select")
 
     def __repr__(self) -> str:
         """String representation"""

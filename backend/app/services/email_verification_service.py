@@ -2,13 +2,11 @@
 
 import secrets
 
-
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.exceptions import BadRequestException, NotFoundException
 from app.db.models import EmailVerificationToken
 from app.repositories import UserRepository
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class EmailVerificationService:
@@ -171,9 +169,7 @@ class EmailVerificationService:
                 user.email_verified_at.isoformat() if user.email_verified_at else None
             ),
             "pending_tokens_count": len(pending_tokens),
-            "can_resend": len(
-                [t for t in pending_tokens if not t.is_expired]
-            )
+            "can_resend": len([t for t in pending_tokens if not t.is_expired])
             < 3,  # Rate limit check
         }
 

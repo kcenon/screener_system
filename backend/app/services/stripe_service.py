@@ -120,6 +120,7 @@ class StripeService:
                 )
                 # Unset other defaults
                 from sqlalchemy import update
+
                 await self.session.execute(
                     update(PaymentMethod)
                     .where(PaymentMethod.user_id == user.id)
@@ -320,8 +321,7 @@ class StripeService:
             await self.session.flush()
 
             logger.info(
-                f"Canceled subscription {subscription.id} "
-                f"(immediate={immediate})"
+                f"Canceled subscription {subscription.id} " f"(immediate={immediate})"
             )
 
             return subscription
@@ -384,6 +384,7 @@ class StripeService:
 
             # Update user tier
             from sqlalchemy import select
+
             result = await self.session.execute(
                 select(User).where(User.id == subscription.user_id)
             )

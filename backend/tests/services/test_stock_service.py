@@ -39,6 +39,7 @@ class TestStockService:
     def sample_stock(self):
         """Create sample stock object"""
         from datetime import datetime, timezone
+
         now = datetime.now(timezone.utc)
         return Stock(
             code="005930",
@@ -71,6 +72,7 @@ class TestStockService:
     def sample_indicators(self):
         """Create sample calculated indicators object"""
         from datetime import datetime, timezone
+
         now = datetime.now(timezone.utc)
         return CalculatedIndicator(
             stock_code="005930",
@@ -267,9 +269,7 @@ class TestStockService:
         service.stock_repo.search_stocks.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_search_stocks_cache_miss(
-        self, service, mock_cache, sample_stock
-    ):
+    async def test_search_stocks_cache_miss(self, service, mock_cache, sample_stock):
         """Test search_stocks fetches from repository on cache miss"""
         # Setup cache miss
         mock_cache.get.return_value = None

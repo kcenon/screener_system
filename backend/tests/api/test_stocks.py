@@ -2,15 +2,13 @@
 
 from datetime import date, datetime, timedelta
 
-
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.db.models.daily_price import DailyPrice
 from app.db.models.financial_statement import FinancialStatement
 from app.db.models.stock import Stock
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 @pytest_asyncio.fixture

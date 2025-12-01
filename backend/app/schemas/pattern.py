@@ -1,5 +1,5 @@
-from typing import List, Dict, Any
 from datetime import datetime
+from typing import Any, Dict, List
 
 from pydantic import BaseModel
 
@@ -14,12 +14,14 @@ class PatternBase(BaseModel):
 
 class PatternRecognitionRequest(BaseModel):
     """Request schema for pattern recognition"""
+
     stock_code: str
     days: int = 60
 
 
 class PatternRecognitionResponse(BaseModel):
     """Response schema for pattern recognition"""
+
     stock_code: str
     patterns: List[Dict[str, Any]]
     summary: str
@@ -28,6 +30,7 @@ class PatternRecognitionResponse(BaseModel):
 
 class PatternDetail(BaseModel):
     """Detailed schema for a recognized pattern"""
+
     name: str
     confidence: float
     description: str

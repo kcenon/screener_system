@@ -102,6 +102,7 @@ class TestRedisPubSubDisconnect:
         self, pubsub_client: RedisPubSubClient
     ):
         """Test disconnect cancels listener task"""
+
         # Create a mock task that is both cancellable and awaitable
         # Real tasks raise CancelledError when awaited after cancel()
         class CancelledTaskMock:

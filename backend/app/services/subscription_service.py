@@ -255,9 +255,11 @@ class SubscriptionService:
             "feature_name": feature,
             "has_access": has_access,
             "required_plan": required_plan,
-            "message": None
-            if has_access
-            else f"Upgrade to {required_plan or 'Premium'} to access this feature",
+            "message": (
+                None
+                if has_access
+                else f"Upgrade to {required_plan or 'Premium'} to access this feature"
+            ),
         }
 
     # =========================================================================
@@ -386,13 +388,17 @@ class SubscriptionService:
             limit_value = limits.get(limit_name, 0)
             current = daily_usage.get(resource_type, 0)
 
-            usage_list.append({
-                "resource_type": resource_type,
-                "current_usage": current,
-                "limit_value": limit_value,
-                "has_access": limit_value == -1 or current < limit_value,
-                "remaining": -1 if limit_value == -1 else max(0, limit_value - current),
-            })
+            usage_list.append(
+                {
+                    "resource_type": resource_type,
+                    "current_usage": current,
+                    "limit_value": limit_value,
+                    "has_access": limit_value == -1 or current < limit_value,
+                    "remaining": (
+                        -1 if limit_value == -1 else max(0, limit_value - current)
+                    ),
+                }
+            )
 
         return {
             "user_id": user_id,

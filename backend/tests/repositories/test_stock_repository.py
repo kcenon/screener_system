@@ -216,9 +216,7 @@ class TestStockRepository:
     # ========================================================================
 
     @pytest.mark.asyncio
-    async def test_search_stocks_by_name(
-        self, repository, mock_session, sample_stock
-    ):
+    async def test_search_stocks_by_name(self, repository, mock_session, sample_stock):
         """Test search_stocks by stock name"""
         # Setup mock
         mock_result = Mock()
@@ -234,9 +232,7 @@ class TestStockRepository:
         assert mock_session.execute.called
 
     @pytest.mark.asyncio
-    async def test_search_stocks_by_code(
-        self, repository, mock_session, sample_stock
-    ):
+    async def test_search_stocks_by_code(self, repository, mock_session, sample_stock):
         """Test search_stocks by stock code"""
         # Setup mock
         mock_result = Mock()
@@ -286,9 +282,7 @@ class TestStockRepository:
     # ========================================================================
 
     @pytest.mark.asyncio
-    async def test_get_latest_price_found(
-        self, repository, mock_session, sample_price
-    ):
+    async def test_get_latest_price_found(self, repository, mock_session, sample_price):
         """Test get_latest_price when price exists"""
         # Setup mock
         mock_result = Mock()
@@ -358,6 +352,7 @@ class TestStockRepository:
         """Test get_financials retrieves financial statements"""
         # Setup mock
         from app.db.models import FinancialStatement
+
         mock_financial = FinancialStatement(
             stock_code="005930",
             fiscal_year=2024,

@@ -483,7 +483,7 @@ class PortfolioService:
             return None
 
         unrealized_gain = total_value - total_cost
-        return_percent = (unrealized_gain / total_cost * 100)
+        return_percent = unrealized_gain / total_cost * 100
 
         return PortfolioPerformance(
             portfolio_id=portfolio_id,
@@ -530,12 +530,14 @@ class PortfolioService:
             value = Decimal(str(holding.shares)) * Decimal(str(stock.current_price))
             total_value += value
 
-            by_stock.append({
-                "symbol": holding.stock_symbol,
-                "name": stock.name_kr,
-                "value": float(value),
-                "percent": 0,  # Will calculate after total
-            })
+            by_stock.append(
+                {
+                    "symbol": holding.stock_symbol,
+                    "name": stock.name_kr,
+                    "value": float(value),
+                    "percent": 0,  # Will calculate after total
+                }
+            )
 
             sector = stock.sector or "Unknown"
             by_sector[sector] += value
@@ -543,7 +545,7 @@ class PortfolioService:
         # Calculate percentages
         if total_value > 0:
             for item in by_stock:
-                item["percent"] = (Decimal(str(item["value"])) / total_value * 100)
+                item["percent"] = Decimal(str(item["value"])) / total_value * 100
                 item["percent"] = float(item["percent"])
 
         by_sector_list = [
@@ -652,9 +654,11 @@ class PortfolioService:
                 stock_symbol=data.stock_symbol,
                 shares=data.shares,
                 average_cost=data.price,
-                first_purchase_date=data.transaction_date.date()
-                if data.transaction_date
-                else datetime.now().date(),
+                first_purchase_date=(
+                    data.transaction_date.date()
+                    if data.transaction_date
+                    else datetime.now().date()
+                ),
                 last_update_date=datetime.now(),
             )
             holding = await self.holding_repo.create(holding)

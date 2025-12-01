@@ -1,11 +1,11 @@
+from typing import Any, Dict, Optional, Tuple
+
 import joblib
 import lightgbm as lgb
 import numpy as np
 import optuna
 import pandas as pd
 import xgboost as xgb
-from typing import Any, Dict, Optional, Tuple
-
 from sklearn.metrics import accuracy_score, classification_report, f1_score
 from sklearn.model_selection import TimeSeriesSplit
 
@@ -63,10 +63,7 @@ class StockPredictionModel:
         future_return = df[target_col].shift(-horizon) / df[target_col] - 1
 
         # Generate labels
-        conditions = [
-            (future_return < -threshold),
-            (future_return > threshold)
-        ]
+        conditions = [(future_return < -threshold), (future_return > threshold)]
         choices = [0, 2]  # 0: Down, 2: Up
         labels = np.select(conditions, choices, default=1)  # 1: Flat
 

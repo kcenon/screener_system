@@ -114,9 +114,7 @@ class MarketRepository:
     # Market Breadth Operations
     # ========================================================================
 
-    async def get_market_breadth(
-        self, market: Optional[str] = None
-    ) -> Dict[str, int]:
+    async def get_market_breadth(self, market: Optional[str] = None) -> Dict[str, int]:
         """
         Get market breadth indicators (advancing/declining/unchanged counts)
 
@@ -229,10 +227,9 @@ class MarketRepository:
         )
 
         # Subquery for prices N days ago
-        cutoff_date = (
-            select(func.max(DailyPrice.trade_date) - timedelta(days=timeframe_days))
-            .scalar_subquery()
-        )
+        cutoff_date = select(
+            func.max(DailyPrice.trade_date) - timedelta(days=timeframe_days)
+        ).scalar_subquery()
 
         previous_prices = (
             select(

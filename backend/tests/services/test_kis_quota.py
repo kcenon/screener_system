@@ -4,13 +4,9 @@ import asyncio
 from unittest.mock import patch
 
 import pytest
-
 from app.core.cache import cache_manager
-from app.services.kis_quota import (
-    CircuitState,
-    KISQuotaManager,
-    RequestPriority,
-)
+from app.services.kis_quota import (CircuitState, KISQuotaManager,
+                                    RequestPriority)
 
 
 @pytest.fixture
@@ -250,8 +246,9 @@ class TestPriorityQueue:
             RequestPriority.MEDIUM,
         ]:
             for i in range(3):
-                from app.services.kis_quota import QueuedRequest
                 import time
+
+                from app.services.kis_quota import QueuedRequest
 
                 req = QueuedRequest(
                     priority=priority,

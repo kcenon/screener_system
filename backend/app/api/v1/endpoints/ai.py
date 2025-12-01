@@ -1,18 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+import logging
 from typing import List
-from app.schemas.ai import (
-    PredictionResponse,
-    BatchPredictionRequest,
-    ModelInfoResponse,
-    PortfolioAnalysisResponse,
-    PortfolioAnalysisRequest,
-)
+
+from app.api.dependencies import get_ai_service, get_current_user
+from app.schemas.ai import (BatchPredictionRequest, ModelInfoResponse,
+                            PortfolioAnalysisRequest,
+                            PortfolioAnalysisResponse, PredictionResponse)
+from app.schemas.pattern import (AlertConfigCreate, AlertConfigResponse,
+                                 PatternResponse)
+from app.services.ai_service import AIService
 from app.services.ml_service import model_service
 from app.services.pattern_recognition_service import pattern_service
-from app.schemas.pattern import PatternResponse, AlertConfigCreate, AlertConfigResponse
-from app.services.ai_service import AIService
-from app.api.dependencies import get_current_user, get_ai_service
-import logging
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/ai", tags=["ai"])
@@ -22,7 +20,7 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 async def predict_stock(
     stock_code: str,
     horizon: str = Query("1d", pattern="^(1d|5d|20d)$"),
-    current_user=Depends(get_current_user)  # Require authentication
+    current_user=Depends(get_current_user),  # Require authentication
 ):
     """
     Get AI prediction for next trading day movement
@@ -48,7 +46,7 @@ async def predict_stock(
 async def explain_portfolio(
     request: PortfolioAnalysisRequest,
     current_user=Depends(get_current_user),
-    service: AIService = Depends(get_ai_service)
+    service: AIService = Depends(get_ai_service),
 ):
     """
     Explain the performance and characteristics of a user's portfolio.
@@ -67,8 +65,7 @@ async def explain_portfolio(
 
 @router.post("/predict/batch", response_model=List[PredictionResponse])
 async def predict_batch(
-    request: BatchPredictionRequest,
-    current_user=Depends(get_current_user)
+    request: BatchPredictionRequest, current_user=Depends(get_current_user)
 ):
     """
     Get AI predictions for multiple stocks (max 100)
@@ -85,7 +82,7 @@ async def predict_batch(
     if len(request.stock_codes) > 100:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Batch size exceeds limit (max 100 stocks)"
+            detail="Batch size exceeds limit (max 100 stocks)",
         )
 
     predictions = await model_service.predict_batch(
@@ -110,7 +107,7 @@ async def get_patterns(
     stock_code: str,
     timeframe: str = Query("1D", regex="^(1D|1W|1M)$"),
     min_confidence: float = Query(0.7, ge=0.0, le=1.0),
-    current_user=Depends(get_current_user)
+    current_user=Depends(get_current_user),
 ):
     """
     Retrieve detected chart patterns for a stock
@@ -120,8 +117,7 @@ async def get_patterns(
 
 @router.post("/patterns/alerts", response_model=AlertConfigResponse)
 async def create_pattern_alert(
-    config: AlertConfigCreate,
-    current_user=Depends(get_current_user)
+    config: AlertConfigCreate, current_user=Depends(get_current_user)
 ):
     """
     Configure pattern detection alert

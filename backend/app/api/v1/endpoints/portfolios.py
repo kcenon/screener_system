@@ -2,28 +2,19 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.api.dependencies import CurrentUser
 from app.db.session import get_db
-from app.schemas.portfolio import (
-    HoldingCreate,
-    HoldingListResponse,
-    HoldingResponse,
-    HoldingUpdate,
-    PortfolioAllocation,
-    PortfolioCreate,
-    PortfolioListResponse,
-    PortfolioPerformance,
-    PortfolioResponse,
-    PortfolioSummary,
-    PortfolioUpdate,
-    TransactionCreate,
-    TransactionListResponse,
-    TransactionResponse,
-)
+from app.schemas.portfolio import (HoldingCreate, HoldingListResponse,
+                                   HoldingResponse, HoldingUpdate,
+                                   PortfolioAllocation, PortfolioCreate,
+                                   PortfolioListResponse, PortfolioPerformance,
+                                   PortfolioResponse, PortfolioSummary,
+                                   PortfolioUpdate, TransactionCreate,
+                                   TransactionListResponse,
+                                   TransactionResponse)
 from app.services.portfolio_service import PortfolioService
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/portfolios", tags=["portfolios"])
 
@@ -48,9 +39,7 @@ def get_user_tier(current_user: CurrentUser) -> str:
 @router.get("/", response_model=PortfolioListResponse, status_code=status.HTTP_200_OK)
 async def list_portfolios(
     current_user: CurrentUser,
-    portfolio_service: Annotated[
-        PortfolioService, Depends(get_portfolio_service)
-    ],
+    portfolio_service: Annotated[PortfolioService, Depends(get_portfolio_service)],
     skip: int = Query(0, ge=0, description="Number of items to skip"),
     limit: int = Query(
         10, ge=1, le=100, description="Maximum number of items to return"
@@ -138,16 +127,12 @@ async def create_portfolio(
 
 
 @router.get(
-    "/{portfolio_id}",
-    response_model=PortfolioSummary,
-    status_code=status.HTTP_200_OK
+    "/{portfolio_id}", response_model=PortfolioSummary, status_code=status.HTTP_200_OK
 )
 async def get_portfolio(
     portfolio_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    portfolio_service: Annotated[
-        PortfolioService, Depends(get_portfolio_service)
-    ],
+    portfolio_service: Annotated[PortfolioService, Depends(get_portfolio_service)],
 ) -> PortfolioSummary:
     """
     Get portfolio details with holdings and performance
@@ -227,17 +212,13 @@ async def get_portfolio(
 
 
 @router.put(
-    "/{portfolio_id}",
-    response_model=PortfolioResponse,
-    status_code=status.HTTP_200_OK
+    "/{portfolio_id}", response_model=PortfolioResponse, status_code=status.HTTP_200_OK
 )
 async def update_portfolio(
     portfolio_id: Annotated[int, Path(gt=0)],
     data: PortfolioUpdate,
     current_user: CurrentUser,
-    portfolio_service: Annotated[
-        PortfolioService, Depends(get_portfolio_service)
-    ],
+    portfolio_service: Annotated[PortfolioService, Depends(get_portfolio_service)],
 ) -> PortfolioResponse:
     """
     Update portfolio information
@@ -289,9 +270,7 @@ async def update_portfolio(
 async def delete_portfolio(
     portfolio_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    portfolio_service: Annotated[
-        PortfolioService, Depends(get_portfolio_service)
-    ],
+    portfolio_service: Annotated[PortfolioService, Depends(get_portfolio_service)],
 ) -> None:
     """
     Delete a portfolio
@@ -462,9 +441,9 @@ async def list_holdings(
     holdings = await service.get_portfolio_holdings(portfolio_id=portfolio_id)
 
     total_cost = sum(h.total_cost for h in holdings)
-    total_value = sum(
-        h.current_value for h in holdings if h.current_value
-    ) if holdings else None
+    total_value = (
+        sum(h.current_value for h in holdings if h.current_value) if holdings else None
+    )
     total_gain = (total_value - total_cost) if total_value else None
 
     return HoldingListResponse(
@@ -579,16 +558,13 @@ async def update_holding(
 
 
 @router.delete(
-    "/{portfolio_id}/holdings/{holding_id}",
-    status_code=status.HTTP_204_NO_CONTENT
+    "/{portfolio_id}/holdings/{holding_id}", status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_holding(
     portfolio_id: Annotated[int, Path(gt=0)],
     holding_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    portfolio_service: Annotated[
-        PortfolioService, Depends(get_portfolio_service)
-    ],
+    portfolio_service: Annotated[PortfolioService, Depends(get_portfolio_service)],
 ) -> None:
     """
     Delete a holding
@@ -603,9 +579,7 @@ async def delete_holding(
     - 404: Portfolio or holding not found or not owned by user
     """
     success = await portfolio_service.delete_holding(
-        holding_id=holding_id,
-        portfolio_id=portfolio_id,
-        user_id=current_user.id
+        holding_id=holding_id, portfolio_id=portfolio_id, user_id=current_user.id
     )
 
     if not success:
@@ -756,9 +730,7 @@ async def delete_transaction(
     portfolio_id: Annotated[int, Path(gt=0)],
     transaction_id: Annotated[int, Path(gt=0)],
     current_user: CurrentUser,
-    portfolio_service: Annotated[
-        PortfolioService, Depends(get_portfolio_service)
-    ],
+    portfolio_service: Annotated[PortfolioService, Depends(get_portfolio_service)],
 ) -> None:
     """
     Delete a transaction
@@ -778,7 +750,7 @@ async def delete_transaction(
     success = await portfolio_service.delete_transaction(
         transaction_id=transaction_id,
         portfolio_id=portfolio_id,
-        user_id=current_user.id
+        user_id=current_user.id,
     )
 
     if not success:

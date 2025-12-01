@@ -1,11 +1,9 @@
 """Daily price database model"""
 
-
-from sqlalchemy import (CheckConstraint, Column, Date, ForeignKey,
-                        Integer, String)
-from sqlalchemy.orm import relationship
-
 from app.db.base import Base
+from sqlalchemy import (CheckConstraint, Column, Date, ForeignKey, Integer,
+                        String)
+from sqlalchemy.orm import relationship
 
 
 class DailyPrice(Base):

@@ -2,13 +2,12 @@
 
 from typing import Callable, Dict, Optional
 
-from fastapi import HTTPException, Request, Response, status
-from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
-
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.logging import logger
+from fastapi import HTTPException, Request, Response, status
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 # Lua script for atomic incr+expire operation
 # This ensures that the counter is incremented and TTL is set atomically,
@@ -71,9 +70,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return True, 0
 
         # Atomically increment counter and set TTL
-        current = await cache_manager.redis.eval(
-            RATE_LIMIT_SCRIPT, 1, key, window
-        )
+        current = await cache_manager.redis.eval(RATE_LIMIT_SCRIPT, 1, key, window)
 
         # Check if limit exceeded
         if current > limit:

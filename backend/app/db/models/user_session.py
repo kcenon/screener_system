@@ -4,13 +4,12 @@ from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 
+from app.db.base import Base, utc_now
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
                         Text)
 # from sqlalchemy.dialects.postgresql import INET
 # from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
 from sqlalchemy.orm import relationship
-
-from app.db.base import Base, utc_now
 
 
 class UserSession(Base):

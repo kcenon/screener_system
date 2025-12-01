@@ -1,8 +1,9 @@
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from httpx import AsyncClient, ASGITransport
-from app.main import app
-from unittest.mock import patch, AsyncMock, MagicMock
 from app.api.dependencies import get_current_user
+from app.main import app
+from httpx import ASGITransport, AsyncClient
 
 # Mock User
 mock_user = MagicMock()
@@ -25,16 +26,15 @@ async def client_no_db():
     app.dependency_overrides[get_current_user] = override_get_current_user
 
     # Mock Redis connection in lifespan
-    with patch("app.core.cache.cache_manager.connect", new_callable=AsyncMock), \
-            patch("app.core.cache.cache_manager.disconnect", new_callable=AsyncMock), \
-            patch(
-                "app.core.websocket.connection_manager.initialize_redis",
-                new_callable=AsyncMock,
-            ), \
-            patch(
-                "app.core.redis_pubsub.redis_pubsub.disconnect",
-                new_callable=AsyncMock,
-            ):
+    with patch("app.core.cache.cache_manager.connect", new_callable=AsyncMock), patch(
+        "app.core.cache.cache_manager.disconnect", new_callable=AsyncMock
+    ), patch(
+        "app.core.websocket.connection_manager.initialize_redis",
+        new_callable=AsyncMock,
+    ), patch(
+        "app.core.redis_pubsub.redis_pubsub.disconnect",
+        new_callable=AsyncMock,
+    ):
 
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -55,15 +55,13 @@ async def test_predict_endpoint(client_no_db):
         "model_version": "1",
         "predicted_at": "2025-11-30T10:00:00",
         "features_used": ["f1"],
-        "horizon": "1d"
+        "horizon": "1d",
     }
 
     with patch(
         "app.services.ml_service.model_service.predict", return_value=mock_prediction
     ):
-        response = await client_no_db.get(
-            "/v1/ai/predict/005930"
-        )
+        response = await client_no_db.get("/v1/ai/predict/005930")
 
         assert response.status_code == 200
         data = response.json()
@@ -94,18 +92,12 @@ async def test_batch_prediction(client_no_db):
             "horizon": "1d",
         },
     ]
-    payload = {
-        "stock_codes": ["005930", "000660"],
-        "horizon": "1d"
-    }
+    payload = {"stock_codes": ["005930", "000660"], "horizon": "1d"}
     with patch(
         "app.services.ml_service.model_service.predict_batch",
         return_value=mock_predictions,
     ):
-        response = await client_no_db.post(
-            "/v1/ai/predict/batch",
-            json=payload
-        )
+        response = await client_no_db.post("/v1/ai/predict/batch", json=payload)
 
         assert response.status_code == 200
         data = response.json()
@@ -125,9 +117,7 @@ async def test_model_info(client_no_db):
     with patch(
         "app.services.ml_service.model_service.get_model_info", return_value=mock_info
     ):
-        response = await client_no_db.get(
-            "/v1/ai/model/info"
-        )
+        response = await client_no_db.get("/v1/ai/model/info")
 
         assert response.status_code == 200
         data = response.json()

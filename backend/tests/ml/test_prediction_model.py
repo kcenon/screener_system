@@ -1,7 +1,8 @@
-import pytest
-import pandas as pd
-import numpy as np
 import os
+
+import numpy as np
+import pandas as pd
+import pytest
 from app.ml.prediction_model import StockPredictionModel
 
 
@@ -12,9 +13,8 @@ def sample_data():
     data = {
         "calculation_date": dates,
         "stock_code": ["005930"] * 100,
-        "close": np.linspace(100, 200, 100) + np.random.normal(
-            0, 5, 100
-        ),  # Upward trend
+        "close": np.linspace(100, 200, 100)
+        + np.random.normal(0, 5, 100),  # Upward trend
         "feature1": np.random.rand(100),
         "feature2": np.random.rand(100),
     }

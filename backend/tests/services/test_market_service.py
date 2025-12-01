@@ -222,9 +222,7 @@ class TestGetMarketBreadth:
             assert result["sentiment"] == "neutral"
 
     @pytest.mark.asyncio
-    async def test_get_market_breadth_zero_declining(
-        self, market_service, mock_cache
-    ):
+    async def test_get_market_breadth_zero_declining(self, market_service, mock_cache):
         """Test with zero declining stocks (avoid division by zero)"""
         mock_cache.get.return_value = None
 
@@ -238,9 +236,7 @@ class TestGetMarketBreadth:
             assert result["ad_ratio"] == 0.0
 
     @pytest.mark.asyncio
-    async def test_get_market_breadth_invalid_market(
-        self, market_service, mock_cache
-    ):
+    async def test_get_market_breadth_invalid_market(self, market_service, mock_cache):
         """Test invalid market defaults to ALL"""
         mock_cache.get.return_value = None
 
@@ -258,9 +254,7 @@ class TestGetSectorPerformance:
     """Test get_sector_performance method"""
 
     @pytest.mark.asyncio
-    async def test_get_sector_performance_from_cache(
-        self, market_service, mock_cache
-    ):
+    async def test_get_sector_performance_from_cache(self, market_service, mock_cache):
         """Test returning cached sector data"""
         cached_data = {
             "sectors": [{"code": "technology", "name": "기술", "change_percent": 1.5}],

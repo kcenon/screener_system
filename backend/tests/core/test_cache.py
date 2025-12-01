@@ -4,7 +4,6 @@ import json
 from unittest.mock import AsyncMock, patch
 
 import pytest
-
 from app.core.cache import CacheManager
 
 
@@ -117,9 +116,7 @@ class TestCacheManager:
         result = await cache_manager.set("test_key", test_data, ttl=ttl)
 
         assert result is True
-        mock_redis.setex.assert_called_once_with(
-            "test_key", ttl, json.dumps(test_data)
-        )
+        mock_redis.setex.assert_called_once_with("test_key", ttl, json.dumps(test_data))
 
     @pytest.mark.asyncio
     async def test_set_with_non_serializable_value(self, cache_manager):

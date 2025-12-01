@@ -3,10 +3,10 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
-from sqlalchemy import Boolean, Column, DateTime, String, Text, JSON
-# from sqlalchemy.dialects.postgresql import JSONB
-
 from app.db.base import BaseModel
+from sqlalchemy import JSON, Boolean, Column, DateTime, String, Text
+
+# from sqlalchemy.dialects.postgresql import JSONB
 
 
 class StripeWebhookEvent(BaseModel):

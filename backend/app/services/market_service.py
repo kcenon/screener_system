@@ -29,10 +29,9 @@ Example:
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.cache import CacheManager
 from app.repositories import MarketRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class MarketService:

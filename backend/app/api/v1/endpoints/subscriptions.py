@@ -4,37 +4,22 @@
 # from typing import Annotated, List  # Unused
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
-
-from app.api.dependencies import (
-    CurrentActiveUser,
-    get_subscription_service,
-)
+from app.api.dependencies import CurrentActiveUser, get_subscription_service
 from app.core.exceptions import BadRequestException, NotFoundException
-from app.schemas import (
-    AddPaymentMethodRequest,
-    BillingPortalSessionResponse,
-    CancelSubscriptionRequest,
-    CheckoutSessionResponse,
-    CreateBillingPortalSessionRequest,
-    CreateCheckoutSessionRequest,
-    FeatureAccessCheck,
-    FeatureAccessListResponse,
-    PaymentHistoryResponse,
-    PaymentMethodResponse,
-    PaymentMethodsListResponse,
-    PaymentResponse,
-    RetryPaymentRequest,
-    SubscribeRequest,
-    SubscriptionActionResponse,
-    SubscriptionPlanResponse,
-    SubscriptionPlansListResponse,
-    SubscriptionResponse,
-    UpgradeSubscriptionRequest,
-    UsageLimitCheck,
-    UsageStatsResponse,
-)
+from app.schemas import (AddPaymentMethodRequest, BillingPortalSessionResponse,
+                         CancelSubscriptionRequest, CheckoutSessionResponse,
+                         CreateBillingPortalSessionRequest,
+                         CreateCheckoutSessionRequest, FeatureAccessCheck,
+                         FeatureAccessListResponse, PaymentHistoryResponse,
+                         PaymentMethodResponse, PaymentMethodsListResponse,
+                         PaymentResponse, RetryPaymentRequest,
+                         SubscribeRequest, SubscriptionActionResponse,
+                         SubscriptionPlanResponse,
+                         SubscriptionPlansListResponse, SubscriptionResponse,
+                         UpgradeSubscriptionRequest, UsageLimitCheck,
+                         UsageStatsResponse)
 from app.services import SubscriptionService
+from fastapi import APIRouter, Depends, HTTPException, status
 
 router = APIRouter(prefix="/subscriptions", tags=["Subscriptions"])
 
@@ -125,6 +110,7 @@ async def get_current_subscription(
 
     # Return free plan info for users without subscription
     from datetime import datetime, timezone
+
     return SubscriptionResponse(
         id=0,
         plan_name=plan.name,
@@ -173,9 +159,8 @@ async def subscribe(
 
         return SubscriptionActionResponse(
             success=True,
-            message="Subscription created successfully" + (
-                ". Please complete payment." if client_secret else ""
-            ),
+            message="Subscription created successfully"
+            + (". Please complete payment." if client_secret else ""),
             subscription=SubscriptionResponse(
                 id=subscription.id,
                 plan_name=plan.name,
@@ -545,9 +530,7 @@ async def get_payment_history(
 ) -> PaymentHistoryResponse:
     """Get payment history"""
     payments, total_count, total_amount = (
-        await subscription_service.get_payment_history(
-            current_user.id, limit, offset
-        )
+        await subscription_service.get_payment_history(current_user.id, limit, offset)
     )
 
     return PaymentHistoryResponse(
@@ -673,11 +656,9 @@ async def create_billing_portal_session(
 ) -> BillingPortalSessionResponse:
     """Create Stripe Billing Portal session"""
     try:
-        url = (
-            await subscription_service.stripe_service.create_billing_portal_session(
-                user=current_user,
-                return_url=request.return_url,
-            )
+        url = await subscription_service.stripe_service.create_billing_portal_session(
+            user=current_user,
+            return_url=request.return_url,
         )
         return BillingPortalSessionResponse(url=url)
 

@@ -2,10 +2,9 @@
 
 from typing import Any, Dict, List, Set, Tuple
 
+from app.schemas.screening import FilterRange, ScreeningFilters
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.schemas.screening import FilterRange, ScreeningFilters
 
 
 class ScreeningRepository:

@@ -1,8 +1,8 @@
-
-import pytest
-import numpy as np
 import sys
 from unittest.mock import MagicMock, patch
+
+import numpy as np
+import pytest
 
 
 class TestPatternRecognitionCNN:
@@ -31,7 +31,7 @@ class TestPatternRecognitionCNN:
             mock_model.layers = [MagicMock(), MagicMock()]
             # Mock output layer
             mock_model.layers[-1].units = 10
-            mock_model.layers[-1].activation.__name__ = 'softmax'
+            mock_model.layers[-1].activation.__name__ = "softmax"
 
             # Mock predict return
             mock_model.predict.return_value = np.zeros((1, 10))
@@ -39,7 +39,7 @@ class TestPatternRecognitionCNN:
 
             # Mock fit return
             mock_history = MagicMock()
-            mock_history.history = {'loss': [0.1], 'accuracy': [0.9]}
+            mock_history.history = {"loss": [0.1], "accuracy": [0.9]}
             mock_model.fit.return_value = mock_history
 
             # Mock evaluate return
@@ -52,7 +52,7 @@ class TestPatternRecognitionCNN:
             # Mock ResNet50
             mock_apps.ResNet50.return_value = MagicMock()
 
-            cnn = PatternRecognitionCNN(num_classes=10, architecture='resnet50')
+            cnn = PatternRecognitionCNN(num_classes=10, architecture="resnet50")
             cnn.model = mock_model
 
             yield cnn
@@ -64,7 +64,7 @@ class TestPatternRecognitionCNN:
 
         # Check output layer
         assert model.model.layers[-1].units == 10
-        assert model.model.layers[-1].activation.__name__ == 'softmax'
+        assert model.model.layers[-1].activation.__name__ == "softmax"
 
     def test_model_output_shape(self, model):
         """Test model output has correct shape"""
@@ -90,5 +90,5 @@ class TestPatternRecognitionCNN:
             X_train, y_train, epochs=1, batch_size=2, mlflow_tracking=False
         )
 
-        assert 'loss' in history.history
-        assert 'accuracy' in history.history
+        assert "loss" in history.history
+        assert "accuracy" in history.history

@@ -22,12 +22,11 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
 
+from app.db.models import Alert, DailyPrice, Notification
+from app.services.notification_service import NotificationService
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
-
-from app.db.models import Alert, DailyPrice, Notification
-from app.services.notification_service import NotificationService
 
 logger = logging.getLogger(__name__)
 
@@ -418,10 +417,12 @@ class AlertEngine:
             .where(
                 and_(
                     Alert.is_active == True,  # noqa: E712
-                    Alert.alert_type.in_([
-                        "CHANGE_PERCENT_ABOVE",
-                        "CHANGE_PERCENT_BELOW",
-                    ]),
+                    Alert.alert_type.in_(
+                        [
+                            "CHANGE_PERCENT_ABOVE",
+                            "CHANGE_PERCENT_BELOW",
+                        ]
+                    ),
                 )
             )
             .limit(self.MAX_ALERTS_PER_CHECK)

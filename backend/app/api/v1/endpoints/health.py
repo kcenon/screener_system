@@ -1,12 +1,11 @@
 """Health check endpoints"""
 
-from fastapi import APIRouter, Depends, status, Response
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
-from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
-
 from app.core.cache import CacheManager, get_cache
 from app.db.session import get_db
+from fastapi import APIRouter, Depends, Response, status
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(tags=["health"])
 
@@ -112,7 +111,4 @@ async def metrics():
     Returns:
         Response: Prometheus metrics in text format
     """
-    return Response(
-        content=generate_latest(),
-        media_type=CONTENT_TYPE_LATEST
-    )
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)

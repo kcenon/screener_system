@@ -4,13 +4,12 @@ import functools
 import logging
 from typing import Callable, List, Optional
 
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.api.dependencies import get_current_active_user
 from app.db.models import User
 from app.db.session import get_db
 from app.services import SubscriptionService
+from fastapi import Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -227,12 +226,15 @@ def require_subscription(required_plan: str):
         async def premium_endpoint(...):
             ...
     """
+
     def decorator(func: Callable):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             # The actual check is done via the dependency
             return await func(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -245,11 +247,14 @@ def require_feature(feature_name: str):
         async def api_endpoint(...):
             ...
     """
+
     def decorator(func: Callable):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             return await func(*args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
@@ -262,9 +267,12 @@ def check_usage_limit(resource_type: str, increment: bool = True):
         async def screening_endpoint(...):
             ...
     """
+
     def decorator(func: Callable):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
             return await func(*args, **kwargs)
+
         return wrapper
+
     return decorator

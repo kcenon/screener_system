@@ -1,12 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock
-from app.services.llm.manager import (
-    LLMManager,
-    LLMMessage,
-    LLMResponse,
-    LLMProviderError
-)
+
+import pytest
 from app.services.llm.base import LLMProvider
+from app.services.llm.manager import (LLMManager, LLMMessage, LLMProviderError,
+                                      LLMResponse)
 
 
 @pytest.fixture
@@ -17,7 +14,7 @@ def mock_openai_provider():
         content="OpenAI response",
         model="gpt-4",
         usage={"total_tokens": 10},
-        provider="openai"
+        provider="openai",
     )
     return provider
 
@@ -30,17 +27,19 @@ def mock_anthropic_provider():
         content="Anthropic response",
         model="claude-3",
         usage={"total_tokens": 10},
-        provider="anthropic"
+        provider="anthropic",
     )
     return provider
 
 
 @pytest.fixture
 def manager(mock_openai_provider, mock_anthropic_provider):
-    manager = LLMManager(config={
-        "openai": {"api_key": "test", "model": "gpt-4"},
-        "anthropic": {"api_key": "test", "model": "claude-3"}
-    })
+    manager = LLMManager(
+        config={
+            "openai": {"api_key": "test", "model": "gpt-4"},
+            "anthropic": {"api_key": "test", "model": "claude-3"},
+        }
+    )
     # Inject mocks
     manager.providers["openai"] = mock_openai_provider
     manager.providers["anthropic"] = mock_anthropic_provider
@@ -59,9 +58,7 @@ async def test_generate_success_primary(manager, mock_openai_provider):
 
 @pytest.mark.asyncio
 async def test_health_check_failover(
-    manager,
-    mock_openai_provider,
-    mock_anthropic_provider
+    manager, mock_openai_provider, mock_anthropic_provider
 ):
     # Make OpenAI unhealthy
     mock_openai_provider.health_check.return_value = False
@@ -76,9 +73,7 @@ async def test_health_check_failover(
 
 @pytest.mark.asyncio
 async def test_generate_failover(
-    manager,
-    mock_openai_provider,
-    mock_anthropic_provider
+    manager, mock_openai_provider, mock_anthropic_provider
 ):
     # Make OpenAI fail
     mock_openai_provider.generate.side_effect = Exception("OpenAI Error")

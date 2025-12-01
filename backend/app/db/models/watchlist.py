@@ -4,20 +4,11 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (
-    CheckConstraint,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-    JSON,
-)
+from app.db.base import Base, TimestampMixin
+from sqlalchemy import (JSON, CheckConstraint, Column, DateTime, ForeignKey,
+                        Integer, String, Text)
 # from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
-
-from app.db.base import Base, TimestampMixin
 
 if TYPE_CHECKING:
     from app.db.models.stock import Stock  # noqa: F401

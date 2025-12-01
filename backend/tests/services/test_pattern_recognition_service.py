@@ -1,6 +1,6 @@
 import pytest
-from app.services.pattern_recognition_service import PatternRecognitionService
 from app.schemas.pattern import AlertConfigCreate
+from app.services.pattern_recognition_service import PatternRecognitionService
 
 
 @pytest.fixture
@@ -30,7 +30,7 @@ async def test_create_and_get_alert(service):
         stock_code="AAPL",
         pattern_types=["Head and Shoulders"],
         min_confidence=0.8,
-        notification_methods=["email"]
+        notification_methods=["email"],
     )
 
     alert = await service.create_alert(config)
@@ -53,7 +53,7 @@ async def test_get_patterns_filtering(service):
             "confidence": 0.9,
             "detected_at": "2023-01-01T00:00:00",
             "timeframe": "1D",
-            "pattern_id": "p1"
+            "pattern_id": "p1",
         },
         {
             "stock_code": "AAPL",
@@ -61,8 +61,8 @@ async def test_get_patterns_filtering(service):
             "confidence": 0.6,
             "detected_at": "2023-01-01T00:00:00",
             "timeframe": "1D",
-            "pattern_id": "p2"
-        }
+            "pattern_id": "p2",
+        },
     ]
 
     patterns = await service.get_patterns("AAPL", min_confidence=0.8)

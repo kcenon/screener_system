@@ -4,7 +4,6 @@ import asyncio
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
-
 from app.core.redis_pubsub import RedisPubSubClient
 from app.core.websocket import ConnectionManager
 from app.schemas.websocket import MessageType, SubscriptionType

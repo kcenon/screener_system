@@ -2,10 +2,9 @@
 
 from typing import Optional
 
+from app.db.base import Base, TimestampMixin
 from sqlalchemy import BigInteger, CheckConstraint, Column, Date, String
 from sqlalchemy.orm import relationship
-
-from app.db.base import Base, TimestampMixin
 
 
 class Stock(Base, TimestampMixin):

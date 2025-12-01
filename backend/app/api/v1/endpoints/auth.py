@@ -2,8 +2,6 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-
 from app.api.dependencies import (CurrentActiveUser, get_auth_service,
                                   get_email_verification_service,
                                   get_password_reset_service)
@@ -11,10 +9,11 @@ from app.core.exceptions import (BadRequestException, NotFoundException,
                                  UnauthorizedException)
 from app.schemas import (EmailVerificationRequest, PasswordResetConfirm,
                          PasswordResetRequest, RefreshTokenRequest,
-                         SuccessResponse, TokenResponse, UserCreate,
-                         UserLogin, UserResponse, VerificationStatusResponse)
+                         SuccessResponse, TokenResponse, UserCreate, UserLogin,
+                         UserResponse, VerificationStatusResponse)
 from app.services import (AuthService, EmailVerificationService,
                           PasswordResetService)
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -254,9 +253,7 @@ async def verify_email(
     """
     try:
         await verification_service.verify_email(request.token)
-        return SuccessResponse(
-            success=True, message="Email verified successfully"
-        )
+        return SuccessResponse(success=True, message="Email verified successfully")
 
     except BadRequestException as e:
         raise HTTPException(
@@ -359,9 +356,7 @@ async def get_verification_status(
 )
 async def forgot_password(
     request: PasswordResetRequest,
-    reset_service: Annotated[
-        PasswordResetService, Depends(get_password_reset_service)
-    ],
+    reset_service: Annotated[PasswordResetService, Depends(get_password_reset_service)],
 ) -> SuccessResponse:
     """
     Request password reset
@@ -399,9 +394,7 @@ async def forgot_password(
 )
 async def validate_reset_token(
     token: str,
-    reset_service: Annotated[
-        PasswordResetService, Depends(get_password_reset_service)
-    ],
+    reset_service: Annotated[PasswordResetService, Depends(get_password_reset_service)],
 ) -> SuccessResponse:
     """
     Validate password reset token
@@ -435,9 +428,7 @@ async def validate_reset_token(
 )
 async def reset_password(
     request: PasswordResetConfirm,
-    reset_service: Annotated[
-        PasswordResetService, Depends(get_password_reset_service)
-    ],
+    reset_service: Annotated[PasswordResetService, Depends(get_password_reset_service)],
 ) -> SuccessResponse:
     """
     Reset user password
@@ -454,9 +445,7 @@ async def reset_password(
         404: User not found
     """
     try:
-        await reset_service.reset_password(
-            request.token, request.new_password
-        )
+        await reset_service.reset_password(request.token, request.new_password)
         return SuccessResponse(
             success=True,
             message="Password reset successfully. All sessions have been logged out.",

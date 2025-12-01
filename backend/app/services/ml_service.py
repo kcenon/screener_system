@@ -4,7 +4,6 @@ from typing import Dict, List
 
 import mlflow
 import numpy as np
-
 from app.core.cache import cache_manager
 from app.core.config import settings
 
@@ -47,9 +46,7 @@ class ModelService:
                 return
 
             if not versions:
-                logger.warning(
-                    "No production model found for 'stock_prediction_lstm'."
-                )
+                logger.warning("No production model found for 'stock_prediction_lstm'.")
                 return
 
             version = versions[0]
@@ -144,7 +141,7 @@ class ModelService:
             "model_version": str(self.model_version),
             "predicted_at": datetime.utcnow().isoformat(),
             "features_used": self.features,
-            "horizon": horizon
+            "horizon": horizon,
         }
 
         # Cache result (TTL until next trading day)
@@ -166,7 +163,7 @@ class ModelService:
             "model_version": "mock",
             "predicted_at": datetime.utcnow().isoformat(),
             "features_used": ["mock_feature"],
-            "horizon": horizon
+            "horizon": horizon,
         }
 
     async def predict_batch(
@@ -180,10 +177,7 @@ class ModelService:
                 results.append(result)
             except Exception as e:
                 logger.error(f"Failed to predict {code}: {e}")
-                results.append({
-                    "stock_code": code,
-                    "error": str(e)
-                })
+                results.append({"stock_code": code, "error": str(e)})
         return results
 
     def get_model_info(self) -> Dict:
@@ -193,7 +187,7 @@ class ModelService:
             "version": str(self.model_version) if self.model_version else "None",
             "stage": "Production",
             "features": self.features or [],
-            "mlflow_uri": getattr(settings, "MLFLOW_TRACKING_URI", "Not Configured")
+            "mlflow_uri": getattr(settings, "MLFLOW_TRACKING_URI", "Not Configured"),
         }
 
     def _calculate_ttl_to_next_trading_day(self) -> int:

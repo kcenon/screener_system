@@ -89,9 +89,11 @@ class TestAuthService:
         service.user_repo.get_by_email = AsyncMock(return_value=None)
         service.user_repo.create = AsyncMock(side_effect=mock_create_user)
 
-        with patch("app.services.auth_service.get_password_hash") as mock_hash, \
-             patch("app.services.auth_service.create_access_token") as mock_access, \
-             patch("app.services.auth_service.create_refresh_token") as mock_refresh:
+        with patch("app.services.auth_service.get_password_hash") as mock_hash, patch(
+            "app.services.auth_service.create_access_token"
+        ) as mock_access, patch(
+            "app.services.auth_service.create_refresh_token"
+        ) as mock_refresh:
 
             mock_hash.return_value = "hashed_password"
             mock_access.return_value = "access_token_abc"
@@ -145,9 +147,11 @@ class TestAuthService:
         service.user_repo.get_by_email = AsyncMock(return_value=sample_user)
         service.user_repo.update = AsyncMock()
 
-        with patch("app.services.auth_service.verify_password") as mock_verify, \
-             patch("app.services.auth_service.create_access_token") as mock_access, \
-             patch("app.services.auth_service.create_refresh_token") as mock_refresh:
+        with patch("app.services.auth_service.verify_password") as mock_verify, patch(
+            "app.services.auth_service.create_access_token"
+        ) as mock_access, patch(
+            "app.services.auth_service.create_refresh_token"
+        ) as mock_refresh:
 
             mock_verify.return_value = True
             mock_access.return_value = "access_token_abc"
@@ -211,8 +215,11 @@ class TestAuthService:
         refresh_token = "valid_refresh_token"
 
         # Mock functions and repositories
-        with patch("app.services.auth_service.verify_token_type") as mock_verify_type, \
-             patch("app.services.auth_service.create_access_token") as mock_access:
+        with patch(
+            "app.services.auth_service.verify_token_type"
+        ) as mock_verify_type, patch(
+            "app.services.auth_service.create_access_token"
+        ) as mock_access:
 
             mock_verify_type.return_value = True
             mock_access.return_value = "new_access_token"

@@ -1,7 +1,7 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
-from app.main import app
 from app.api.dependencies import get_current_user
+from app.main import app
+from httpx import ASGITransport, AsyncClient
 
 # Mock user
 
@@ -28,9 +28,7 @@ async def client():
 @pytest.mark.asyncio
 async def test_get_patterns_endpoint(client: AsyncClient):
     # Since we don't have real data, it should return empty list
-    response = await client.get(
-        "/v1/ai/patterns/AAPL"
-    )
+    response = await client.get("/v1/ai/patterns/AAPL")
     assert response.status_code == 200
     assert response.json() == []
 
@@ -42,12 +40,9 @@ async def test_create_alert_endpoint(client: AsyncClient):
         "stock_code": "AAPL",
         "pattern_types": ["Head and Shoulders"],
         "min_confidence": 0.8,
-        "notification_methods": ["email"]
+        "notification_methods": ["email"],
     }
-    response = await client.post(
-        "/v1/ai/patterns/alerts",
-        json=payload
-    )
+    response = await client.post("/v1/ai/patterns/alerts", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert data["stock_code"] == "AAPL"

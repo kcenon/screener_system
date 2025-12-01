@@ -1,6 +1,5 @@
-
-import pytest
 import numpy as np
+import pytest
 from app.ml.data.pattern_detector import PatternDetector
 
 
@@ -14,11 +13,25 @@ class TestPatternDetector:
         """Test head and shoulders detection"""
         # Create synthetic H&S pattern
         # Prices array needs to be long enough for peak detection
-        prices = np.array([
-            10, 11, 12, 11, 10,  # Left shoulder peak at 12
-            10, 13, 15, 13, 10,  # Head peak at 15
-            10, 11, 12, 11, 10   # Right shoulder peak at 12
-        ])
+        prices = np.array(
+            [
+                10,
+                11,
+                12,
+                11,
+                10,  # Left shoulder peak at 12
+                10,
+                13,
+                15,
+                13,
+                10,  # Head peak at 15
+                10,
+                11,
+                12,
+                11,
+                10,  # Right shoulder peak at 12
+            ]
+        )
 
         # Note: find_peaks needs some context, so we might need to adjust
         # the synthetic data to ensure peaks are detected with distance=5
@@ -104,9 +117,9 @@ class TestPatternDetector:
         # Prices moving in a narrow, downward-sloping channel after a sharp rise
         prices = np.linspace(10, 20, 10)  # Pole
         # Downward channel
-        flag_prices = np.linspace(20, 18, 10) + np.sin(
-            np.linspace(0, 2 * np.pi, 10)
-        ) * 0.5
+        flag_prices = (
+            np.linspace(20, 18, 10) + np.sin(np.linspace(0, 2 * np.pi, 10)) * 0.5
+        )
         prices = np.concatenate((prices, flag_prices))
 
         # Test Flag

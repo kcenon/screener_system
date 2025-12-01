@@ -2,11 +2,11 @@
 
 from typing import Optional
 
-from sqlalchemy import delete as sql_delete, func, select
+from app.db.models import Holding, Portfolio, Transaction
+from sqlalchemy import delete as sql_delete
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-
-from app.db.models import Holding, Portfolio, Transaction
 
 
 class PortfolioRepository:
@@ -120,11 +120,8 @@ class PortfolioRepository:
         self, user_id: int, exclude_id: Optional[int] = None
     ) -> None:
         """Clear is_default flag for all user portfolios except excluded one"""
-        query = (
-            select(Portfolio)
-            .where(
-                Portfolio.user_id == user_id, Portfolio.is_default.is_(True)
-            )
+        query = select(Portfolio).where(
+            Portfolio.user_id == user_id, Portfolio.is_default.is_(True)
         )
         if exclude_id:
             query = query.where(Portfolio.id != exclude_id)
@@ -244,8 +241,10 @@ class TransactionRepository:
         if stock_symbol:
             query = query.where(Transaction.stock_symbol == stock_symbol)
 
-        query = query.order_by(Transaction.transaction_date.desc()).offset(skip).limit(
-            limit
+        query = (
+            query.order_by(Transaction.transaction_date.desc())
+            .offset(skip)
+            .limit(limit)
         )
 
         result = await self.session.execute(query)

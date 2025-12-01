@@ -31,10 +31,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.cache import CacheManager
 from app.core.exceptions import NotFoundException
 from app.repositories import StockRepository
-from app.schemas import (CalculatedIndicator, DailyPrice, FinancialStatement,
-                         PaginationMeta, StockDetail, StockListItem,
-                         StockListResponse, StockSearchResponse,
-                         StockSearchResult)
+from app.schemas import (
+    CalculatedIndicator,
+    DailyPrice,
+    FinancialStatement,
+    PaginationMeta,
+    StockDetail,
+    StockListItem,
+    StockListResponse,
+    StockSearchResponse,
+    StockSearchResult,
+)
 
 
 class StockService:

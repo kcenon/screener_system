@@ -4,20 +4,15 @@ import json
 from datetime import datetime
 from typing import Optional
 
+from app.core.config import settings
+from app.core.logging import logger
+from app.core.websocket import connection_manager
+from app.schemas.websocket import (MessageType, PongMessage, SubscribeRequest,
+                                   SubscriptionResponse, UnsubscribeRequest)
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 # from fastapi import Depends, status  # Unused
 from jose import JWTError, jwt
 
-from app.core.config import settings
-from app.core.logging import logger
-from app.core.websocket import connection_manager
-from app.schemas.websocket import (
-    MessageType,
-    PongMessage,
-    SubscribeRequest,
-    SubscriptionResponse,
-    UnsubscribeRequest,
-)
 # from app.schemas.websocket import ErrorMessage  # Unused
 
 router = APIRouter(tags=["websocket"])
@@ -342,7 +337,8 @@ async def handle_refresh_token(connection_id: str, message: dict):
         message: Token refresh message
     """
     try:
-        from app.schemas.websocket import RefreshTokenRequest, TokenRefreshedMessage
+        from app.schemas.websocket import (RefreshTokenRequest,
+                                           TokenRefreshedMessage)
 
         # Validate request
         request = RefreshTokenRequest(**message)
@@ -377,6 +373,7 @@ async def handle_refresh_token(connection_id: str, message: dict):
 
             # Generate new access token
             from datetime import timedelta
+
             from jose import jwt as jose_jwt
 
             expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -450,9 +447,7 @@ async def get_active_connections():
                 "connected_at": info.connected_at.isoformat(),
                 "last_activity": info.last_activity.isoformat(),
                 "message_count": info.message_count,
-                "subscriptions": {
-                    k.value: v for k, v in info.subscriptions.items()
-                },
+                "subscriptions": {k.value: v for k, v in info.subscriptions.items()},
             }
         )
 

@@ -1,9 +1,8 @@
 """Market Index database model"""
 
+from app.db.base import Base, TimestampMixin
 from sqlalchemy import BigInteger, CheckConstraint, Column, Numeric, String
 from sqlalchemy.dialects.postgresql import TIMESTAMP
-
-from app.db.base import Base, TimestampMixin
 
 
 class MarketIndex(Base, TimestampMixin):
@@ -123,7 +122,7 @@ class MarketIndex(Base, TimestampMixin):
             "volume": self.volume,
             "trading_value": self.trading_value,
             "change": float(self.change_value) if self.change_value else None,
-            "change_percent": float(self.change_percent)
-            if self.change_percent
-            else None,
+            "change_percent": (
+                float(self.change_percent) if self.change_percent else None
+            ),
         }

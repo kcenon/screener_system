@@ -1,23 +1,13 @@
-
 """OAuth state database model for CSRF protection"""
 
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import (
-    CheckConstraint,
-    Column,
-    DateTime,
-    ForeignKey,
-    Index,
-    Integer,
-    String,
-    JSON,
-)
+from app.db.base import Base
+from sqlalchemy import (JSON, CheckConstraint, Column, DateTime, ForeignKey,
+                        Index, Integer, String)
 # from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-
-from app.db.base import Base
 
 if TYPE_CHECKING:
     from app.db.models.user import User  # noqa: F401

@@ -81,8 +81,7 @@ class TestRateLimitMiddleware:
         # Make requests up to limit
         for i in range(settings.RATE_LIMIT_FREE):
             response = client.get("/test")
-            assert response.status_code == 200, \
-                f"Request {i+1} failed: {response.text}"
+            assert response.status_code == 200, f"Request {i+1} failed: {response.text}"
 
             # Check rate limit headers
             assert "X-RateLimit-Limit" in response.headers
@@ -91,8 +90,9 @@ class TestRateLimitMiddleware:
 
         # Next request should be rate limited
         response = client.get("/test")
-        assert response.status_code == 429, \
-            f"Expected 429 but got {response.status_code}: {response.text}"
+        assert (
+            response.status_code == 429
+        ), f"Expected 429 but got {response.status_code}: {response.text}"
         assert response.json()["success"] is False
         assert "rate limit exceeded" in response.json()["message"].lower()
 
@@ -108,6 +108,7 @@ class TestRateLimitMiddleware:
 
         # Patch the endpoint limits dictionary directly
         from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
         original_limit = ENDPOINT_RATE_LIMITS["/v1/screen"]
         ENDPOINT_RATE_LIMITS["/v1/screen"] = 5
 
@@ -119,8 +120,9 @@ class TestRateLimitMiddleware:
 
             # Next request should be rate limited
             response = client.post("/v1/screen")
-            assert response.status_code == 429, \
-                f"Expected 429 but got {response.status_code}"
+            assert (
+                response.status_code == 429
+            ), f"Expected 429 but got {response.status_code}"
             assert "endpoint rate limit exceeded" in response.json()["message"].lower()
             assert "X-RateLimit-Endpoint" in response.headers
         finally:
@@ -150,12 +152,15 @@ class TestRateLimitMiddleware:
         remaining = int(response.headers["X-RateLimit-Remaining"])
         reset = int(response.headers["X-RateLimit-Reset"])
 
-        assert limit == settings.RATE_LIMIT_FREE, \
-            f"Limit should be {settings.RATE_LIMIT_FREE} but got {limit}"
-        assert remaining == settings.RATE_LIMIT_FREE - 1, \
-            f"Remaining should be {settings.RATE_LIMIT_FREE - 1} but got {remaining}"
-        assert reset == settings.RATE_LIMIT_WINDOW, \
-            f"Reset should be {settings.RATE_LIMIT_WINDOW} but got {reset}"
+        assert (
+            limit == settings.RATE_LIMIT_FREE
+        ), f"Limit should be {settings.RATE_LIMIT_FREE} but got {limit}"
+        assert (
+            remaining == settings.RATE_LIMIT_FREE - 1
+        ), f"Remaining should be {settings.RATE_LIMIT_FREE - 1} but got {remaining}"
+        assert (
+            reset == settings.RATE_LIMIT_WINDOW
+        ), f"Reset should be {settings.RATE_LIMIT_WINDOW} but got {reset}"
 
     def test_different_endpoints_separate_limits(
         self, app: FastAPI, mock_redis, monkeypatch
@@ -165,6 +170,7 @@ class TestRateLimitMiddleware:
 
         # Patch the endpoint limits dictionary directly
         from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
         original_limit = ENDPOINT_RATE_LIMITS["/v1/screen"]
         ENDPOINT_RATE_LIMITS["/v1/screen"] = 5
 
@@ -235,6 +241,7 @@ class TestEndpointRateLimitConfiguration:
             )
 
         from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
         for endpoint, limit in ENDPOINT_RATE_LIMITS.items():
             assert limit > 0, f"Limit for {endpoint} must be positive"
             assert limit <= 10000, f"Limit for {endpoint} seems too high"

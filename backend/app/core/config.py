@@ -1,7 +1,7 @@
 """Application configuration settings"""
 
 from functools import lru_cache
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -221,9 +221,7 @@ class Settings(BaseSettings):
     LLM_MODEL_ANTHROPIC: str = "claude-3-opus-20240229"
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        case_sensitive=True,
-        extra="ignore"
+        env_file=".env", case_sensitive=True, extra="ignore"
     )
 
 

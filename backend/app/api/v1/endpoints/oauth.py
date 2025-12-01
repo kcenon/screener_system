@@ -2,21 +2,17 @@
 
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from fastapi.responses import RedirectResponse
-
-from app.api.dependencies import (CurrentActiveUser, get_oauth_service)
+from app.api.dependencies import CurrentActiveUser, get_oauth_service
 from app.core.config import settings
 from app.core.exceptions import BadRequestException, NotFoundException
 from app.schemas import TokenResponse
-from app.schemas.oauth import (
-    OAuthAuthorizationResponse,
-    OAuthCallbackRequest,
-    OAuthUnlinkResponse,
-    SocialAccountResponse,
-    SocialAccountsListResponse,
-)
+from app.schemas.oauth import (OAuthAuthorizationResponse,
+                               OAuthCallbackRequest, OAuthUnlinkResponse,
+                               SocialAccountResponse,
+                               SocialAccountsListResponse)
 from app.services import OAuthService
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi.responses import RedirectResponse
 
 router = APIRouter(prefix="/auth/oauth", tags=["OAuth"])
 

@@ -1,8 +1,9 @@
-from typing import List, Dict
 import uuid
 from datetime import datetime
+from typing import Dict, List
 
-from app.schemas.pattern import PatternResponse, AlertConfigCreate, AlertConfigResponse
+from app.schemas.pattern import (AlertConfigCreate, AlertConfigResponse,
+                                 PatternResponse)
 
 
 class PatternRecognitionService:
@@ -14,10 +15,7 @@ class PatternRecognitionService:
         self._alerts: Dict[str, Dict] = {}  # Mock DB
 
     async def get_patterns(
-        self,
-        stock_code: str,
-        timeframe: str = "1D",
-        min_confidence: float = 0.7
+        self, stock_code: str, timeframe: str = "1D", min_confidence: float = 0.7
     ) -> List[PatternResponse]:
         """
         Retrieve detected patterns for a stock.
@@ -28,7 +26,8 @@ class PatternRecognitionService:
 
         # Filter by confidence
         filtered = [
-            PatternResponse(**p) for p in patterns_data
+            PatternResponse(**p)
+            for p in patterns_data
             if p["confidence"] >= min_confidence
         ]
         return filtered
@@ -70,7 +69,7 @@ class PatternRecognitionService:
             "alert_id": alert_id,
             "created_at": datetime.utcnow(),
             "status": "active",
-            **config.model_dump()
+            **config.model_dump(),
         }
         self._alerts[alert_id] = alert
         return AlertConfigResponse(**alert)

@@ -136,9 +136,7 @@ class WebSocketClient:
             while self.running and (time.time() - start_time < duration):
                 try:
                     # Set timeout to check running flag periodically
-                    message = await asyncio.wait_for(
-                        self.websocket.recv(), timeout=1.0
-                    )
+                    message = await asyncio.wait_for(self.websocket.recv(), timeout=1.0)
 
                     # Record receive time
                     receive_time = time.time()

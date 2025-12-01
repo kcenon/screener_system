@@ -2,19 +2,10 @@
 
 from typing import TYPE_CHECKING, Any, Dict
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    Float,
-    Integer,
-    String,
-    Text,
-    JSON,
-)
+from app.db.base import BaseModel
+from sqlalchemy import JSON, Boolean, Column, Float, Integer, String, Text
 # from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-
-from app.db.base import BaseModel
 
 if TYPE_CHECKING:
     from app.db.models.user_subscription import UserSubscription  # noqa: F401

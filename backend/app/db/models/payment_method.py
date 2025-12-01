@@ -3,18 +3,10 @@
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import (
-    Boolean,
-    CheckConstraint,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    JSON,
-)
-from sqlalchemy.orm import relationship
-
 from app.db.base import BaseModel
+from sqlalchemy import (JSON, Boolean, CheckConstraint, Column, ForeignKey,
+                        Integer, String)
+from sqlalchemy.orm import relationship
 
 
 class PaymentMethodType(str, Enum):
@@ -95,9 +87,7 @@ class PaymentMethod(BaseModel):
         if self.type == PaymentMethodType.CARD.value and self.card_brand:
             return f"{self.card_brand.capitalize()} ****{self.card_last4}"
         return (
-            f"{self.type} ending in {self.card_last4}"
-            if self.card_last4
-            else self.type
+            f"{self.type} ending in {self.card_last4}" if self.card_last4 else self.type
         )
 
     @property
@@ -108,9 +98,8 @@ class PaymentMethod(BaseModel):
         from datetime import date
 
         today = date.today()
-        return (
-            self.card_exp_year < today.year
-            or (self.card_exp_year == today.year and self.card_exp_month < today.month)
+        return self.card_exp_year < today.year or (
+            self.card_exp_year == today.year and self.card_exp_month < today.month
         )
 
     @property

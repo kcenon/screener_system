@@ -1,11 +1,10 @@
 """Tests for authentication API endpoints"""
 
 import pytest
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.security import create_access_token, get_password_hash
 from app.db.models import User
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class TestAuthRegistration:
@@ -104,9 +103,7 @@ class TestAuthLogin:
         assert data["user"]["email"] == "testuser@example.com"
 
     @pytest.mark.asyncio
-    async def test_login_invalid_password(
-        self, client: AsyncClient, db: AsyncSession
-    ):
+    async def test_login_invalid_password(self, client: AsyncClient, db: AsyncSession):
         """Test login with invalid password"""
         # Create user
         user = User(

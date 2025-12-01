@@ -1,45 +1,40 @@
-import openai
-from typing import List, AsyncIterator
-from tenacity import retry, stop_after_attempt, wait_exponential
-from app.services.llm.base import LLMProvider, LLMMessage, LLMResponse
 import logging
+from typing import AsyncIterator, List
+
+import openai
+from app.services.llm.base import LLMMessage, LLMProvider, LLMResponse
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
 
 
 class OpenAIProvider(LLMProvider):
     """OpenAI GPT-4 provider implementation"""
-    def __init__(
-        self,
-        api_key: str,
-        model: str = "gpt-4-turbo-preview",
-        **kwargs
-    ):
+
+    def __init__(self, api_key: str, model: str = "gpt-4-turbo-preview", **kwargs):
         super().__init__(api_key, model, **kwargs)
         self.client = openai.AsyncOpenAI(api_key=api_key)
 
     @retry(
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
-        reraise=True
+        reraise=True,
     )
     async def generate(
         self,
         messages: List[LLMMessage],
         temperature: float = 0.7,
         max_tokens: int = 2000,
-        **kwargs
+        **kwargs,
     ) -> LLMResponse:
         """Generate completion using OpenAI API"""
         try:
             response = await self.client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": m.role, "content": m.content} for m in messages
-                ],
+                messages=[{"role": m.role, "content": m.content} for m in messages],
                 temperature=temperature,
                 max_tokens=max_tokens,
-                **kwargs
+                **kwargs,
             )
 
             return LLMResponse(
@@ -50,15 +45,14 @@ class OpenAIProvider(LLMProvider):
                         response.usage.prompt_tokens if response.usage else 0
                     ),
                     "completion_tokens": (
-                        response.usage.completion_tokens
-                        if response.usage else 0
+                        response.usage.completion_tokens if response.usage else 0
                     ),
                     "total_tokens": (
                         response.usage.total_tokens if response.usage else 0
                     ),
                 },
                 finish_reason=response.choices[0].finish_reason,
-                provider="openai"
+                provider="openai",
             )
 
         except Exception as e:
@@ -70,19 +64,17 @@ class OpenAIProvider(LLMProvider):
         messages: List[LLMMessage],
         temperature: float = 0.7,
         max_tokens: int = 2000,
-        **kwargs
+        **kwargs,
     ) -> AsyncIterator[str]:
         """Generate completion with streaming"""
         try:
             stream = await self.client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": m.role, "content": m.content} for m in messages
-                ],
+                messages=[{"role": m.role, "content": m.content} for m in messages],
                 temperature=temperature,
                 max_tokens=max_tokens,
                 stream=True,
-                **kwargs
+                **kwargs,
             )
 
             async for chunk in stream:

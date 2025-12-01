@@ -1,7 +1,6 @@
-
-import pytest
 import numpy as np
 import pandas as pd
+import pytest
 from app.ml.data.chart_generator import ChartImageGenerator
 
 
