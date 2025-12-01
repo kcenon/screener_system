@@ -11,7 +11,7 @@ starlette>=0.49.1  # Security: Fixed HTTP Range DoS (GHSA-7f5h-v6xp-fcq8, CVE-20
 
 # Database Drivers
 # =============================================================================
-asyncpg==0.30.0  # Async PostgreSQL driver
+asyncpg==0.31.0  # Async PostgreSQL driver
 psycopg2-binary==2.9.11  # PostgreSQL driver (for Airflow metadata DB)
 
 # Data Processing
