@@ -64,7 +64,7 @@ freezegun==1.5.5
 # Code Quality
 black==25.11.0  # Security: Fixed ReDoS (PYSEC-2024-48)
 flake8==7.3.0
-mypy==1.18.2
+mypy==1.19.0
 isort==7.0.0
 
 # Utilities
