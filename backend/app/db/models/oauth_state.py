@@ -1,11 +1,20 @@
+
 """OAuth state database model for CSRF protection"""
 
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import (CheckConstraint, Column, DateTime, ForeignKey, Index,
-                        Integer, String)
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import (
+    CheckConstraint,
+    Column,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    JSON,
+)
+# from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base
@@ -51,7 +60,7 @@ class OAuthState(Base):
     )
 
     # Additional data (avoid 'metadata' - reserved in SQLAlchemy)
-    extra_data = Column(JSONB, default=dict, nullable=False)
+    extra_data = Column(JSON, default=dict, nullable=False)
 
     # Relationships
     user = relationship("User")

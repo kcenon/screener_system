@@ -12,8 +12,9 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    JSON,
 )
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+# from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base, TimestampMixin
@@ -28,7 +29,7 @@ class Watchlist(Base, TimestampMixin):
 
     __tablename__ = "watchlists"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -70,7 +71,7 @@ class WatchlistStock(Base):
     __tablename__ = "watchlist_stocks"
 
     watchlist_id = Column(
-        UUID(as_uuid=True),
+        String(36),
         ForeignKey("watchlists.id", ondelete="CASCADE"),
         primary_key=True,
     )
@@ -104,7 +105,7 @@ class UserActivity(Base):
 
     __tablename__ = "user_activities"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -113,7 +114,7 @@ class UserActivity(Base):
     )
     activity_type = Column(String(50), nullable=False, index=True)
     description = Column(Text, nullable=False)
-    activity_metadata = Column(JSONB, nullable=True)
+    activity_metadata = Column(JSON, nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         default=datetime.now,
@@ -153,7 +154,7 @@ class UserPreferences(Base, TimestampMixin):
         primary_key=True,
     )
     default_watchlist_id = Column(
-        UUID(as_uuid=True),
+        String(36),
         ForeignKey("watchlists.id", ondelete="SET NULL"),
         nullable=True,
     )
@@ -167,8 +168,8 @@ class UserPreferences(Base, TimestampMixin):
         DateTime(timezone=True),
         nullable=False,
     )
-    dashboard_layout = Column(JSONB, nullable=True)
-    notification_settings = Column(JSONB, nullable=True)
+    dashboard_layout = Column(JSON, nullable=True)
+    notification_settings = Column(JSON, nullable=True)
 
     # Relationships
     user = relationship("User", back_populates="preferences")

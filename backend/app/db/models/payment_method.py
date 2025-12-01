@@ -10,8 +10,8 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    JSON,
 )
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
@@ -63,7 +63,7 @@ class PaymentMethod(BaseModel):
     billing_email = Column(String(255))
 
     # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
-    method_metadata = Column(JSONB, default=dict)
+    method_metadata = Column(JSON, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="payment_methods")

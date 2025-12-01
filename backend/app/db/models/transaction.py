@@ -56,6 +56,7 @@ class Transaction(Base):
     price = Column(Float, nullable=False)
     amount = Column(Float, nullable=False)  # Total amount (quantity * price)
     transaction_date = Column(DateTime(timezone=True), nullable=False, index=True)
+    commission = Column(Float, default=0.0)
     notes = Column(String(255), nullable=True)
 
     # Relationships
@@ -69,8 +70,8 @@ class Transaction(Base):
             name="valid_transaction_type",
         ),
         CheckConstraint(
-            "shares > 0",
-            name="valid_shares",
+            "quantity > 0",
+            name="valid_quantity",
         ),
         CheckConstraint(
             "price >= 0",

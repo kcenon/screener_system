@@ -49,7 +49,7 @@ class AnthropicProvider(LLMProvider):
             )
 
             return LLMResponse(
-                content=response.content[0].text,
+                content=response.content[0].text,  # type: ignore
                 model=response.model,
                 usage={
                     "input_tokens": response.usage.input_tokens,
@@ -84,14 +84,18 @@ class AnthropicProvider(LLMProvider):
             for m in messages if m.role != "system"
         ]
 
-        async with self.client.messages.stream(
-            model=self.model,
-            system=system_message,
-            messages=conversation,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            **kwargs
-        ) as stream:
+        stream_kwargs = {
+            "model": self.model,
+            "messages": conversation,  # type: ignore
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            **kwargs,
+        }
+        
+        if system_message:
+            stream_kwargs["system"] = system_message
+
+        async with self.client.messages.stream(**stream_kwargs) as stream:
             async for text in stream.text_stream:
                 yield text
 

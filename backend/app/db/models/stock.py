@@ -52,6 +52,13 @@ class Stock(Base, TimestampMixin):
         lazy="select",
     )
 
+    holdings = relationship(
+        "Holding",
+        back_populates="stock",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+
     # Constraints
     __table_args__ = (
         CheckConstraint(

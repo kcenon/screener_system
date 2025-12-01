@@ -3,8 +3,8 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
-from sqlalchemy import Boolean, Column, DateTime, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Boolean, Column, DateTime, String, Text, JSON
+# from sqlalchemy.dialects.postgresql import JSONB
 
 from app.db.base import BaseModel
 
@@ -24,7 +24,7 @@ class StripeWebhookEvent(BaseModel):
     processed_at = Column(DateTime(timezone=True))
 
     # Event payload
-    payload = Column(JSONB, nullable=False)
+    payload = Column(JSON, nullable=False)
 
     def __repr__(self) -> str:
         """String representation"""

@@ -14,8 +14,9 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    JSON,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+# from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
@@ -57,6 +58,12 @@ class Payment(BaseModel):
         ForeignKey("user_subscriptions.id", ondelete="SET NULL"),
         index=True,
     )
+    payment_method_id = Column(
+        Integer,
+        ForeignKey("payment_methods.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
 
     # Payment details
     amount = Column(Numeric(10, 2), nullable=False)
@@ -90,11 +97,12 @@ class Payment(BaseModel):
     paid_at = Column(DateTime(timezone=True))
 
     # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
-    payment_metadata = Column(JSONB, default=dict)
+    payment_metadata = Column(JSON, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="payments")
     subscription = relationship("UserSubscription", back_populates="payments")
+    payment_method = relationship("PaymentMethod", back_populates="payments")
 
     # Constraints
     __table_args__ = (

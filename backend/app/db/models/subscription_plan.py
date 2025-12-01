@@ -9,8 +9,9 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    JSON,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+# from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
@@ -35,8 +36,8 @@ class SubscriptionPlan(BaseModel):
     price_yearly = Column(Float, nullable=False, default=0.00)
 
     # Features and limits stored as JSON
-    features = Column(JSONB, nullable=False, default=dict)
-    limits = Column(JSONB, nullable=False, default=dict)
+    features = Column(JSON, nullable=False, default=dict)
+    limits = Column(JSON, nullable=False, default=dict)
 
     # Stripe integration
     stripe_product_id = Column(String(255), unique=True, index=True)

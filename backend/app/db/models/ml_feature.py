@@ -1,21 +1,24 @@
-from sqlalchemy import Column, Date, ForeignKey, String
-from sqlalchemy.dialects.postgresql import JSONB
+
+from sqlalchemy import Column, ForeignKey, String, JSON
+# from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
-from app.db.base import Base, TimestampMixin
+from app.db.base import BaseModel
 
 
-class MLFeature(Base, TimestampMixin):
-    """Model for ML features"""
+class MLFeature(BaseModel):
+    """Machine learning feature storage"""
+
+    __tablename__ = "ml_features"
 
     stock_code = Column(
-        String(6),
-        ForeignKey("stocks.code", ondelete="CASCADE"),
-        primary_key=True,
-        nullable=False,
+        String(20), ForeignKey("stocks.code", ondelete="CASCADE"), nullable=False
     )
-    calculation_date = Column(Date, primary_key=True, nullable=False)
-    feature_data = Column(JSONB, nullable=False)
+    feature_date = Column(String(10), nullable=False)  # YYYY-MM-DD
+
+    # Feature data stored as JSON
+    feature_data = Column(JSON, nullable=False)
 
     # Relationships
     stock = relationship("Stock", backref="ml_features")
+

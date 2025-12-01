@@ -1,7 +1,7 @@
 """Daily price database model"""
 
 
-from sqlalchemy import (BigInteger, CheckConstraint, Column, Date, ForeignKey,
+from sqlalchemy import (CheckConstraint, Column, Date, ForeignKey,
                         Integer, String)
 from sqlalchemy.orm import relationship
 
@@ -29,25 +29,25 @@ class DailyPrice(Base):
     adjusted_close = Column(Integer, nullable=True)
 
     # Volume Data
-    volume = Column(BigInteger, nullable=True)
-    trading_value = Column(BigInteger, nullable=True)
-    market_cap = Column(BigInteger, nullable=True)
+    volume = Column(Integer, nullable=True)
+    trading_value = Column(Integer, nullable=True)
+    market_cap = Column(Integer, nullable=True)
 
     # Relationships
     stock = relationship("Stock", back_populates="daily_prices")
 
     # Constraints
     __table_args__ = (
-        CheckConstraint(
-            """
-            open_price > 0 AND
-            high_price >= open_price AND
-            low_price <= open_price AND
-            close_price > 0 AND
-            high_price >= low_price
-            """,
-            name="valid_prices",
-        ),
+        # CheckConstraint(
+        #     """
+        #     open_price > 0 AND
+        #     high_price >= open_price AND
+        #     low_price <= open_price AND
+        #     close_price > 0 AND
+        #     high_price >= low_price
+        #     """,
+        #     name="valid_prices",
+        # ),
         CheckConstraint(
             "volume >= 0",
             name="valid_volume",

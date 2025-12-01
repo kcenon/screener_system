@@ -11,8 +11,9 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    JSON,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+# from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
@@ -59,7 +60,7 @@ class UsageTracking(BaseModel):
     )
 
     # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
-    tracking_metadata = Column(JSONB, default=dict)
+    tracking_metadata = Column(JSON, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="usage_records")

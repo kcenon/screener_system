@@ -1,5 +1,6 @@
 """Services layer package"""
 
+from app.services.ai_service import AIService
 from app.services.alert_engine import AlertEngine
 from app.services.auth_service import AuthService
 from app.services.email_verification_service import EmailVerificationService
@@ -11,6 +12,7 @@ from app.services.stripe_service import StripeService
 from app.services.subscription_service import SubscriptionService
 
 __all__ = [
+    "AIService",
     "AlertEngine",
     "AuthService",
     "EmailVerificationService",
