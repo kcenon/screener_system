@@ -104,7 +104,9 @@ class TestAuthLogin:
         assert data["user"]["email"] == "testuser@example.com"
 
     @pytest.mark.asyncio
-    async def test_login_invalid_password(self, client: AsyncClient, db: AsyncSession):
+    async def test_login_invalid_password(
+        self, client: AsyncClient, db: AsyncSession
+    ):
         """Test login with invalid password"""
         # Create user
         user = User(

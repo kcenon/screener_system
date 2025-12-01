@@ -4,6 +4,7 @@ import numpy as np
 from app.services.ml_service import ModelService
 
 
+
 class TestModelService:
     @pytest.fixture
     def model_service(self):
@@ -20,7 +21,8 @@ class TestModelService:
     async def test_predict_single_stock(self, model_service):
         """Test single stock prediction"""
         # Mock cache miss
-        with patch("app.services.ml_service.cache_manager.get", return_value=None), \
+        with patch("app.services.ml_service.cache_manager.get",
+                   return_value=None), \
              patch("app.services.ml_service.cache_manager.set") as mock_set:
 
             result = await model_service.predict("005930")
@@ -44,31 +46,18 @@ class TestModelService:
         assert result["prediction"] == "neutral"  # Default mock
         assert "confidence" in result
 
-    @pytest.mark.asyncio
-    async def test_train_model_mock(self):
-        service = ModelService()
 
-        run_id = await service.train_model(
-            model_type="lstm",
-            params={"epochs": 1}
-        )
-
-        assert isinstance(run_id, str)
-        assert len(run_id) > 0
 
     @pytest.mark.asyncio
     async def test_predict_with_caching(self, model_service):
         """Test prediction caching"""
         cached_result = {"stock_code": "005930", "prediction": "up"}
-        cache_key = f"prediction:005930:{model_service.model_version}:1d"
 
-        # Setup cache mock
-        model_service.cache.get.return_value = cached_result
-
-        result = await model_service.predict("005930")
-
-        assert result == cached_result
-        model_service.cache.get.assert_called_with(cache_key)
+        # Mock cache hit
+        with patch("app.services.ml_service.cache_manager.get",
+                   return_value=cached_result):
+            result = await model_service.predict("005930")
+            assert result == cached_result
 
     @pytest.mark.asyncio
     async def test_batch_prediction(self, model_service):

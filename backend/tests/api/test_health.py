@@ -71,7 +71,9 @@ class TestDatabaseHealthCheck:
         # Mock database session that raises exception
         async def mock_get_db_failing():
             mock_session = AsyncMock(spec=AsyncSession)
-            mock_session.execute.side_effect = Exception("Database connection failed")
+            mock_session.execute.side_effect = Exception(
+                "Database connection failed"
+            )
             yield mock_session
 
         # Override the get_db dependency
@@ -273,7 +275,9 @@ class TestMetricsEndpoint:
         assert response.headers["content-type"].startswith("text/plain")
 
     @pytest.mark.asyncio
-    async def test_metrics_endpoint_no_auth_required(self, client: AsyncClient):
+    async def test_metrics_endpoint_no_auth_required(
+        self, client: AsyncClient
+    ):
         """Test metrics endpoint accessible without authentication"""
         response = await client.get("/v1/metrics")
 

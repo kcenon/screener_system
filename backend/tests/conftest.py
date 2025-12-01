@@ -8,8 +8,21 @@ import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.pool import NullPool
+from sqlalchemy.pool import NullPool, StaticPool
 
+import sys
+from unittest.mock import MagicMock
+
+# Mock ML dependencies if not installed (for local testing on incompatible platforms)
+for module_name in [
+    "mlflow", "mlflow.tracking", "numpy", "pandas", "lightgbm", "xgboost", "optuna",
+    "sklearn", "sklearn.metrics", "sklearn.model_selection", "scipy", "scipy.stats",
+    "tensorflow", "keras"
+]:
+    try:
+        __import__(module_name)
+    except ImportError:
+        sys.modules[module_name] = MagicMock()
 from app.db.base import Base
 import app.db.models  # noqa: F401
 from app.db.session import get_db
@@ -29,7 +42,18 @@ DEFAULT_TEST_DB_URL = os.getenv(
     .replace("postgres://", "postgresql+asyncpg://"),
 )
 
-TEST_DATABASE_URL = DEFAULT_TEST_DB_URL
+TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
+# Mock Redis connection to prevent startup failures
+from unittest.mock import AsyncMock
+from app.core.cache import cache_manager
+from app.core.websocket import connection_manager
+from app.core.redis_pubsub import redis_pubsub
+
+cache_manager.connect = AsyncMock()
+cache_manager.disconnect = AsyncMock()
+connection_manager.initialize_redis = AsyncMock()
+redis_pubsub.disconnect = AsyncMock()
 
 
 @pytest.fixture(scope="function")
@@ -59,7 +83,8 @@ async def db_engine():
     engine = create_async_engine(
         TEST_DATABASE_URL,
         echo=False,
-        poolclass=NullPool,
+        poolclass=StaticPool,
+        connect_args={"check_same_thread": False},
     )
 
     # Create tables

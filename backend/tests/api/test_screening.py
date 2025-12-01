@@ -243,7 +243,7 @@ class TestScreeningEndpoints:
     async def test_apply_screening_template_custom_pagination(
         self, client: AsyncClient
     ):
-        """Test POST /v1/screen/templates/{template_id} with custom pagination"""
+        """Test POST /v1/screen/templates/{template_id} custom pagination"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository"
             ".get_screening_templates"
