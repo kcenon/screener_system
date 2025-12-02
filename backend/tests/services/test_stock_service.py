@@ -1,7 +1,7 @@
 """Unit tests for stock service"""
 
 from datetime import date
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -39,6 +39,7 @@ class TestStockService:
     def sample_stock(self):
         """Create sample stock object"""
         from datetime import datetime, timezone
+
         now = datetime.now(timezone.utc)
         return Stock(
             code="005930",
@@ -71,6 +72,7 @@ class TestStockService:
     def sample_indicators(self):
         """Create sample calculated indicators object"""
         from datetime import datetime, timezone
+
         now = datetime.now(timezone.utc)
         return CalculatedIndicator(
             stock_code="005930",
@@ -267,9 +269,7 @@ class TestStockService:
         service.stock_repo.search_stocks.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_search_stocks_cache_miss(
-        self, service, mock_cache, sample_stock
-    ):
+    async def test_search_stocks_cache_miss(self, service, mock_cache, sample_stock):
         """Test search_stocks fetches from repository on cache miss"""
         # Setup cache miss
         mock_cache.get.return_value = None
@@ -315,8 +315,8 @@ class TestStockService:
         mock_cache.get.return_value = None
         service.stock_repo.search_stocks = AsyncMock(return_value=[sample_stock])
 
-        # Execute with invalid limit (should be clamped to 50)
-        result = await service.search_stocks("삼성", limit=100)
+        # Execute
+        await service.search_stocks("삼성", limit=100)
 
         # Assert
         call_args = service.stock_repo.search_stocks.call_args

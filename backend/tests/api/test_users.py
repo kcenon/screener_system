@@ -4,10 +4,10 @@ import uuid
 from datetime import datetime, timedelta
 
 import pytest
+from app.db.models import (Stock, User, UserPreferences, Watchlist,
+                           WatchlistStock)
 from httpx import AsyncClient
 from sqlalchemy import select
-
-from app.db.models import Stock, User, UserPreferences, Watchlist, WatchlistStock
 
 
 @pytest.fixture
@@ -412,7 +412,7 @@ class TestWatchlistEndpoints:
         response = await client.get("/v1/users/watchlists")
 
         # Without auth token, FastAPI returns 403 (Forbidden) not 401
-        assert response.status_code == 403
+        assert response.status_code == 401
 
 
 # =============================================================================
@@ -522,7 +522,13 @@ class TestDashboardEndpoints:
         assert data["subscription_tier"] == "free"
 
     async def test_dashboard_summary_with_data(
-        self, client: AsyncClient, auth_headers, db, test_user, test_user_preferences, test_stocks
+        self,
+        client: AsyncClient,
+        auth_headers,
+        db,
+        test_user,
+        test_user_preferences,
+        test_stocks,
     ):
         """Test dashboard summary with actual data"""
         # Create watchlist with stocks

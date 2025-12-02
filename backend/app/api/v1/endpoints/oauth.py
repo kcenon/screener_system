@@ -2,22 +2,17 @@
 
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from fastapi.responses import RedirectResponse
-
-from app.api.dependencies import (CurrentActiveUser, get_oauth_service)
+from app.api.dependencies import CurrentActiveUser, get_oauth_service
 from app.core.config import settings
 from app.core.exceptions import BadRequestException, NotFoundException
-from app.schemas import SuccessResponse, TokenResponse
-from app.schemas.oauth import (
-    OAuthAuthorizationResponse,
-    OAuthCallbackRequest,
-    OAuthProviderEnum,
-    OAuthUnlinkResponse,
-    SocialAccountResponse,
-    SocialAccountsListResponse,
-)
+from app.schemas import TokenResponse
+from app.schemas.oauth import (OAuthAuthorizationResponse,
+                               OAuthCallbackRequest, OAuthUnlinkResponse,
+                               SocialAccountResponse,
+                               SocialAccountsListResponse)
 from app.services import OAuthService
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi.responses import RedirectResponse
 
 router = APIRouter(prefix="/auth/oauth", tags=["OAuth"])
 
@@ -30,10 +25,10 @@ router = APIRouter(prefix="/auth/oauth", tags=["OAuth"])
 )
 async def get_oauth_login_url(
     provider: str,
+    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)],
     redirect_url: Optional[str] = Query(
         None, description="URL to redirect after OAuth (optional)"
     ),
-    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)] = None,
 ) -> OAuthAuthorizationResponse:
     """
     Get OAuth authorization URL for login/signup.
@@ -69,10 +64,10 @@ async def get_oauth_login_url(
 )
 async def handle_oauth_callback(
     provider: str,
+    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)],
     code: str = Query(..., description="Authorization code from OAuth provider"),
     state: str = Query(..., description="State token for CSRF validation"),
     request: Request = None,
-    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)] = None,
 ) -> TokenResponse:
     """
     Handle OAuth callback from provider.
@@ -122,10 +117,10 @@ async def handle_oauth_callback(
 )
 async def handle_oauth_callback_redirect(
     provider: str,
+    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)],
     code: str = Query(..., description="Authorization code from OAuth provider"),
     state: str = Query(..., description="State token for CSRF validation"),
     request: Request = None,
-    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)] = None,
 ) -> RedirectResponse:
     """
     Handle OAuth callback and redirect to frontend.
@@ -186,15 +181,17 @@ async def handle_oauth_callback_redirect(
     "/{provider}/link",
     response_model=OAuthAuthorizationResponse,
     summary="Get OAuth URL for account linking",
-    description="Generate OAuth authorization URL to link social account to existing user",
+    description=(
+        "Generate OAuth authorization URL to link social account to existing user"
+    ),
 )
 async def get_oauth_link_url(
     provider: str,
     current_user: CurrentActiveUser,
+    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)],
     redirect_url: Optional[str] = Query(
         None, description="URL to redirect after linking (optional)"
     ),
-    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)] = None,
 ) -> OAuthAuthorizationResponse:
     """
     Get OAuth authorization URL for linking social account.
@@ -213,7 +210,6 @@ async def get_oauth_link_url(
 
     Raises:
         400: Provider not configured or not supported
-        401: Not authenticated
     """
     try:
         return await oauth_service.get_authorization_url(
@@ -238,7 +234,7 @@ async def link_social_account(
     provider: str,
     callback_data: OAuthCallbackRequest,
     current_user: CurrentActiveUser,
-    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)] = None,
+    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)],
 ) -> SocialAccountResponse:
     """
     Link a social account to the current user.
@@ -288,7 +284,7 @@ async def link_social_account(
 async def unlink_social_account(
     provider: str,
     current_user: CurrentActiveUser,
-    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)] = None,
+    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)],
 ) -> OAuthUnlinkResponse:
     """
     Unlink a social account from the current user.
@@ -339,7 +335,7 @@ async def unlink_social_account(
 )
 async def list_linked_accounts(
     current_user: CurrentActiveUser,
-    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)] = None,
+    oauth_service: Annotated[OAuthService, Depends(get_oauth_service)],
 ) -> SocialAccountsListResponse:
     """
     Get all social accounts linked to the current user.

@@ -3,10 +3,10 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
-from sqlalchemy import Boolean, Column, DateTime, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
-
 from app.db.base import BaseModel
+from sqlalchemy import JSON, Boolean, Column, DateTime, String, Text
+
+# from sqlalchemy.dialects.postgresql import JSONB
 
 
 class StripeWebhookEvent(BaseModel):
@@ -24,13 +24,13 @@ class StripeWebhookEvent(BaseModel):
     processed_at = Column(DateTime(timezone=True))
 
     # Event payload
-    payload = Column(JSONB, nullable=False)
+    payload = Column(JSON, nullable=False)
 
     def __repr__(self) -> str:
         """String representation"""
         return (
-            f"<StripeWebhookEvent(event_id={self.stripe_event_id}, "
-            f"type={self.event_type}, processed={self.processed})>"
+            f"<StripeWebhookEvent(id={self.id}, type={self.event_type}, "
+            f"processed={self.processed})>"
         )
 
     @property
@@ -67,5 +67,7 @@ class StripeWebhookEvent(BaseModel):
 
     @classmethod
     def event_type_prefix(cls, event_type: str) -> str:
-        """Extract the prefix from an event type (e.g., 'invoice' from 'invoice.paid')"""
+        """
+        Extract the prefix from an event type (e.g., 'invoice' from 'invoice.paid')
+        """
         return event_type.split(".")[0] if "." in event_type else event_type

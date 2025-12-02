@@ -31,10 +31,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.cache import CacheManager
 from app.core.exceptions import NotFoundException
 from app.repositories import StockRepository
-from app.schemas import (CalculatedIndicator, DailyPrice, FinancialStatement,
-                         PaginationMeta, StockDetail, StockListItem,
-                         StockListResponse, StockSearchResponse,
-                         StockSearchResult)
+from app.schemas import (
+    CalculatedIndicator,
+    DailyPrice,
+    FinancialStatement,
+    PaginationMeta,
+    StockDetail,
+    StockListItem,
+    StockListResponse,
+    StockSearchResponse,
+    StockSearchResult,
+)
 
 
 class StockService:
@@ -160,7 +167,8 @@ class StockService:
         improve performance and reduce database load.
 
         Args:
-            stock_code: 6-digit Korean stock code (e.g., "005930" for Samsung Electronics).
+            stock_code: 6-digit Korean stock code
+            (e.g., "005930" for Samsung Electronics).
 
         Returns:
             StockDetail: Comprehensive stock information containing:
@@ -171,7 +179,8 @@ class StockService:
 
         Raises:
             NotFoundException: If the stock code does not exist in the database.
-            ValidationError: If the stock code format is invalid (implicit via Pydantic).
+            ValidationError: If the stock code format is invalid
+            (implicit via Pydantic).
 
         Note:
             This method uses Redis cache with key format: `stock:detail:{stock_code}`

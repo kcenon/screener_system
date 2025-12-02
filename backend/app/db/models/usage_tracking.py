@@ -1,22 +1,13 @@
 """Usage tracking database model"""
 
-from datetime import date, datetime
+from datetime import date
 from enum import Enum
-from typing import Optional
-
-from sqlalchemy import (
-    CheckConstraint,
-    Column,
-    Date,
-    ForeignKey,
-    Integer,
-    String,
-    UniqueConstraint,
-)
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
+from sqlalchemy import (JSON, CheckConstraint, Column, Date, ForeignKey,
+                        Integer, String, UniqueConstraint)
+# from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 
 class ResourceType(str, Enum):
@@ -60,7 +51,7 @@ class UsageTracking(BaseModel):
     )
 
     # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
-    tracking_metadata = Column(JSONB, default=dict)
+    tracking_metadata = Column(JSON, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="usage_records")

@@ -2,10 +2,9 @@
 
 from typing import Optional
 
+from app.db.base import Base, TimestampMixin
 from sqlalchemy import BigInteger, CheckConstraint, Column, Date, String
 from sqlalchemy.orm import relationship
-
-from app.db.base import Base, TimestampMixin
 
 
 class Stock(Base, TimestampMixin):
@@ -47,6 +46,13 @@ class Stock(Base, TimestampMixin):
 
     calculated_indicators = relationship(
         "CalculatedIndicator",
+        back_populates="stock",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
+
+    holdings = relationship(
+        "Holding",
         back_populates="stock",
         cascade="all, delete-orphan",
         lazy="select",

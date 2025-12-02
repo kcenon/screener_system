@@ -3,18 +3,10 @@
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import (
-    Boolean,
-    CheckConstraint,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-)
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship
-
 from app.db.base import BaseModel
+from sqlalchemy import (JSON, Boolean, CheckConstraint, Column, ForeignKey,
+                        Integer, String)
+from sqlalchemy.orm import relationship
 
 
 class PaymentMethodType(str, Enum):
@@ -40,7 +32,9 @@ class PaymentMethod(BaseModel):
     )
 
     # Stripe integration
-    stripe_payment_method_id = Column(String(255), nullable=False, unique=True, index=True)
+    stripe_payment_method_id = Column(
+        String(255), nullable=False, unique=True, index=True
+    )
 
     # Payment method details
     type = Column(
@@ -61,10 +55,16 @@ class PaymentMethod(BaseModel):
     billing_email = Column(String(255))
 
     # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
-    method_metadata = Column(JSONB, default=dict)
+    method_metadata = Column(JSON, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="payment_methods")
+    payments = relationship(
+        "Payment",
+        back_populates="payment_method",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
 
     # Constraints
     __table_args__ = (
@@ -77,8 +77,8 @@ class PaymentMethod(BaseModel):
     def __repr__(self) -> str:
         """String representation"""
         return (
-            f"<PaymentMethod(user_id={self.user_id}, type={self.type}, "
-            f"last4={self.card_last4}, default={self.is_default})>"
+            f"<PaymentMethod(id={self.id}, user_id={self.user_id}, "
+            f"type={self.type}, last4={self.card_last4})>"
         )
 
     @property
@@ -86,7 +86,9 @@ class PaymentMethod(BaseModel):
         """Get display name for the payment method"""
         if self.type == PaymentMethodType.CARD.value and self.card_brand:
             return f"{self.card_brand.capitalize()} ****{self.card_last4}"
-        return f"{self.type} ending in {self.card_last4}" if self.card_last4 else self.type
+        return (
+            f"{self.type} ending in {self.card_last4}" if self.card_last4 else self.type
+        )
 
     @property
     def is_expired(self) -> bool:
@@ -96,9 +98,8 @@ class PaymentMethod(BaseModel):
         from datetime import date
 
         today = date.today()
-        return (
-            self.card_exp_year < today.year
-            or (self.card_exp_year == today.year and self.card_exp_month < today.month)
+        return self.card_exp_year < today.year or (
+            self.card_exp_year == today.year and self.card_exp_month < today.month
         )
 
     @property

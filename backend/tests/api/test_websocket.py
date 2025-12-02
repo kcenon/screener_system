@@ -1,6 +1,5 @@
 """Tests for WebSocket endpoints"""
 
-import json
 from datetime import datetime
 
 import pytest
@@ -8,7 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.core.websocket import connection_manager
 from app.main import app
-from app.schemas.websocket import MessageType, SubscriptionType
+from app.schemas.websocket import SubscriptionType
 
 
 @pytest.fixture
@@ -587,8 +586,7 @@ class TestVerifyToken:
 
         # Create expired token
         token = create_access_token(
-            subject="test-user-123",
-            expires_delta=timedelta(seconds=-1)
+            subject="test-user-123", expires_delta=timedelta(seconds=-1)
         )
         result = await verify_token(token)
         assert result is None
@@ -613,7 +611,7 @@ class TestWebSocketSubscriptionLimits:
             # Ignore pongs
             while response.get("type") == "pong":
                 response = websocket.receive_json()
-                
+
             assert response["type"] == "error"
             assert response["code"] == "TOO_MANY_TARGETS"
 
@@ -684,7 +682,9 @@ class TestHandleSubscribe:
             mock_cm.get_connection_info.return_value = None
 
             # Invalid subscription type
-            await handle_subscribe("test-conn", {"type": "subscribe", "invalid": "data"})
+            await handle_subscribe(
+                "test-conn", {"type": "subscribe", "invalid": "data"}
+            )
 
             mock_cm.send_error.assert_called_once()
 
@@ -757,8 +757,7 @@ class TestHandleRefreshToken:
             mock_cm.send_error = AsyncMock()
 
             await handle_refresh_token(
-                "test-conn",
-                {"type": "refresh_token", "refresh_token": access_token}
+                "test-conn", {"type": "refresh_token", "refresh_token": access_token}
             )
 
             mock_cm.send_error.assert_called()
@@ -774,8 +773,7 @@ class TestHandleRefreshToken:
             mock_cm.send_error = AsyncMock()
 
             await handle_refresh_token(
-                "test-conn",
-                {"type": "refresh_token", "refresh_token": "expired_token"}
+                "test-conn", {"type": "refresh_token", "refresh_token": "expired_token"}
             )
 
             mock_cm.send_error.assert_called()

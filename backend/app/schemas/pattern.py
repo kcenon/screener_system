@@ -1,6 +1,8 @@
-from typing import List, Optional, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field
+from typing import Any, Dict, List
+
+from pydantic import BaseModel
+
 
 class PatternBase(BaseModel):
     stock_code: str
@@ -9,15 +11,47 @@ class PatternBase(BaseModel):
     detected_at: datetime
     timeframe: str = "1D"
 
+
+class PatternRecognitionRequest(BaseModel):
+    """Request schema for pattern recognition"""
+
+    stock_code: str
+    days: int = 60
+
+
+class PatternRecognitionResponse(BaseModel):
+    """Response schema for pattern recognition"""
+
+    stock_code: str
+    patterns: List[Dict[str, Any]]
+    summary: str
+    timestamp: datetime
+
+
+class PatternDetail(BaseModel):
+    """Detailed schema for a recognized pattern"""
+
+    name: str
+    confidence: float
+    description: str
+    action: str  # "buy", "sell", "hold"
+
+
 class PatternCreate(PatternBase):
     metadata: Dict[str, Any] = {}
 
+
+class PatternUpdate(PatternBase):
+    pass
+
+
 class PatternResponse(PatternBase):
-    pattern_id: str
-    metadata: Dict[str, Any] = {}
-    
+    id: int
+    created_at: datetime
+
     class Config:
         from_attributes = True
+
 
 class AlertConfigBase(BaseModel):
     stock_code: str
@@ -25,8 +59,10 @@ class AlertConfigBase(BaseModel):
     min_confidence: float = 0.7
     notification_methods: List[str] = ["email"]
 
+
 class AlertConfigCreate(AlertConfigBase):
     user_id: str
+
 
 class AlertConfigResponse(AlertConfigBase):
     alert_id: str

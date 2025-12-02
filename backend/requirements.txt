@@ -13,6 +13,7 @@ sqlalchemy[asyncio]==2.0.44
 asyncpg==0.30.0
 alembic==1.17.1
 psycopg2-binary==2.9.11
+greenlet==3.0.3  # Required for SQLAlchemy asyncio
 
 # Cache
 redis[hiredis]==5.0.1
@@ -38,8 +39,12 @@ scikit-learn==1.7.2
 lightgbm==4.6.0
 xgboost==3.1.2
 optuna==4.6.0
+openai==1.12.0
+anthropic==0.18.1
+tenacity==8.2.3
+jinja2==3.1.5
 mlflow==3.5.0  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, path traversal, DoS)
-tensorflow
+tensorflow==2.16.1
 keras==3.12.0  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-xfhp, GHSA-c9rc-mg46-23w3)
 matplotlib==3.8.2
 pillow==10.4.0  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
@@ -70,3 +75,8 @@ isort==7.0.0
 # Utilities
 python-dotenv==1.2.1  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
 pyyaml==6.0.1
+email-validator==2.1.0.post1
+zipp>=3.19.1
+tornado>=6.4.1
+idna>=3.7
+certifi>=2024.07.04

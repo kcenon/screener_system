@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 from unittest.mock import AsyncMock, Mock
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -195,9 +195,7 @@ class TestUserSessionRepository:
     # ========================================================================
 
     @pytest.mark.asyncio
-    async def test_create_session(
-        self, repository, mock_session, sample_user_session
-    ):
+    async def test_create_session(self, repository, mock_session, sample_user_session):
         """Test creating a new session"""
         # Execute
         result = await repository.create(sample_user_session)
@@ -213,9 +211,7 @@ class TestUserSessionRepository:
     # ========================================================================
 
     @pytest.mark.asyncio
-    async def test_revoke_session(
-        self, repository, mock_session, sample_user_session
-    ):
+    async def test_revoke_session(self, repository, mock_session, sample_user_session):
         """Test revoking a session"""
         # Setup - mock the revoke method on the session object
         sample_user_session.revoke = Mock()
@@ -234,9 +230,7 @@ class TestUserSessionRepository:
     # ========================================================================
 
     @pytest.mark.asyncio
-    async def test_revoke_by_refresh_token_found(
-        self, repository, sample_user_session
-    ):
+    async def test_revoke_by_refresh_token_found(self, repository, sample_user_session):
         """Test revoking session by refresh token when session exists"""
         # Mock the methods
         repository.get_by_refresh_token = AsyncMock(return_value=sample_user_session)
@@ -344,9 +338,7 @@ class TestUserSessionRepository:
         assert mock_session.execute.called
 
     @pytest.mark.asyncio
-    async def test_delete_expired_sessions_none_expired(
-        self, repository, mock_session
-    ):
+    async def test_delete_expired_sessions_none_expired(self, repository, mock_session):
         """Test deleting expired sessions when none are expired"""
         # Setup mock
         mock_result = Mock()

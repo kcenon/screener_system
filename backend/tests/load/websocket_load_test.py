@@ -20,7 +20,7 @@ import json
 import time
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List
+from typing import List
 
 import psutil
 import websockets
@@ -59,17 +59,22 @@ class LoadTestStats:
         print("WEBSOCKET LOAD TEST SUMMARY")
         print("=" * 60)
         print(f"Duration: {duration:.2f} seconds")
-        print(f"\nConnections:")
+        print("\nConnections:")
         print(f"  - Established: {self.connections_established}")
         print(f"  - Failed: {self.connections_failed}")
-        print(f"  - Success Rate: {self.connections_established / (self.connections_established + self.connections_failed) * 100:.2f}%")
-        print(f"\nMessages:")
+        success_rate = (
+            self.connections_established
+            / (self.connections_established + self.connections_failed)
+            * 100
+        )
+        print(f"  - Success Rate: {success_rate:.2f}%")
+        print("\nMessages:")
         print(f"  - Sent: {self.messages_sent}")
         print(f"  - Received: {self.messages_received}")
         print(f"  - Rate: {self.messages_received / duration:.2f} msg/s")
 
         if self.latencies:
-            print(f"\nLatency (ms):")
+            print("\nLatency (ms):")
             print(f"  - Min: {min(self.latencies) * 1000:.2f}")
             print(f"  - Max: {max(self.latencies) * 1000:.2f}")
             print(f"  - Mean: {sum(self.latencies) / len(self.latencies) * 1000:.2f}")
@@ -78,7 +83,7 @@ class LoadTestStats:
             print(f"  - p99: {self.get_percentile(0.99) * 1000:.2f}")
 
         if self.errors:
-            print(f"\nErrors:")
+            print("\nErrors:")
             for error_type, count in self.errors.items():
                 print(f"  - {error_type}: {count}")
 
@@ -131,9 +136,7 @@ class WebSocketClient:
             while self.running and (time.time() - start_time < duration):
                 try:
                     # Set timeout to check running flag periodically
-                    message = await asyncio.wait_for(
-                        self.websocket.recv(), timeout=1.0
-                    )
+                    message = await asyncio.wait_for(self.websocket.recv(), timeout=1.0)
 
                     # Record receive time
                     receive_time = time.time()
@@ -213,7 +216,7 @@ async def run_load_test(
     stats.start_time = datetime.utcnow()
 
     print(f"\n{'=' * 60}")
-    print(f"Starting WebSocket Load Test")
+    print("Starting WebSocket Load Test")
     print(f"{'=' * 60}")
     print(f"URL: {url}")
     print(f"Connections: {num_connections}")
@@ -265,7 +268,7 @@ async def run_load_test(
     # Print results
     stats.print_summary()
 
-    print(f"System Resources:")
+    print("System Resources:")
     print(f"  - Memory used: {memory_used:.2f} MB")
     print(f"  - Memory per connection: {memory_used / num_connections:.2f} MB")
     print(f"  - CPU percent: {process.cpu_percent()}%\n")

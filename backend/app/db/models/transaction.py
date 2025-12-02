@@ -1,27 +1,17 @@
 """Transaction database model"""
 
-from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (
-    DECIMAL,
-    CheckConstraint,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-)
+from app.db.base import Base
+from sqlalchemy import (CheckConstraint, Column, DateTime, Float, ForeignKey,
+                        Integer, String)
 from sqlalchemy.orm import relationship
 
-from app.db.base import Base, TimestampMixin
-
 if TYPE_CHECKING:
-    from app.db.models.portfolio import Portfolio
-    from app.db.models.stock import Stock
+    from app.db.models.portfolio import Portfolio  # noqa: F401
+    from app.db.models.stock import Stock  # noqa: F401
 
 
 class TransactionType(str, Enum):
@@ -29,27 +19,37 @@ class TransactionType(str, Enum):
 
     BUY = "BUY"
     SELL = "SELL"
+    DEPOSIT = "DEPOSIT"
+    WITHDRAW = "WITHDRAW"
 
 
-class Transaction(Base, TimestampMixin):
-    """Transaction model for buy/sell activities"""
+class Transaction(Base):
+    """Transaction model for portfolio operations"""
 
     __tablename__ = "transactions"
 
-    # Primary Key
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-    # Foreign Keys
-    portfolio_id = Column(Integer, ForeignKey("portfolios.id", ondelete="CASCADE"), nullable=False, index=True)
-    stock_symbol = Column(String(20), ForeignKey("stocks.code", ondelete="RESTRICT"), nullable=False, index=True)
-
-    # Transaction Details
-    transaction_type = Column(String(10), nullable=False, index=True)
-    shares = Column(DECIMAL(18, 8), nullable=False)
-    price = Column(DECIMAL(18, 2), nullable=False)
-    commission = Column(DECIMAL(18, 2), nullable=False, default=0, server_default="0")
+    id = Column(Integer, primary_key=True, index=True)
+    portfolio_id = Column(
+        Integer,
+        ForeignKey("portfolios.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    stock_code = Column(
+        String(6),
+        ForeignKey("stocks.code", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    transaction_type = Column(
+        String(10), nullable=False
+    )  # 'BUY', 'SELL', 'DEPOSIT', 'WITHDRAW'
+    quantity = Column(Integer, nullable=False)
+    price = Column(Float, nullable=False)
+    amount = Column(Float, nullable=False)  # Total amount (quantity * price)
     transaction_date = Column(DateTime(timezone=True), nullable=False, index=True)
-    notes = Column(Text, nullable=True)
+    commission = Column(Float, default=0.0)
+    notes = Column(String(255), nullable=True)
 
     # Relationships
     portfolio = relationship("Portfolio", back_populates="transactions", lazy="select")
@@ -62,8 +62,8 @@ class Transaction(Base, TimestampMixin):
             name="valid_transaction_type",
         ),
         CheckConstraint(
-            "shares > 0",
-            name="valid_shares",
+            "quantity > 0",
+            name="valid_quantity",
         ),
         CheckConstraint(
             "price >= 0",
@@ -77,7 +77,10 @@ class Transaction(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<Transaction(id={self.id}, type={self.transaction_type}, stock={self.stock_symbol}, shares={self.shares}, price={self.price})>"
+        return (
+            f"<Transaction(id={self.id}, type={self.transaction_type}, "
+            f"code={self.stock_code}, amount={self.amount})>"
+        )
 
     @property
     def transaction_value(self) -> Decimal:

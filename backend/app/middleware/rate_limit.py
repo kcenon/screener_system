@@ -2,13 +2,12 @@
 
 from typing import Callable, Dict, Optional
 
-from fastapi import Request, Response, status
-from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
-
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.logging import logger
+from fastapi import HTTPException, Request, Response, status
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 # Lua script for atomic incr+expire operation
 # This ensures that the counter is incremented and TTL is set atomically,
@@ -71,9 +70,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return True, 0
 
         # Atomically increment counter and set TTL
-        current = await cache_manager.redis.eval(
-            RATE_LIMIT_SCRIPT, 1, key, window
-        )
+        current = await cache_manager.redis.eval(RATE_LIMIT_SCRIPT, 1, key, window)
 
         # Check if limit exceeded
         if current > limit:
@@ -124,16 +121,24 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             # 1. Check tier-based rate limit
             tier_key = f"rate_limit:tier:{user_id}:{tier}"
             tier_allowed, tier_current = await self._check_rate_limit(
-                tier_key, tier_limit, settings.RATE_LIMIT_WINDOW, user_id, f"tier-{tier}"
+                tier_key,
+                tier_limit,
+                settings.RATE_LIMIT_WINDOW,
+                user_id,
+                f"tier-{tier}",
             )
 
             if not tier_allowed:
-                return JSONResponse(
+                raise HTTPException(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                    content={
-                        "success": False,
-                        "message": "Rate limit exceeded",
-                        "detail": f"Maximum {tier_limit} requests per hour allowed for {tier} tier",
+                    detail={
+                        "error": "rate_limit_exceeded",
+                        "message": "Too many requests",
+                        "retry_after": settings.RATE_LIMIT_WINDOW,
+                        "info": (
+                            f"Maximum {tier_limit} requests per hour allowed "
+                            f"for {tier} tier"
+                        ),
                     },
                     headers={
                         "X-RateLimit-Limit": str(tier_limit),
@@ -150,8 +155,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             if endpoint_limit is not None:
                 endpoint_key = f"rate_limit:endpoint:{user_id}:{request.url.path}"
                 endpoint_allowed, endpoint_current = await self._check_rate_limit(
-                    endpoint_key, endpoint_limit, settings.RATE_LIMIT_WINDOW,
-                    user_id, f"endpoint-{request.url.path}"
+                    endpoint_key,
+                    endpoint_limit,
+                    settings.RATE_LIMIT_WINDOW,
+                    user_id,
+                    f"endpoint-{request.url.path}",
                 )
 
                 if not endpoint_allowed:
@@ -160,7 +168,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         content={
                             "success": False,
                             "message": "Endpoint rate limit exceeded",
-                            "detail": f"Maximum {endpoint_limit} requests per hour allowed for {request.url.path}",
+                            "detail": (
+                                f"Maximum {endpoint_limit} requests per hour "
+                                f"allowed for {request.url.path}"
+                            ),
                         },
                         headers={
                             "X-RateLimit-Limit": str(endpoint_limit),
@@ -176,7 +187,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
             # Add rate limit headers (use endpoint limit if available, else tier limit)
             active_limit = endpoint_limit if endpoint_limit is not None else tier_limit
-            active_current = endpoint_current if endpoint_limit is not None else tier_current
+            active_current = (
+                endpoint_current if endpoint_limit is not None else tier_current
+            )
             remaining = max(0, active_limit - active_current)
 
             response.headers["X-RateLimit-Limit"] = str(active_limit)

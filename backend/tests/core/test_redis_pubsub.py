@@ -33,7 +33,9 @@ class TestRedisPubSubClientInit:
         """Test is_connected returns False when not connected"""
         assert pubsub_client.is_connected() is False
 
-    def test_get_subscriber_count_zero_initially(self, pubsub_client: RedisPubSubClient):
+    def test_get_subscriber_count_zero_initially(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test subscriber count is zero initially"""
         assert pubsub_client.get_subscriber_count() == 0
 
@@ -56,7 +58,9 @@ class TestRedisPubSubConnect:
             mock_redis.ping.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_connect_failure_raises_exception(self, pubsub_client: RedisPubSubClient):
+    async def test_connect_failure_raises_exception(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test connection failure raises exception"""
         with patch(
             "app.core.redis_pubsub.redis.from_url",
@@ -66,7 +70,9 @@ class TestRedisPubSubConnect:
                 await pubsub_client.connect()
 
     @pytest.mark.asyncio
-    async def test_is_connected_true_after_connect(self, pubsub_client: RedisPubSubClient):
+    async def test_is_connected_true_after_connect(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test is_connected returns True after successful connection"""
         mock_redis = AsyncMock()
         mock_redis.ping = AsyncMock(return_value=True)
@@ -92,8 +98,11 @@ class TestRedisPubSubDisconnect:
         assert pubsub_client._running is False
 
     @pytest.mark.asyncio
-    async def test_disconnect_cancels_listener_task(self, pubsub_client: RedisPubSubClient):
+    async def test_disconnect_cancels_listener_task(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test disconnect cancels listener task"""
+
         # Create a mock task that is both cancellable and awaitable
         # Real tasks raise CancelledError when awaited after cancel()
         class CancelledTaskMock:
@@ -150,7 +159,9 @@ class TestRedisPubSubPublish:
         )
 
     @pytest.mark.asyncio
-    async def test_publish_without_connection_raises(self, pubsub_client: RedisPubSubClient):
+    async def test_publish_without_connection_raises(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test publish raises error when not connected"""
         message = {"test": "data"}
 
@@ -203,7 +214,9 @@ class TestRedisPubSubSubscribe:
         mock_pubsub.psubscribe.assert_called_once_with("stock:*:price")
 
     @pytest.mark.asyncio
-    async def test_subscribe_without_pubsub_raises(self, pubsub_client: RedisPubSubClient):
+    async def test_subscribe_without_pubsub_raises(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test subscribe raises error when PubSub not initialized"""
 
         async def handler(channel, data):
@@ -256,7 +269,9 @@ class TestRedisPubSubUnsubscribe:
         mock_pubsub.punsubscribe.assert_called_once_with("stock:*:price")
 
     @pytest.mark.asyncio
-    async def test_unsubscribe_without_pubsub_returns(self, pubsub_client: RedisPubSubClient):
+    async def test_unsubscribe_without_pubsub_returns(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test unsubscribe returns silently when PubSub not initialized"""
         await pubsub_client.unsubscribe("test_channel")  # Should not raise
 
@@ -265,7 +280,9 @@ class TestRedisPubSubListen:
     """Test Redis listener functionality"""
 
     @pytest.mark.asyncio
-    async def test_listen_without_pubsub_returns(self, pubsub_client: RedisPubSubClient):
+    async def test_listen_without_pubsub_returns(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test _listen returns when PubSub is None"""
         pubsub_client._pubsub = None
         await pubsub_client._listen()  # Should return without error
@@ -301,7 +318,9 @@ class TestRedisPubSubListen:
         assert received_data[0] == ("test_channel", {"test": "data"})
 
     @pytest.mark.asyncio
-    async def test_listen_skips_subscription_messages(self, pubsub_client: RedisPubSubClient):
+    async def test_listen_skips_subscription_messages(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test _listen skips subscription confirmation messages"""
         received_data = []
 
@@ -351,7 +370,9 @@ class TestRedisPubSubListen:
         assert len(received_data) == 0
 
     @pytest.mark.asyncio
-    async def test_listen_handles_handler_exception(self, pubsub_client: RedisPubSubClient):
+    async def test_listen_handles_handler_exception(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test _listen handles handler exceptions gracefully"""
 
         async def failing_handler(channel, data):
@@ -376,7 +397,9 @@ class TestRedisPubSubListen:
         await pubsub_client._listen()
 
     @pytest.mark.asyncio
-    async def test_listen_handles_pattern_message(self, pubsub_client: RedisPubSubClient):
+    async def test_listen_handles_pattern_message(
+        self, pubsub_client: RedisPubSubClient
+    ):
         """Test _listen handles pattern match messages"""
         received_data = []
 

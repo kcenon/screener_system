@@ -2,11 +2,11 @@
 
 from typing import Optional
 
-from sqlalchemy import delete, func, select
+from app.db.models import Holding, Portfolio, Transaction
+from sqlalchemy import delete as sql_delete
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-
-from app.db.models import Holding, Portfolio, Transaction
 
 
 class PortfolioRepository:
@@ -83,7 +83,7 @@ class PortfolioRepository:
     async def get_default_portfolio(self, user_id: int) -> Optional[Portfolio]:
         """Get user's default portfolio"""
         query = select(Portfolio).where(
-            Portfolio.user_id == user_id, Portfolio.is_default == True
+            Portfolio.user_id == user_id, Portfolio.is_default.is_(True)
         )
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
@@ -103,7 +103,9 @@ class PortfolioRepository:
 
     async def delete(self, portfolio: Portfolio) -> None:
         """Delete portfolio (cascades to holdings and transactions)"""
-        await self.session.delete(portfolio)
+        await self.session.execute(
+            sql_delete(Portfolio).where(Portfolio.id == portfolio.id)
+        )
         await self.session.flush()
 
     async def get_by_name(self, user_id: int, name: str) -> Optional[Portfolio]:
@@ -114,11 +116,12 @@ class PortfolioRepository:
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
 
-    async def clear_default_flag(self, user_id: int, exclude_id: Optional[int] = None) -> None:
+    async def clear_default_flag(
+        self, user_id: int, exclude_id: Optional[int] = None
+    ) -> None:
         """Clear is_default flag for all user portfolios except excluded one"""
-        query = (
-            select(Portfolio)
-            .where(Portfolio.user_id == user_id, Portfolio.is_default == True)
+        query = select(Portfolio).where(
+            Portfolio.user_id == user_id, Portfolio.is_default.is_(True)
         )
         if exclude_id:
             query = query.where(Portfolio.id != exclude_id)
@@ -238,7 +241,11 @@ class TransactionRepository:
         if stock_symbol:
             query = query.where(Transaction.stock_symbol == stock_symbol)
 
-        query = query.order_by(Transaction.transaction_date.desc()).offset(skip).limit(limit)
+        query = (
+            query.order_by(Transaction.transaction_date.desc())
+            .offset(skip)
+            .limit(limit)
+        )
 
         result = await self.session.execute(query)
         return list(result.scalars().all())

@@ -1,11 +1,10 @@
 """Global exception handlers for FastAPI"""
 
+from app.core.exceptions import AppException
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
-
-from app.core.exceptions import AppException
 
 
 async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:

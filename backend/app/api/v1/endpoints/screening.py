@@ -1,13 +1,12 @@
 """Stock screening endpoints for filtering and templates"""
 
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.cache import CacheManager, get_cache
 from app.db.session import get_db
 from app.schemas.screening import (ScreeningRequest, ScreeningResponse,
                                    ScreeningTemplateList)
 from app.services.screening_service import ScreeningService
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/screen", tags=["screening"])
 
@@ -103,22 +102,27 @@ def get_screening_service(
             "description": "Successful screening with stocks and metadata",
             "headers": {
                 "X-RateLimit-Limit": {
-                    "description": "Maximum requests allowed per hour for this endpoint",
-                    "schema": {"type": "integer", "example": 50}
+                    "description": (
+                        "Maximum requests allowed per hour for this endpoint"
+                    ),
+                    "schema": {"type": "integer", "example": 50},
                 },
                 "X-RateLimit-Remaining": {
                     "description": "Requests remaining in current 1-hour window",
-                    "schema": {"type": "integer", "example": 45}
+                    "schema": {"type": "integer", "example": 45},
                 },
                 "X-RateLimit-Reset": {
-                    "description": "Seconds until rate limit resets (always 3600 for 1-hour window)",
-                    "schema": {"type": "integer", "example": 3600}
+                    "description": (
+                        "Seconds until rate limit resets "
+                        "(always 3600 for 1-hour window)"
+                    ),
+                    "schema": {"type": "integer", "example": 3600},
                 },
                 "X-RateLimit-Endpoint": {
                     "description": "Current endpoint path",
-                    "schema": {"type": "string", "example": "/v1/screen"}
-                }
-            }
+                    "schema": {"type": "string", "example": "/v1/screen"},
+                },
+            },
         },
         429: {
             "description": "Rate limit exceeded - too many requests",
@@ -127,33 +131,33 @@ def get_screening_service(
                     "example": {
                         "success": False,
                         "message": "Endpoint rate limit exceeded",
-                        "detail": "Maximum 50 requests per hour allowed for /v1/screen"
+                        "detail": "Upgrade required for advanced screening",
                     }
                 }
             },
             "headers": {
                 "X-RateLimit-Limit": {
                     "description": "Maximum requests allowed per hour",
-                    "schema": {"type": "integer", "example": 50}
+                    "schema": {"type": "integer", "example": 50},
                 },
                 "X-RateLimit-Remaining": {
                     "description": "Requests remaining (0 when rate limited)",
-                    "schema": {"type": "integer", "example": 0}
+                    "schema": {"type": "integer", "example": 0},
                 },
                 "X-RateLimit-Reset": {
                     "description": "Seconds until rate limit resets",
-                    "schema": {"type": "integer", "example": 3600}
+                    "schema": {"type": "integer", "example": 3600},
                 },
                 "X-RateLimit-Endpoint": {
                     "description": "Endpoint that exceeded the limit",
-                    "schema": {"type": "string", "example": "/v1/screen"}
+                    "schema": {"type": "string", "example": "/v1/screen"},
                 },
                 "Retry-After": {
                     "description": "Seconds to wait before retrying",
-                    "schema": {"type": "integer", "example": 3600}
-                }
-            }
-        }
+                    "schema": {"type": "integer", "example": 3600},
+                },
+            },
+        },
     },
 )
 async def screen_stocks(

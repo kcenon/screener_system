@@ -26,40 +26,27 @@ Attributes:
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
-from sqlalchemy.exc import SQLAlchemyError
-
 from app.api.error_handlers import (app_exception_handler,
                                     generic_exception_handler,
                                     sqlalchemy_exception_handler,
                                     validation_exception_handler)
-from app.api.v1.endpoints import (
-    alerts,
-    ai,
-    auth,
-    health,
-    market,
-    notifications,
-    oauth,
-    portfolios,
-    recommendation, # Added recommendation
-    screening,
-    stocks,
-    subscriptions,
-    users,
-    webhooks,
-    websocket,
-)
+from app.api.v1.endpoints import ai_analysis  # Added ai_analysis
+from app.api.v1.endpoints import (ai, alerts, auth, health, market,
+                                  notifications, oauth, portfolios,
+                                  recommendation, screening, stocks,
+                                  subscriptions, users, webhooks, websocket)
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.exceptions import AppException
 from app.core.logging import logger
 from app.middleware.logging import LoggingMiddleware
-from app.middleware.rate_limit import RateLimitMiddleware
 from app.middleware.metrics import PrometheusMetricsMiddleware
+from app.middleware.rate_limit import RateLimitMiddleware
+from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from sqlalchemy.exc import SQLAlchemyError
 
 
 @asynccontextmanager
@@ -107,8 +94,9 @@ async def lifespan(app: FastAPI):
 
     # Initialize WebSocket Redis Pub/Sub
     try:
-        from app.core.websocket import connection_manager
         import asyncio
+
+        from app.core.websocket import connection_manager
 
         await connection_manager.initialize_redis()
         logger.info("WebSocket Redis Pub/Sub initialized")
@@ -213,7 +201,16 @@ app.include_router(health.router, prefix="/v1")
 
 # Include AI routes
 app.include_router(ai.router, prefix=settings.API_V1_STR)
-app.include_router(recommendation.router, prefix=settings.API_V1_STR)
+app.include_router(
+    recommendation.router,
+    prefix=settings.API_V1_STR + "/recommendations",
+    tags=["recommendations"],
+)
+app.include_router(
+    ai_analysis.router,
+    prefix=settings.API_V1_STR + "/ai",
+    tags=["ai-analysis"],
+)
 
 # Include authentication routes
 app.include_router(auth.router, prefix="/v1")

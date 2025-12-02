@@ -2,10 +2,9 @@
 
 from typing import Optional
 
+from app.db.models import User
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.db.models import User
 
 
 class UserRepository:

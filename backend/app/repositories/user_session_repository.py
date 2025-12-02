@@ -4,10 +4,9 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
+from app.db.models import UserSession
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.db.models import UserSession
 
 
 class UserSessionRepository:
@@ -27,7 +26,10 @@ class UserSessionRepository:
     async def get_by_refresh_token(self, refresh_token: str) -> Optional[UserSession]:
         """Get session by refresh token"""
         result = await self.session.execute(
-            select(UserSession).where(UserSession.refresh_token == refresh_token)
+            select(UserSession).where(
+                UserSession.refresh_token == refresh_token,
+                UserSession.revoked == False,  # noqa: E712
+            )
         )
         return result.scalar_one_or_none()
 
@@ -65,7 +67,10 @@ class UserSessionRepository:
         return user_session
 
     async def revoke_by_refresh_token(self, refresh_token: str) -> bool:
-        """Revoke session by refresh token. Returns True if session was found and revoked."""
+        """
+        Revoke session by refresh token.
+        Returns True if session was found and revoked.
+        """
         user_session = await self.get_by_refresh_token(refresh_token)
         if user_session:
             await self.revoke(user_session)
@@ -81,9 +86,8 @@ class UserSessionRepository:
 
     async def delete_expired_sessions(self, before: Optional[datetime] = None) -> int:
         """Delete expired sessions. Returns count of deleted sessions."""
-        from sqlalchemy import delete
-
         from app.db.base import utc_now
+        from sqlalchemy import delete
 
         cutoff = before or utc_now()
         result = await self.session.execute(

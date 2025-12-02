@@ -67,6 +67,7 @@ class TestCeleryAppConfiguration:
 
             # Reload the module to test with new settings
             import importlib
+
             import app.celery_app
 
             importlib.reload(app.celery_app)

@@ -3,7 +3,7 @@
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 
-from sqlalchemy import and_, case, desc, func, or_, select
+from sqlalchemy import and_, case, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import DailyPrice, MarketIndex, Stock
@@ -114,9 +114,7 @@ class MarketRepository:
     # Market Breadth Operations
     # ========================================================================
 
-    async def get_market_breadth(
-        self, market: Optional[str] = None
-    ) -> Dict[str, int]:
+    async def get_market_breadth(self, market: Optional[str] = None) -> Dict[str, int]:
         """
         Get market breadth indicators (advancing/declining/unchanged counts)
 
@@ -156,13 +154,31 @@ class MarketRepository:
         # Calculate change and count
         query = select(
             func.count(
-                case((latest_price_data.c.close_price > latest_price_data.c.open_price, 1))
+                case(
+                    (
+                        latest_price_data.c.close_price
+                        > latest_price_data.c.open_price,
+                        1,
+                    )
+                )
             ).label("advancing"),
             func.count(
-                case((latest_price_data.c.close_price < latest_price_data.c.open_price, 1))
+                case(
+                    (
+                        latest_price_data.c.close_price
+                        < latest_price_data.c.open_price,
+                        1,
+                    )
+                )
             ).label("declining"),
             func.count(
-                case((latest_price_data.c.close_price == latest_price_data.c.open_price, 1))
+                case(
+                    (
+                        latest_price_data.c.close_price
+                        == latest_price_data.c.open_price,
+                        1,
+                    )
+                )
             ).label("unchanged"),
         ).select_from(latest_price_data)
 
@@ -211,10 +227,9 @@ class MarketRepository:
         )
 
         # Subquery for prices N days ago
-        cutoff_date = (
-            select(func.max(DailyPrice.trade_date) - timedelta(days=timeframe_days))
-            .scalar_subquery()
-        )
+        cutoff_date = select(
+            func.max(DailyPrice.trade_date) - timedelta(days=timeframe_days)
+        ).scalar_subquery()
 
         previous_prices = (
             select(
@@ -234,6 +249,7 @@ class MarketRepository:
                     "market_cap"
                 ),
                 func.sum(DailyPrice.volume).label("total_volume"),
+                # Calculate price change
                 func.avg(
                     (DailyPrice.close_price - previous_prices.c.prev_close)
                     / previous_prices.c.prev_close
@@ -284,7 +300,9 @@ class MarketRepository:
             for row in sectors
         ]
 
-    async def get_sector_top_stock(self, sector: str) -> Optional[Tuple[str, str, float]]:
+    async def get_sector_top_stock(
+        self, sector: str
+    ) -> Optional[Tuple[str, str, float]]:
         """
         Get top performing stock in a sector
 

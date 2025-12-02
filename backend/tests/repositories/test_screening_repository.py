@@ -3,10 +3,9 @@
 from unittest.mock import AsyncMock, Mock
 
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.repositories.screening_repository import ScreeningRepository
 from app.schemas.screening import FilterRange, ScreeningFilters
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class TestScreeningRepository:
@@ -230,7 +229,7 @@ class TestScreeningRepository:
         assert params["price_change_3m_min"] == 20.0
 
     def test_build_where_conditions_score_filters(self, repository):
-        """Test building WHERE conditions with composite score filters (parameterized)"""
+        """Test building WHERE conditions with composite score filters"""
         filters = ScreeningFilters(
             quality_score=FilterRange(min=70.0),
             value_score=FilterRange(min=60.0),
@@ -247,7 +246,7 @@ class TestScreeningRepository:
         assert params["overall_score_min"] == 75.0
 
     def test_build_where_conditions_price_and_market_cap_filters(self, repository):
-        """Test building WHERE conditions with price and market cap filters (parameterized)"""
+        """Test building WHERE conditions with price/market cap filters"""
         filters = ScreeningFilters(
             current_price=FilterRange(min=10000, max=100000),
             market_cap=FilterRange(min=1000000),
@@ -455,9 +454,9 @@ class TestSQLInjectionPrevention:
 
         malicious_market = "'; DROP TABLE stocks; --"
 
-        # Should raise ValidationError - Pydantic prevents SQL injection at validation layer
+        # Should raise ValidationError - Pydantic prevents SQL injection
         with pytest.raises(ValidationError) as exc_info:
-            filters = ScreeningFilters(market=malicious_market)
+            ScreeningFilters(market=malicious_market)
 
         # Verify error is about literal type validation
         assert "literal_error" in str(exc_info.value)

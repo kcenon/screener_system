@@ -2,10 +2,9 @@
 
 from typing import Any, Dict, List, Set, Tuple
 
+from app.schemas.screening import FilterRange, ScreeningFilters
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.schemas.screening import FilterRange, ScreeningFilters
 
 
 class ScreeningRepository:
@@ -105,7 +104,8 @@ class ScreeningRepository:
         order_direction = "DESC" if order == "desc" else "ASC"
 
         # OPTIMIZED: Single query with window function COUNT() OVER()
-        # This eliminates the need for a separate COUNT query, improving performance by ~50%
+        # This eliminates the need for a separate COUNT query,
+        # improving performance by ~50%
         query = f"""
             WITH filtered AS (
                 SELECT
@@ -125,7 +125,7 @@ class ScreeningRepository:
         params["limit"] = limit
         params["offset"] = offset
 
-        # Execute single optimized query
+        # Execute query
         result = await self.session.execute(text(query), params)
         rows = result.mappings().all()
 
@@ -154,6 +154,8 @@ class ScreeningRepository:
         params = {}
 
         # Market filter (parameterized)
+
+
         if filters.market and filters.market != "ALL":
             conditions.append("market = :market")
             params["market"] = filters.market

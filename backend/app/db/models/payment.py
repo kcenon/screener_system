@@ -5,20 +5,11 @@ from decimal import Decimal
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import (
-    CheckConstraint,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    Numeric,
-    String,
-    Text,
-)
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship
-
 from app.db.base import BaseModel
+from sqlalchemy import (JSON, CheckConstraint, Column, DateTime, ForeignKey,
+                        Integer, Numeric, String, Text)
+# from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 
 class PaymentStatus(str, Enum):
@@ -57,6 +48,12 @@ class Payment(BaseModel):
         ForeignKey("user_subscriptions.id", ondelete="SET NULL"),
         index=True,
     )
+    payment_method_id = Column(
+        Integer,
+        ForeignKey("payment_methods.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
 
     # Payment details
     amount = Column(Numeric(10, 2), nullable=False)
@@ -90,16 +87,18 @@ class Payment(BaseModel):
     paid_at = Column(DateTime(timezone=True))
 
     # Additional data (Note: 'metadata' is reserved in SQLAlchemy)
-    payment_metadata = Column(JSONB, default=dict)
+    payment_metadata = Column(JSON, default=dict)
 
     # Relationships
     user = relationship("User", back_populates="payments")
     subscription = relationship("UserSubscription", back_populates="payments")
+    payment_method = relationship("PaymentMethod", back_populates="payments")
 
     # Constraints
     __table_args__ = (
         CheckConstraint(
-            "status IN ('pending', 'processing', 'succeeded', 'failed', 'refunded', 'canceled')",
+            "status IN ('pending', 'processing', 'succeeded', 'failed', "
+            "'refunded', 'canceled')",
             name="valid_payment_status",
         ),
         CheckConstraint(
@@ -111,8 +110,8 @@ class Payment(BaseModel):
     def __repr__(self) -> str:
         """String representation"""
         return (
-            f"<Payment(id={self.id}, user_id={self.user_id}, "
-            f"amount={self.amount}, status={self.status})>"
+            f"<Payment(id={self.id}, user_id={self.user_id}, amount={self.amount}, "
+            f"status={self.status})>"
         )
 
     @property
@@ -128,7 +127,10 @@ class Payment(BaseModel):
     @property
     def is_pending(self) -> bool:
         """Check if payment is pending"""
-        return self.status in (PaymentStatus.PENDING.value, PaymentStatus.PROCESSING.value)
+        return self.status in (
+            PaymentStatus.PENDING.value,
+            PaymentStatus.PROCESSING.value,
+        )
 
     @property
     def amount_decimal(self) -> Decimal:
@@ -154,7 +156,9 @@ class Payment(BaseModel):
         self.status = PaymentStatus.SUCCEEDED.value
         self.paid_at = datetime.now(timezone.utc)
 
-    def mark_as_failed(self, code: Optional[str] = None, message: Optional[str] = None) -> None:
+    def mark_as_failed(
+        self, code: Optional[str] = None, message: Optional[str] = None
+    ) -> None:
         """Mark payment as failed with optional error details"""
         self.status = PaymentStatus.FAILED.value
         self.failure_code = code
