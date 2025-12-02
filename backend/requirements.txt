@@ -42,7 +42,7 @@ optuna==4.6.0
 openai==1.12.0
 anthropic==0.18.1
 tenacity==8.2.3
-jinja2==3.1.5
+jinja2==3.1.6
 mlflow==3.5.0  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, path traversal, DoS)
 tensorflow==2.16.1
 keras==3.12.0  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-xfhp, GHSA-c9rc-mg46-23w3)
