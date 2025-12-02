@@ -21,16 +21,17 @@ Example:
         async with get_session() as session:
             service = MarketService(session, cache_manager)
             breadth = await service.get_market_breadth()
-            print(f"A/D Ratio: {breadth['ad_ratio']}, Sentiment: {breadth['sentiment']}")
+            print(
+                f"A/D Ratio: {breadth['ad_ratio']}, Sentiment: {breadth['sentiment']}"
+            )
 """
 
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Dict, List
 
 from app.core.cache import CacheManager
 from app.repositories import MarketRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class MarketService:

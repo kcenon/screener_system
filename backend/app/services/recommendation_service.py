@@ -1,7 +1,10 @@
-from typing import List, Dict, Any
-from sqlalchemy.orm import Session
+from typing import List
+
 from app.db.models.user_behavior import UserBehaviorEvent
-from app.schemas.recommendation import UserBehaviorEventCreate, RecommendationResponse
+from app.schemas.recommendation import (RecommendationResponse,
+                                        UserBehaviorEventCreate)
+from sqlalchemy.orm import Session
+
 
 class RecommendationService:
     def __init__(self, db: Session):
@@ -13,14 +16,16 @@ class RecommendationService:
             user_id=user_id,
             event_type=event.event_type,
             stock_code=event.stock_code,
-            metadata_=event.metadata
+            metadata_=event.metadata,
         )
         self.db.add(db_event)
         self.db.commit()
         self.db.refresh(db_event)
         return db_event
 
-    async def get_recommendations(self, user_id: int, top_k: int = 10) -> List[RecommendationResponse]:
+    async def get_recommendations(
+        self, user_id: int, top_k: int = 10
+    ) -> List[RecommendationResponse]:
         """
         Generate personalized recommendations.
         Currently returns mock data until the engine is fully implemented.
@@ -36,6 +41,6 @@ class RecommendationService:
                 confidence=0.9,
                 reasons=["Similar users liked this", "AI predicts bullish"],
                 ai_prediction={"direction": "bullish", "probability": 0.85},
-                key_metrics={"per": 25.5, "pbr": 10.2, "dividend_yield": 0.5}
+                key_metrics={"per": 25.5, "pbr": 10.2, "dividend_yield": 0.5},
             )
         ]

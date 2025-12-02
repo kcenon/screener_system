@@ -1,12 +1,8 @@
 """Market Index database model"""
 
-from datetime import datetime
-from typing import Optional
-
-from sqlalchemy import BigInteger, CheckConstraint, Column, DateTime, Numeric, String
-from sqlalchemy.dialects.postgresql import TIMESTAMP
-
 from app.db.base import Base, TimestampMixin
+from sqlalchemy import BigInteger, CheckConstraint, Column, Integer, Numeric, String
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 
 
 class MarketIndex(Base, TimestampMixin):
@@ -15,7 +11,7 @@ class MarketIndex(Base, TimestampMixin):
     __tablename__ = "market_indices"
 
     # Primary Key
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     # Index Identification
     code = Column(String(20), nullable=False, index=True)
@@ -66,8 +62,8 @@ class MarketIndex(Base, TimestampMixin):
     def __repr__(self) -> str:
         """String representation"""
         return (
-            f"<MarketIndex(code={self.code}, timestamp={self.timestamp}, "
-            f"close={self.close_value})>"
+            f"<MarketIndex(code={self.code}, name={self.name}, "
+            f"price={self.current_price})>"
         )
 
     @property
@@ -126,5 +122,7 @@ class MarketIndex(Base, TimestampMixin):
             "volume": self.volume,
             "trading_value": self.trading_value,
             "change": float(self.change_value) if self.change_value else None,
-            "change_percent": float(self.change_percent) if self.change_percent else None,
+            "change_percent": (
+                float(self.change_percent) if self.change_percent else None
+            ),
         }

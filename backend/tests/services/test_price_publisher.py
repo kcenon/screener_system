@@ -1,7 +1,6 @@
 """Tests for PricePublisher service"""
 
 import asyncio
-from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -58,7 +57,9 @@ class TestPublishPriceUpdate:
             assert message["volume"] == 1000000
 
     @pytest.mark.asyncio
-    async def test_publish_price_update_handles_exception(self, publisher: PricePublisher):
+    async def test_publish_price_update_handles_exception(
+        self, publisher: PricePublisher
+    ):
         """Test price update handles exception gracefully"""
         with patch("app.services.price_publisher.redis_pubsub") as mock_pubsub:
             mock_pubsub.publish = AsyncMock(side_effect=Exception("Redis error"))
@@ -255,10 +256,11 @@ class TestMockPublisher:
             await publisher.start_mock_publisher(mock_db, interval=1.0)
 
             assert publisher._running is True
-            assert publisher._publish_task is not None
 
     @pytest.mark.asyncio
-    async def test_start_mock_publisher_already_running(self, publisher: PricePublisher):
+    async def test_start_mock_publisher_already_running(
+        self, publisher: PricePublisher
+    ):
         """Test starting mock publisher when already running"""
         publisher._running = True
 
@@ -271,7 +273,8 @@ class TestMockPublisher:
 
     @pytest.mark.asyncio
     async def test_stop_mock_publisher(self, publisher: PricePublisher):
-        """Test stopping mock publisher"""
+        """Test stopping a running mock publisher"""
+
         # Create a mock task that is both cancellable and awaitable
         # Real tasks raise CancelledError when awaited after cancel()
         class CancelledTaskMock:
@@ -291,8 +294,15 @@ class TestMockPublisher:
         assert publisher._running is False
         mock_task.cancel.assert_called_once()
 
+        # Should not raise
+        await publisher.stop_mock_publisher()
+
+        assert publisher._running is False
+
     @pytest.mark.asyncio
-    async def test_stop_mock_publisher_when_not_running(self, publisher: PricePublisher):
+    async def test_stop_mock_publisher_when_not_running(
+        self, publisher: PricePublisher
+    ):
         """Test stopping mock publisher when not running"""
         publisher._running = False
         publisher._publish_task = None

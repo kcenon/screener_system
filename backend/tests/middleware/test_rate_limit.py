@@ -41,8 +41,6 @@ def app():
 @pytest.fixture(autouse=False)
 def mock_redis(monkeypatch):
     """Mock Redis for testing rate limiting without actual Redis connection"""
-    from unittest.mock import AsyncMock, MagicMock
-
     # Create a simple in-memory counter for testing
     counters = {}
 
@@ -50,7 +48,6 @@ def mock_redis(monkeypatch):
         async def eval(self, script, numkeys, *keys_and_args):
             """Mock Redis eval for rate limiting Lua script"""
             key = keys_and_args[0]
-            ttl = int(keys_and_args[1])
 
             if key not in counters:
                 counters[key] = {"count": 0, "created": True}
@@ -78,7 +75,7 @@ class TestRateLimitMiddleware:
         """Test free tier rate limiting (100 req/hour)"""
         # Lower limit for testing
         monkeypatch.setattr(settings, "RATE_LIMIT_FREE", 10)
-        
+
         client = TestClient(app)
 
         # Make requests up to limit
@@ -93,7 +90,9 @@ class TestRateLimitMiddleware:
 
         # Next request should be rate limited
         response = client.get("/test")
-        assert response.status_code == 429, f"Expected 429 but got {response.status_code}: {response.text}"
+        assert (
+            response.status_code == 429
+        ), f"Expected 429 but got {response.status_code}: {response.text}"
         assert response.json()["success"] is False
         assert "rate limit exceeded" in response.json()["message"].lower()
 
@@ -101,15 +100,18 @@ class TestRateLimitMiddleware:
         assert "X-RateLimit-Limit" in response.headers
         assert "Retry-After" in response.headers
 
-    def test_endpoint_specific_rate_limiting(self, app: FastAPI, mock_redis, monkeypatch):
+    def test_endpoint_specific_rate_limiting(
+        self, app: FastAPI, mock_redis, monkeypatch
+    ):
         """Test endpoint-specific rate limits"""
         client = TestClient(app)
 
         # Patch the endpoint limits dictionary directly
         from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
         original_limit = ENDPOINT_RATE_LIMITS["/v1/screen"]
         ENDPOINT_RATE_LIMITS["/v1/screen"] = 5
-        
+
         try:
             # Test screening endpoint (5 req/hour)
             for i in range(5):
@@ -118,7 +120,9 @@ class TestRateLimitMiddleware:
 
             # Next request should be rate limited
             response = client.post("/v1/screen")
-            assert response.status_code == 429, f"Expected 429 but got {response.status_code}"
+            assert (
+                response.status_code == 429
+            ), f"Expected 429 but got {response.status_code}"
             assert "endpoint rate limit exceeded" in response.json()["message"].lower()
             assert "X-RateLimit-Endpoint" in response.headers
         finally:
@@ -148,16 +152,25 @@ class TestRateLimitMiddleware:
         remaining = int(response.headers["X-RateLimit-Remaining"])
         reset = int(response.headers["X-RateLimit-Reset"])
 
-        assert limit == settings.RATE_LIMIT_FREE, f"Limit should be {settings.RATE_LIMIT_FREE} but got {limit}"
-        assert remaining == settings.RATE_LIMIT_FREE - 1, f"Remaining should be {settings.RATE_LIMIT_FREE - 1} but got {remaining}"
-        assert reset == settings.RATE_LIMIT_WINDOW, f"Reset should be {settings.RATE_LIMIT_WINDOW} but got {reset}"
+        assert (
+            limit == settings.RATE_LIMIT_FREE
+        ), f"Limit should be {settings.RATE_LIMIT_FREE} but got {limit}"
+        assert (
+            remaining == settings.RATE_LIMIT_FREE - 1
+        ), f"Remaining should be {settings.RATE_LIMIT_FREE - 1} but got {remaining}"
+        assert (
+            reset == settings.RATE_LIMIT_WINDOW
+        ), f"Reset should be {settings.RATE_LIMIT_WINDOW} but got {reset}"
 
-    def test_different_endpoints_separate_limits(self, app: FastAPI, mock_redis, monkeypatch):
+    def test_different_endpoints_separate_limits(
+        self, app: FastAPI, mock_redis, monkeypatch
+    ):
         """Test that different endpoints have separate rate limits"""
         client = TestClient(app)
 
         # Patch the endpoint limits dictionary directly
         from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
         original_limit = ENDPOINT_RATE_LIMITS["/v1/screen"]
         ENDPOINT_RATE_LIMITS["/v1/screen"] = 5
 
@@ -169,7 +182,7 @@ class TestRateLimitMiddleware:
 
             # Screening should be rate limited
             response = client.post("/v1/screen")
-            assert response.status_code == 429, f"Expected screening to be rate limited"
+            assert response.status_code == 429, "Expected screening to be rate limited"
 
             # But other endpoints should still work (subject to tier limit)
             response = client.get("/test")
@@ -223,9 +236,12 @@ class TestEndpointRateLimitConfiguration:
         """Test that endpoint limits are within reasonable ranges"""
         # Skip if running in dev mode with high limits
         if settings.RATE_LIMIT_FREE > 10000:
-            pytest.skip("Skipping reasonable limit check in dev environment with high limits")
+            pytest.skip(
+                "Skipping reasonable limit check in dev environment with high limits"
+            )
 
         from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
         for endpoint, limit in ENDPOINT_RATE_LIMITS.items():
             assert limit > 0, f"Limit for {endpoint} must be positive"
             assert limit <= 10000, f"Limit for {endpoint} seems too high"
@@ -252,14 +268,15 @@ class TestRateLimitMiddlewareAsync:
             for response in responses:
                 assert response.status_code == 200
 
-    async def test_concurrent_requests_exceed_limit(self, app: FastAPI, mock_redis, monkeypatch):
+    async def test_concurrent_requests_exceed_limit(
+        self, app: FastAPI, mock_redis, monkeypatch
+    ):
         """Test that concurrent requests properly enforce rate limits"""
         import asyncio
         from httpx import ASGITransport, AsyncClient
 
         # Lower the limit for testing to avoid high concurrency issues
         monkeypatch.setattr(settings, "RATE_LIMIT_FREE", 10)
-        test_limit = 10
         request_count = 20
 
         async with AsyncClient(
@@ -271,7 +288,11 @@ class TestRateLimitMiddlewareAsync:
 
             # Some should be rate limited
             status_codes = [r.status_code for r in responses]
-            assert 429 in status_codes, f"Expected some requests to be rate limited. Got: {status_codes.count(200)} success, {status_codes.count(429)} rate limited"
+            assert 429 in status_codes, (
+                f"Expected some requests to be rate limited. Got: "
+                f"{status_codes.count(200)} success, "
+                f"{status_codes.count(429)} rate limited"
+            )
             assert 200 in status_codes, "Expected some requests to succeed"
 
 

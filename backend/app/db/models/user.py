@@ -3,10 +3,9 @@
 from datetime import datetime
 from typing import Optional
 
+from app.db.base import BaseModel
 from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, String
 from sqlalchemy.orm import relationship
-
-from app.db.base import BaseModel
 
 
 class User(BaseModel):

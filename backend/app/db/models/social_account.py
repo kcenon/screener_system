@@ -4,14 +4,13 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Optional
 
+from app.db.base import BaseModel
 from sqlalchemy import (CheckConstraint, Column, DateTime, ForeignKey, Index,
                         String, Text, UniqueConstraint)
 from sqlalchemy.orm import relationship
 
-from app.db.base import BaseModel
-
 if TYPE_CHECKING:
-    from app.db.models.user import User
+    from app.db.models.user import User  # noqa: F401
 
 
 class OAuthProvider(str, Enum):
@@ -61,9 +60,7 @@ class SocialAccount(BaseModel):
             "provider IN ('GOOGLE', 'KAKAO', 'NAVER')",
             name="valid_oauth_provider",
         ),
-        UniqueConstraint(
-            "provider", "provider_user_id", name="unique_provider_user"
-        ),
+        UniqueConstraint("provider", "provider_user_id", name="unique_provider_user"),
         UniqueConstraint("user_id", "provider", name="unique_user_provider"),
         Index("idx_social_accounts_provider_email", "provider_email"),
     )

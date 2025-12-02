@@ -3,19 +3,13 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-
 from app.api.dependencies import CurrentActiveUser, get_watchlist_service
-from app.schemas.watchlist import (
-    DashboardSummary,
-    UserActivityListResponse,
-    WatchlistCreate,
-    WatchlistListResponse,
-    WatchlistResponse,
-    WatchlistSummary,
-    WatchlistUpdate,
-)
+from app.schemas.watchlist import (DashboardSummary, UserActivityListResponse,
+                                   WatchlistCreate, WatchlistListResponse,
+                                   WatchlistResponse, WatchlistSummary,
+                                   WatchlistUpdate)
 from app.services.watchlist_service import WatchlistService
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -39,7 +33,7 @@ async def build_watchlist_response(
     Returns:
         WatchlistResponse with all stock data loaded
     """
-    from app.db.models import WatchlistStock
+    # from app.db.models import WatchlistStock  # Unused
     from app.db.models.stock import Stock
     from app.repositories.watchlist_repository import WatchlistRepository
     from sqlalchemy import select
@@ -231,7 +225,9 @@ async def get_watchlist(
             detail="Watchlist not found or access denied",
         )
 
-    return await build_watchlist_response(watchlist, watchlist_service, load_stocks=True)
+    return await build_watchlist_response(
+        watchlist, watchlist_service, load_stocks=True
+    )
 
 
 @router.put(

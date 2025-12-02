@@ -1,7 +1,7 @@
 """Unit and integration tests for stock repository"""
 
 from datetime import date
-from unittest.mock import AsyncMock, Mock, MagicMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -216,9 +216,7 @@ class TestStockRepository:
     # ========================================================================
 
     @pytest.mark.asyncio
-    async def test_search_stocks_by_name(
-        self, repository, mock_session, sample_stock
-    ):
+    async def test_search_stocks_by_name(self, repository, mock_session, sample_stock):
         """Test search_stocks by stock name"""
         # Setup mock
         mock_result = Mock()
@@ -234,9 +232,7 @@ class TestStockRepository:
         assert mock_session.execute.called
 
     @pytest.mark.asyncio
-    async def test_search_stocks_by_code(
-        self, repository, mock_session, sample_stock
-    ):
+    async def test_search_stocks_by_code(self, repository, mock_session, sample_stock):
         """Test search_stocks by stock code"""
         # Setup mock
         mock_result = Mock()
@@ -286,9 +282,7 @@ class TestStockRepository:
     # ========================================================================
 
     @pytest.mark.asyncio
-    async def test_get_latest_price_found(
-        self, repository, mock_session, sample_price
-    ):
+    async def test_get_latest_price_found(self, repository, mock_session, sample_price):
         """Test get_latest_price when price exists"""
         # Setup mock
         mock_result = Mock()
@@ -337,7 +331,9 @@ class TestStockRepository:
         assert mock_session.execute.called
 
     @pytest.mark.asyncio
-    async def test_get_price_history_no_dates(self, repository, mock_session, sample_price):
+    async def test_get_price_history_no_dates(
+        self, repository, mock_session, sample_price
+    ):
         """Test get_price_history without date filters"""
         # Setup mock
         mock_result = Mock()
@@ -351,12 +347,12 @@ class TestStockRepository:
         assert len(result) == 1
         assert result[0] == sample_price
 
-
     @pytest.mark.asyncio
     async def test_get_financials(self, repository, mock_session):
         """Test get_financials retrieves financial statements"""
         # Setup mock
         from app.db.models import FinancialStatement
+
         mock_financial = FinancialStatement(
             stock_code="005930",
             fiscal_year=2024,

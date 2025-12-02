@@ -2,29 +2,21 @@
 
 import secrets
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Tuple
-
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional, Tuple
 
 from app.core.config import settings
 from app.core.exceptions import BadRequestException, NotFoundException
 from app.core.security import create_access_token, create_refresh_token
 from app.db.models import OAuthState, SocialAccount, User, UserSession
-from app.repositories import (
-    OAuthStateRepository,
-    SocialAccountRepository,
-    UserRepository,
-    UserSessionRepository,
-)
+from app.repositories import (OAuthStateRepository, SocialAccountRepository,
+                              UserRepository, UserSessionRepository)
 from app.schemas import TokenResponse, UserResponse
-from app.schemas.oauth import (
-    OAuthAuthorizationResponse,
-    OAuthProviderEnum,
-    OAuthUserInfo,
-    SocialAccountResponse,
-    SocialAccountsListResponse,
-)
-from app.services.oauth_providers import get_oauth_provider, is_provider_configured
+from app.schemas.oauth import (OAuthAuthorizationResponse, OAuthProviderEnum,
+                               OAuthUserInfo, SocialAccountResponse,
+                               SocialAccountsListResponse)
+from app.services.oauth_providers import (get_oauth_provider,
+                                          is_provider_configured)
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class OAuthService:
@@ -69,9 +61,7 @@ class OAuthService:
         provider = provider.lower()
 
         if not is_provider_configured(provider):
-            raise BadRequestException(
-                f"OAuth provider '{provider}' is not configured"
-            )
+            raise BadRequestException(f"OAuth provider '{provider}' is not configured")
 
         oauth_provider = get_oauth_provider(provider)
         if not oauth_provider:
@@ -324,8 +314,7 @@ class OAuthService:
 
         return SocialAccountsListResponse(
             accounts=[
-                SocialAccountResponse.model_validate(account)
-                for account in accounts
+                SocialAccountResponse.model_validate(account) for account in accounts
             ],
             total=len(accounts),
         )
@@ -385,10 +374,13 @@ class OAuthService:
 
         # Create new user
         user = User(
-            email=user_info.email or f"{provider.lower()}_{user_info.provider_user_id}@oauth.local",
+            email=user_info.email
+            or f"{provider.lower()}_{user_info.provider_user_id}@oauth.local",
             password_hash=None,  # OAuth-only user
             name=user_info.name,
-            email_verified=True if user_info.email else False,  # Auto-verify if email from provider
+            email_verified=(
+                True if user_info.email else False
+            ),  # Auto-verify if email from provider
         )
         await self.user_repo.create(user)
 
@@ -445,9 +437,7 @@ class OAuthService:
         )
         return await self.social_account_repo.create(social_account)
 
-    def _calculate_token_expiry(
-        self, expires_in: Optional[int]
-    ) -> Optional[datetime]:
+    def _calculate_token_expiry(self, expires_in: Optional[int]) -> Optional[datetime]:
         """Calculate token expiration datetime"""
         if expires_in is None:
             return None

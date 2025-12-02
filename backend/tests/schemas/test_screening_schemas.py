@@ -3,10 +3,16 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.screening import (FilterRange, ScreenedStock,
-                                   ScreeningFilters, ScreeningMetadata,
-                                   ScreeningRequest, ScreeningResponse,
-                                   ScreeningTemplate, ScreeningTemplateList)
+from app.schemas.screening import (
+    FilterRange,
+    ScreenedStock,
+    ScreeningFilters,
+    ScreeningMetadata,
+    ScreeningRequest,
+    ScreeningResponse,
+    ScreeningTemplate,
+    ScreeningTemplateList,
+)
 
 
 class TestFilterRange:

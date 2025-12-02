@@ -4,23 +4,15 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import (
-    CheckConstraint,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-)
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from app.db.base import Base, TimestampMixin
+from sqlalchemy import (JSON, CheckConstraint, Column, DateTime, ForeignKey,
+                        Integer, String, Text)
+# from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
-from app.db.base import Base, TimestampMixin
-
 if TYPE_CHECKING:
-    from app.db.models.stock import Stock
-    from app.db.models.user import User
+    from app.db.models.stock import Stock  # noqa: F401
+    from app.db.models.user import User  # noqa: F401
 
 
 class Watchlist(Base, TimestampMixin):
@@ -28,7 +20,7 @@ class Watchlist(Base, TimestampMixin):
 
     __tablename__ = "watchlists"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -70,7 +62,7 @@ class WatchlistStock(Base):
     __tablename__ = "watchlist_stocks"
 
     watchlist_id = Column(
-        UUID(as_uuid=True),
+        String(36),
         ForeignKey("watchlists.id", ondelete="CASCADE"),
         primary_key=True,
     )
@@ -93,7 +85,10 @@ class WatchlistStock(Base):
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<WatchlistStock(watchlist_id={self.watchlist_id}, stock_code={self.stock_code})>"
+        return (
+            f"<WatchlistStock(watchlist_id={self.watchlist_id}, "
+            f"stock_code={self.stock_code})>"
+        )
 
 
 class UserActivity(Base):
@@ -101,7 +96,7 @@ class UserActivity(Base):
 
     __tablename__ = "user_activities"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -110,7 +105,7 @@ class UserActivity(Base):
     )
     activity_type = Column(String(50), nullable=False, index=True)
     description = Column(Text, nullable=False)
-    activity_metadata = Column(JSONB, nullable=True)
+    activity_metadata = Column(JSON, nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         default=datetime.now,
@@ -125,14 +120,18 @@ class UserActivity(Base):
     __table_args__ = (
         CheckConstraint(
             "activity_type IN ('screening', 'watchlist_create', 'watchlist_update', "
-            "'watchlist_delete', 'stock_add', 'stock_remove', 'stock_view', 'login', 'logout')",
+            "'watchlist_delete', 'stock_add', 'stock_remove', 'stock_view', "
+            "'login', 'logout')",
             name="valid_activity_type",
         ),
     )
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<UserActivity(id={self.id}, type='{self.activity_type}', user_id={self.user_id})>"
+        return (
+            f"<UserActivity(id={self.id}, type='{self.activity_type}', "
+            f"user_id={self.user_id})>"
+        )
 
 
 class UserPreferences(Base, TimestampMixin):
@@ -146,7 +145,7 @@ class UserPreferences(Base, TimestampMixin):
         primary_key=True,
     )
     default_watchlist_id = Column(
-        UUID(as_uuid=True),
+        String(36),
         ForeignKey("watchlists.id", ondelete="SET NULL"),
         nullable=True,
     )
@@ -160,8 +159,8 @@ class UserPreferences(Base, TimestampMixin):
         DateTime(timezone=True),
         nullable=False,
     )
-    dashboard_layout = Column(JSONB, nullable=True)
-    notification_settings = Column(JSONB, nullable=True)
+    dashboard_layout = Column(JSON, nullable=True)
+    notification_settings = Column(JSON, nullable=True)
 
     # Relationships
     user = relationship("User", back_populates="preferences")
@@ -177,4 +176,7 @@ class UserPreferences(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         """String representation"""
-        return f"<UserPreferences(user_id={self.user_id}, quota_used={self.screening_quota_used})>"
+        return (
+            f"<UserPreferences(user_id={self.user_id}, "
+            f"quota_used={self.screening_quota_used})>"
+        )

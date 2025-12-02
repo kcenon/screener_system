@@ -1,7 +1,7 @@
 """Application configuration settings"""
 
 from functools import lru_cache
-from typing import List, Union
+from typing import List, Optional, Union
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -152,8 +152,12 @@ class Settings(BaseSettings):
 
     # WebSocket limits (DoS protection)
     WEBSOCKET_MAX_MESSAGE_SIZE: int = 65536  # 64KB max message size
-    WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION: int = 100  # Max subscriptions per connection
-    WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION: int = 50  # Max targets per subscribe request
+    WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION: int = (
+        100  # Max subscriptions per connection
+    )
+    WEBSOCKET_MAX_TARGETS_PER_SUBSCRIPTION: int = (
+        50  # Max targets per subscribe request
+    )
 
     # ========================================================================
     # EXTERNAL APIs
@@ -210,10 +214,14 @@ class Settings(BaseSettings):
     PRO_PRICE_MONTHLY: float = 29.99
     PRO_PRICE_YEARLY: float = 299.00
 
+    # AI / LLM
+    OPENAI_API_KEY: Optional[str] = None
+    ANTHROPIC_API_KEY: Optional[str] = None
+    LLM_MODEL_OPENAI: str = "gpt-4-turbo"
+    LLM_MODEL_ANTHROPIC: str = "claude-3-opus-20240229"
+
     model_config = SettingsConfigDict(
-        env_file=".env",
-        case_sensitive=True,
-        extra="ignore"
+        env_file=".env", case_sensitive=True, extra="ignore"
     )
 
 

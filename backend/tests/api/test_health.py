@@ -3,11 +3,10 @@
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.cache import CacheManager
 from app.db.session import get_db
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class TestBasicHealthCheck:
@@ -52,9 +51,7 @@ class TestDatabaseHealthCheck:
     """Tests for database health check endpoint"""
 
     @pytest.mark.asyncio
-    async def test_health_db_connected(
-        self, client: AsyncClient, db: AsyncSession
-    ):
+    async def test_health_db_connected(self, client: AsyncClient, db: AsyncSession):
         """Test /health/db returns 200 when database connected"""
         response = await client.get("/v1/health/db")
 
@@ -65,13 +62,13 @@ class TestDatabaseHealthCheck:
 
     @pytest.mark.asyncio
     async def test_health_db_disconnected(self, client: AsyncClient):
-        """Test /health/db returns 200 with unhealthy status"""
+        """Test /health/db returns 200 with unhealthy status
+        when database unreachable"""
+
         # Mock database session that raises exception
         async def mock_get_db_failing():
             mock_session = AsyncMock(spec=AsyncSession)
-            mock_session.execute.side_effect = Exception(
-                "Database connection failed"
-            )
+            mock_session.execute.side_effect = Exception("Database connection failed")
             yield mock_session
 
         # Override the get_db dependency
@@ -131,8 +128,8 @@ class TestRedisHealthCheck:
         async def mock_get_cache():
             return mock_cache
 
-        from app.main import app
         from app.core.cache import get_cache
+        from app.main import app
 
         app.dependency_overrides[get_cache] = mock_get_cache
 
@@ -148,20 +145,19 @@ class TestRedisHealthCheck:
 
     @pytest.mark.asyncio
     async def test_health_redis_disconnected(self, client: AsyncClient):
-        """Test /health/redis returns 200 with unhealthy status"""
+        """Test /health/redis returns 200 with unhealthy status
+        when Redis unreachable"""
         # Mock cache manager with failed Redis connection
         mock_cache = MagicMock(spec=CacheManager)
         mock_redis = AsyncMock()
-        mock_redis.ping = AsyncMock(
-            side_effect=Exception("Redis connection failed")
-        )
+        mock_redis.ping = AsyncMock(side_effect=Exception("Redis connection failed"))
         mock_cache.redis = mock_redis
 
         async def mock_get_cache():
             return mock_cache
 
-        from app.main import app
         from app.core.cache import get_cache
+        from app.main import app
 
         app.dependency_overrides[get_cache] = mock_get_cache
 
@@ -187,8 +183,8 @@ class TestRedisHealthCheck:
         async def mock_get_cache():
             return mock_cache
 
-        from app.main import app
         from app.core.cache import get_cache
+        from app.main import app
 
         app.dependency_overrides[get_cache] = mock_get_cache
 
@@ -203,9 +199,7 @@ class TestRedisHealthCheck:
             app.dependency_overrides.clear()
 
     @pytest.mark.asyncio
-    async def test_health_redis_response_includes_details(
-        self, client: AsyncClient
-    ):
+    async def test_health_redis_response_includes_details(self, client: AsyncClient):
         """Test response includes Redis connection details"""
         # Mock cache manager with healthy Redis connection
         mock_cache = MagicMock(spec=CacheManager)
@@ -216,8 +210,8 @@ class TestRedisHealthCheck:
         async def mock_get_cache():
             return mock_cache
 
-        from app.main import app
         from app.core.cache import get_cache
+        from app.main import app
 
         app.dependency_overrides[get_cache] = mock_get_cache
 
@@ -247,8 +241,8 @@ class TestRedisHealthCheck:
         async def mock_get_cache():
             return mock_cache
 
-        from app.main import app
         from app.core.cache import get_cache
+        from app.main import app
 
         app.dependency_overrides[get_cache] = mock_get_cache
 
@@ -272,9 +266,7 @@ class TestMetricsEndpoint:
         assert response.headers["content-type"].startswith("text/plain")
 
     @pytest.mark.asyncio
-    async def test_metrics_endpoint_no_auth_required(
-        self, client: AsyncClient
-    ):
+    async def test_metrics_endpoint_no_auth_required(self, client: AsyncClient):
         """Test metrics endpoint accessible without authentication"""
         response = await client.get("/v1/metrics")
 

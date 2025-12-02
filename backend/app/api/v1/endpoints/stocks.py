@@ -3,14 +3,13 @@
 from datetime import date
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.cache import CacheManager, get_cache
 from app.db.session import get_db
 from app.schemas import (DailyPrice, FinancialStatement, StockDetail,
                          StockListResponse, StockSearchResponse)
 from app.services.stock_service import StockService
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/stocks", tags=["stocks"])
 

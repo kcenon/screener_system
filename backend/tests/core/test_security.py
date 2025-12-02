@@ -4,21 +4,13 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict
 
 import pytest
+from app.core.config import settings
+from app.core.security import (BCRYPT_ROUNDS, create_access_token,
+                               create_refresh_token, decode_token,
+                               get_password_hash, get_user_id_from_token,
+                               verify_password, verify_token_type)
 from freezegun import freeze_time
 from jose import JWTError, jwt
-
-from app.core.config import settings
-from app.core.security import (
-    BCRYPT_ROUNDS,
-    create_access_token,
-    create_refresh_token,
-    decode_token,
-    get_password_hash,
-    get_user_id_from_token,
-    verify_password,
-    verify_token_type,
-)
-
 
 # ============================================================================
 # JWT Token Tests
@@ -423,7 +415,9 @@ class TestPasswordVerification:
             assert verify_password(password + "x", hashed) is False
 
     def test_verify_password_timing_attack_resistance(self):
-        """Test that password verification has consistent timing (timing attack prevention)"""
+        """Test that password verification has consistent timing
+        (timing attack prevention)
+        """
         import time
 
         password = "test_password_for_timing"

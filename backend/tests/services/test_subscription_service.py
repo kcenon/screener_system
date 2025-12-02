@@ -2,19 +2,13 @@
 
 from datetime import date, datetime, timezone
 from decimal import Decimal
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.db.models import (
-    SubscriptionPlan,
-    UsageTracking,
-    User,
-    UserSubscription,
-)
+from app.db.models import (SubscriptionPlan, UsageTracking, User,
+                           UserSubscription)
 from app.services.subscription_service import SubscriptionService
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 @pytest_asyncio.fixture
@@ -145,7 +139,7 @@ class TestGetPlanByName:
 
         assert plan is not None
         assert plan.name == "PREMIUM"
-        assert plan.price_monthly == Decimal("9.99")
+        assert plan.price_monthly == 9.99
 
     @pytest.mark.asyncio
     async def test_case_insensitive_lookup(

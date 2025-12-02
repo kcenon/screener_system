@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
-
 from app.services.watchlist_service import WatchlistService
 
 
@@ -228,7 +227,7 @@ class TestCreateWatchlist:
             new_callable=AsyncMock,
         ):
             data = WatchlistCreate(name="Test Watchlist", stock_codes=["005930"])
-            result = await watchlist_service.create_watchlist(user_id=1, data=data)
+            await watchlist_service.create_watchlist(user_id=1, data=data)
 
             watchlist_service.watchlist_repo.add_stock.assert_called_once()
 
@@ -333,7 +332,9 @@ class TestUpdateWatchlist:
             watchlist_service.watchlist_repo.add_stock.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_update_watchlist_remove_stocks(self, watchlist_service, mock_session):
+    async def test_update_watchlist_remove_stocks(
+        self, watchlist_service, mock_session
+    ):
         """Test removing stocks from watchlist"""
         from app.schemas.watchlist import WatchlistUpdate
 

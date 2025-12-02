@@ -10,16 +10,12 @@ Automatically tracks HTTP metrics for all requests:
 
 import time
 from typing import Callable
+
+from app.core.metrics import (http_errors_total, http_request_duration_seconds,
+                              http_requests_in_progress, http_requests_total)
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
-
-from app.core.metrics import (
-    http_requests_total,
-    http_request_duration_seconds,
-    http_requests_in_progress,
-    http_errors_total,
-)
 
 
 class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
@@ -74,46 +70,36 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
 
             # Request count
             http_requests_total.labels(
-                method=method,
-                endpoint=endpoint,
-                status_code=status_code
+                method=method, endpoint=endpoint, status_code=status_code
             ).inc()
 
             # Request duration
             http_request_duration_seconds.labels(
-                method=method,
-                endpoint=endpoint
+                method=method, endpoint=endpoint
             ).observe(duration)
 
             # Track 5xx errors
             if 500 <= status_code < 600:
                 http_errors_total.labels(
-                    method=method,
-                    endpoint=endpoint,
-                    status_code=status_code
+                    method=method, endpoint=endpoint, status_code=status_code
                 ).inc()
 
             return response
 
-        except Exception as e:
+        except Exception:
             # Record error metrics
             duration = time.time() - start_time
 
             http_requests_total.labels(
-                method=method,
-                endpoint=endpoint,
-                status_code=500
+                method=method, endpoint=endpoint, status_code=500
             ).inc()
 
             http_errors_total.labels(
-                method=method,
-                endpoint=endpoint,
-                status_code=500
+                method=method, endpoint=endpoint, status_code=500
             ).inc()
 
             http_request_duration_seconds.labels(
-                method=method,
-                endpoint=endpoint
+                method=method, endpoint=endpoint
             ).observe(duration)
 
             # Re-raise the exception
@@ -141,7 +127,7 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
         Returns:
             Normalized path with placeholders
         """
-        parts = path.split('/')
+        parts = path.split("/")
         normalized_parts = []
 
         for i, part in enumerate(parts):
@@ -155,22 +141,22 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
                 # Determine placeholder based on context
                 if i > 0:
                     prev_part = parts[i - 1]
-                    if prev_part == 'stocks':
-                        normalized_parts.append('{code}')
-                    elif prev_part == 'users':
-                        normalized_parts.append('{id}')
-                    elif prev_part == 'portfolios':
-                        normalized_parts.append('{id}')
-                    elif prev_part == 'prices':
-                        normalized_parts.append('{code}')
+                    if prev_part == "stocks":
+                        normalized_parts.append("{code}")
+                    elif prev_part == "users":
+                        normalized_parts.append("{id}")
+                    elif prev_part == "portfolios":
+                        normalized_parts.append("{id}")
+                    elif prev_part == "prices":
+                        normalized_parts.append("{code}")
                     else:
-                        normalized_parts.append('{id}')
+                        normalized_parts.append("{id}")
                 else:
-                    normalized_parts.append('{id}')
+                    normalized_parts.append("{id}")
             else:
                 normalized_parts.append(part)
 
-        return '/'.join(normalized_parts)
+        return "/".join(normalized_parts)
 
     @staticmethod
     def _is_dynamic_segment(segment: str) -> bool:
@@ -192,7 +178,7 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
             return True
 
         # Check if it's a UUID pattern (contains hyphens and alphanumeric)
-        if '-' in segment and len(segment) >= 32:
+        if "-" in segment and len(segment) >= 32:
             return True
 
         # Check if it matches common ID patterns
@@ -203,4 +189,4 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
 
 
 # Export for easy import
-__all__ = ['PrometheusMetricsMiddleware']
+__all__ = ["PrometheusMetricsMiddleware"]

@@ -1,9 +1,8 @@
+from typing import Optional
 
 import numpy as np
 from scipy.signal import find_peaks
-from typing import Optional, Dict, List
-import os
-from PIL import Image
+
 
 class PatternDetector:
     """Detect technical chart patterns in OHLCV data"""
@@ -28,11 +27,14 @@ class PatternDetector:
         # We look at the last 3 peaks found in the window
         if len(peaks) >= 3:
             left_peak, head, right_peak = peaks[-3:]
-            
+
             # Basic H&S logic: Head > Shoulders
             if prices[head] > prices[left_peak] and prices[head] > prices[right_peak]:
                 # Check shoulders at similar level (within 5% tolerance)
-                if abs(prices[left_peak] - prices[right_peak]) / prices[left_peak] < 0.05:
+                if (
+                    abs(prices[left_peak] - prices[right_peak]) / prices[left_peak]
+                    < 0.05
+                ):
                     return True
 
         return False
@@ -52,10 +54,35 @@ class PatternDetector:
             # Check trough between peaks
             # Find minimum between the two peaks
             trough_idx = np.argmin(prices[peak1:peak2]) + peak1
-            
+
             # Trough should be significantly lower (e.g., > 5% drop from peak)
             avg_peak_price = (prices[peak1] + prices[peak2]) / 2
             if prices[trough_idx] < avg_peak_price * 0.95:
+                return True
+
+        return False
+
+    def detect_double_bottom(self, prices: np.ndarray) -> bool:
+        """Detect Double Bottom pattern"""
+        # Find troughs (local minima)
+        # find_peaks on inverted signal finds troughs
+        troughs, _ = find_peaks(-prices, distance=10)
+
+        if len(troughs) < 2:
+            return False
+
+        # Last two troughs
+        trough1, trough2 = troughs[-2:]
+
+        # Check troughs at similar level (within 2%)
+        if abs(prices[trough1] - prices[trough2]) / prices[trough1] < 0.02:
+            # Check peak between troughs
+            # Find maximum between the two troughs
+            peak_idx = np.argmax(prices[trough1:trough2]) + trough1
+
+            # Peak should be significantly higher (e.g., > 5% rise from trough)
+            avg_trough_price = (prices[trough1] + prices[trough2]) / 2
+            if prices[peak_idx] > avg_trough_price * 1.05:
                 return True
 
         return False
@@ -106,11 +133,7 @@ class PatternDetector:
         return None
 
     def build_labeled_dataset(
-        self,
-        stock_codes: list,
-        start_date: str,
-        end_date: str,
-        output_dir: str
+        self, stock_codes: list, start_date: str, end_date: str, output_dir: str
     ):
         """
         Generate labeled dataset for all patterns
@@ -121,7 +144,7 @@ class PatternDetector:
             end_date: End date
             output_dir: Output directory
         """
-        # This implementation requires dependencies like ChartImageGenerator and data fetching
-        # which we will mock or assume available in integration.
+        # This implementation requires dependencies like ChartImageGenerator
+        # and data fetching which we will mock or assume available in integration.
         # For unit testing purposes, we focus on the detection logic above.
         pass

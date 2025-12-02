@@ -10,22 +10,16 @@ Tests the core dependency injection infrastructure that provides:
 from unittest.mock import AsyncMock, Mock
 
 import pytest
-from fastapi import HTTPException
-from fastapi.security import HTTPAuthorizationCredentials
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app.api.dependencies import (
-    get_auth_service,
-    get_current_active_user,
-    get_current_user,
-    get_watchlist_service,
-)
+from app.api.dependencies import (get_auth_service, get_current_active_user,
+                                  get_current_user, get_watchlist_service)
 from app.core.exceptions import UnauthorizedException
 from app.db.models import User
 from app.services import AuthService
 from app.services.watchlist_service import WatchlistService
-
+from fastapi import HTTPException
+from fastapi.security import HTTPAuthorizationCredentials
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # =============================================================================
 # Database Session Injection Tests
@@ -268,8 +262,8 @@ async def test_dependency_injection_full_chain(db: AsyncSession):
 
     # 3. User authentication (depends on service)
     # Create test user in database
-    from app.db.models import User
     from app.core.security import get_password_hash
+    from app.db.models import User
 
     test_user = User(
         email="chain@example.com",
@@ -282,6 +276,7 @@ async def test_dependency_injection_full_chain(db: AsyncSession):
 
     # Generate token for user
     from app.core.security import create_access_token
+
     access_token = create_access_token(subject=str(test_user.id))
 
     # Test authentication with real token

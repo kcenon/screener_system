@@ -4,13 +4,12 @@ from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 
+from app.db.base import Base, utc_now
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
                         Text)
-from sqlalchemy.dialects.postgresql import INET
-from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
+# from sqlalchemy.dialects.postgresql import INET
+# from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
 from sqlalchemy.orm import relationship
-
-from app.db.base import Base, utc_now
 
 
 class UserSession(Base):
@@ -20,9 +19,9 @@ class UserSession(Base):
 
     # Primary key (UUID)
     id = Column(
-        PostgreSQLUUID(as_uuid=True),
+        String(36),
         primary_key=True,
-        default=uuid4,
+        default=lambda: str(uuid4()),
         index=True,
     )
 
@@ -32,10 +31,10 @@ class UserSession(Base):
     )
 
     # Refresh token (unique)
-    refresh_token = Column(String(255), unique=True, nullable=False, index=True)
+    refresh_token = Column(Text, unique=True, nullable=False, index=True)
 
     # Session metadata
-    ip_address = Column(INET)
+    ip_address = Column(String(45))
     user_agent = Column(Text)
 
     # Token expiration

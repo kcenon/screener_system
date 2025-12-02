@@ -7,7 +7,11 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Holding, Portfolio, Transaction
-from app.repositories import HoldingRepository, PortfolioRepository, TransactionRepository
+from app.repositories import (
+    HoldingRepository,
+    PortfolioRepository,
+    TransactionRepository,
+)
 from app.repositories.stock_repository import StockRepository
 from app.schemas.portfolio import (
     HoldingCreate,
@@ -137,7 +141,9 @@ class PortfolioService:
         Raises:
             ValueError: If portfolio not found or name already exists
         """
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        portfolio = await self.get_portfolio_by_id(
+            portfolio_id, user_id, load_holdings=False
+        )
         if not portfolio:
             raise ValueError("Portfolio not found")
 
@@ -156,7 +162,9 @@ class PortfolioService:
         if data.is_default is not None and data.is_default != portfolio.is_default:
             if data.is_default:
                 # Clear other defaults before setting this one
-                await self.portfolio_repo.clear_default_flag(user_id, exclude_id=portfolio_id)
+                await self.portfolio_repo.clear_default_flag(
+                    user_id, exclude_id=portfolio_id
+                )
             portfolio.is_default = data.is_default
 
         return await self.portfolio_repo.update(portfolio)
@@ -172,7 +180,9 @@ class PortfolioService:
         Returns:
             True if deleted, False if not found
         """
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        portfolio = await self.get_portfolio_by_id(
+            portfolio_id, user_id, load_holdings=False
+        )
         if not portfolio:
             return False
 
@@ -198,7 +208,9 @@ class PortfolioService:
             ValueError: If portfolio not found, stock invalid, or limits exceeded
         """
         # Check portfolio ownership
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=True)
+        portfolio = await self.get_portfolio_by_id(
+            portfolio_id, user_id, load_holdings=True
+        )
         if not portfolio:
             raise ValueError("Portfolio not found")
 
@@ -217,7 +229,9 @@ class PortfolioService:
         # Check if holding already exists
         existing = await self.holding_repo.get_by_stock(portfolio_id, data.stock_symbol)
         if existing:
-            raise ValueError(f"Holding for {data.stock_symbol} already exists in this portfolio")
+            raise ValueError(
+                f"Holding for {data.stock_symbol} already exists in this portfolio"
+            )
 
         # Create holding
         holding = Holding(
@@ -247,7 +261,9 @@ class PortfolioService:
             raise ValueError("Holding not found")
 
         # Check ownership through portfolio
-        portfolio = await self.portfolio_repo.get_by_id(holding.portfolio_id, user_id, load_holdings=False)
+        portfolio = await self.portfolio_repo.get_by_id(
+            holding.portfolio_id, user_id, load_holdings=False
+        )
         if not portfolio:
             raise ValueError("Holding not found or not owned by user")
 
@@ -272,11 +288,16 @@ class PortfolioService:
         """
         # Check ownership if user_id provided
         if user_id:
-            portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+            portfolio = await self.get_portfolio_by_id(
+                portfolio_id, user_id, load_holdings=False
+            )
             if not portfolio:
                 raise ValueError("Portfolio not found")
 
-        return await self.holding_repo.get_portfolio_holdings(portfolio_id, active_only)
+        holdings = await self.holding_repo.get_portfolio_holdings(
+            portfolio_id, active_only
+        )
+        return holdings
 
     async def add_holding(
         self, portfolio_id: int, user_id: int, user_tier: str, data: HoldingCreate
@@ -304,7 +325,9 @@ class PortfolioService:
             return None
 
         # Check ownership
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        portfolio = await self.get_portfolio_by_id(
+            portfolio_id, user_id, load_holdings=False
+        )
         if not portfolio:
             return None
 
@@ -336,7 +359,9 @@ class PortfolioService:
             return False
 
         # Check ownership
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        portfolio = await self.get_portfolio_by_id(
+            portfolio_id, user_id, load_holdings=False
+        )
         if not portfolio:
             return False
 
@@ -362,14 +387,22 @@ class PortfolioService:
 
         # Get current stock price
         stock = await self.stock_repo.get_by_code(holding.stock_symbol)
-        current_price = Decimal(str(stock.current_price)) if stock and stock.current_price else None
+        current_price = (
+            Decimal(str(stock.current_price)) if stock and stock.current_price else None
+        )
 
         # Calculate current value and gains
         total_cost = holding.total_cost
-        current_value = (Decimal(str(holding.shares)) * current_price) if current_price else None
-        unrealized_gain = (current_value - Decimal(str(total_cost))) if current_value else None
+        current_value = (
+            (Decimal(str(holding.shares)) * current_price) if current_price else None
+        )
+        unrealized_gain = (
+            (current_value - Decimal(str(total_cost))) if current_value else None
+        )
         return_percent = (
-            (unrealized_gain / Decimal(str(total_cost)) * 100) if current_value and total_cost > 0 else None
+            (unrealized_gain / Decimal(str(total_cost)) * 100)
+            if current_value and total_cost > 0
+            else None
         )
 
         return HoldingResponse(
@@ -404,7 +437,9 @@ class PortfolioService:
         from app.schemas.portfolio import PortfolioPerformance
         from decimal import Decimal
 
-        holdings = await self.holding_repo.get_portfolio_holdings(portfolio_id, active_only=True)
+        holdings = await self.holding_repo.get_portfolio_holdings(
+            portfolio_id, active_only=True
+        )
         if not holdings:
             return None
 
@@ -448,7 +483,7 @@ class PortfolioService:
             return None
 
         unrealized_gain = total_value - total_cost
-        return_percent = (unrealized_gain / total_cost * 100)
+        return_percent = unrealized_gain / total_cost * 100
 
         return PortfolioPerformance(
             portfolio_id=portfolio_id,
@@ -477,7 +512,9 @@ class PortfolioService:
         from decimal import Decimal
         from collections import defaultdict
 
-        holdings = await self.holding_repo.get_portfolio_holdings(portfolio_id, active_only=True)
+        holdings = await self.holding_repo.get_portfolio_holdings(
+            portfolio_id, active_only=True
+        )
         if not holdings:
             return None
 
@@ -493,12 +530,14 @@ class PortfolioService:
             value = Decimal(str(holding.shares)) * Decimal(str(stock.current_price))
             total_value += value
 
-            by_stock.append({
-                "symbol": holding.stock_symbol,
-                "name": stock.name_kr,
-                "value": float(value),
-                "percent": 0,  # Will calculate after total
-            })
+            by_stock.append(
+                {
+                    "symbol": holding.stock_symbol,
+                    "name": stock.name_kr,
+                    "value": float(value),
+                    "percent": 0,  # Will calculate after total
+                }
+            )
 
             sector = stock.sector or "Unknown"
             by_sector[sector] += value
@@ -506,7 +545,7 @@ class PortfolioService:
         # Calculate percentages
         if total_value > 0:
             for item in by_stock:
-                item["percent"] = (Decimal(str(item["value"])) / total_value * 100)
+                item["percent"] = Decimal(str(item["value"])) / total_value * 100
                 item["percent"] = float(item["percent"])
 
         by_sector_list = [
@@ -522,7 +561,11 @@ class PortfolioService:
             portfolio_id=portfolio_id,
             by_stock=by_stock,
             by_sector=by_sector_list,
-            by_market_cap={"large": 0, "mid": 0, "small": 0},  # TODO: Implement market cap classification
+            by_market_cap={
+                "large": 0,
+                "mid": 0,
+                "small": 0,
+            },  # TODO: Implement market cap classification
         )
 
     async def get_portfolio_transactions(
@@ -563,7 +606,9 @@ class PortfolioService:
             Created transaction
         """
         # Check portfolio ownership
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        portfolio = await self.get_portfolio_by_id(
+            portfolio_id, user_id, load_holdings=False
+        )
         if not portfolio:
             raise ValueError("Portfolio not found")
 
@@ -609,14 +654,20 @@ class PortfolioService:
                 stock_symbol=data.stock_symbol,
                 shares=data.shares,
                 average_cost=data.price,
-                first_purchase_date=data.transaction_date.date() if data.transaction_date else datetime.now().date(),
+                first_purchase_date=(
+                    data.transaction_date.date()
+                    if data.transaction_date
+                    else datetime.now().date()
+                ),
                 last_update_date=datetime.now(),
             )
             holding = await self.holding_repo.create(holding)
         else:
             # Update existing holding with weighted average cost
             total_shares = Decimal(str(holding.shares)) + data.shares
-            total_cost = (Decimal(str(holding.shares)) * Decimal(str(holding.average_cost))) + (data.shares * data.price)
+            total_cost = (
+                Decimal(str(holding.shares)) * Decimal(str(holding.average_cost))
+            ) + (data.shares * data.price)
             holding.shares = total_shares
             holding.average_cost = total_cost / total_shares
             holding.last_update_date = datetime.now()
@@ -633,7 +684,8 @@ class PortfolioService:
 
         if Decimal(str(holding.shares)) < data.shares:
             raise ValueError(
-                f"Insufficient shares: have {holding.shares}, trying to sell {data.shares}"
+                f"Insufficient shares: have {holding.shares}, "
+                f"trying to sell {data.shares}"
             )
 
         # Reduce shares
@@ -662,7 +714,9 @@ class PortfolioService:
             return False
 
         # Check ownership
-        portfolio = await self.get_portfolio_by_id(portfolio_id, user_id, load_holdings=False)
+        portfolio = await self.get_portfolio_by_id(
+            portfolio_id, user_id, load_holdings=False
+        )
         if not portfolio:
             return False
 
