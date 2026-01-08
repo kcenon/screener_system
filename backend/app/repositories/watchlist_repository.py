@@ -31,8 +31,9 @@ class WatchlistRepository:
         Returns:
             Watchlist if found and owned by user, None otherwise
         """
+        # Convert UUID to string for comparison with String(36) column
         query = select(Watchlist).where(
-            Watchlist.id == watchlist_id, Watchlist.user_id == user_id
+            Watchlist.id == str(watchlist_id), Watchlist.user_id == user_id
         )
 
         result = await self.session.execute(query)
@@ -107,8 +108,9 @@ class WatchlistRepository:
         Returns:
             Created WatchlistStock
         """
+        # Convert UUID to string for String(36) column
         watchlist_stock = WatchlistStock(
-            watchlist_id=watchlist_id,
+            watchlist_id=str(watchlist_id),
             stock_code=stock_code,
             notes=notes,
         )
@@ -128,8 +130,9 @@ class WatchlistRepository:
         Returns:
             Number of rows deleted (0 or 1)
         """
+        # Convert UUID to string for comparison with String(36) column
         stmt = delete(WatchlistStock).where(
-            WatchlistStock.watchlist_id == watchlist_id,
+            WatchlistStock.watchlist_id == str(watchlist_id),
             WatchlistStock.stock_code == stock_code,
         )
         result = await self.session.execute(stmt)
@@ -138,18 +141,20 @@ class WatchlistRepository:
 
     async def get_watchlist_stocks(self, watchlist_id: UUID) -> list[WatchlistStock]:
         """Get all stocks in a watchlist"""
+        # Convert UUID to string for comparison with String(36) column
         result = await self.session.execute(
             select(WatchlistStock)
-            .where(WatchlistStock.watchlist_id == watchlist_id)
+            .where(WatchlistStock.watchlist_id == str(watchlist_id))
             .order_by(WatchlistStock.added_at.desc())
         )
         return list(result.scalars().all())
 
     async def stock_in_watchlist(self, watchlist_id: UUID, stock_code: str) -> bool:
         """Check if stock exists in watchlist"""
+        # Convert UUID to string for comparison with String(36) column
         result = await self.session.execute(
             select(WatchlistStock).where(
-                WatchlistStock.watchlist_id == watchlist_id,
+                WatchlistStock.watchlist_id == str(watchlist_id),
                 WatchlistStock.stock_code == stock_code,
             )
         )
