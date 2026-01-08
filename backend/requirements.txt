@@ -13,7 +13,7 @@ sqlalchemy[asyncio]==2.0.44
 asyncpg==0.31.0
 alembic==1.17.1
 psycopg2-binary==2.9.11
-greenlet==3.0.3  # Required for SQLAlchemy asyncio
+greenlet==3.3.0  # Required for SQLAlchemy asyncio
 
 # Cache
 redis[hiredis]==5.0.1
