@@ -52,7 +52,7 @@ scipy==1.16.3  # Upgraded: numpy 2.x compatibility
 
 # HTTP Requests
 httpx==0.28.1
-aiohttp==3.13.2  # Security: Fixed request smuggling in chunked trailer parsing (GHSA-9548-qrrj-x5pj, CVE-2025-53643)
+aiohttp==3.13.3  # Security: Fixed zip bomb DoS & request smuggling (CVE-2025-69223~69230, CVE-2025-53643)
 
 # Monitoring & Logging
 prometheus-client==0.23.1
