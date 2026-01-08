@@ -59,7 +59,7 @@ prometheus-client==0.23.1
 sentry-sdk[fastapi]==2.45.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
 
 # Testing
-pytest==9.0.1
+pytest==8.3.5  # Downgraded: pytest-asyncio 0.25.3 requires pytest<9
 pytest-asyncio==0.25.3
 pytest-cov==4.1.0
 aiosqlite==0.21.0
