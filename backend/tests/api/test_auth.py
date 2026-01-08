@@ -177,7 +177,8 @@ class TestAuthProtectedEndpoints:
         """Test accessing protected endpoint without token"""
         response = await client.get("/v1/auth/me")
 
-        assert response.status_code == 403
+        # 401 Unauthorized: No authentication credentials provided
+        assert response.status_code == 401
 
     @pytest.mark.asyncio
     async def test_get_current_user_invalid_token(self, client: AsyncClient):
