@@ -10,7 +10,7 @@ gunicorn==23.0.0  # Security: Fixed request smuggling (GHSA-w3h3-4rj7-4ph4, GHSA
 
 # Database
 sqlalchemy[asyncio]==2.0.44
-asyncpg==0.30.0
+asyncpg==0.31.0
 alembic==1.17.1
 psycopg2-binary==2.9.11
 greenlet==3.0.3  # Required for SQLAlchemy asyncio
