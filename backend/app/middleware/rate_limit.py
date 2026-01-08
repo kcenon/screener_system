@@ -5,7 +5,7 @@ from typing import Callable, Dict, Optional
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.logging import logger
-from fastapi import HTTPException, Request, Response, status
+from fastapi import Request, Response, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -129,13 +129,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             )
 
             if not tier_allowed:
-                raise HTTPException(
+                # Return JSONResponse directly instead of raising HTTPException
+                # to avoid being caught by the outer exception handler
+                return JSONResponse(
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                    detail={
-                        "error": "rate_limit_exceeded",
-                        "message": "Too many requests",
-                        "retry_after": settings.RATE_LIMIT_WINDOW,
-                        "info": (
+                    content={
+                        "success": False,
+                        "message": "Rate limit exceeded",
+                        "detail": (
                             f"Maximum {tier_limit} requests per hour allowed "
                             f"for {tier} tier"
                         ),
