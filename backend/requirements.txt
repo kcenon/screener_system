@@ -63,7 +63,7 @@ sentry-sdk[fastapi]==2.45.0  # Security: Fixed env variable exposure (GHSA-g92j-
 pytest==8.3.5  # Downgraded: pytest-asyncio 0.25.3 requires pytest<9
 pytest-asyncio==0.25.3
 pytest-cov==4.1.0
-aiosqlite==0.21.0
+aiosqlite==0.22.1
 freezegun==1.5.5
 # httpx already listed in HTTP Requests section
 
