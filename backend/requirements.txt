@@ -76,7 +76,7 @@ isort==7.0.0
 # Utilities
 python-dotenv==1.2.1  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
 pyyaml==6.0.3
-email-validator==2.1.0.post1
+email-validator==2.3.0
 zipp>=3.19.1
 tornado>=6.4.1
 idna>=3.7
