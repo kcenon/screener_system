@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   createChart,
   ColorType,
+  LineSeries,
   type IChartApi,
   type ISeriesApi,
   type LineData,
@@ -133,7 +134,7 @@ export function MarketTrendChart({
     data.trends.forEach((trend) => {
       if (!chartRef.current) return
 
-      const series = chartRef.current.addLineSeries({
+      const series = chartRef.current.addSeries(LineSeries, {
         color: colors[trend.code] || '#6b7280',
         lineWidth: 2,
         title: trend.name,

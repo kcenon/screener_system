@@ -17,6 +17,11 @@ import {
   ColorType,
   CrosshairMode,
   LineStyle,
+  LineSeries,
+  AreaSeries,
+  BarSeries,
+  CandlestickSeries,
+  HistogramSeries,
   type IChartApi,
   type ISeriesApi,
   type CandlestickData,
@@ -202,7 +207,7 @@ export default function AdvancedChart({
 
     // Create new series based on chart type
     if (chartType === 'line') {
-      const series = chart.addLineSeries({
+      const series = chart.addSeries(LineSeries, {
         color: chartTheme.upColor,
         lineWidth: 2,
       })
@@ -213,7 +218,7 @@ export default function AdvancedChart({
       series.setData(lineData)
       mainSeriesRef.current = series
     } else if (chartType === 'area') {
-      const series = chart.addAreaSeries({
+      const series = chart.addSeries(AreaSeries, {
         topColor: `${chartTheme.upColor}50`,
         bottomColor: `${chartTheme.upColor}10`,
         lineColor: chartTheme.upColor,
@@ -226,7 +231,7 @@ export default function AdvancedChart({
       series.setData(areaData)
       mainSeriesRef.current = series
     } else if (chartType === 'ohlc') {
-      const series = chart.addBarSeries({
+      const series = chart.addSeries(BarSeries, {
         upColor: chartTheme.upColor,
         downColor: chartTheme.downColor,
       })
@@ -241,7 +246,7 @@ export default function AdvancedChart({
       mainSeriesRef.current = series
     } else {
       // Candlestick (default, also used for Heikin-Ashi)
-      const series = chart.addCandlestickSeries({
+      const series = chart.addSeries(CandlestickSeries, {
         upColor: chartTheme.upColor,
         downColor: chartTheme.downColor,
         borderUpColor: chartTheme.upColor,
@@ -283,7 +288,7 @@ export default function AdvancedChart({
     if (!showVolume) return
 
     // Create volume series
-    const volumeSeries = chart.addHistogramSeries({
+    const volumeSeries = chart.addSeries(HistogramSeries, {
       priceFormat: { type: 'volume' },
       priceScaleId: 'volume',
     })
@@ -349,7 +354,7 @@ export default function AdvancedChart({
           const smaData = calculateSMA(data, indicator.params.period || 20)
           if (smaData.length === 0) return
 
-          const series = chart.addLineSeries({
+          const series = chart.addSeries(LineSeries, {
             color: indicator.color,
             lineWidth: 1,
             priceLineVisible: false,
@@ -363,7 +368,7 @@ export default function AdvancedChart({
           const emaData = calculateEMA(data, indicator.params.period || 12)
           if (emaData.length === 0) return
 
-          const series = chart.addLineSeries({
+          const series = chart.addSeries(LineSeries, {
             color: indicator.color,
             lineWidth: 1,
             priceLineVisible: false,
@@ -382,7 +387,7 @@ export default function AdvancedChart({
           if (bbData.length === 0) return
 
           // Upper band
-          const upperSeries = chart.addLineSeries({
+          const upperSeries = chart.addSeries(LineSeries, {
             color: indicator.color,
             lineWidth: 1,
             lineStyle: LineStyle.Dashed,
@@ -393,7 +398,7 @@ export default function AdvancedChart({
           indicatorSeriesRef.current.set(`${indicator.id}-upper`, upperSeries)
 
           // Middle band
-          const middleSeries = chart.addLineSeries({
+          const middleSeries = chart.addSeries(LineSeries, {
             color: indicator.color,
             lineWidth: 1,
             priceLineVisible: false,
@@ -403,7 +408,7 @@ export default function AdvancedChart({
           indicatorSeriesRef.current.set(`${indicator.id}-middle`, middleSeries)
 
           // Lower band
-          const lowerSeries = chart.addLineSeries({
+          const lowerSeries = chart.addSeries(LineSeries, {
             color: indicator.color,
             lineWidth: 1,
             lineStyle: LineStyle.Dashed,
@@ -418,7 +423,7 @@ export default function AdvancedChart({
           const rsiData = calculateRSI(data, indicator.params.period || 14)
           if (rsiData.length === 0) return
 
-          const series = chart.addLineSeries({
+          const series = chart.addSeries(LineSeries, {
             color: indicator.color,
             lineWidth: 1,
             priceScaleId: 'rsi',
@@ -448,7 +453,7 @@ export default function AdvancedChart({
           if (macdData.length === 0) return
 
           // MACD line
-          const macdSeries = chart.addLineSeries({
+          const macdSeries = chart.addSeries(LineSeries, {
             color: '#2196F3',
             lineWidth: 1,
             priceScaleId: 'macd',
@@ -459,7 +464,7 @@ export default function AdvancedChart({
           macdSeriesRef.current.macd = macdSeries
 
           // Signal line
-          const signalSeries = chart.addLineSeries({
+          const signalSeries = chart.addSeries(LineSeries, {
             color: '#FF9800',
             lineWidth: 1,
             priceScaleId: 'macd',
@@ -470,7 +475,7 @@ export default function AdvancedChart({
           macdSeriesRef.current.signal = signalSeries
 
           // Histogram
-          const histogramSeries = chart.addHistogramSeries({
+          const histogramSeries = chart.addSeries(HistogramSeries, {
             priceScaleId: 'macd',
           })
           histogramSeries.setData(

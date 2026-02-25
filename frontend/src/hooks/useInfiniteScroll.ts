@@ -43,7 +43,7 @@ export interface UseInfiniteScrollReturn {
   /** Whether currently fetching more items */
   isFetching: boolean
   /** Reference to scroll container element */
-  scrollContainerRef: React.RefObject<HTMLDivElement>
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>
   /** Manually trigger load more */
   loadMore: () => void
 }

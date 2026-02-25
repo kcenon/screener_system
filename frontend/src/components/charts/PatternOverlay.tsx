@@ -20,7 +20,7 @@ export const PatternOverlay: React.FC<PatternOverlayProps> = ({
   onPatternClick,
 }) => {
   const [overlayPaths, setOverlayPaths] = useState<React.ReactNode[]>([]);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
 
   const updateOverlay = () => {
     if (!chart || !series) return;

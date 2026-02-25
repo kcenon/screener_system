@@ -78,6 +78,49 @@ If migration is desired in the future:
 
 ---
 
+### diskcache 5.6.3 - Pickle Deserialization (CVE-2025-69872)
+
+**Package**: `diskcache`
+**Current Version**: 5.6.3
+**Vulnerability**: Unsafe pickle deserialization allows arbitrary code execution
+**Severity**: High
+**Status**: ⚠️ **No upstream fix available**
+
+#### Details
+
+diskcache uses Python's `pickle` module for serialization, which is inherently unsafe when processing untrusted data. An attacker who can control cached data could execute arbitrary code via crafted pickle payloads.
+
+#### Risk Assessment for Our Application
+
+**Current Risk**: ⚠️ **LOW**
+
+**Rationale**:
+1. **Limited Exposure**: `diskcache` is a transitive dependency (likely via `mlflow`)
+2. **Internal Use Only**: Cache data is generated internally, not from external user input
+3. **Attack Requirements**:
+   - Attacker needs write access to the cache storage directory
+   - Server filesystem access is a prerequisite
+4. **Mitigations in Place**:
+   - Application runs in Docker containers with limited filesystem access
+   - Cache directories are not exposed externally
+
+#### Recommended Actions
+
+1. **Short Term** (Current):
+   - ✅ Document the vulnerability and risk assessment
+   - ✅ Exclude from CI security audit (no upstream fix)
+   - ⏳ Monitor for upstream fix releases
+
+2. **Medium Term**:
+   - Consider alternative caching backends if `diskcache` dependency can be replaced
+   - Ensure cache directories have restrictive file permissions
+
+#### References
+
+- **CVE**: CVE-2025-69872
+
+---
+
 ## Monitoring Recommendations
 
 Monitor the following for suspicious patterns that might indicate exploitation attempts:
@@ -88,6 +131,6 @@ Monitor the following for suspicious patterns that might indicate exploitation a
 
 ---
 
-**Last Updated**: 2025-11-11
-**Next Review**: 2026-02-11 (quarterly)
+**Last Updated**: 2026-02-26
+**Next Review**: 2026-05-26 (quarterly)
 **Risk Owner**: Security Team
