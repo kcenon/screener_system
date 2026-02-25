@@ -153,13 +153,27 @@ jobs:
           python -m pip install --upgrade pip
           # Skip starlette override (conflicts with Airflow 3.1.2's fastapi<0.118 → starlette<0.49)
           grep -v '^starlette' requirements.txt | pip install -r /dev/stdin
+          # Re-install providers explicitly to fix namespace package resolution
+          pip install --force-reinstall --no-deps \
+            apache-airflow-providers-postgres \
+            apache-airflow-providers-common-sql
+
+      - name: Verify Airflow provider imports
+        run: |
+          python -c "
+          from airflow.providers.postgres.operators.postgres import PostgresOperator
+          from airflow.providers.postgres.hooks.postgres import PostgresHook
+          print('Airflow provider imports OK')
+          "
 
       - name: Run data pipeline tests
         working-directory: data_pipeline
         env:
+          AIRFLOW_HOME: /tmp/airflow
           PYTHONPATH: ${{ github.workspace }}/data_pipeline/dags:${{ github.workspace }}/data_pipeline/scripts
         run: |
-          pytest tests/ -v
+          mkdir -p /tmp/airflow
+          python -m pytest tests/ -v
 
   frontend-test:
     name: Frontend Tests
