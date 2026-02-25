@@ -45,18 +45,15 @@ class TestEmailService:
     @pytest.fixture
     def email_service(self, mock_settings):
         """Create EmailService with mocked settings"""
-        with patch("app.services.email_service.settings", mock_settings):
-            # Patch at the point where settings is imported in __init__
-            with patch("app.core.config.settings", mock_settings):
-                service = EmailService()
+        with patch("app.core.config.settings", mock_settings):
+            service = EmailService()
         return service
 
     @pytest.fixture
     def disabled_service(self, disabled_settings):
         """Create EmailService with email disabled"""
-        with patch("app.services.email_service.settings", disabled_settings):
-            with patch("app.core.config.settings", disabled_settings):
-                service = EmailService()
+        with patch("app.core.config.settings", disabled_settings):
+            service = EmailService()
         return service
 
     def test_init_enabled(self, email_service):
