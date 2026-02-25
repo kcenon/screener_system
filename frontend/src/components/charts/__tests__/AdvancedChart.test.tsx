@@ -6,22 +6,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import type { OHLCV } from '@/utils/indicators'
 
-// Mock lightweight-charts
+// Mock lightweight-charts (v5 API)
 vi.mock('lightweight-charts', () => ({
   createChart: vi.fn(() => ({
-    addCandlestickSeries: vi.fn(() => ({
-      setData: vi.fn(),
-    })),
-    addLineSeries: vi.fn(() => ({
-      setData: vi.fn(),
-    })),
-    addAreaSeries: vi.fn(() => ({
-      setData: vi.fn(),
-    })),
-    addBarSeries: vi.fn(() => ({
-      setData: vi.fn(),
-    })),
-    addHistogramSeries: vi.fn(() => ({
+    addSeries: vi.fn(() => ({
       setData: vi.fn(),
     })),
     priceScale: vi.fn(() => ({
@@ -34,6 +22,11 @@ vi.mock('lightweight-charts', () => ({
     remove: vi.fn(),
     removeSeries: vi.fn(),
   })),
+  LineSeries: 'LineSeries',
+  AreaSeries: 'AreaSeries',
+  BarSeries: 'BarSeries',
+  CandlestickSeries: 'CandlestickSeries',
+  HistogramSeries: 'HistogramSeries',
   ColorType: { Solid: 'solid' },
   CrosshairMode: { Normal: 0 },
   LineStyle: { Solid: 0, Dashed: 1 },
