@@ -41,7 +41,7 @@ dag = DAG(
     'indicator_calculation',
     default_args=default_args,
     description='Calculate 200+ indicators for all stocks',
-    schedule_interval=None,  # Triggered by daily_price_ingestion
+    schedule=None,  # Triggered by daily_price_ingestion
     start_date=datetime(2024, 1, 1),
     catchup=False,
     max_active_runs=1,
@@ -1096,7 +1096,6 @@ def calculate_indicators_for_all_stocks(**context):
 calculate_indicators = PythonOperator(
     task_id='calculate_indicators',
     python_callable=calculate_indicators_for_all_stocks,
-    provide_context=True,
     execution_timeout=timedelta(minutes=30),
     dag=dag,
 )
@@ -1118,7 +1117,7 @@ log_calculation_status = PostgresOperator(
         ) VALUES (
             'internal', 'indicators', {{ ti.xcom_pull(task_ids='calculate_indicators', key='calculated_count') }},
             {{ ti.xcom_pull(task_ids='calculate_indicators', key='failed_count') }},
-            'success', '{{ execution_date }}', NOW()
+            'success', '{{ logical_date }}', NOW()
         )
     """,
     dag=dag,

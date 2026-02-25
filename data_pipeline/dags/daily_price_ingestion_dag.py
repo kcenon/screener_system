@@ -58,7 +58,7 @@ dag = DAG(
     'daily_price_ingestion',
     default_args=default_args,
     description='Ingest daily stock prices from KRX',
-    schedule_interval='0 18 * * 1-5',  # Mon-Fri at 18:00 KST
+    schedule='0 18 * * 1-5',  # Mon-Fri at 18:00 KST
     start_date=datetime(2024, 1, 1),
     catchup=False,
     max_active_runs=1,
@@ -561,7 +561,7 @@ def log_ingestion_status(**context):
         loaded_count,
         fetched_count - valid_count,
         status,
-        context['execution_date']
+        context['logical_date']
     ))
 
     logger.info(f"Logged ingestion status: {status}")
@@ -575,7 +575,6 @@ def log_ingestion_status(**context):
 fetch_prices = PythonOperator(
     task_id='fetch_krx_prices',
     python_callable=fetch_krx_prices,
-    provide_context=True,
     dag=dag,
 )
 
@@ -583,7 +582,6 @@ fetch_prices = PythonOperator(
 validate_data = PythonOperator(
     task_id='validate_price_data',
     python_callable=validate_price_data,
-    provide_context=True,
     dag=dag,
 )
 
@@ -591,7 +589,6 @@ validate_data = PythonOperator(
 load_to_db = PythonOperator(
     task_id='load_prices_to_db',
     python_callable=load_prices_to_db,
-    provide_context=True,
     dag=dag,
 )
 
@@ -599,7 +596,6 @@ load_to_db = PythonOperator(
 check_completeness = PythonOperator(
     task_id='check_data_completeness',
     python_callable=check_data_completeness,
-    provide_context=True,
     dag=dag,
 )
 
@@ -618,7 +614,6 @@ refresh_aggregates = PostgresOperator(
 log_status = PythonOperator(
     task_id='log_ingestion_status',
     python_callable=log_ingestion_status,
-    provide_context=True,
     trigger_rule='all_done',  # Run even if previous tasks failed
     dag=dag,
 )
