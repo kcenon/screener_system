@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     # ========================================================================
 
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
     PROJECT_NAME: str = "Stock Screening Platform"
     VERSION: str = "0.1.0"
