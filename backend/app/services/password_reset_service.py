@@ -1,5 +1,6 @@
 """Password reset service for account recovery"""
 
+import logging
 import secrets
 from typing import Optional
 
@@ -7,18 +8,26 @@ from app.core.exceptions import BadRequestException, NotFoundException
 from app.core.security import get_password_hash
 from app.db.models import PasswordResetToken
 from app.repositories import UserRepository, UserSessionRepository
+from app.services.email_service import EmailService
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
 
 
 class PasswordResetService:
     """Service for password reset operations"""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(
+        self,
+        session: AsyncSession,
+        email_service: Optional[EmailService] = None,
+    ):
         """Initialize service with database session"""
         self.session = session
         self.user_repo = UserRepository(session)
         self.session_repo = UserSessionRepository(session)
+        self.email_service = email_service or EmailService()
 
     async def request_password_reset(self, email: str) -> Optional[PasswordResetToken]:
         """
@@ -65,8 +74,17 @@ class PasswordResetService:
         await self.session.commit()
         await self.session.refresh(reset_token)
 
-        # TODO: Send actual email (implement email service integration)
-        # For now, return token for manual testing in development
+        # Send password reset email
+        sent = await self.email_service.send_password_reset_email(
+            to_email=email,
+            token=token,
+        )
+        if not sent:
+            logger.warning(
+                f"Failed to send password reset email to {email} "
+                f"(token created for user {user.id})"
+            )
+
         return reset_token
 
     async def validate_reset_token(self, token: str) -> bool:
@@ -139,7 +157,9 @@ class PasswordResetService:
 
         await self.session.commit()
 
-        # TODO: Send password changed confirmation email
+        # Send password changed confirmation email
+        await self.email_service.send_password_changed_email(to_email=user.email)
+
         return True
 
     async def _count_recent_tokens(self, user_id: int, hours: int = 1) -> int:
