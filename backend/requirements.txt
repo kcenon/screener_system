@@ -11,7 +11,7 @@ gunicorn==23.0.0  # Security: Fixed request smuggling (GHSA-w3h3-4rj7-4ph4, GHSA
 # Database
 sqlalchemy[asyncio]==2.0.44
 asyncpg==0.31.0
-alembic==1.17.1
+alembic==1.18.0
 psycopg2-binary==2.9.11
 greenlet==3.3.0  # Required for SQLAlchemy asyncio
 
@@ -21,21 +21,21 @@ redis[hiredis]==5.0.1
 # Authentication & Security
 python-jose[cryptography]==3.5.0  # Security: Fixed algorithm confusion and JWT bomb (PYSEC-2024-232, PYSEC-2024-233)
 bcrypt==5.0.0
-python-multipart==0.0.20  # Security: Fixed ReDoS vulnerabilities (GHSA-2jv5-9r88-3w3p, GHSA-59g5-xgcq-4qw3)
+python-multipart==0.0.22  # Security: Fixed ReDoS vulnerabilities (GHSA-2jv5-9r88-3w3p, GHSA-59g5-xgcq-4qw3)
 pydantic[email]==2.12.5
 pydantic-settings==2.12.0  # Upgraded: Compatible with pydantic 2.11.7
 
 # Payment Processing
-stripe==14.0.1
+stripe==14.1.0
 
 # Background Tasks
 # Note: Celery 5.4.0+ supports redis 5.0+
-celery[redis]==5.6.0
+celery[redis]==5.6.2
 
 # Data Processing
 pandas==2.3.3
 numpy==2.3.5
-scikit-learn==1.7.2
+scikit-learn==1.8.0
 lightgbm==4.6.0
 xgboost==3.1.2
 optuna==4.6.0
@@ -46,9 +46,9 @@ jinja2==3.1.6
 mlflow==3.5.0  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, path traversal, DoS)
 mcp>=1.23.0  # Security: Fixed DNS rebinding vulnerability (CVE-2025-66416) - transitive dep of mlflow
 tensorflow==2.20.0  # Upgraded: numpy 2.x compatibility
-keras==3.12.0  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-xfhp, GHSA-c9rc-mg46-23w3)
+keras==3.13.2  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-xfhp, GHSA-c9rc-mg46-23w3)
 matplotlib==3.10.7  # Upgraded: numpy 2.x compatibility
-pillow==12.1.0  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
+pillow==12.1.1  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
 scipy==1.16.3  # Upgraded: numpy 2.x compatibility
 
 # HTTP Requests
@@ -62,7 +62,7 @@ sentry-sdk[fastapi]==2.45.0  # Security: Fixed env variable exposure (GHSA-g92j-
 # Testing
 pytest==8.3.5  # Downgraded: pytest-asyncio 0.25.3 requires pytest<9
 pytest-asyncio==0.25.3
-pytest-cov==4.1.0
+pytest-cov==7.0.0
 aiosqlite==0.22.1
 freezegun==1.5.5
 # httpx already listed in HTTP Requests section
@@ -70,13 +70,13 @@ freezegun==1.5.5
 # Code Quality
 black==25.11.0  # Security: Fixed ReDoS (PYSEC-2024-48)
 flake8==7.3.0
-mypy==1.19.0
+mypy==1.19.1
 isort==7.0.0
 
 # Utilities
 python-dotenv==1.2.1  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
 pyyaml==6.0.3
-email-validator==2.1.0.post1
+email-validator==2.3.0
 zipp>=3.19.1
 tornado>=6.4.1
 idna>=3.7
