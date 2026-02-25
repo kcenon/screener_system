@@ -165,8 +165,8 @@ class TestIndicatorCalculationDagStructure:
 
     def test_schedule_is_none(self, indicator_dag):
         schedule = _get_schedule(indicator_dag)
-        # Airflow 2.x returns None; Airflow 3.x NullTimetable returns "Never"
-        assert schedule is None or schedule == "Never"
+        # Airflow 2.x returns None; Airflow 3.x returns str "None" or "Never"
+        assert schedule is None or schedule in ("None", "Never")
 
     def test_catchup_disabled(self, indicator_dag):
         assert indicator_dag.catchup is False
