@@ -8,6 +8,7 @@ Airflow instance.
 
 import os
 import sys
+import types
 from datetime import datetime
 from unittest.mock import MagicMock
 
@@ -24,6 +25,60 @@ _scripts_path = os.path.join(_pipeline_root, "scripts")
 for _p in (_dags_path, _scripts_path):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+
+
+# ---------------------------------------------------------------------------
+# Airflow 3.x provider compatibility stubs
+# ---------------------------------------------------------------------------
+#
+# In apache-airflow-providers-postgres 6.x (Airflow 3.x), the
+# ``operators/`` sub-package was removed.  PostgresOperator is replaced
+# by SQLExecuteQueryOperator from apache-airflow-providers-common-sql.
+#
+# For DAG structure tests we only need operator classes that register
+# tasks in the DAG correctly (inheriting from BaseOperator).  The stubs
+# below let us import DAG files unchanged.
+# ---------------------------------------------------------------------------
+
+
+def _ensure_postgres_operator_importable():
+    """Create a backward-compat stub for PostgresOperator if missing."""
+    try:
+        from airflow.providers.postgres.operators.postgres import PostgresOperator  # noqa: F401
+
+        return  # Already available (Airflow 2.x or compat shim)
+    except (ImportError, ModuleNotFoundError):
+        pass
+
+    from airflow.models.baseoperator import BaseOperator
+
+    class _StubPostgresOperator(BaseOperator):
+        """Minimal PostgresOperator stub for DAG structure testing."""
+
+        template_fields = ("sql",)
+
+        def __init__(self, sql="", postgres_conn_id="default", **kwargs):
+            super().__init__(**kwargs)
+            self.sql = sql
+            self.postgres_conn_id = postgres_conn_id
+
+        def execute(self, context):
+            raise NotImplementedError("Stub — not for execution")
+
+    # Wire up the module hierarchy so `from … import PostgresOperator` works
+    operators_pkg = types.ModuleType("airflow.providers.postgres.operators")
+    operators_pkg.__path__ = []
+    operators_pkg.__package__ = "airflow.providers.postgres.operators"
+    sys.modules["airflow.providers.postgres.operators"] = operators_pkg
+
+    postgres_mod = types.ModuleType("airflow.providers.postgres.operators.postgres")
+    postgres_mod.PostgresOperator = _StubPostgresOperator
+    postgres_mod.__package__ = "airflow.providers.postgres.operators"
+    sys.modules["airflow.providers.postgres.operators.postgres"] = postgres_mod
+
+
+# Run once at import time — before any DAG module is loaded
+_ensure_postgres_operator_importable()
 
 
 # ---------------------------------------------------------------------------

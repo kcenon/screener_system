@@ -154,44 +154,6 @@ jobs:
           # Skip starlette override (conflicts with Airflow 3.1.2's fastapi<0.118 → starlette<0.49)
           grep -v '^starlette' requirements.txt | pip install -r /dev/stdin
 
-      - name: Debug Airflow provider package structure
-        run: |
-          python -c "
-          import airflow, os, sys
-          print('airflow.__path__:', airflow.__path__)
-
-          # Check providers namespace
-          try:
-              import airflow.providers
-              print('providers.__path__:', airflow.providers.__path__)
-              print('providers.__file__:', getattr(airflow.providers, '__file__', 'N/A'))
-          except Exception as e:
-              print('providers import error:', e)
-
-          # Check postgres provider directory
-          for p in (airflow.providers.__path__ if hasattr(airflow, 'providers') and hasattr(airflow.providers, '__path__') else []):
-              pg = os.path.join(p, 'postgres')
-              if os.path.isdir(pg):
-                  print(f'postgres at {pg}: {os.listdir(pg)}')
-                  ops = os.path.join(pg, 'operators')
-                  if os.path.isdir(ops):
-                      print(f'operators at {ops}: {os.listdir(ops)}')
-                  else:
-                      print(f'operators dir NOT FOUND at {ops}')
-              else:
-                  print(f'postgres dir NOT FOUND at {pg}')
-
-          # Check site-packages for the provider
-          import site
-          for sp in site.getsitepackages():
-              afp = os.path.join(sp, 'airflow', 'providers', 'postgres')
-              if os.path.isdir(afp):
-                  print(f'site-packages postgres: {os.listdir(afp)}')
-                  ops = os.path.join(afp, 'operators')
-                  if os.path.isdir(ops):
-                      print(f'site-packages operators: {os.listdir(ops)}')
-          "
-
       - name: Run data pipeline tests
         working-directory: data_pipeline
         env:
