@@ -4,6 +4,8 @@ import {
   ColorType,
   CrosshairMode,
   LineStyle,
+  CandlestickSeries,
+  HistogramSeries,
   type IChartApi,
   type ISeriesApi,
   type CandlestickData,
@@ -120,7 +122,7 @@ export default function PriceChart({
     })
 
     // Add candlestick series
-    const candlestickSeries = chart.addCandlestickSeries({
+    const candlestickSeries = chart.addSeries(CandlestickSeries, {
       upColor: '#ef5350',
       downColor: '#26a69a',
       borderVisible: false,
@@ -129,7 +131,7 @@ export default function PriceChart({
     })
 
     // Add volume series
-    const volumeSeries = chart.addHistogramSeries({
+    const volumeSeries = chart.addSeries(HistogramSeries, {
       color: '#26a69a',
       priceFormat: {
         type: 'volume',

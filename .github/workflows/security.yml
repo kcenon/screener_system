@@ -112,17 +112,19 @@ jobs:
       - name: Check for vulnerabilities
         working-directory: backend
         run: |
-          # Count vulnerabilities (excluding ecdsa which has no fix)
-          TOTAL_VULNS=$(cat pip-audit.json | jq '[.dependencies[] | select(.name != "ecdsa") | .vulns[]] | length')
+          # Count vulnerabilities (excluding packages with no upstream fix)
+          # - ecdsa: no fix available
+          # - diskcache: CVE-2025-69872 pickle deserialization, no upstream fix
+          TOTAL_VULNS=$(cat pip-audit.json | jq '[.dependencies[] | select(.name != "ecdsa" and .name != "diskcache") | .vulns[]] | length')
 
-          echo "Total vulnerabilities (excluding ecdsa): $TOTAL_VULNS"
+          echo "Total vulnerabilities (excluding ecdsa, diskcache): $TOTAL_VULNS"
 
           if [ "$TOTAL_VULNS" -gt 0 ]; then
             echo "❌ Found $TOTAL_VULNS vulnerabilities in Python dependencies"
-            echo "Note: ecdsa vulnerability is excluded (no fix available, documented in SECURITY_NOTES.md)"
+            echo "Note: ecdsa, diskcache vulnerabilities excluded (no fix available, documented in SECURITY_NOTES.md)"
             exit 1
           else
-            echo "✅ No vulnerabilities found (ecdsa excluded as documented)"
+            echo "✅ No vulnerabilities found (ecdsa, diskcache excluded as documented)"
           fi
 
       - name: Upload pip-audit results
