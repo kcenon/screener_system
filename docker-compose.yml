@@ -14,7 +14,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_NAME:-screener_db}
       POSTGRES_USER: ${DB_USER:-screener_user}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-screener_password}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD environment variable is required}
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
     ports:
       - "${DB_PORT:-5432}:5432"
@@ -39,9 +39,9 @@ services:
     image: redis:7-alpine
     container_name: screener_redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}
     environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
@@ -69,14 +69,14 @@ services:
     environment:
       # Database
       # Use postgresql+asyncpg for async SQLAlchemy
-      DATABASE_URL: postgresql+asyncpg://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/${DB_NAME:-screener_db}
-      TEST_DATABASE_URL: postgresql+asyncpg://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/screener_test
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-screener_user}:${DB_PASSWORD:?DB_PASSWORD environment variable is required}@postgres:5432/${DB_NAME:-screener_db}
+      TEST_DATABASE_URL: postgresql+asyncpg://${DB_USER:-screener_user}:${DB_PASSWORD:?DB_PASSWORD environment variable is required}@postgres:5432/screener_test
 
       # Redis
-      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
+      REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}@redis:6379/0
 
       # JWT
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-this-in-production}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY environment variable is required}
       ACCESS_TOKEN_EXPIRE_MINUTES: 15
       REFRESH_TOKEN_EXPIRE_DAYS: 30
 
@@ -128,10 +128,10 @@ services:
     container_name: screener_celery_worker
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/${DB_NAME:-screener_db}
-      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/0
-      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/1
-      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379/2
+      DATABASE_URL: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:?DB_PASSWORD environment variable is required}@postgres:5432/${DB_NAME:-screener_db}
+      REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}@redis:6379/1
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}@redis:6379/2
     depends_on:
       - postgres
       - redis
@@ -152,21 +152,21 @@ services:
     restart: unless-stopped
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/airflow
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-your-fernet-key-here}
-      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:-your-secret-key-here}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:?DB_PASSWORD environment variable is required}@postgres:5432/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:?AIRFLOW_FERNET_KEY environment variable is required}
+      AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW_SECRET_KEY:?AIRFLOW_SECRET_KEY environment variable is required}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
       _AIRFLOW_DB_UPGRADE: 'true'
       _AIRFLOW_WWW_USER_CREATE: 'true'
       _AIRFLOW_WWW_USER_USERNAME: ${AIRFLOW_USER:-admin}
-      _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_PASSWORD:-admin}
+      _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_PASSWORD:?AIRFLOW_PASSWORD environment variable is required}
       # Screener database connection (for DAGs)
       SCREENER_DB_HOST: ${SCREENER_DB_HOST:-postgres}
       SCREENER_DB_PORT: ${SCREENER_DB_PORT:-5432}
       SCREENER_DB_NAME: ${SCREENER_DB_NAME:-screener_db}
       SCREENER_DB_USER: ${SCREENER_DB_USER:-screener_user}
-      SCREENER_DB_PASSWORD: ${SCREENER_DB_PASSWORD:-${DB_PASSWORD:-screener_password}}
+      SCREENER_DB_PASSWORD: ${SCREENER_DB_PASSWORD:-${DB_PASSWORD}}
     ports:
       - "${AIRFLOW_PORT:-8080}:8080"
     depends_on:
@@ -194,15 +194,15 @@ services:
     restart: unless-stopped
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:-screener_password}@postgres:5432/airflow
-      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:-your-fernet-key-here}
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql://${DB_USER:-screener_user}:${DB_PASSWORD:?DB_PASSWORD environment variable is required}@postgres:5432/airflow
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY:?AIRFLOW_FERNET_KEY environment variable is required}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       # Screener database connection (for DAGs)
       SCREENER_DB_HOST: ${SCREENER_DB_HOST:-postgres}
       SCREENER_DB_PORT: ${SCREENER_DB_PORT:-5432}
       SCREENER_DB_NAME: ${SCREENER_DB_NAME:-screener_db}
       SCREENER_DB_USER: ${SCREENER_DB_USER:-screener_user}
-      SCREENER_DB_PASSWORD: ${SCREENER_DB_PASSWORD:-${DB_PASSWORD:-screener_password}}
+      SCREENER_DB_PASSWORD: ${SCREENER_DB_PASSWORD:-${DB_PASSWORD}}
     depends_on:
       - airflow_webserver
     volumes:
@@ -312,7 +312,7 @@ services:
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?GRAFANA_PASSWORD environment variable is required}
       GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
     ports:
       - "${GRAFANA_PORT:-3001}:3000"
