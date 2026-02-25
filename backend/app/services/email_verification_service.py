@@ -1,21 +1,31 @@
 """Email verification service for user registration"""
 
+import logging
 import secrets
+from typing import Optional
 
 from app.core.exceptions import BadRequestException, NotFoundException
 from app.db.models import EmailVerificationToken
 from app.repositories import UserRepository
+from app.services.email_service import EmailService
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
 
 
 class EmailVerificationService:
     """Service for email verification operations"""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(
+        self,
+        session: AsyncSession,
+        email_service: Optional[EmailService] = None,
+    ):
         """Initialize service with database session"""
         self.session = session
         self.user_repo = UserRepository(session)
+        self.email_service = email_service or EmailService()
 
     async def send_verification_email(
         self, user_id: int, email: str
@@ -67,8 +77,17 @@ class EmailVerificationService:
         await self.session.commit()
         await self.session.refresh(verification_token)
 
-        # TODO: Send actual email (implement email service integration)
-        # For now, return token for manual verification in development
+        # Send verification email
+        sent = await self.email_service.send_verification_email(
+            to_email=email,
+            token=token,
+        )
+        if not sent:
+            logger.warning(
+                f"Failed to send verification email to {email} "
+                f"(token created for user {user_id})"
+            )
+
         return verification_token
 
     async def verify_email(self, token: str) -> bool:

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Stock Screening Platform{% endblock %}</title>
+<style>
+  body { margin: 0; padding: 0; background-color: #f4f7fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+  .card { background: #ffffff; border-radius: 8px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .header { text-align: center; margin-bottom: 32px; }
+  .header h1 { color: #1a1a2e; font-size: 20px; margin: 0; }
+  .content { color: #333; font-size: 15px; line-height: 1.6; }
+  .btn { display: inline-block; padding: 14px 32px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 15px; }
+  .btn-wrapper { text-align: center; margin: 32px 0; }
+  .footer { text-align: center; margin-top: 32px; color: #999; font-size: 12px; line-height: 1.5; }
+  .muted { color: #888; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <h1>Stock Screening Platform</h1>
+    </div>
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  <div class="footer">
+    <p>Stock Screening Platform</p>
+    <p>This is an automated message. Please do not reply directly to this email.</p>
+  </div>
+</div>
+</body>
+</html>

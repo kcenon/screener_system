@@ -177,6 +177,22 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = ""
 
     # ========================================================================
+    # EMAIL (SMTP)
+    # ========================================================================
+
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_USE_TLS: bool = True
+    EMAIL_SENDER_ADDRESS: str = ""
+    EMAIL_SENDER_NAME: str = "Stock Screening Platform"
+    EMAIL_ENABLED: bool = False
+
+    # Frontend URL for constructing verification/reset links
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    # ========================================================================
     # MONITORING
     # ========================================================================
 

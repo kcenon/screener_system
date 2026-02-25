@@ -220,8 +220,6 @@ class NotificationService:
                 to_email=user.email,
                 subject=notification.title,
                 body=notification.message,
-                notification_type=notification.notification_type,
-                priority=notification.priority,
             )
 
             if success:
