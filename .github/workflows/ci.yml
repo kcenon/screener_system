@@ -58,6 +58,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Verify Alembic migration chain
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/screener_test
+          PYTHONPATH: ${{ github.workspace }}/backend
+        run: |
+          # Ensure exactly one migration head (no branching)
+          HEAD_COUNT=$(alembic heads | wc -l)
+          if [ "$HEAD_COUNT" -ne 1 ]; then
+            echo "ERROR: Multiple migration heads detected. Merge branches first."
+            alembic heads
+            exit 1
+          fi
+          echo "Migration chain OK: single head detected."
+          alembic heads
+
       - name: Run tests with coverage
         working-directory: backend
         env:
