@@ -38,7 +38,7 @@ def setup_screener_db_connection() -> bool:
     """
     try:
         from airflow.models import Connection
-        from airflow.utils.db import create_session
+        from airflow.utils.session import create_session
 
         # Get environment variables
         host = os.getenv('SCREENER_DB_HOST', 'postgres')
