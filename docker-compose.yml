@@ -259,7 +259,7 @@ services:
       - backend
     volumes:
       - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./infrastructure/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./infrastructure/nginx/conf.d.dev:/etc/nginx/conf.d:ro
       - ./infrastructure/nginx/ssl:/etc/nginx/ssl:ro
       - certbot_webroot:/var/www/certbot:ro
       - certbot_certs:/etc/nginx/ssl/letsencrypt:ro
