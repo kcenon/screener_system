@@ -12,169 +12,269 @@ on:
         options:
           - staging
           - production
+      image_tag:
+        description: 'Docker image tag to deploy (default: latest commit SHA)'
+        required: false
+        type: string
 
 permissions:
   contents: read
   packages: read
 
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ghcr.io/${{ github.repository }}/backend
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/frontend
+
 jobs:
+  # ==========================================================================
+  # STAGING DEPLOYMENT
+  # ==========================================================================
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
     environment:
       name: staging
-      url: https://staging.screener.example.com
+      url: ${{ vars.STAGING_URL || 'https://staging.screener.example.com' }}
+    concurrency:
+      group: deploy-staging
+      cancel-in-progress: false
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Determine image tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.image_tag }}" ]; then
+            echo "tag=${{ github.event.inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Copy deployment files to staging server
+        uses: appleboy/scp-action@v0.1.7
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          source: "docker-compose.staging.yml,scripts/deploy.sh,infrastructure/nginx/"
+          target: "~/screener"
+          overwrite: true
 
-      - name: Pull latest Docker images
-        run: |
-          docker pull ghcr.io/${{ github.repository }}/backend:latest
-          docker pull ghcr.io/${{ github.repository }}/frontend:latest
-
-      - name: Verify images
-        run: |
-          echo "✓ Backend image pulled successfully"
-          docker inspect ghcr.io/${{ github.repository }}/backend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
-          echo ""
-          echo "✓ Frontend image pulled successfully"
-          docker inspect ghcr.io/${{ github.repository }}/frontend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
-
-      - name: Deploy to staging
-        run: |
-          echo "✓ Images verified and ready for deployment"
-          echo "Note: Actual deployment commands are disabled (placeholder)"
-          # Add actual deployment commands here when ready:
-          # docker-compose -f docker-compose.staging.yml up -d
-
-      - name: Run smoke tests
-        run: |
-          echo "Running smoke tests..."
-          sleep 10
-          # Add smoke test commands
-          # curl -f https://staging.screener.example.com/health || exit 1
-
-      - name: Notify on Slack
-        if: false  # Disabled: SLACK_WEBHOOK_URL not configured
-        uses: slackapi/slack-github-action@v1
-        with:
-          payload: |
-            {
-              "text": "Staging Deployment ${{ job.status }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Staging Deployment ${{ job.status }}*\n\nCommit: ${{ github.sha }}\nAuthor: ${{ github.actor }}"
-                  }
-                }
-              ]
-            }
+      - name: Deploy to staging via SSH
+        uses: appleboy/ssh-action@v1.2.0
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          IMAGE_TAG: ${{ steps.tag.outputs.tag }}
+          REGISTRY: ${{ env.REGISTRY }}
+          BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
+          FRONTEND_IMAGE: ${{ env.FRONTEND_IMAGE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          envs: IMAGE_TAG,REGISTRY,BACKEND_IMAGE,FRONTEND_IMAGE,GITHUB_TOKEN,GITHUB_ACTOR
+          script_stop: true
+          script: |
+            cd ~/screener
+            chmod +x scripts/deploy.sh
+            ./scripts/deploy.sh \
+              --environment staging \
+              --image-tag "$IMAGE_TAG" \
+              --registry "$REGISTRY" \
+              --backend-image "$BACKEND_IMAGE" \
+              --frontend-image "$FRONTEND_IMAGE" \
+              --github-token "$GITHUB_TOKEN" \
+              --github-actor "$GITHUB_ACTOR"
 
+      - name: Verify deployment health
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            echo "Running post-deployment health checks..."
+            MAX_RETRIES=10
+            RETRY_INTERVAL=6
+            for i in $(seq 1 $MAX_RETRIES); do
+              HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/v1/health 2>/dev/null || echo "000")
+              if [ "$HTTP_STATUS" = "200" ]; then
+                echo "Health check passed (attempt $i/$MAX_RETRIES)"
+                exit 0
+              fi
+              echo "Health check attempt $i/$MAX_RETRIES: HTTP $HTTP_STATUS (waiting ${RETRY_INTERVAL}s...)"
+              sleep $RETRY_INTERVAL
+            done
+            echo "Health check failed after $MAX_RETRIES attempts"
+            exit 1
+
+      - name: Rollback on failure
+        if: failure()
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          script: |
+            cd ~/screener
+            if [ -x scripts/deploy.sh ]; then
+              ./scripts/deploy.sh --environment staging --rollback
+            else
+              echo "Deploy script not found, manual rollback required"
+            fi
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## Staging Deployment Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | staging |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Image Tag | \`${{ steps.tag.outputs.tag }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Triggered by | ${{ github.actor }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Status | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+
+  # ==========================================================================
+  # PRODUCTION DEPLOYMENT (manual trigger only)
+  # ==========================================================================
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
     environment:
       name: production
-      url: https://screener.example.com
-    needs: []
+      url: ${{ vars.PRODUCTION_URL || 'https://screener.example.com' }}
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Determine image tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.image_tag }}" ]; then
+            echo "tag=${{ github.event.inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Copy deployment files to production server
+        uses: appleboy/scp-action@v0.1.7
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_SSH_PORT || 22 }}
+          source: "docker-compose.prod.yml,scripts/deploy.sh,infrastructure/nginx/"
+          target: "~/screener"
+          overwrite: true
 
-      - name: Pull latest Docker images
-        run: |
-          docker pull ghcr.io/${{ github.repository }}/backend:latest
-          docker pull ghcr.io/${{ github.repository }}/frontend:latest
+      - name: Deploy to production via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          IMAGE_TAG: ${{ steps.tag.outputs.tag }}
+          REGISTRY: ${{ env.REGISTRY }}
+          BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
+          FRONTEND_IMAGE: ${{ env.FRONTEND_IMAGE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_SSH_PORT || 22 }}
+          envs: IMAGE_TAG,REGISTRY,BACKEND_IMAGE,FRONTEND_IMAGE,GITHUB_TOKEN,GITHUB_ACTOR
+          script_stop: true
+          script: |
+            cd ~/screener
+            chmod +x scripts/deploy.sh
+            ./scripts/deploy.sh \
+              --environment production \
+              --image-tag "$IMAGE_TAG" \
+              --registry "$REGISTRY" \
+              --backend-image "$BACKEND_IMAGE" \
+              --frontend-image "$FRONTEND_IMAGE" \
+              --github-token "$GITHUB_TOKEN" \
+              --github-actor "$GITHUB_ACTOR"
 
-      - name: Verify images
-        run: |
-          echo "✓ Backend image pulled successfully"
-          docker inspect ghcr.io/${{ github.repository }}/backend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
-          echo ""
-          echo "✓ Frontend image pulled successfully"
-          docker inspect ghcr.io/${{ github.repository }}/frontend:latest --format='Image ID: {{.Id}}, Created: {{.Created}}'
+      - name: Verify deployment health
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            echo "Running post-deployment health checks..."
+            MAX_RETRIES=15
+            RETRY_INTERVAL=10
+            for i in $(seq 1 $MAX_RETRIES); do
+              HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/v1/health 2>/dev/null || echo "000")
+              if [ "$HTTP_STATUS" = "200" ]; then
+                echo "Health check passed (attempt $i/$MAX_RETRIES)"
 
-      - name: Deploy to production
-        run: |
-          echo "✓ Images verified and ready for production deployment"
-          echo "Note: Actual deployment commands are disabled (placeholder)"
-          # Add Kubernetes deployment commands when ready:
-          # kubectl set image deployment/backend backend=ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
-          # kubectl set image deployment/frontend frontend=ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+                # Additional production checks
+                echo "Checking database connectivity..."
+                DB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health/db 2>/dev/null || echo "000")
+                if [ "$DB_STATUS" != "200" ]; then
+                  echo "WARNING: Database health check returned HTTP $DB_STATUS"
+                fi
 
-      - name: Run health checks
-        run: |
-          echo "Running health checks..."
-          sleep 15
-          # Add health check commands
-          # kubectl wait --for=condition=ready pod -l app=backend --timeout=300s
-          # kubectl wait --for=condition=ready pod -l app=frontend --timeout=300s
+                echo "Checking Redis connectivity..."
+                REDIS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health/redis 2>/dev/null || echo "000")
+                if [ "$REDIS_STATUS" != "200" ]; then
+                  echo "WARNING: Redis health check returned HTTP $REDIS_STATUS"
+                fi
+
+                exit 0
+              fi
+              echo "Health check attempt $i/$MAX_RETRIES: HTTP $HTTP_STATUS (waiting ${RETRY_INTERVAL}s...)"
+              sleep $RETRY_INTERVAL
+            done
+            echo "Health check failed after $MAX_RETRIES attempts"
+            exit 1
 
       - name: Rollback on failure
         if: failure()
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_SSH_PORT || 22 }}
+          script: |
+            cd ~/screener
+            if [ -x scripts/deploy.sh ]; then
+              ./scripts/deploy.sh --environment production --rollback
+            else
+              echo "Deploy script not found, manual rollback required"
+            fi
+
+      - name: Deployment summary
+        if: always()
         run: |
-          echo "Deployment failed, rolling back..."
-          # Add rollback commands
-          # kubectl rollout undo deployment/backend
-          # kubectl rollout undo deployment/frontend
-
-      - name: Notify on Slack
-        if: false  # Disabled: SLACK_WEBHOOK_URL not configured
-        uses: slackapi/slack-github-action@v1
-        with:
-          payload: |
-            {
-              "text": "Production Deployment ${{ job.status }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Production Deployment ${{ job.status }}*\n\nCommit: ${{ github.sha }}\nAuthor: ${{ github.actor }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Send email notification
-        if: false  # Disabled: Email credentials not configured
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Production Deployment ${{ job.status }}
-          body: |
-            Production deployment has completed with status: ${{ job.status }}
-
-            Commit: ${{ github.sha }}
-            Author: ${{ github.actor }}
-            Workflow: ${{ github.workflow }}
-          to: engineering@example.com
-          from: noreply@screener.example.com
+          echo "## Production Deployment Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Field | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Environment | production |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Image Tag | \`${{ steps.tag.outputs.tag }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Triggered by | ${{ github.actor }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Status | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
