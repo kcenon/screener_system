@@ -7,8 +7,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
 
-from app.db.models import (Stock, User, UserPreferences, Watchlist,
-                           WatchlistStock)
+from app.db.models import Stock, User, UserPreferences, Watchlist, WatchlistStock
 
 
 @pytest.fixture

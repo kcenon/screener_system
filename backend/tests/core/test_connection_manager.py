@@ -6,8 +6,12 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 
 from app.core.websocket import ConnectionManager
-from app.schemas.websocket import (MessageType, PongMessage, PriceUpdate,
-                                   SubscriptionType)
+from app.schemas.websocket import (
+    MessageType,
+    PongMessage,
+    PriceUpdate,
+    SubscriptionType,
+)
 
 
 @pytest.fixture

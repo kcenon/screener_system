@@ -3,8 +3,15 @@
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import (JSON, Boolean, CheckConstraint, Column, ForeignKey,
-                        Integer, String)
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    CheckConstraint,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel

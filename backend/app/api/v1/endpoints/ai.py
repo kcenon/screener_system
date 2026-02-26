@@ -4,11 +4,14 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.dependencies import get_ai_service, get_current_user
-from app.schemas.ai import (BatchPredictionRequest, ModelInfoResponse,
-                            PortfolioAnalysisRequest,
-                            PortfolioAnalysisResponse, PredictionResponse)
-from app.schemas.pattern import (AlertConfigCreate, AlertConfigResponse,
-                                 PatternResponse)
+from app.schemas.ai import (
+    BatchPredictionRequest,
+    ModelInfoResponse,
+    PortfolioAnalysisRequest,
+    PortfolioAnalysisResponse,
+    PredictionResponse,
+)
+from app.schemas.pattern import AlertConfigCreate, AlertConfigResponse, PatternResponse
 from app.services.ai_service import AIService
 from app.services.ml_service import model_service
 from app.services.pattern_recognition_service import pattern_service

@@ -7,8 +7,7 @@ from uuid import UUID
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import (UserActivity, UserPreferences, Watchlist,
-                           WatchlistStock)
+from app.db.models import UserActivity, UserPreferences, Watchlist, WatchlistStock
 
 
 class WatchlistRepository:

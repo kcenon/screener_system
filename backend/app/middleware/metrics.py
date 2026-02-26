@@ -15,8 +15,12 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
-from app.core.metrics import (http_errors_total, http_request_duration_seconds,
-                              http_requests_in_progress, http_requests_total)
+from app.core.metrics import (
+    http_errors_total,
+    http_request_duration_seconds,
+    http_requests_in_progress,
+    http_requests_total,
+)
 
 
 class PrometheusMetricsMiddleware(BaseHTTPMiddleware):

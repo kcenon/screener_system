@@ -9,9 +9,14 @@ from typing import Any, Dict, List, Optional, Set, Union
 from fastapi import WebSocket, WebSocketDisconnect
 
 from app.core.logging import logger
-from app.schemas.websocket import (BatchMessage, ConnectionInfo, ErrorMessage,
-                                   PongMessage, SubscriptionType,
-                                   WebSocketMessage)
+from app.schemas.websocket import (
+    BatchMessage,
+    ConnectionInfo,
+    ErrorMessage,
+    PongMessage,
+    SubscriptionType,
+    WebSocketMessage,
+)
 
 
 class ConnectionManager:

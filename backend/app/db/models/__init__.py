@@ -20,14 +20,20 @@ from app.db.models.stock import Stock
 from app.db.models.stripe_webhook_event import StripeWebhookEvent
 from app.db.models.subscription_plan import SubscriptionPlan
 from app.db.models.transaction import Transaction, TransactionType
-from app.db.models.usage_tracking import (PeriodType, ResourceType,
-                                          UsageTracking)
+from app.db.models.usage_tracking import PeriodType, ResourceType, UsageTracking
 from app.db.models.user import User
 from app.db.models.user_session import UserSession
-from app.db.models.user_subscription import (BillingCycle, SubscriptionStatus,
-                                             UserSubscription)
-from app.db.models.watchlist import (UserActivity, UserPreferences, Watchlist,
-                                     WatchlistStock)
+from app.db.models.user_subscription import (
+    BillingCycle,
+    SubscriptionStatus,
+    UserSubscription,
+)
+from app.db.models.watchlist import (
+    UserActivity,
+    UserPreferences,
+    Watchlist,
+    WatchlistStock,
+)
 
 __all__ = [
     "Alert",

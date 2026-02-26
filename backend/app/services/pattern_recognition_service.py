@@ -2,8 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Dict, List
 
-from app.schemas.pattern import (AlertConfigCreate, AlertConfigResponse,
-                                 PatternResponse)
+from app.schemas.pattern import AlertConfigCreate, AlertConfigResponse, PatternResponse
 
 
 class PatternRecognitionService:

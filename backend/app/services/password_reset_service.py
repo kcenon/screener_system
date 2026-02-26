@@ -4,13 +4,14 @@ import logging
 import secrets
 from typing import Optional
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.exceptions import BadRequestException, NotFoundException
 from app.core.security import get_password_hash
 from app.db.models import PasswordResetToken
 from app.repositories import UserRepository, UserSessionRepository
 from app.services.email_service import EmailService
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

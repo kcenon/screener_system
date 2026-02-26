@@ -32,15 +32,30 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.error_handlers import (app_exception_handler,
-                                    generic_exception_handler,
-                                    sqlalchemy_exception_handler,
-                                    validation_exception_handler)
+from app.api.error_handlers import (
+    app_exception_handler,
+    generic_exception_handler,
+    sqlalchemy_exception_handler,
+    validation_exception_handler,
+)
 from app.api.v1.endpoints import ai_analysis  # Added ai_analysis
-from app.api.v1.endpoints import (ai, alerts, auth, health, market,
-                                  notifications, oauth, portfolios,
-                                  recommendation, screening, stocks,
-                                  subscriptions, users, webhooks, websocket)
+from app.api.v1.endpoints import (
+    ai,
+    alerts,
+    auth,
+    health,
+    market,
+    notifications,
+    oauth,
+    portfolios,
+    recommendation,
+    screening,
+    stocks,
+    subscriptions,
+    users,
+    webhooks,
+    websocket,
+)
 from app.core.cache import cache_manager
 from app.core.config import settings
 from app.core.exceptions import AppException

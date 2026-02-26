@@ -6,8 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from app.core.cache import cache_manager
-from app.services.kis_quota import (CircuitState, KISQuotaManager,
-                                    RequestPriority)
+from app.services.kis_quota import CircuitState, KISQuotaManager, RequestPriority
 
 
 @pytest.fixture

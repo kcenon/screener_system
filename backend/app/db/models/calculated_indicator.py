@@ -1,7 +1,15 @@
 """Calculated indicator database model"""
 
-from sqlalchemy import (BigInteger, CheckConstraint, Column, Date, ForeignKey,
-                        Integer, Numeric, String)
+from sqlalchemy import (
+    BigInteger,
+    CheckConstraint,
+    Column,
+    Date,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+)
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base, TimestampMixin

@@ -18,16 +18,25 @@ from fastapi.testclient import TestClient
 from pydantic import BaseModel, field_validator
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.error_handlers import (app_exception_handler,
-                                    generic_exception_handler,
-                                    sqlalchemy_exception_handler,
-                                    validation_exception_handler)
-from app.core.exceptions import (AppException, BadRequestException,
-                                 CacheException, ConflictException,
-                                 DatabaseException, ExternalAPIException,
-                                 ForbiddenException, NotFoundException,
-                                 RateLimitException, UnauthorizedException,
-                                 ValidationException)
+from app.api.error_handlers import (
+    app_exception_handler,
+    generic_exception_handler,
+    sqlalchemy_exception_handler,
+    validation_exception_handler,
+)
+from app.core.exceptions import (
+    AppException,
+    BadRequestException,
+    CacheException,
+    ConflictException,
+    DatabaseException,
+    ExternalAPIException,
+    ForbiddenException,
+    NotFoundException,
+    RateLimitException,
+    UnauthorizedException,
+    ValidationException,
+)
 
 # ============================================================================
 # TEST FIXTURES

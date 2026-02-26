@@ -3,8 +3,17 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import (Boolean, CheckConstraint, Column, DateTime, ForeignKey,
-                        Integer, String, Text, text)
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    text,
+)
 from sqlalchemy.orm import relationship
 
 from app.db.base import Base

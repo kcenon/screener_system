@@ -10,10 +10,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache import CacheManager
 from app.repositories.screening_repository import ScreeningRepository
-from app.schemas.screening import (ScreenedStock, ScreeningFilters,
-                                   ScreeningMetadata, ScreeningRequest,
-                                   ScreeningResponse, ScreeningTemplate,
-                                   ScreeningTemplateList)
+from app.schemas.screening import (
+    ScreenedStock,
+    ScreeningFilters,
+    ScreeningMetadata,
+    ScreeningRequest,
+    ScreeningResponse,
+    ScreeningTemplate,
+    ScreeningTemplateList,
+)
 
 logger = logging.getLogger(__name__)
 

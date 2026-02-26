@@ -10,8 +10,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logging import logger
 from app.core.redis_pubsub import redis_pubsub
 from app.db.models.stock import Stock
-from app.schemas.websocket import (MarketStatus, MessageType, OrderBookLevel,
-                                   OrderBookUpdate, PriceUpdate)
+from app.schemas.websocket import (
+    MarketStatus,
+    MessageType,
+    OrderBookLevel,
+    OrderBookUpdate,
+    PriceUpdate,
+)
 
 
 class PricePublisher:

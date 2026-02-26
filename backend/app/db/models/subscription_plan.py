@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING, Any, Dict
 
 from sqlalchemy import JSON, Boolean, Column, Float, Integer, String, Text
+
 # from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 

@@ -4,6 +4,7 @@ import asyncio
 import os
 import sys
 from typing import AsyncGenerator
+
 # Mock Redis connection to prevent startup failures
 from unittest.mock import AsyncMock, MagicMock
 

@@ -16,7 +16,8 @@ export default function ForgotPasswordPage() {
   } = useForm<PasswordResetRequest>()
 
   const resetMutation = useMutation({
-    mutationFn: (data: PasswordResetRequest) => authService.requestPasswordReset(data),
+    mutationFn: (data: PasswordResetRequest) =>
+      authService.requestPasswordReset(data),
     onSuccess: () => {
       setIsSubmitted(true)
     },
@@ -58,12 +59,12 @@ export default function ForgotPasswordPage() {
                 Password Reset Email Sent
               </h3>
               <p className="mt-2 text-sm text-gray-600">
-                If an account exists for <strong>{submittedEmail}</strong>, you will receive
-                a password reset link shortly.
+                If an account exists for <strong>{submittedEmail}</strong>, you
+                will receive a password reset link shortly.
               </p>
               <p className="mt-2 text-sm text-gray-500">
-                Please check your email inbox and spam folder. The link will expire in 1
-                hour.
+                Please check your email inbox and spam folder. The link will
+                expire in 1 hour.
               </p>
               <div className="mt-6">
                 <Link
@@ -88,13 +89,17 @@ export default function ForgotPasswordPage() {
             Reset your password
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we'll send you a link to reset your
+            password.
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email address
             </label>
             <div className="mt-1">
@@ -115,7 +120,9 @@ export default function ForgotPasswordPage() {
                 })}
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+                <p className="mt-2 text-sm text-red-600">
+                  {errors.email.message}
+                </p>
               )}
             </div>
           </div>

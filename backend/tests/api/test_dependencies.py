@@ -15,8 +15,12 @@ from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import (get_auth_service, get_current_active_user,
-                                  get_current_user, get_watchlist_service)
+from app.api.dependencies import (
+    get_auth_service,
+    get_current_active_user,
+    get_current_user,
+    get_watchlist_service,
+)
 from app.core.exceptions import UnauthorizedException
 from app.db.models import User
 from app.services import AuthService

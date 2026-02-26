@@ -1,7 +1,6 @@
 """Market Index database model"""
 
-from sqlalchemy import (BigInteger, CheckConstraint, Column, Integer, Numeric,
-                        String)
+from sqlalchemy import BigInteger, CheckConstraint, Column, Integer, Numeric, String
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 
 from app.db.base import Base, TimestampMixin

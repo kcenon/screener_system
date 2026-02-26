@@ -3,8 +3,17 @@
 from datetime import date
 from enum import Enum
 
-from sqlalchemy import (JSON, CheckConstraint, Column, Date, ForeignKey,
-                        Integer, String, UniqueConstraint)
+from sqlalchemy import (
+    JSON,
+    CheckConstraint,
+    Column,
+    Date,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
+
 # from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 

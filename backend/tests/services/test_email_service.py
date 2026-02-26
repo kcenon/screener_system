@@ -245,11 +245,12 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_alert_email_with_html_template(self, email_service):
         """Test stock alert email renders HTML template with correct context"""
-        with patch.object(
-            email_service, "_render_template", return_value="<html>rendered</html>"
-        ) as mock_render, patch.object(
-            email_service, "send_notification_email"
-        ) as mock_send:
+        with (
+            patch.object(
+                email_service, "_render_template", return_value="<html>rendered</html>"
+            ) as mock_render,
+            patch.object(email_service, "send_notification_email") as mock_send,
+        ):
             mock_send.return_value = True
 
             result = await email_service.send_alert_email(
@@ -276,11 +277,12 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_payment_failure_email(self, email_service):
         """Test payment failure email with amount, currency, and template context"""
-        with patch.object(
-            email_service, "_render_template", return_value="<html>pf</html>"
-        ) as mock_render, patch.object(
-            email_service, "send_notification_email"
-        ) as mock_send:
+        with (
+            patch.object(
+                email_service, "_render_template", return_value="<html>pf</html>"
+            ) as mock_render,
+            patch.object(email_service, "send_notification_email") as mock_send,
+        ):
             mock_send.return_value = True
 
             result = await email_service.send_payment_failure_email(
@@ -325,11 +327,12 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_upcoming_invoice_email(self, email_service):
         """Test upcoming invoice email with amount, due date, and template context"""
-        with patch.object(
-            email_service, "_render_template", return_value="<html>ui</html>"
-        ) as mock_render, patch.object(
-            email_service, "send_notification_email"
-        ) as mock_send:
+        with (
+            patch.object(
+                email_service, "_render_template", return_value="<html>ui</html>"
+            ) as mock_render,
+            patch.object(email_service, "send_notification_email") as mock_send,
+        ):
             mock_send.return_value = True
 
             result = await email_service.send_upcoming_invoice_email(
@@ -357,11 +360,12 @@ class TestEmailService:
     @pytest.mark.asyncio
     async def test_send_trial_ending_email(self, email_service):
         """Test trial ending email with plan name, date, and template context"""
-        with patch.object(
-            email_service, "_render_template", return_value="<html>te</html>"
-        ) as mock_render, patch.object(
-            email_service, "send_notification_email"
-        ) as mock_send:
+        with (
+            patch.object(
+                email_service, "_render_template", return_value="<html>te</html>"
+            ) as mock_render,
+            patch.object(email_service, "send_notification_email") as mock_send,
+        ):
             mock_send.return_value = True
 
             result = await email_service.send_trial_ending_email(

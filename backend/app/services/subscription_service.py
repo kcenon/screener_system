@@ -10,9 +10,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.exceptions import BadRequestException, NotFoundException
-from app.db.models import (Payment, PaymentMethod, PaymentStatus,
-                           SubscriptionPlan, UsageTracking, User,
-                           UserSubscription)
+from app.db.models import (
+    Payment,
+    PaymentMethod,
+    PaymentStatus,
+    SubscriptionPlan,
+    UsageTracking,
+    User,
+    UserSubscription,
+)
 from app.services.stripe_service import StripeService
 
 logger = logging.getLogger(__name__)

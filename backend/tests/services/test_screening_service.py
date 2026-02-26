@@ -6,8 +6,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 
 from app.core.exceptions import NotFoundException
-from app.schemas.screening import (FilterRange, ScreeningFilters,
-                                   ScreeningRequest)
+from app.schemas.screening import FilterRange, ScreeningFilters, ScreeningRequest
 from app.services.screening_service import ScreeningService
 
 

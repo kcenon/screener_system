@@ -27,14 +27,17 @@ async def client_no_db():
     app.dependency_overrides[get_current_user] = override_get_current_user
 
     # Mock Redis connection in lifespan
-    with patch("app.core.cache.cache_manager.connect", new_callable=AsyncMock), patch(
-        "app.core.cache.cache_manager.disconnect", new_callable=AsyncMock
-    ), patch(
-        "app.core.websocket.connection_manager.initialize_redis",
-        new_callable=AsyncMock,
-    ), patch(
-        "app.core.redis_pubsub.redis_pubsub.disconnect",
-        new_callable=AsyncMock,
+    with (
+        patch("app.core.cache.cache_manager.connect", new_callable=AsyncMock),
+        patch("app.core.cache.cache_manager.disconnect", new_callable=AsyncMock),
+        patch(
+            "app.core.websocket.connection_manager.initialize_redis",
+            new_callable=AsyncMock,
+        ),
+        patch(
+            "app.core.redis_pubsub.redis_pubsub.disconnect",
+            new_callable=AsyncMock,
+        ),
     ):
 
         transport = ASGITransport(app=app)

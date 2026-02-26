@@ -7,14 +7,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import CurrentUser
 from app.db.session import get_db
-from app.schemas.portfolio import (HoldingCreate, HoldingListResponse,
-                                   HoldingResponse, HoldingUpdate,
-                                   PortfolioAllocation, PortfolioCreate,
-                                   PortfolioListResponse, PortfolioPerformance,
-                                   PortfolioResponse, PortfolioSummary,
-                                   PortfolioUpdate, TransactionCreate,
-                                   TransactionListResponse,
-                                   TransactionResponse)
+from app.schemas.portfolio import (
+    HoldingCreate,
+    HoldingListResponse,
+    HoldingResponse,
+    HoldingUpdate,
+    PortfolioAllocation,
+    PortfolioCreate,
+    PortfolioListResponse,
+    PortfolioPerformance,
+    PortfolioResponse,
+    PortfolioSummary,
+    PortfolioUpdate,
+    TransactionCreate,
+    TransactionListResponse,
+    TransactionResponse,
+)
 from app.services.portfolio_service import PortfolioService
 
 router = APIRouter(prefix="/portfolios", tags=["portfolios"])

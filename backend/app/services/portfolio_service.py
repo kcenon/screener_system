@@ -7,12 +7,20 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Holding, Portfolio, Transaction
-from app.repositories import (HoldingRepository, PortfolioRepository,
-                              TransactionRepository)
+from app.repositories import (
+    HoldingRepository,
+    PortfolioRepository,
+    TransactionRepository,
+)
 from app.repositories.stock_repository import StockRepository
-from app.schemas.portfolio import (HoldingCreate, HoldingUpdate,
-                                   PortfolioCreate, PortfolioUpdate,
-                                   TransactionCreate, TransactionType)
+from app.schemas.portfolio import (
+    HoldingCreate,
+    HoldingUpdate,
+    PortfolioCreate,
+    PortfolioUpdate,
+    TransactionCreate,
+    TransactionType,
+)
 
 
 class PortfolioService:

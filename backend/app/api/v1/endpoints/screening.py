@@ -5,8 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache import CacheManager, get_cache
 from app.db.session import get_db
-from app.schemas.screening import (ScreeningRequest, ScreeningResponse,
-                                   ScreeningTemplateList)
+from app.schemas.screening import (
+    ScreeningRequest,
+    ScreeningResponse,
+    ScreeningTemplateList,
+)
 from app.services.screening_service import ScreeningService
 
 router = APIRouter(prefix="/screen", tags=["screening"])

@@ -10,9 +10,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.endpoints.webhooks import (_handle_invoice_payment_failed,
-                                           _handle_invoice_upcoming,
-                                           _handle_trial_will_end)
+from app.api.v1.endpoints.webhooks import (
+    _handle_invoice_payment_failed,
+    _handle_invoice_upcoming,
+    _handle_trial_will_end,
+)
 
 
 @pytest.fixture

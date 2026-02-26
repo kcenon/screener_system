@@ -10,8 +10,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import BadRequestException
-from app.db.models import (Payment, PaymentStatus, SubscriptionPlan, User,
-                           UserSubscription)
+from app.db.models import (
+    Payment,
+    PaymentStatus,
+    SubscriptionPlan,
+    User,
+    UserSubscription,
+)
 from app.db.session import get_db
 from app.schemas import StripeWebhookResponse
 from app.services import StripeService

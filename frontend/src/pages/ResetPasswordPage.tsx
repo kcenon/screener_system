@@ -53,7 +53,9 @@ export default function ResetPasswordPage() {
 
   // Password strength indicator
   const password = watch('new_password')
-  const getPasswordStrength = (pwd: string): { strength: number; label: string; color: string } => {
+  const getPasswordStrength = (
+    pwd: string,
+  ): { strength: number; label: string; color: string } => {
     if (!pwd) return { strength: 0, label: '', color: '' }
     let strength = 0
     if (pwd.length >= 8) strength++
@@ -62,7 +64,12 @@ export default function ResetPasswordPage() {
     if (/[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(pwd)) strength++
 
     const labels = ['Weak', 'Fair', 'Good', 'Strong']
-    const colors = ['bg-red-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500']
+    const colors = [
+      'bg-red-500',
+      'bg-yellow-500',
+      'bg-blue-500',
+      'bg-green-500',
+    ]
 
     return {
       strength: Math.min(strength, 4),
@@ -79,7 +86,9 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Invalid Link</h2>
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              Invalid Link
+            </h2>
             <p className="mt-2 text-sm text-gray-600">
               This password reset link is invalid or missing a token.
             </p>
@@ -130,7 +139,9 @@ export default function ResetPasswordPage() {
                 />
               </svg>
             </div>
-            <h2 className="mt-4 text-3xl font-extrabold text-gray-900">Link Expired</h2>
+            <h2 className="mt-4 text-3xl font-extrabold text-gray-900">
+              Link Expired
+            </h2>
             <p className="mt-2 text-sm text-gray-600">
               This password reset link has expired or is invalid.
             </p>
@@ -179,7 +190,8 @@ export default function ResetPasswordPage() {
               Password Reset Successful
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              Your password has been changed successfully. Redirecting to login...
+              Your password has been changed successfully. Redirecting to
+              login...
             </p>
           </div>
         </div>
@@ -203,7 +215,10 @@ export default function ResetPasswordPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {/* New Password */}
           <div>
-            <label htmlFor="new_password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="new_password"
+              className="block text-sm font-medium text-gray-700"
+            >
               New Password
             </label>
             <div className="mt-1 relative">
@@ -222,8 +237,10 @@ export default function ResetPasswordPage() {
                     message: 'Password must be at least 8 characters',
                   },
                   pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{}|;:,.<>?])/,
-                    message: 'Password must contain uppercase, lowercase, number, and special character',
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{}|;:,.<>?])/,
+                    message:
+                      'Password must contain uppercase, lowercase, number, and special character',
                   },
                 })}
               />
@@ -232,30 +249,44 @@ export default function ResetPasswordPage() {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
-                <span className="text-gray-400 text-sm">{showPassword ? 'Hide' : 'Show'}</span>
+                <span className="text-gray-400 text-sm">
+                  {showPassword ? 'Hide' : 'Show'}
+                </span>
               </button>
             </div>
             {errors.new_password && (
-              <p className="mt-2 text-sm text-red-600">{errors.new_password.message}</p>
+              <p className="mt-2 text-sm text-red-600">
+                {errors.new_password.message}
+              </p>
             )}
 
             {/* Password Strength Indicator */}
             {password && (
               <div className="mt-2">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-600">Password Strength:</span>
-                  <span className={`text-xs font-medium ${
-                    passwordStrength.strength === 4 ? 'text-green-600' :
-                    passwordStrength.strength === 3 ? 'text-blue-600' :
-                    passwordStrength.strength === 2 ? 'text-yellow-600' : 'text-red-600'
-                  }`}>
+                  <span className="text-xs text-gray-600">
+                    Password Strength:
+                  </span>
+                  <span
+                    className={`text-xs font-medium ${
+                      passwordStrength.strength === 4
+                        ? 'text-green-600'
+                        : passwordStrength.strength === 3
+                          ? 'text-blue-600'
+                          : passwordStrength.strength === 2
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
+                    }`}
+                  >
                     {passwordStrength.label}
                   </span>
                 </div>
                 <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
                     className={`h-full ${passwordStrength.color} transition-all duration-300`}
-                    style={{ width: `${(passwordStrength.strength / 4) * 100}%` }}
+                    style={{
+                      width: `${(passwordStrength.strength / 4) * 100}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -264,7 +295,10 @@ export default function ResetPasswordPage() {
 
           {/* Confirm Password */}
           <div>
-            <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="confirm_password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Confirm Password
             </label>
             <div className="mt-1 relative">
@@ -278,7 +312,7 @@ export default function ResetPasswordPage() {
                 placeholder="Confirm new password"
                 {...register('confirm_password', {
                   required: 'Please confirm your password',
-                  validate: (value) =>
+                  validate: value =>
                     value === password || 'Passwords do not match',
                 })}
               />
@@ -293,7 +327,9 @@ export default function ResetPasswordPage() {
               </button>
             </div>
             {errors.confirm_password && (
-              <p className="mt-2 text-sm text-red-600">{errors.confirm_password.message}</p>
+              <p className="mt-2 text-sm text-red-600">
+                {errors.confirm_password.message}
+              </p>
             )}
           </div>
 
@@ -331,7 +367,9 @@ export default function ResetPasswordPage() {
               disabled={resetMutation.isPending}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {resetMutation.isPending ? 'Resetting Password...' : 'Reset Password'}
+              {resetMutation.isPending
+                ? 'Resetting Password...'
+                : 'Reset Password'}
             </button>
           </div>
 

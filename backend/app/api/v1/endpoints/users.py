@@ -6,10 +6,15 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.dependencies import CurrentActiveUser, get_watchlist_service
-from app.schemas.watchlist import (DashboardSummary, UserActivityListResponse,
-                                   WatchlistCreate, WatchlistListResponse,
-                                   WatchlistResponse, WatchlistSummary,
-                                   WatchlistUpdate)
+from app.schemas.watchlist import (
+    DashboardSummary,
+    UserActivityListResponse,
+    WatchlistCreate,
+    WatchlistListResponse,
+    WatchlistResponse,
+    WatchlistSummary,
+    WatchlistUpdate,
+)
 from app.services.watchlist_service import WatchlistService
 
 router = APIRouter(prefix="/users", tags=["Users"])

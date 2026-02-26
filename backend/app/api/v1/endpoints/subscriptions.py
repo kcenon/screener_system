@@ -8,18 +8,29 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import CurrentActiveUser, get_subscription_service
 from app.core.exceptions import BadRequestException, NotFoundException
-from app.schemas import (AddPaymentMethodRequest, BillingPortalSessionResponse,
-                         CancelSubscriptionRequest, CheckoutSessionResponse,
-                         CreateBillingPortalSessionRequest,
-                         CreateCheckoutSessionRequest, FeatureAccessCheck,
-                         FeatureAccessListResponse, PaymentHistoryResponse,
-                         PaymentMethodResponse, PaymentMethodsListResponse,
-                         PaymentResponse, RetryPaymentRequest,
-                         SubscribeRequest, SubscriptionActionResponse,
-                         SubscriptionPlanResponse,
-                         SubscriptionPlansListResponse, SubscriptionResponse,
-                         UpgradeSubscriptionRequest, UsageLimitCheck,
-                         UsageStatsResponse)
+from app.schemas import (
+    AddPaymentMethodRequest,
+    BillingPortalSessionResponse,
+    CancelSubscriptionRequest,
+    CheckoutSessionResponse,
+    CreateBillingPortalSessionRequest,
+    CreateCheckoutSessionRequest,
+    FeatureAccessCheck,
+    FeatureAccessListResponse,
+    PaymentHistoryResponse,
+    PaymentMethodResponse,
+    PaymentMethodsListResponse,
+    PaymentResponse,
+    RetryPaymentRequest,
+    SubscribeRequest,
+    SubscriptionActionResponse,
+    SubscriptionPlanResponse,
+    SubscriptionPlansListResponse,
+    SubscriptionResponse,
+    UpgradeSubscriptionRequest,
+    UsageLimitCheck,
+    UsageStatsResponse,
+)
 from app.services import SubscriptionService
 
 router = APIRouter(prefix="/subscriptions", tags=["Subscriptions"])
