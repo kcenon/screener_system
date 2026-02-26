@@ -125,9 +125,11 @@ from app.schemas.user import (
     SuccessResponse,
     TokenPayload,
     TokenResponse,
+    UserAdminResponse,
     UserCreate,
     UserLogin,
     UserResponse,
+    UserSuspendRequest,
     UserUpdate,
     VerificationStatusResponse,
 )
@@ -178,6 +180,8 @@ __all__ = [
     "PasswordResetConfirm",
     "VerificationStatusResponse",
     "SuccessResponse",
+    "UserSuspendRequest",
+    "UserAdminResponse",
     # Stock schemas
     "Stock",
     "StockDetail",

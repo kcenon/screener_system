@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, String
+from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, String, Text
 from sqlalchemy.orm import relationship
 
 from app.db.base import BaseModel
@@ -36,6 +36,14 @@ class User(BaseModel):
     # Password reset
     password_reset_token = Column(String(255))
     password_reset_expires = Column(DateTime(timezone=True))
+
+    # Account status
+    is_suspended = Column(
+        Boolean, default=False, server_default="false", nullable=False
+    )
+    suspended_at = Column(DateTime(timezone=True))
+    suspension_reason = Column(Text)
+    is_admin = Column(Boolean, default=False, server_default="false", nullable=False)
 
     # Activity tracking
     last_login_at = Column(DateTime(timezone=True))
@@ -149,9 +157,12 @@ class User(BaseModel):
 
     @property
     def is_active(self) -> bool:
-        """Check if user account is active"""
-        # Could add more conditions like email_verified, account suspension, etc.
-        return True
+        """Check if user account is active (not suspended)
+
+        Uses strict equality check so that None (pre-migration state)
+        is treated as inactive (fail-safe deny).
+        """
+        return self.is_suspended is False
 
     @property
     def is_premium(self) -> bool:

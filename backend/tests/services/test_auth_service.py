@@ -40,6 +40,7 @@ class TestAuthService:
             name="Test User",
             subscription_tier="free",
             email_verified=False,
+            is_suspended=False,
             created_at=now,
             updated_at=now,
         )

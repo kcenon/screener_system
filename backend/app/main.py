@@ -40,6 +40,7 @@ from app.api.error_handlers import (
 )
 from app.api.v1.endpoints import ai_analysis  # Added ai_analysis
 from app.api.v1.endpoints import (
+    admin,
     ai,
     alerts,
     auth,
@@ -266,6 +267,9 @@ app.include_router(recommendation.router, prefix="/v1")
 
 # Include WebSocket routes
 app.include_router(websocket.router, prefix="/v1")
+
+# Include admin routes
+app.include_router(admin.router, prefix="/v1")
 
 # ============================================================================
 # ROOT ENDPOINT
