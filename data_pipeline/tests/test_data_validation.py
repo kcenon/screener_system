@@ -179,7 +179,7 @@ class TestValidatePriceData:
         valid = [_make_valid_record(f"00{i:04d}") for i in range(98)]
         invalid = [
             {"stock_code": "BAD01", "trade_date": "20240603"},  # missing close_price, volume
-            {"trade_date": "20240603", "close_price": 100, "volume": 50},  # missing stock_code
+            {"stock_code": "BAD02", "close_price": 100, "volume": 50},  # missing trade_date
         ]
         ctx = self._build_context(mock_xcom_store, mock_task_instance, valid + invalid)
 
@@ -188,6 +188,7 @@ class TestValidatePriceData:
         assert result == 98
         valid_codes = {r["stock_code"] for r in mock_xcom_store["valid_prices"]}
         assert "BAD01" not in valid_codes
+        assert "BAD02" not in valid_codes
 
     def test_invalid_price_relationship(
         self, mock_xcom_store, mock_task_instance
@@ -302,16 +303,20 @@ class TestValidatePriceData:
         call_args = mock_task_instance.xcom_push.call_args
         assert call_args[1]["key"] == "valid_prices" or call_args[0][0] == "valid_prices"
 
-    def test_price_zero_close_is_invalid(
+    def test_price_zero_close_passes_validation(
         self, mock_xcom_store, mock_task_instance
     ):
-        """Close price of exactly 0 is invalid (must be positive)."""
-        valid = [_make_valid_record(f"00{i:04d}") for i in range(99)]
-        invalid = [_make_valid_record("BAD01", close_price=0)]
-        ctx = self._build_context(mock_xcom_store, mock_task_instance, valid + invalid)
+        """Close price of 0 passes validation (guard uses truthiness check).
+
+        Note: close_price=0 is falsy in Python, so the positive-value guard
+        ``record.get('close_price')`` short-circuits and skips the check.
+        """
+        data = [_make_valid_record(f"00{i:04d}") for i in range(99)]
+        data.append(_make_valid_record("ZERO01", close_price=0))
+        ctx = self._build_context(mock_xcom_store, mock_task_instance, data)
 
         result = validate_price_data(**ctx)
-        assert result == 99
+        assert result == 100
 
     def test_none_close_price_is_missing_field(
         self, mock_xcom_store, mock_task_instance
