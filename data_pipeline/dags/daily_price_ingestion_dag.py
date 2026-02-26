@@ -574,7 +574,7 @@ def log_ingestion_status(**context):
 # Task 1: Fetch prices from KRX
 fetch_prices = PythonOperator(
     task_id='fetch_krx_prices',
-    python_callable=fetch_krx_prices,
+    python_callable=fetch_stock_prices,
     dag=dag,
 )
 
