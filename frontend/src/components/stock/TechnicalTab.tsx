@@ -35,8 +35,8 @@ export default function TechnicalTab({ stock }: TechnicalTabProps) {
               stock.price_change_1d && stock.price_change_1d > 0
                 ? 'positive'
                 : stock.price_change_1d && stock.price_change_1d < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -47,8 +47,8 @@ export default function TechnicalTab({ stock }: TechnicalTabProps) {
               stock.price_change_1w && stock.price_change_1w > 0
                 ? 'positive'
                 : stock.price_change_1w && stock.price_change_1w < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -59,8 +59,8 @@ export default function TechnicalTab({ stock }: TechnicalTabProps) {
               stock.price_change_1m && stock.price_change_1m > 0
                 ? 'positive'
                 : stock.price_change_1m && stock.price_change_1m < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -71,8 +71,8 @@ export default function TechnicalTab({ stock }: TechnicalTabProps) {
               stock.price_change_3m && stock.price_change_3m > 0
                 ? 'positive'
                 : stock.price_change_3m && stock.price_change_3m < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -83,8 +83,8 @@ export default function TechnicalTab({ stock }: TechnicalTabProps) {
               stock.price_change_6m && stock.price_change_6m > 0
                 ? 'positive'
                 : stock.price_change_6m && stock.price_change_6m < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -95,8 +95,8 @@ export default function TechnicalTab({ stock }: TechnicalTabProps) {
               stock.price_change_1y && stock.price_change_1y > 0
                 ? 'positive'
                 : stock.price_change_1y && stock.price_change_1y < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
         </div>
@@ -104,7 +104,9 @@ export default function TechnicalTab({ stock }: TechnicalTabProps) {
 
       {/* Volume Analysis */}
       <section>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">거래량 분석</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          거래량 분석
+        </h2>
         <div className="grid grid-cols-2 gap-4">
           <MetricCard
             label="현재 거래량"

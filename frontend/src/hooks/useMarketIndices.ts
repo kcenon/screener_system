@@ -30,7 +30,7 @@ export interface UseMarketIndicesOptions {
  * ```
  */
 export function useMarketIndices(
-  options: UseMarketIndicesOptions = {}
+  options: UseMarketIndicesOptions = {},
 ): UseQueryResult<MarketIndicesResponse, Error> {
   const { refetchInterval = 60000, enabled = true } = options
 

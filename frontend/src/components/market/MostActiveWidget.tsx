@@ -80,7 +80,8 @@ export function MostActiveWidget({
   autoRefresh = true,
   className = '',
 }: MostActiveWidgetProps) {
-  const [selectedMarket, setSelectedMarket] = useState<MarketType>(defaultMarket)
+  const [selectedMarket, setSelectedMarket] =
+    useState<MarketType>(defaultMarket)
 
   const { data, isLoading, error } = useMostActive({
     market: selectedMarket,
@@ -93,12 +94,13 @@ export function MostActiveWidget({
       {/* Header with market filter */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-base font-semibold text-gray-900">
-          거래 상위 종목 <span className="text-sm font-normal text-gray-500">Most Active</span>
+          거래 상위 종목{' '}
+          <span className="text-sm font-normal text-gray-500">Most Active</span>
         </h2>
 
         {/* Market filter */}
         <div className="flex gap-1.5">
-          {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map((market) => (
+          {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map(market => (
             <button
               key={market}
               onClick={() => setSelectedMarket(market)}
@@ -117,7 +119,9 @@ export function MostActiveWidget({
       {/* Error State */}
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-          <p className="text-sm text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-red-600">
+            데이터를 불러오는 중 오류가 발생했습니다.
+          </p>
         </div>
       )}
 
@@ -125,7 +129,10 @@ export function MostActiveWidget({
       {isLoading && (
         <div className="space-y-2">
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-14 animate-pulse rounded bg-gray-200"></div>
+            <div
+              key={i}
+              className="h-14 animate-pulse rounded bg-gray-200"
+            ></div>
           ))}
         </div>
       )}
@@ -151,7 +158,10 @@ export function MostActiveWidget({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-sm text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="py-8 text-center text-sm text-gray-500"
+                  >
                     데이터가 없습니다
                   </td>
                 </tr>

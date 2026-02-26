@@ -6,7 +6,7 @@ describe('VolumeBar', () => {
   describe('Rendering', () => {
     it('renders bar container with correct width', () => {
       const { container } = render(
-        <VolumeBar volume={2000000} averageVolume={1000000} maxWidth={60} />
+        <VolumeBar volume={2000000} averageVolume={1000000} maxWidth={60} />,
       )
 
       const barContainer = container.querySelector('.relative.bg-gray-200')
@@ -16,7 +16,9 @@ describe('VolumeBar', () => {
     it('renders placeholder when volume is null', () => {
       render(<VolumeBar volume={null} averageVolume={1000000} />)
 
-      expect(screen.getByLabelText('No volume data available')).toBeInTheDocument()
+      expect(
+        screen.getByLabelText('No volume data available'),
+      ).toBeInTheDocument()
       expect(screen.getByText('-')).toBeInTheDocument()
     })
 
@@ -38,7 +40,7 @@ describe('VolumeBar', () => {
           volume={2000000}
           averageVolume={1000000}
           className="custom-class"
-        />
+        />,
       )
 
       expect(container.firstChild).toHaveClass('custom-class')
@@ -48,7 +50,7 @@ describe('VolumeBar', () => {
   describe('Volume ratio calculation', () => {
     it('shows 2.0x label for double volume', () => {
       render(
-        <VolumeBar volume={2000000} averageVolume={1000000} showRatio={true} />
+        <VolumeBar volume={2000000} averageVolume={1000000} showRatio={true} />,
       )
 
       expect(screen.getByText('2.0x')).toBeInTheDocument()
@@ -56,7 +58,7 @@ describe('VolumeBar', () => {
 
     it('shows 1.0x label for average volume', () => {
       render(
-        <VolumeBar volume={1000000} averageVolume={1000000} showRatio={true} />
+        <VolumeBar volume={1000000} averageVolume={1000000} showRatio={true} />,
       )
 
       expect(screen.getByText('1.0x')).toBeInTheDocument()
@@ -64,7 +66,7 @@ describe('VolumeBar', () => {
 
     it('shows 0.50x label for half volume', () => {
       render(
-        <VolumeBar volume={500000} averageVolume={1000000} showRatio={true} />
+        <VolumeBar volume={500000} averageVolume={1000000} showRatio={true} />,
       )
 
       expect(screen.getByText('0.50x')).toBeInTheDocument()
@@ -77,7 +79,7 @@ describe('VolumeBar', () => {
           averageVolume={1000000}
           maxRatio={5}
           showRatio={true}
-        />
+        />,
       )
 
       // Should show 10x since ratio is 10, not capped for label
@@ -86,7 +88,11 @@ describe('VolumeBar', () => {
 
     it('hides ratio label when showRatio is false', () => {
       render(
-        <VolumeBar volume={2000000} averageVolume={1000000} showRatio={false} />
+        <VolumeBar
+          volume={2000000}
+          averageVolume={1000000}
+          showRatio={false}
+        />,
       )
 
       expect(screen.queryByText('2.0x')).not.toBeInTheDocument()
@@ -96,7 +102,7 @@ describe('VolumeBar', () => {
   describe('Color coding', () => {
     it('uses green color for high volume (>=2x)', () => {
       const { container } = render(
-        <VolumeBar volume={2500000} averageVolume={1000000} />
+        <VolumeBar volume={2500000} averageVolume={1000000} />,
       )
 
       const fillBar = container.querySelector('.bg-green-500')
@@ -105,7 +111,7 @@ describe('VolumeBar', () => {
 
     it('uses lighter green for above average (>=1x)', () => {
       const { container } = render(
-        <VolumeBar volume={1200000} averageVolume={1000000} />
+        <VolumeBar volume={1200000} averageVolume={1000000} />,
       )
 
       const fillBar = container.querySelector('.bg-green-400')
@@ -114,7 +120,7 @@ describe('VolumeBar', () => {
 
     it('uses yellow for below average (>=0.5x)', () => {
       const { container } = render(
-        <VolumeBar volume={700000} averageVolume={1000000} />
+        <VolumeBar volume={700000} averageVolume={1000000} />,
       )
 
       const fillBar = container.querySelector('.bg-yellow-400')
@@ -123,7 +129,7 @@ describe('VolumeBar', () => {
 
     it('uses red for very low volume (<0.5x)', () => {
       const { container } = render(
-        <VolumeBar volume={300000} averageVolume={1000000} />
+        <VolumeBar volume={300000} averageVolume={1000000} />,
       )
 
       const fillBar = container.querySelector('.bg-red-400')
@@ -134,7 +140,7 @@ describe('VolumeBar', () => {
   describe('Tooltip', () => {
     it('shows tooltip with volume details', () => {
       const { container } = render(
-        <VolumeBar volume={2500000} averageVolume={1000000} />
+        <VolumeBar volume={2500000} averageVolume={1000000} />,
       )
 
       const wrapper = container.firstChild as HTMLElement
@@ -148,24 +154,25 @@ describe('VolumeBar', () => {
     it('has descriptive aria-label for above average', () => {
       render(<VolumeBar volume={1500000} averageVolume={1000000} />)
 
-      expect(
-        screen.getByLabelText(/volume above average/i)
-      ).toBeInTheDocument()
+      expect(screen.getByLabelText(/volume above average/i)).toBeInTheDocument()
     })
 
     it('has descriptive aria-label for below average', () => {
       render(<VolumeBar volume={500000} averageVolume={1000000} />)
 
-      expect(
-        screen.getByLabelText(/volume below average/i)
-      ).toBeInTheDocument()
+      expect(screen.getByLabelText(/volume below average/i)).toBeInTheDocument()
     })
   })
 
   describe('Reference line', () => {
     it('renders reference line at 1x position', () => {
       const { container } = render(
-        <VolumeBar volume={2500000} averageVolume={1000000} maxWidth={60} maxRatio={5} />
+        <VolumeBar
+          volume={2500000}
+          averageVolume={1000000}
+          maxWidth={60}
+          maxRatio={5}
+        />,
       )
 
       // Reference line at 1x = 60/5 = 12px

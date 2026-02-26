@@ -45,9 +45,9 @@ describe('useInfiniteScroll', () => {
       let resolveFetch: () => void
       const slowFetchMore = vi.fn(
         () =>
-          new Promise<void>((resolve) => {
+          new Promise<void>(resolve => {
             resolveFetch = resolve
-          })
+          }),
       )
 
       const { result } = renderHook(() => useInfiniteScroll(slowFetchMore))
@@ -76,7 +76,7 @@ describe('useInfiniteScroll', () => {
 
     it('does not call fetchMore when enabled is false', async () => {
       const { result } = renderHook(() =>
-        useInfiniteScroll(fetchMoreMock, { enabled: false })
+        useInfiniteScroll(fetchMoreMock, { enabled: false }),
       )
 
       if (!result.current) return
@@ -90,7 +90,7 @@ describe('useInfiniteScroll', () => {
 
     it('does not call fetchMore when hasMore is false', async () => {
       const { result } = renderHook(() =>
-        useInfiniteScroll(fetchMoreMock, { hasMore: false })
+        useInfiniteScroll(fetchMoreMock, { hasMore: false }),
       )
 
       if (!result.current) return
@@ -104,7 +104,7 @@ describe('useInfiniteScroll', () => {
 
     it('does not call fetchMore when isLoading is true', async () => {
       const { result } = renderHook(() =>
-        useInfiniteScroll(fetchMoreMock, { isLoading: true })
+        useInfiniteScroll(fetchMoreMock, { isLoading: true }),
       )
 
       if (!result.current) return
@@ -120,9 +120,9 @@ describe('useInfiniteScroll', () => {
       let resolveFetch: () => void
       const slowFetchMore = vi.fn(
         () =>
-          new Promise<void>((resolve) => {
+          new Promise<void>(resolve => {
             resolveFetch = resolve
-          })
+          }),
       )
 
       const { result } = renderHook(() => useInfiniteScroll(slowFetchMore))
@@ -166,7 +166,10 @@ describe('useInfiniteScroll', () => {
 
       // Attach ref
       act(() => {
-        if (result.current && result.current.scrollContainerRef.current === null) {
+        if (
+          result.current &&
+          result.current.scrollContainerRef.current === null
+        ) {
           ;(result.current.scrollContainerRef as any).current = container
         }
       })
@@ -175,7 +178,7 @@ describe('useInfiniteScroll', () => {
       await act(async () => {
         container.dispatchEvent(new Event('scroll'))
         // Wait for async fetchMore
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
       })
 
       // Distance from bottom: 2000 - 900 - 800 = 300px
@@ -206,7 +209,7 @@ describe('useInfiniteScroll', () => {
       // Trigger scroll event
       await act(async () => {
         container.dispatchEvent(new Event('scroll'))
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
       })
 
       // Distance from bottom: 2000 - 100 - 800 = 1100px
@@ -216,7 +219,7 @@ describe('useInfiniteScroll', () => {
 
     it('respects custom threshold value', async () => {
       const { result } = renderHook(() =>
-        useInfiniteScroll(fetchMoreMock, { threshold: 800 })
+        useInfiniteScroll(fetchMoreMock, { threshold: 800 }),
       )
 
       if (!result.current) return
@@ -239,7 +242,7 @@ describe('useInfiniteScroll', () => {
       // Trigger scroll event
       await act(async () => {
         container.dispatchEvent(new Event('scroll'))
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
       })
 
       // Distance from bottom: 2000 - 500 - 800 = 700px
@@ -249,7 +252,7 @@ describe('useInfiniteScroll', () => {
 
     it('does not trigger when enabled is false', async () => {
       const { result } = renderHook(() =>
-        useInfiniteScroll(fetchMoreMock, { enabled: false })
+        useInfiniteScroll(fetchMoreMock, { enabled: false }),
       )
 
       if (!result.current) return
@@ -272,7 +275,7 @@ describe('useInfiniteScroll', () => {
       // Trigger scroll event
       await act(async () => {
         container.dispatchEvent(new Event('scroll'))
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
       })
 
       // Should not trigger because enabled=false
@@ -281,7 +284,7 @@ describe('useInfiniteScroll', () => {
 
     it('does not trigger when hasMore is false', async () => {
       const { result } = renderHook(() =>
-        useInfiniteScroll(fetchMoreMock, { hasMore: false })
+        useInfiniteScroll(fetchMoreMock, { hasMore: false }),
       )
 
       if (!result.current) return
@@ -304,7 +307,7 @@ describe('useInfiniteScroll', () => {
       // Trigger scroll event
       await act(async () => {
         container.dispatchEvent(new Event('scroll'))
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
       })
 
       // Should not trigger because hasMore=false
@@ -332,7 +335,9 @@ describe('useInfiniteScroll', () => {
 
   describe('Error Handling', () => {
     it('handles fetchMore errors gracefully', async () => {
-      const errorFetchMore = vi.fn().mockRejectedValue(new Error('Network error'))
+      const errorFetchMore = vi
+        .fn()
+        .mockRejectedValue(new Error('Network error'))
 
       const { result } = renderHook(() => useInfiniteScroll(errorFetchMore))
 
@@ -356,7 +361,9 @@ describe('useInfiniteScroll', () => {
         return Promise.resolve()
       })
 
-      const { result } = renderHook(() => useInfiniteScroll(conditionalFetchMore))
+      const { result } = renderHook(() =>
+        useInfiniteScroll(conditionalFetchMore),
+      )
 
       if (result.current) {
         // First call - error
@@ -394,7 +401,7 @@ describe('useInfiniteScroll', () => {
       // Trigger scroll event on unattached container
       await act(async () => {
         container.dispatchEvent(new Event('scroll'))
-        await new Promise((resolve) => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
       })
 
       // Should not trigger fetchMore (ref not attached)

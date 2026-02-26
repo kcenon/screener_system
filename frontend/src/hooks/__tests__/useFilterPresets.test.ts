@@ -55,7 +55,9 @@ describe('useFilterPresets', () => {
     })
 
     it('handles corrupted localStorage data gracefully', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
       localStorage.setItem(STORAGE_KEY, 'invalid json')
 
       const { result } = renderHook(() => useFilterPresets())
@@ -63,7 +65,7 @@ describe('useFilterPresets', () => {
       expect(result.current.presets).toEqual([])
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Failed to load filter presets:',
-        expect.any(Error)
+        expect.any(Error),
       )
       consoleErrorSpy.mockRestore()
     })
@@ -74,7 +76,11 @@ describe('useFilterPresets', () => {
       const { result } = renderHook(() => useFilterPresets())
 
       act(() => {
-        result.current.savePreset('Value Stocks', mockFilters1, 'Low PER, high ROE')
+        result.current.savePreset(
+          'Value Stocks',
+          mockFilters1,
+          'Low PER, high ROE',
+        )
       })
 
       expect(result.current.presets).toHaveLength(1)
@@ -138,7 +144,11 @@ describe('useFilterPresets', () => {
       let createdPreset: any
 
       act(() => {
-        createdPreset = result.current.savePreset('Test Preset', mockFilters1, 'Test description')
+        createdPreset = result.current.savePreset(
+          'Test Preset',
+          mockFilters1,
+          'Test description',
+        )
       })
 
       expect(createdPreset).toMatchObject({
@@ -189,7 +199,9 @@ describe('useFilterPresets', () => {
       const presetId = result.current.presets[0].id
 
       act(() => {
-        result.current.updatePreset(presetId, { description: 'Updated description' })
+        result.current.updatePreset(presetId, {
+          description: 'Updated description',
+        })
       })
 
       expect(result.current.presets[0].description).toBe('Updated description')
@@ -422,12 +434,16 @@ describe('useFilterPresets', () => {
     })
 
     it('handles localStorage errors gracefully', () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
 
       // Mock localStorage.setItem to throw error
-      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-        throw new Error('Storage quota exceeded')
-      })
+      const setItemSpy = vi
+        .spyOn(Storage.prototype, 'setItem')
+        .mockImplementation(() => {
+          throw new Error('Storage quota exceeded')
+        })
 
       const { result } = renderHook(() => useFilterPresets())
 
@@ -437,7 +453,7 @@ describe('useFilterPresets', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Failed to save filter presets:',
-        expect.any(Error)
+        expect.any(Error),
       )
 
       setItemSpy.mockRestore()

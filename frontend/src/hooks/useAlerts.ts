@@ -9,7 +9,12 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { alertService, type Alert, type AlertCreate, type AlertUpdate } from '../services/alertService'
+import {
+  alertService,
+  type Alert,
+  type AlertCreate,
+  type AlertUpdate,
+} from '../services/alertService'
 
 /**
  * Query key factory for alerts.
@@ -82,7 +87,7 @@ export function useAlerts() {
   // Create alert mutation
   const createMutation = useMutation({
     mutationFn: (data: AlertCreate) => alertService.createAlert(data),
-    onMutate: async (newAlert) => {
+    onMutate: async newAlert => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: alertsQueryKey() })
 
@@ -104,7 +109,10 @@ export function useAlerts() {
         stock: null,
       }
 
-      queryClient.setQueryData<Alert[]>(alertsQueryKey(), (old) => [...(old || []), optimisticAlert])
+      queryClient.setQueryData<Alert[]>(alertsQueryKey(), old => [
+        ...(old || []),
+        optimisticAlert,
+      ])
 
       return { previousAlerts }
     },
@@ -122,14 +130,19 @@ export function useAlerts() {
 
   // Update alert mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: AlertUpdate }) => alertService.updateAlert(id, data),
+    mutationFn: ({ id, data }: { id: number; data: AlertUpdate }) =>
+      alertService.updateAlert(id, data),
     onMutate: async ({ id, data }) => {
       await queryClient.cancelQueries({ queryKey: alertsQueryKey() })
 
       const previousAlerts = queryClient.getQueryData<Alert[]>(alertsQueryKey())
 
-      queryClient.setQueryData<Alert[]>(alertsQueryKey(), (old) =>
-        old?.map((alert) => (alert.id === id ? { ...alert, ...data, updated_at: new Date().toISOString() } : alert))
+      queryClient.setQueryData<Alert[]>(alertsQueryKey(), old =>
+        old?.map(alert =>
+          alert.id === id
+            ? { ...alert, ...data, updated_at: new Date().toISOString() }
+            : alert,
+        ),
       )
 
       return { previousAlerts }
@@ -147,12 +160,14 @@ export function useAlerts() {
   // Delete alert mutation
   const deleteMutation = useMutation({
     mutationFn: (id: number) => alertService.deleteAlert(id),
-    onMutate: async (id) => {
+    onMutate: async id => {
       await queryClient.cancelQueries({ queryKey: alertsQueryKey() })
 
       const previousAlerts = queryClient.getQueryData<Alert[]>(alertsQueryKey())
 
-      queryClient.setQueryData<Alert[]>(alertsQueryKey(), (old) => old?.filter((alert) => alert.id !== id))
+      queryClient.setQueryData<Alert[]>(alertsQueryKey(), old =>
+        old?.filter(alert => alert.id !== id),
+      )
 
       return { previousAlerts }
     },
@@ -169,15 +184,21 @@ export function useAlerts() {
   // Toggle alert active status
   const toggleMutation = useMutation({
     mutationFn: (id: number) => alertService.toggleAlert(id),
-    onMutate: async (id) => {
+    onMutate: async id => {
       await queryClient.cancelQueries({ queryKey: alertsQueryKey() })
 
       const previousAlerts = queryClient.getQueryData<Alert[]>(alertsQueryKey())
 
-      queryClient.setQueryData<Alert[]>(alertsQueryKey(), (old) =>
-        old?.map((alert) =>
-          alert.id === id ? { ...alert, is_active: !alert.is_active, updated_at: new Date().toISOString() } : alert
-        )
+      queryClient.setQueryData<Alert[]>(alertsQueryKey(), old =>
+        old?.map(alert =>
+          alert.id === id
+            ? {
+                ...alert,
+                is_active: !alert.is_active,
+                updated_at: new Date().toISOString(),
+              }
+            : alert,
+        ),
       )
 
       return { previousAlerts }
@@ -200,12 +221,13 @@ export function useAlerts() {
 
     // Statistics
     totalAlerts: alerts.length,
-    activeAlerts: alerts.filter((a) => a.is_active).length,
-    triggeredAlerts: alerts.filter((a) => a.triggered_at !== null).length,
+    activeAlerts: alerts.filter(a => a.is_active).length,
+    triggeredAlerts: alerts.filter(a => a.triggered_at !== null).length,
 
     // Actions
     createAlert: createMutation.mutateAsync,
-    updateAlert: (id: number, data: AlertUpdate) => updateMutation.mutateAsync({ id, data }),
+    updateAlert: (id: number, data: AlertUpdate) =>
+      updateMutation.mutateAsync({ id, data }),
     deleteAlert: deleteMutation.mutateAsync,
     toggleAlert: toggleMutation.mutateAsync,
     refetch,

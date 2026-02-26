@@ -37,7 +37,9 @@ export default function IndicatorPanel({
   onUpdateIndicator,
   onClose,
 }: IndicatorPanelProps) {
-  const [expandedIndicator, setExpandedIndicator] = useState<string | null>(null)
+  const [expandedIndicator, setExpandedIndicator] = useState<string | null>(
+    null,
+  )
 
   const handleAddIndicator = (type: IndicatorType) => {
     const newIndicator: IndicatorConfig = {
@@ -55,7 +57,7 @@ export default function IndicatorPanel({
   }
 
   const handleParamChange = (id: string, paramName: string, value: number) => {
-    const indicator = indicators.find((i) => i.id === id)
+    const indicator = indicators.find(i => i.id === id)
     if (indicator) {
       onUpdateIndicator(id, {
         params: { ...indicator.params, [paramName]: value },
@@ -77,7 +79,9 @@ export default function IndicatorPanel({
             <input
               type="number"
               value={value}
-              onChange={(e) => handleParamChange(indicator.id, key, Number(e.target.value))}
+              onChange={e =>
+                handleParamChange(indicator.id, key, Number(e.target.value))
+              }
               className="flex-1 px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               min={1}
               max={200}
@@ -86,11 +90,15 @@ export default function IndicatorPanel({
         ))}
         {/* Color picker */}
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-600 dark:text-gray-400 w-20">Color</label>
+          <label className="text-xs text-gray-600 dark:text-gray-400 w-20">
+            Color
+          </label>
           <input
             type="color"
             value={indicator.color}
-            onChange={(e) => onUpdateIndicator(indicator.id, { color: e.target.value })}
+            onChange={e =>
+              onUpdateIndicator(indicator.id, { color: e.target.value })
+            }
             className="w-8 h-6 rounded cursor-pointer"
           />
         </div>
@@ -102,7 +110,9 @@ export default function IndicatorPanel({
     <div className="w-64 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">기술적 지표</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+          기술적 지표
+        </h3>
         <button
           onClick={onClose}
           className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
@@ -119,14 +129,18 @@ export default function IndicatorPanel({
               활성 지표
             </h4>
             <div className="space-y-1">
-              {indicators.map((indicator) => (
+              {indicators.map(indicator => (
                 <div
                   key={indicator.id}
                   className="bg-gray-50 dark:bg-gray-700 rounded-md overflow-hidden"
                 >
                   <div className="flex items-center gap-2 px-2 py-1.5">
                     <button
-                      onClick={() => onUpdateIndicator(indicator.id, { visible: !indicator.visible })}
+                      onClick={() =>
+                        onUpdateIndicator(indicator.id, {
+                          visible: !indicator.visible,
+                        })
+                      }
                       className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
                     >
                       {indicator.visible ? (
@@ -141,7 +155,8 @@ export default function IndicatorPanel({
                     />
                     <span className="flex-1 text-xs font-medium text-gray-700 dark:text-gray-300">
                       {INDICATOR_LABELS[indicator.type]}
-                      {indicator.params.period && ` (${indicator.params.period})`}
+                      {indicator.params.period &&
+                        ` (${indicator.params.period})`}
                     </span>
                     <button
                       onClick={() => toggleExpand(indicator.id)}
@@ -178,7 +193,7 @@ export default function IndicatorPanel({
             오버레이 지표
           </h4>
           <div className="grid grid-cols-2 gap-1 mb-3">
-            {INDICATOR_GROUPS.overlay.map((type) => (
+            {INDICATOR_GROUPS.overlay.map(type => (
               <button
                 key={type}
                 onClick={() => handleAddIndicator(type)}
@@ -195,7 +210,7 @@ export default function IndicatorPanel({
             오실레이터 지표
           </h4>
           <div className="grid grid-cols-2 gap-1">
-            {INDICATOR_GROUPS.oscillator.map((type) => (
+            {INDICATOR_GROUPS.oscillator.map(type => (
               <button
                 key={type}
                 onClick={() => handleAddIndicator(type)}
@@ -218,7 +233,7 @@ export default function IndicatorPanel({
           <button
             onClick={() => {
               // Clear existing and add common setup
-              indicators.forEach((i) => onRemoveIndicator(i.id))
+              indicators.forEach(i => onRemoveIndicator(i.id))
               handleAddIndicator('sma')
               setTimeout(() => {
                 handleAddIndicator('ema')
@@ -230,7 +245,7 @@ export default function IndicatorPanel({
           </button>
           <button
             onClick={() => {
-              indicators.forEach((i) => onRemoveIndicator(i.id))
+              indicators.forEach(i => onRemoveIndicator(i.id))
               handleAddIndicator('bollinger')
               setTimeout(() => {
                 handleAddIndicator('rsi')
@@ -242,7 +257,7 @@ export default function IndicatorPanel({
           </button>
           <button
             onClick={() => {
-              indicators.forEach((i) => onRemoveIndicator(i.id))
+              indicators.forEach(i => onRemoveIndicator(i.id))
               handleAddIndicator('macd')
             }}
             className="w-full px-2 py-1.5 text-xs text-left text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"

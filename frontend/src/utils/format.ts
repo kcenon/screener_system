@@ -15,7 +15,10 @@
  * formatNumber(1234567) // "1,234,567"
  * formatNumber(1234.567, 2) // "1,234.57"
  */
-export function formatNumber(value: number | null | undefined, decimals: number = 0): string {
+export function formatNumber(
+  value: number | null | undefined,
+  decimals: number = 0,
+): string {
   if (value === null || value === undefined || isNaN(value)) {
     return '-'
   }
@@ -66,7 +69,10 @@ export function formatPrice(value: number | null | undefined): string {
  * formatCurrency(1000000) // "₩1,000,000"
  * formatCurrency(1000000, true) // "₩1.0M"
  */
-export function formatCurrency(value: number | null | undefined, compact: boolean = false): string {
+export function formatCurrency(
+  value: number | null | undefined,
+  compact: boolean = false,
+): string {
   if (value === null || value === undefined || isNaN(value)) {
     return '-'
   }
@@ -104,7 +110,7 @@ export function formatPercentage(
   value: number | null | undefined,
   decimals: number = 2,
   asDecimal: boolean = false,
-  showSign: boolean = true
+  showSign: boolean = true,
 ): string {
   if (value === null || value === undefined || isNaN(value)) {
     return '-'
@@ -165,7 +171,7 @@ export function formatMarketCap(value: number | null | undefined): string {
  */
 export function formatDate(
   date: string | Date | null | undefined,
-  format: 'short' | 'medium' | 'long' = 'short'
+  format: 'short' | 'medium' | 'long' = 'short',
 ): string {
   if (!date) {
     return '-'
@@ -214,7 +220,7 @@ export function formatDate(
  */
 export function formatChange(
   value: number | null | undefined,
-  formatFn: (v: number) => string = formatNumber
+  formatFn: (v: number) => string = formatNumber,
 ): { text: string; className: string } {
   if (value === null || value === undefined || isNaN(value)) {
     return { text: '-', className: 'text-gray-500' }

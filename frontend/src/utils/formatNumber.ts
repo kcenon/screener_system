@@ -19,7 +19,10 @@
  * formatCompactNumber(2500000) // "2.5M"
  * formatCompactNumber(1234567890) // "1.2B"
  */
-export function formatCompactNumber(num: number | null | undefined, decimals: number = 1): string {
+export function formatCompactNumber(
+  num: number | null | undefined,
+  decimals: number = 1,
+): string {
   if (num === null || num === undefined || isNaN(num)) {
     return '-'
   }
@@ -59,7 +62,7 @@ export function formatCompactNumber(num: number | null | undefined, decimals: nu
  */
 export function formatCompactKoreanNumber(
   num: number | null | undefined,
-  decimals: number = 1
+  decimals: number = 1,
 ): string {
   if (num === null || num === undefined || isNaN(num)) {
     return '-'
@@ -112,7 +115,9 @@ export function formatCompactVolume(volume: number | null | undefined): string {
  * formatCompactMarketCap(425000000000000) // "425조"
  * formatCompactMarketCap(15000000000) // "150억"
  */
-export function formatCompactMarketCap(marketCap: number | null | undefined): string {
+export function formatCompactMarketCap(
+  marketCap: number | null | undefined,
+): string {
   if (marketCap === null || marketCap === undefined || isNaN(marketCap)) {
     return '-'
   }
@@ -152,7 +157,7 @@ export function formatCompactMarketCap(marketCap: number | null | undefined): st
  */
 export function formatChangePercentage(
   percent: number | null | undefined,
-  decimals: number = 2
+  decimals: number = 2,
 ): string {
   if (percent === null || percent === undefined || isNaN(percent)) {
     return '-'
@@ -211,7 +216,7 @@ export function formatCompactPrice(price: number | null | undefined): string {
  */
 export function formatTableNumber(
   num: number | null | undefined,
-  type: 'price' | 'volume' | 'marketcap' | 'percent'
+  type: 'price' | 'volume' | 'marketcap' | 'percent',
 ): string {
   if (num === null || num === undefined || isNaN(num)) {
     return '-'
@@ -251,11 +256,13 @@ export function formatTableNumber(
  */
 export function formatIntelligentNumber(
   num: number | null | undefined,
-  preferKorean: boolean = true
+  preferKorean: boolean = true,
 ): string {
   if (num === null || num === undefined || isNaN(num)) {
     return '-'
   }
 
-  return preferKorean ? formatCompactKoreanNumber(num) : formatCompactNumber(num)
+  return preferKorean
+    ? formatCompactKoreanNumber(num)
+    : formatCompactNumber(num)
 }

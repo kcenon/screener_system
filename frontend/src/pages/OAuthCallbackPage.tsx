@@ -32,7 +32,8 @@ export default function OAuthCallbackPage() {
 
       // Also check URL path for provider (e.g., /oauth/callback/google)
       const pathSegments = window.location.pathname.split('/')
-      const provider = (providerParam || pathSegments[pathSegments.length - 1]) as OAuthProvider
+      const provider = (providerParam ||
+        pathSegments[pathSegments.length - 1]) as OAuthProvider
 
       if (!code || !state) {
         setStatus('error')
@@ -56,7 +57,9 @@ export default function OAuthCallbackPage() {
         }, 1500)
       } catch (err) {
         setStatus('error')
-        setErrorMessage(err instanceof Error ? err.message : 'OAuth authentication failed')
+        setErrorMessage(
+          err instanceof Error ? err.message : 'OAuth authentication failed',
+        )
       }
     }
 

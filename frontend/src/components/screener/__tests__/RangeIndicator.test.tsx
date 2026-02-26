@@ -11,7 +11,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           width={60}
-        />
+        />,
       )
 
       const bar = container.querySelector('.bg-gradient-to-r')
@@ -20,24 +20,18 @@ describe('RangeIndicator', () => {
 
     it('renders placeholder when currentPrice is null', () => {
       render(
-        <RangeIndicator
-          currentPrice={null}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={null} low52w={40000} high52w={60000} />,
       )
 
       expect(screen.getByText('-')).toBeInTheDocument()
-      expect(screen.getByLabelText('No 52-week range data available')).toBeInTheDocument()
+      expect(
+        screen.getByLabelText('No 52-week range data available'),
+      ).toBeInTheDocument()
     })
 
     it('renders placeholder when low52w is null', () => {
       render(
-        <RangeIndicator
-          currentPrice={50000}
-          low52w={null}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={50000} low52w={null} high52w={60000} />,
       )
 
       expect(screen.getByText('-')).toBeInTheDocument()
@@ -45,11 +39,7 @@ describe('RangeIndicator', () => {
 
     it('renders placeholder when high52w is null', () => {
       render(
-        <RangeIndicator
-          currentPrice={50000}
-          low52w={40000}
-          high52w={null}
-        />
+        <RangeIndicator currentPrice={50000} low52w={40000} high52w={null} />,
       )
 
       expect(screen.getByText('-')).toBeInTheDocument()
@@ -57,11 +47,7 @@ describe('RangeIndicator', () => {
 
     it('renders placeholder when high52w <= low52w', () => {
       render(
-        <RangeIndicator
-          currentPrice={50000}
-          low52w={60000}
-          high52w={40000}
-        />
+        <RangeIndicator currentPrice={50000} low52w={60000} high52w={40000} />,
       )
 
       expect(screen.getByText('-')).toBeInTheDocument()
@@ -74,7 +60,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           className="custom-class"
-        />
+        />,
       )
 
       expect(container.firstChild).toHaveClass('custom-class')
@@ -89,7 +75,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={true}
-        />
+        />,
       )
 
       expect(screen.getByText('50%')).toBeInTheDocument()
@@ -102,7 +88,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={true}
-        />
+        />,
       )
 
       expect(screen.getByText('0%')).toBeInTheDocument()
@@ -115,7 +101,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={true}
-        />
+        />,
       )
 
       expect(screen.getByText('100%')).toBeInTheDocument()
@@ -128,7 +114,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={true}
-        />
+        />,
       )
 
       expect(screen.getByText('25%')).toBeInTheDocument()
@@ -141,7 +127,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={true}
-        />
+        />,
       )
 
       expect(screen.getByText('75%')).toBeInTheDocument()
@@ -154,7 +140,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={false}
-        />
+        />,
       )
 
       expect(screen.queryByText('50%')).not.toBeInTheDocument()
@@ -164,11 +150,7 @@ describe('RangeIndicator', () => {
   describe('Color coding', () => {
     it('uses green marker for high position (>=80%)', () => {
       const { container } = render(
-        <RangeIndicator
-          currentPrice={58000}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={58000} low52w={40000} high52w={60000} />,
       )
 
       const marker = container.querySelector('.bg-green-500')
@@ -177,11 +159,7 @@ describe('RangeIndicator', () => {
 
     it('uses lighter green marker for position >=60%', () => {
       const { container } = render(
-        <RangeIndicator
-          currentPrice={54000}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={54000} low52w={40000} high52w={60000} />,
       )
 
       const marker = container.querySelector('.bg-green-400')
@@ -190,11 +168,7 @@ describe('RangeIndicator', () => {
 
     it('uses yellow marker for middle position (>=40%)', () => {
       const { container } = render(
-        <RangeIndicator
-          currentPrice={48000}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={48000} low52w={40000} high52w={60000} />,
       )
 
       const marker = container.querySelector('.bg-yellow-400')
@@ -203,11 +177,7 @@ describe('RangeIndicator', () => {
 
     it('uses orange marker for low position (>=20%)', () => {
       const { container } = render(
-        <RangeIndicator
-          currentPrice={44000}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={44000} low52w={40000} high52w={60000} />,
       )
 
       const marker = container.querySelector('.bg-orange-400')
@@ -216,11 +186,7 @@ describe('RangeIndicator', () => {
 
     it('uses red marker for very low position (<20%)', () => {
       const { container } = render(
-        <RangeIndicator
-          currentPrice={41000}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={41000} low52w={40000} high52w={60000} />,
       )
 
       const marker = container.querySelector('.bg-red-500')
@@ -231,11 +197,7 @@ describe('RangeIndicator', () => {
   describe('Tooltip', () => {
     it('shows tooltip with range details', () => {
       const { container } = render(
-        <RangeIndicator
-          currentPrice={50000}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={50000} low52w={40000} high52w={60000} />,
       )
 
       const wrapper = container.firstChild as HTMLElement
@@ -249,15 +211,11 @@ describe('RangeIndicator', () => {
   describe('Accessibility', () => {
     it('has descriptive aria-label', () => {
       render(
-        <RangeIndicator
-          currentPrice={50000}
-          low52w={40000}
-          high52w={60000}
-        />
+        <RangeIndicator currentPrice={50000} low52w={40000} high52w={60000} />,
       )
 
       expect(
-        screen.getByLabelText(/52-week range position/i)
+        screen.getByLabelText(/52-week range position/i),
       ).toBeInTheDocument()
     })
   })
@@ -270,7 +228,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={true}
-        />
+        />,
       )
 
       expect(screen.getByText('0%')).toBeInTheDocument()
@@ -283,7 +241,7 @@ describe('RangeIndicator', () => {
           low52w={40000}
           high52w={60000}
           showPercent={true}
-        />
+        />,
       )
 
       expect(screen.getByText('100%')).toBeInTheDocument()
@@ -291,11 +249,7 @@ describe('RangeIndicator', () => {
 
     it('handles equal high and low (invalid range)', () => {
       render(
-        <RangeIndicator
-          currentPrice={50000}
-          low52w={50000}
-          high52w={50000}
-        />
+        <RangeIndicator currentPrice={50000} low52w={50000} high52w={50000} />,
       )
 
       expect(screen.getByText('-')).toBeInTheDocument()

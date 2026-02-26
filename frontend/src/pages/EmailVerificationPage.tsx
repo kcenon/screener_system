@@ -6,7 +6,9 @@ import type { EmailVerificationRequest, SuccessResponse } from '@/types'
 
 export default function EmailVerificationPage() {
   const [searchParams] = useSearchParams()
-  const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying')
+  const [status, setStatus] = useState<'verifying' | 'success' | 'error'>(
+    'verifying',
+  )
   const [message, setMessage] = useState('')
 
   const verifyMutation = useMutation<
@@ -14,15 +16,16 @@ export default function EmailVerificationPage() {
     Error,
     EmailVerificationRequest
   >({
-    mutationFn: (data) => authService.verifyEmail(data),
-    onSuccess: (data) => {
+    mutationFn: data => authService.verifyEmail(data),
+    onSuccess: data => {
       setStatus('success')
       setMessage(data.message || 'Email verified successfully!')
     },
     onError: (error: Error) => {
       setStatus('error')
       setMessage(
-        error.message || 'Verification failed. The link may have expired or is invalid.'
+        error.message ||
+          'Verification failed. The link may have expired or is invalid.',
       )
     },
   })
@@ -121,8 +124,8 @@ export default function EmailVerificationPage() {
                   Go to Login
                 </Link>
                 <p className="text-xs text-gray-500">
-                  Already logged in? You can request a new verification email from your
-                  account settings.
+                  Already logged in? You can request a new verification email
+                  from your account settings.
                 </p>
               </div>
             </div>

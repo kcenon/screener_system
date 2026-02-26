@@ -24,11 +24,11 @@ import type { SectorPerformance } from '../../types/market'
  * Matches finviz-style color scheme
  */
 function getPerformanceColor(changePct: number): string {
-  if (changePct > 3) return '#166534'  // Dark Green
-  if (changePct > 1) return '#16a34a'  // Green
+  if (changePct > 3) return '#166534' // Dark Green
+  if (changePct > 1) return '#16a34a' // Green
   if (changePct > -1) return '#6b7280' // Gray
   if (changePct > -3) return '#dc2626' // Red
-  return '#991b1b'                     // Dark Red
+  return '#991b1b' // Dark Red
 }
 
 /**
@@ -60,8 +60,12 @@ function CustomTreemapContent(props: any) {
   const { x, y, width, height, name, performance, stockCount } = props
 
   // Ensure all required props exist
-  if (typeof x !== 'number' || typeof y !== 'number' ||
-      typeof width !== 'number' || typeof height !== 'number') {
+  if (
+    typeof x !== 'number' ||
+    typeof y !== 'number' ||
+    typeof width !== 'number' ||
+    typeof height !== 'number'
+  ) {
     return null
   }
 
@@ -118,7 +122,10 @@ function CustomTreemapContent(props: any) {
 /**
  * Custom tooltip component
  */
-function CustomTooltip({ active, payload }: {
+function CustomTooltip({
+  active,
+  payload,
+}: {
   active?: boolean
   payload?: Array<{
     payload: TreemapData & {
@@ -138,7 +145,8 @@ function CustomTooltip({ active, payload }: {
       <div className="mb-1 font-medium">{data.name}</div>
       <div className="text-sm">
         <div>
-          변동률: <span className={isPositive ? 'text-green-400' : 'text-red-400'}>
+          변동률:{' '}
+          <span className={isPositive ? 'text-green-400' : 'text-red-400'}>
             {isPositive ? '+' : ''}
             {data.performance.toFixed(2)}%
           </span>
@@ -185,7 +193,9 @@ export function SectorHeatmapAdvanced({
   height = 500,
   className = '',
 }: SectorHeatmapAdvancedProps) {
-  const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M'>(defaultTimeframe)
+  const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M'>(
+    defaultTimeframe,
+  )
   const navigate = useNavigate()
 
   const { data, isLoading, error } = useSectorPerformance({
@@ -221,16 +231,21 @@ export function SectorHeatmapAdvanced({
   ]
 
   return (
-    <div className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}>
+    <div
+      className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}
+    >
       {/* Header with timeframe selector */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className={`${typography.h2} text-gray-900`}>
-          섹터 성과 맵 <span className="text-xs font-normal text-gray-500">Sector Performance Map</span>
+          섹터 성과 맵{' '}
+          <span className="text-xs font-normal text-gray-500">
+            Sector Performance Map
+          </span>
         </h2>
 
         {/* Timeframe selector */}
         <div className="flex gap-1.5">
-          {timeframes.map((tf) => (
+          {timeframes.map(tf => (
             <button
               key={tf.value}
               onClick={() => setTimeframe(tf.value)}
@@ -249,23 +264,38 @@ export function SectorHeatmapAdvanced({
       {/* Legend */}
       <div className="mb-3 flex flex-wrap items-center gap-3 text-xs">
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded" style={{ backgroundColor: '#166534' }}></div>
+          <div
+            className="h-3 w-3 rounded"
+            style={{ backgroundColor: '#166534' }}
+          ></div>
           <span>+3% 이상</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded" style={{ backgroundColor: '#16a34a' }}></div>
+          <div
+            className="h-3 w-3 rounded"
+            style={{ backgroundColor: '#16a34a' }}
+          ></div>
           <span>+1% ~ +3%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded" style={{ backgroundColor: '#6b7280' }}></div>
+          <div
+            className="h-3 w-3 rounded"
+            style={{ backgroundColor: '#6b7280' }}
+          ></div>
           <span>-1% ~ +1%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded" style={{ backgroundColor: '#dc2626' }}></div>
+          <div
+            className="h-3 w-3 rounded"
+            style={{ backgroundColor: '#dc2626' }}
+          ></div>
           <span>-3% ~ -1%</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded" style={{ backgroundColor: '#991b1b' }}></div>
+          <div
+            className="h-3 w-3 rounded"
+            style={{ backgroundColor: '#991b1b' }}
+          ></div>
           <span>-3% 이하</span>
         </div>
       </div>
@@ -273,7 +303,9 @@ export function SectorHeatmapAdvanced({
       {/* Error State */}
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-          <p className="text-sm text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-red-600">
+            데이터를 불러오는 중 오류가 발생했습니다.
+          </p>
         </div>
       )}
 
@@ -308,7 +340,8 @@ export function SectorHeatmapAdvanced({
 
       {/* Help text */}
       <div className="mt-3 text-center text-xs text-gray-500">
-        크기는 시가총액에 비례하며, 색상은 성과를 나타냅니다. 섹터를 클릭하면 해당 종목 목록을 볼 수 있습니다.
+        크기는 시가총액에 비례하며, 색상은 성과를 나타냅니다. 섹터를 클릭하면
+        해당 종목 목록을 볼 수 있습니다.
       </div>
     </div>
   )

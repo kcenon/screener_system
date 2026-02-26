@@ -13,7 +13,11 @@ import WatchlistWidget from '../WatchlistWidget'
 import RecentActivityWidget from '../RecentActivityWidget'
 import QuickActionsWidget from '../QuickActionsWidget'
 import PlatformStatsWidget from '../PlatformStatsWidget'
-import type { MarketIndex, WatchlistSummary, UserActivity } from '../../../types'
+import type {
+  MarketIndex,
+  WatchlistSummary,
+  UserActivity,
+} from '../../../types'
 
 /**
  * Helper to wrap components with Router
@@ -116,7 +120,9 @@ describe('RecentActivityWidget', () => {
 
     render(<RecentActivityWidget activities={activities} />)
     expect(screen.getByText('Performed stock screening')).toBeInTheDocument()
-    expect(screen.getByText('Created watchlist "Tech Stocks"')).toBeInTheDocument()
+    expect(
+      screen.getByText('Created watchlist "Tech Stocks"'),
+    ).toBeInTheDocument()
   })
 })
 
@@ -136,7 +142,7 @@ describe('PlatformStatsWidget', () => {
         screeningCount={0}
         totalWatchlistStocks={0}
         isLoading={true}
-      />
+      />,
     )
     const skeletons = document.querySelectorAll('.animate-pulse')
     expect(skeletons.length).toBeGreaterThan(0)
@@ -148,7 +154,7 @@ describe('PlatformStatsWidget', () => {
         screeningCount={15}
         totalWatchlistStocks={25}
         lastLogin={new Date().toISOString()}
-      />
+      />,
     )
     expect(screen.getByText('15')).toBeInTheDocument()
     expect(screen.getByText('25')).toBeInTheDocument()

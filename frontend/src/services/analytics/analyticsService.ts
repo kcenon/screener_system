@@ -97,7 +97,8 @@ class AnalyticsService {
       mixpanel.init(config.token, {
         debug: config.debug ?? false,
         track_pageview: false, // We handle this manually
-        persistence: config.persistence === 'none' ? 'localStorage' : config.persistence,
+        persistence:
+          config.persistence === 'none' ? 'localStorage' : config.persistence,
         api_host: config.apiHost,
         ignore_dnt: !config.respectDoNotTrack,
         opt_out_tracking_by_default: !this.consentGiven,
@@ -160,7 +161,10 @@ class AnalyticsService {
   /**
    * Track an event
    */
-  track(event: AnalyticsEvent | string, properties?: Record<string, unknown>): void {
+  track(
+    event: AnalyticsEvent | string,
+    properties?: Record<string, unknown>,
+  ): void {
     if (!this.canTrack()) return
 
     const eventProperties = this.buildEventProperties(properties)
@@ -198,7 +202,12 @@ class AnalyticsService {
   /**
    * Track a timing event (for performance monitoring)
    */
-  timing(category: string, variable: string, value: number, label?: string): void {
+  timing(
+    category: string,
+    variable: string,
+    value: number,
+    label?: string,
+  ): void {
     if (!this.canTrack()) return
 
     const timingProperties = {
@@ -240,7 +249,10 @@ class AnalyticsService {
    */
   optIn(): void {
     this.consentGiven = true
-    this.saveConsentSettings({ analyticsConsent: true, marketingConsent: false })
+    this.saveConsentSettings({
+      analyticsConsent: true,
+      marketingConsent: false,
+    })
 
     if (!this.mockMode && this.initialized) {
       mixpanel.opt_in_tracking()
@@ -256,7 +268,10 @@ class AnalyticsService {
    */
   optOut(): void {
     this.consentGiven = false
-    this.saveConsentSettings({ analyticsConsent: false, marketingConsent: false })
+    this.saveConsentSettings({
+      analyticsConsent: false,
+      marketingConsent: false,
+    })
 
     if (!this.mockMode && this.initialized) {
       mixpanel.opt_out_tracking()
@@ -294,7 +309,11 @@ class AnalyticsService {
   /**
    * Track link click (useful for external links)
    */
-  trackLink(element: HTMLElement, event: string, properties?: Record<string, unknown>): void {
+  trackLink(
+    element: HTMLElement,
+    event: string,
+    properties?: Record<string, unknown>,
+  ): void {
     if (!this.canTrack()) return
 
     if (this.mockMode || this.config?.debug) {
@@ -302,7 +321,11 @@ class AnalyticsService {
     }
 
     if (!this.mockMode) {
-      mixpanel.track_links(element, event, this.buildEventProperties(properties))
+      mixpanel.track_links(
+        element,
+        event,
+        this.buildEventProperties(properties),
+      )
     }
   }
 
@@ -352,13 +375,15 @@ class AnalyticsService {
     return base
   }
 
-  private sanitizeProperties(properties: Record<string, unknown>): Record<string, unknown> {
+  private sanitizeProperties(
+    properties: Record<string, unknown>,
+  ): Record<string, unknown> {
     const sanitized: Record<string, unknown> = {}
 
     for (const [key, value] of Object.entries(properties)) {
       // Skip PII fields
       const lowerKey = key.toLowerCase()
-      if (PII_FIELDS.some((pii) => lowerKey.includes(pii.toLowerCase()))) {
+      if (PII_FIELDS.some(pii => lowerKey.includes(pii.toLowerCase()))) {
         continue
       }
 

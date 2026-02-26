@@ -97,13 +97,21 @@ describe('exportUtils', () => {
       click: clickSpy,
     } as unknown as HTMLAnchorElement
 
-    createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue(mockLink)
-    appendChildSpy = vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink)
-    removeChildSpy = vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink)
+    createElementSpy = vi
+      .spyOn(document, 'createElement')
+      .mockReturnValue(mockLink)
+    appendChildSpy = vi
+      .spyOn(document.body, 'appendChild')
+      .mockImplementation(() => mockLink)
+    removeChildSpy = vi
+      .spyOn(document.body, 'removeChild')
+      .mockImplementation(() => mockLink)
 
     // Mock URL.createObjectURL and URL.revokeObjectURL
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url')
-    revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+    revokeObjectURLSpy = vi
+      .spyOn(URL, 'revokeObjectURL')
+      .mockImplementation(() => {})
 
     // Mock Date to ensure consistent timestamp
     vi.useFakeTimers()
@@ -122,7 +130,7 @@ describe('exportUtils', () => {
 
     it('throws error for unsupported format', () => {
       expect(() => exportStocks(mockStocks, 'xml' as any)).toThrow(
-        'Unsupported export format: xml'
+        'Unsupported export format: xml',
       )
     })
 
@@ -143,7 +151,8 @@ describe('exportUtils', () => {
     it('passes custom filename to export functions', () => {
       exportStocks(mockStocks, 'csv', 'my-stocks.csv')
 
-      const mockLink = createElementSpy.mock.results[0].value as HTMLAnchorElement
+      const mockLink = createElementSpy.mock.results[0]
+        .value as HTMLAnchorElement
       expect(mockLink.download).toBe('my-stocks.csv')
     })
   })
@@ -159,14 +168,16 @@ describe('exportUtils', () => {
     it('uses default filename with timestamp when no filename provided', () => {
       exportToCSV(mockStocks)
 
-      const mockLink = createElementSpy.mock.results[0].value as HTMLAnchorElement
+      const mockLink = createElementSpy.mock.results[0]
+        .value as HTMLAnchorElement
       expect(mockLink.download).toBe('stock_screening_2025-01-15.csv')
     })
 
     it('uses custom filename when provided', () => {
       exportToCSV(mockStocks, 'custom-filename.csv')
 
-      const mockLink = createElementSpy.mock.results[0].value as HTMLAnchorElement
+      const mockLink = createElementSpy.mock.results[0]
+        .value as HTMLAnchorElement
       expect(mockLink.download).toBe('custom-filename.csv')
     })
 
@@ -226,14 +237,16 @@ describe('exportUtils', () => {
     it('uses default filename with timestamp when no filename provided', () => {
       exportToJSON(mockStocks)
 
-      const mockLink = createElementSpy.mock.results[0].value as HTMLAnchorElement
+      const mockLink = createElementSpy.mock.results[0]
+        .value as HTMLAnchorElement
       expect(mockLink.download).toBe('stock_screening_2025-01-15.json')
     })
 
     it('uses custom filename when provided', () => {
       exportToJSON(mockStocks, 'custom-filename.json')
 
-      const mockLink = createElementSpy.mock.results[0].value as HTMLAnchorElement
+      const mockLink = createElementSpy.mock.results[0]
+        .value as HTMLAnchorElement
       expect(mockLink.download).toBe('custom-filename.json')
     })
 
@@ -308,7 +321,8 @@ describe('exportUtils', () => {
     it('sets href on link element', () => {
       exportToCSV(mockStocks)
 
-      const mockLink = createElementSpy.mock.results[0].value as HTMLAnchorElement
+      const mockLink = createElementSpy.mock.results[0]
+        .value as HTMLAnchorElement
       expect(mockLink.href).toBe('blob:mock-url')
     })
 

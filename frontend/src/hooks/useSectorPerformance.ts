@@ -33,7 +33,7 @@ export interface UseSectorPerformanceOptions {
  * ```
  */
 export function useSectorPerformance(
-  options: UseSectorPerformanceOptions = {}
+  options: UseSectorPerformanceOptions = {},
 ): UseQueryResult<SectorsPerformanceResponse, Error> {
   const { timeframe = '1D', refetchInterval, enabled = true } = options
 

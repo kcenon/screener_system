@@ -78,7 +78,7 @@ import { portfolioDetailQueryKey } from './usePortfolioDetail'
 export function useTransactions(
   portfolioId: number | undefined,
   skip: number = 0,
-  limit: number = 50
+  limit: number = 50,
 ) {
   const queryClient = useQueryClient()
 
@@ -86,7 +86,11 @@ export function useTransactions(
   const query = useQuery({
     queryKey: ['portfolio', portfolioId, 'transactions', skip, limit],
     queryFn: async () => {
-      const response = await portfolioService.getTransactions(portfolioId!, skip, limit)
+      const response = await portfolioService.getTransactions(
+        portfolioId!,
+        skip,
+        limit,
+      )
       return response.data
     },
     enabled: !!portfolioId,

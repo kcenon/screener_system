@@ -33,13 +33,16 @@ const CATEGORY_LABELS: Record<CategoryName, string> = {
   performance: 'Performance',
 }
 
-export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps) {
-  const [expandedCategories, setExpandedCategories] = useState<Set<CategoryName>>(
-    new Set(['valuation', 'profitability'])
-  )
+export function ComparisonTable({
+  stocks,
+  className = '',
+}: ComparisonTableProps) {
+  const [expandedCategories, setExpandedCategories] = useState<
+    Set<CategoryName>
+  >(new Set(['valuation', 'profitability']))
 
   const toggleCategory = (category: CategoryName) => {
-    setExpandedCategories((prev) => {
+    setExpandedCategories(prev => {
       const next = new Set(prev)
       if (next.has(category)) {
         next.delete(category)
@@ -60,12 +63,17 @@ export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps
   ]
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden ${className}`}>
+    <div
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden ${className}`}
+    >
       {/* Header */}
       <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-        <h3 className="text-lg font-semibold text-gray-900">Comparison Table</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Comparison Table
+        </h3>
         <p className="text-sm text-gray-600 mt-1">
-          Click category to expand • Best values highlighted in green • Worst in red
+          Click category to expand • Best values highlighted in green • Worst in
+          red
         </p>
       </div>
 
@@ -77,7 +85,7 @@ export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900 min-w-[200px]">
                 Metric
               </th>
-              {stocks.map((stock) => (
+              {stocks.map(stock => (
                 <th
                   key={stock.code}
                   className="px-4 py-3 text-center text-sm font-semibold text-gray-900 min-w-[150px]"
@@ -88,7 +96,9 @@ export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps
                       {stock.name}
                     </span>
                     {stock.isLoading && (
-                      <span className="text-xs text-blue-600 mt-1">Loading...</span>
+                      <span className="text-xs text-blue-600 mt-1">
+                        Loading...
+                      </span>
                     )}
                     {stock.error && (
                       <span className="text-xs text-red-600 mt-1">Error</span>
@@ -100,7 +110,7 @@ export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps
           </thead>
 
           <tbody>
-            {categories.map((category) => {
+            {categories.map(category => {
               const metrics = getMetricsByCategory(category)
               const isExpanded = expandedCategories.has(category)
 
@@ -108,10 +118,7 @@ export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps
                 <React.Fragment key={category}>
                   {/* Category Header */}
                   <tr className="bg-gray-50 border-t border-gray-200">
-                    <td
-                      colSpan={stocks.length + 1}
-                      className="px-6 py-3"
-                    >
+                    <td colSpan={stocks.length + 1} className="px-6 py-3">
                       <button
                         onClick={() => toggleCategory(category)}
                         className="
@@ -135,13 +142,13 @@ export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps
 
                   {/* Metrics Rows */}
                   {isExpanded &&
-                    metrics.map((metric) => {
-                      const values = stocks.map((stock) =>
-                        getMetricValue(stock, metric.key)
+                    metrics.map(metric => {
+                      const values = stocks.map(stock =>
+                        getMetricValue(stock, metric.key),
                       )
                       const highlights = highlightBestWorst(
                         values,
-                        metric.higher_is_better
+                        metric.higher_is_better,
                       )
 
                       return (
@@ -160,7 +167,7 @@ export function ComparisonTable({ stocks, className = '' }: ComparisonTableProps
                             const highlight = highlights[index]
                             const formattedValue = formatMetricValue(
                               value,
-                              metric.format
+                              metric.format,
                             )
 
                             return (

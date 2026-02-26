@@ -32,12 +32,15 @@ describe('OAuthCallbackPage', () => {
         <MemoryRouter initialEntries={[route]}>
           <Routes>
             <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
-            <Route path="/oauth/callback/:provider" element={<OAuthCallbackPage />} />
+            <Route
+              path="/oauth/callback/:provider"
+              element={<OAuthCallbackPage />}
+            />
             <Route path="/login" element={<div>Login Page</div>} />
             <Route path="/dashboard" element={<div>Dashboard</div>} />
           </Routes>
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
   }
 
@@ -58,22 +61,32 @@ describe('OAuthCallbackPage', () => {
 
   describe('Initial State', () => {
     it('shows processing state initially', async () => {
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback').mockImplementation(
-        () => new Promise(() => {}) // Never resolves
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockImplementation(
+        () => new Promise(() => {}), // Never resolves
       )
 
-      renderWithRoute('/oauth/callback?code=test-code&state=test-state&provider=google')
+      renderWithRoute(
+        '/oauth/callback?code=test-code&state=test-state&provider=google',
+      )
 
       expect(screen.getByText(/completing sign in/i)).toBeInTheDocument()
-      expect(screen.getByText(/please wait while we verify your credentials/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/please wait while we verify your credentials/i),
+      ).toBeInTheDocument()
     })
 
     it('shows loading spinner during processing', async () => {
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback').mockImplementation(
-        () => new Promise(() => {})
-      )
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockImplementation(() => new Promise(() => {}))
 
-      renderWithRoute('/oauth/callback?code=test-code&state=test-state&provider=google')
+      renderWithRoute(
+        '/oauth/callback?code=test-code&state=test-state&provider=google',
+      )
 
       const spinner = document.querySelector('.animate-spin')
       expect(spinner).toBeInTheDocument()
@@ -82,7 +95,10 @@ describe('OAuthCallbackPage', () => {
 
   describe('Successful Callback', () => {
     it('shows success state after successful callback', async () => {
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback').mockResolvedValue({
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockResolvedValue({
         access_token: 'test-access-token',
         refresh_token: 'test-refresh-token',
         token_type: 'bearer',
@@ -98,7 +114,9 @@ describe('OAuthCallbackPage', () => {
         },
       })
 
-      renderWithRoute('/oauth/callback?code=test-code&state=test-state&provider=google')
+      renderWithRoute(
+        '/oauth/callback?code=test-code&state=test-state&provider=google',
+      )
 
       await waitFor(() => {
         expect(screen.getByText(/sign in successful/i)).toBeInTheDocument()
@@ -106,7 +124,8 @@ describe('OAuthCallbackPage', () => {
     })
 
     it('calls handleCallback with correct parameters', async () => {
-      const mockHandleCallback = vi.spyOn(oauthServiceModule.oauthService, 'handleCallback')
+      const mockHandleCallback = vi
+        .spyOn(oauthServiceModule.oauthService, 'handleCallback')
         .mockResolvedValue({
           access_token: 'test',
           refresh_token: 'test',
@@ -114,20 +133,30 @@ describe('OAuthCallbackPage', () => {
           user: {} as any,
         })
 
-      renderWithRoute('/oauth/callback?code=auth-code&state=csrf-state&provider=google')
+      renderWithRoute(
+        '/oauth/callback?code=auth-code&state=csrf-state&provider=google',
+      )
 
       await waitFor(() => {
-        expect(mockHandleCallback).toHaveBeenCalledWith('google', 'auth-code', 'csrf-state')
+        expect(mockHandleCallback).toHaveBeenCalledWith(
+          'google',
+          'auth-code',
+          'csrf-state',
+        )
       })
     })
   })
 
   describe('Error Handling', () => {
     it('shows error state when callback fails', async () => {
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback')
-        .mockRejectedValue(new Error('Authentication failed'))
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockRejectedValue(new Error('Authentication failed'))
 
-      renderWithRoute('/oauth/callback?code=test-code&state=test-state&provider=google')
+      renderWithRoute(
+        '/oauth/callback?code=test-code&state=test-state&provider=google',
+      )
 
       await waitFor(() => {
         expect(screen.getByText(/sign in failed/i)).toBeInTheDocument()
@@ -140,7 +169,9 @@ describe('OAuthCallbackPage', () => {
 
       await waitFor(() => {
         expect(screen.getByText(/sign in failed/i)).toBeInTheDocument()
-        expect(screen.getByText(/missing authorization code or state parameter/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/missing authorization code or state parameter/i),
+        ).toBeInTheDocument()
       })
     })
 
@@ -149,16 +180,22 @@ describe('OAuthCallbackPage', () => {
 
       await waitFor(() => {
         expect(screen.getByText(/sign in failed/i)).toBeInTheDocument()
-        expect(screen.getByText(/missing authorization code or state parameter/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/missing authorization code or state parameter/i),
+        ).toBeInTheDocument()
       })
     })
 
     it('shows error when provider is invalid', async () => {
-      renderWithRoute('/oauth/callback?code=test-code&state=test-state&provider=invalid')
+      renderWithRoute(
+        '/oauth/callback?code=test-code&state=test-state&provider=invalid',
+      )
 
       await waitFor(() => {
         expect(screen.getByText(/sign in failed/i)).toBeInTheDocument()
-        expect(screen.getByText(/invalid or missing oauth provider/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/invalid or missing oauth provider/i),
+        ).toBeInTheDocument()
       })
     })
 
@@ -172,24 +209,36 @@ describe('OAuthCallbackPage', () => {
     })
 
     it('renders return to login button on error', async () => {
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback')
-        .mockRejectedValue(new Error('Auth failed'))
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockRejectedValue(new Error('Auth failed'))
 
-      renderWithRoute('/oauth/callback?code=test-code&state=test-state&provider=google')
+      renderWithRoute(
+        '/oauth/callback?code=test-code&state=test-state&provider=google',
+      )
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /return to login/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /return to login/i }),
+        ).toBeInTheDocument()
       })
     })
 
     it('navigates to login when clicking return button', async () => {
       const user = userEvent.setup()
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback')
-        .mockRejectedValue(new Error('Auth failed'))
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockRejectedValue(new Error('Auth failed'))
 
-      renderWithRoute('/oauth/callback?code=test-code&state=test-state&provider=google')
+      renderWithRoute(
+        '/oauth/callback?code=test-code&state=test-state&provider=google',
+      )
 
-      const returnButton = await screen.findByRole('button', { name: /return to login/i })
+      const returnButton = await screen.findByRole('button', {
+        name: /return to login/i,
+      })
       await user.click(returnButton)
 
       expect(mockNavigate).toHaveBeenCalledWith('/login', { replace: true })
@@ -198,7 +247,8 @@ describe('OAuthCallbackPage', () => {
 
   describe('Provider Detection', () => {
     it('detects provider from URL param', async () => {
-      const mockHandleCallback = vi.spyOn(oauthServiceModule.oauthService, 'handleCallback')
+      const mockHandleCallback = vi
+        .spyOn(oauthServiceModule.oauthService, 'handleCallback')
         .mockResolvedValue({
           access_token: 'test',
           refresh_token: 'test',
@@ -214,7 +264,8 @@ describe('OAuthCallbackPage', () => {
     })
 
     it('handles naver provider', async () => {
-      const mockHandleCallback = vi.spyOn(oauthServiceModule.oauthService, 'handleCallback')
+      const mockHandleCallback = vi
+        .spyOn(oauthServiceModule.oauthService, 'handleCallback')
         .mockResolvedValue({
           access_token: 'test',
           refresh_token: 'test',
@@ -232,7 +283,10 @@ describe('OAuthCallbackPage', () => {
 
   describe('Visual States', () => {
     it('shows green checkmark on success', async () => {
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback').mockResolvedValue({
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockResolvedValue({
         access_token: 'test',
         refresh_token: 'test',
         token_type: 'bearer',
@@ -248,8 +302,10 @@ describe('OAuthCallbackPage', () => {
     })
 
     it('shows red X on error', async () => {
-      vi.spyOn(oauthServiceModule.oauthService, 'handleCallback')
-        .mockRejectedValue(new Error('Failed'))
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'handleCallback',
+      ).mockRejectedValue(new Error('Failed'))
 
       renderWithRoute('/oauth/callback?code=test&state=test&provider=google')
 

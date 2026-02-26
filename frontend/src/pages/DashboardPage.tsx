@@ -76,14 +76,20 @@ export default function DashboardPage() {
         {error && (
           <div className="mb-8">
             <ErrorMessage
-              message={error instanceof Error ? error.message : 'Failed to load dashboard data'}
+              message={
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to load dashboard data'
+              }
             />
           </div>
         )}
 
         {/* Market Summary Section */}
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Market Overview</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Market Overview
+          </h2>
           <div className="bg-white rounded-lg shadow p-6">
             <MarketSummaryWidget
               kospi={data?.market_indices.kospi}
@@ -97,7 +103,6 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column (2/3 width on large screens) */}
           <div className="lg:col-span-2 space-y-8">
-            
             {/* Recommendations Section */}
             <section>
               <RecommendationList />
@@ -105,7 +110,9 @@ export default function DashboardPage() {
 
             {/* Watchlist Widget */}
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">My Watchlists</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                My Watchlists
+              </h2>
               <div className="bg-white rounded-lg shadow p-6">
                 <WatchlistWidget
                   watchlists={data?.watchlists || []}
@@ -132,7 +139,9 @@ export default function DashboardPage() {
           <div className="space-y-8">
             {/* Quick Actions Widget */}
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Quick Actions
+              </h2>
               <div className="bg-white rounded-lg shadow p-6">
                 <QuickActionsWidget />
               </div>
@@ -140,11 +149,15 @@ export default function DashboardPage() {
 
             {/* Platform Stats Widget */}
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Stats</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Your Stats
+              </h2>
               <div className="bg-white rounded-lg shadow p-6">
                 <PlatformStatsWidget
                   screeningCount={data?.user_stats.screening_count || 0}
-                  totalWatchlistStocks={data?.user_stats.total_watchlist_stocks || 0}
+                  totalWatchlistStocks={
+                    data?.user_stats.total_watchlist_stocks || 0
+                  }
                   lastLogin={data?.user_stats.last_login}
                   isLoading={isLoading}
                 />

@@ -5,11 +5,11 @@ type Modifier = 'ctrl' | 'cmd' | 'alt' | 'shift'
 export const useKeyboardShortcut = (
   key: string,
   callback: () => void,
-  modifiers: Modifier[] = []
+  modifiers: Modifier[] = [],
 ) => {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      const hasModifiers = modifiers.every((mod) => {
+      const hasModifiers = modifiers.every(mod => {
         if (mod === 'ctrl') return e.ctrlKey
         if (mod === 'cmd') return e.metaKey
         if (mod === 'alt') return e.altKey

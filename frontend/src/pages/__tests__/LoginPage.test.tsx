@@ -26,7 +26,7 @@ describe('LoginPage', () => {
         <MemoryRouter>
           <LoginPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
   }
 
@@ -69,10 +69,14 @@ describe('LoginPage', () => {
     it('renders login form', () => {
       renderLoginPage()
 
-      expect(screen.getByRole('heading', { name: /sign in to your account/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', { name: /sign in to your account/i }),
+      ).toBeInTheDocument()
       expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /^sign in$/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /^sign in$/i }),
+      ).toBeInTheDocument()
     })
 
     it('renders email input field with correct attributes', () => {
@@ -111,7 +115,9 @@ describe('LoginPage', () => {
     it('renders "Sign Up" link', () => {
       renderLoginPage()
 
-      const signUpLink = screen.getByRole('link', { name: /create a new account/i })
+      const signUpLink = screen.getByRole('link', {
+        name: /create a new account/i,
+      })
       expect(signUpLink).toBeInTheDocument()
       expect(signUpLink).toHaveAttribute('href', '/register')
     })
@@ -119,7 +125,9 @@ describe('LoginPage', () => {
     it('renders remember me checkbox', () => {
       renderLoginPage()
 
-      const rememberMeCheckbox = screen.getByRole('checkbox', { name: /remember me/i })
+      const rememberMeCheckbox = screen.getByRole('checkbox', {
+        name: /remember me/i,
+      })
       expect(rememberMeCheckbox).toBeInTheDocument()
     })
 
@@ -190,7 +198,9 @@ describe('LoginPage', () => {
 
       renderLoginPage()
 
-      const submitButton = screen.getByRole('button', { name: /signing in.../i })
+      const submitButton = screen.getByRole('button', {
+        name: /signing in.../i,
+      })
       expect(submitButton).toBeDisabled()
     })
 
@@ -361,7 +371,9 @@ describe('LoginPage', () => {
       await user.click(submitButton)
 
       await waitFor(() => {
-        expect(screen.getByText(/password must be at least 8 characters/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/password must be at least 8 characters/i),
+        ).toBeInTheDocument()
       })
 
       expect(mockLogin).not.toHaveBeenCalled()
@@ -406,7 +418,9 @@ describe('LoginPage', () => {
 
       // Find and click toggle button
       const passwordField = passwordInput.parentElement
-      const toggleButton = passwordField?.querySelector('button[type="button"]') as HTMLElement
+      const toggleButton = passwordField?.querySelector(
+        'button[type="button"]',
+      ) as HTMLElement
       await user.click(toggleButton)
 
       expect(passwordInput).toHaveAttribute('type', 'text')
@@ -421,7 +435,9 @@ describe('LoginPage', () => {
     it('navigates to sign up page via link', () => {
       renderLoginPage()
 
-      const signUpLink = screen.getByRole('link', { name: /create a new account/i })
+      const signUpLink = screen.getByRole('link', {
+        name: /create a new account/i,
+      })
       expect(signUpLink).toHaveAttribute('href', '/register')
     })
 
@@ -446,7 +462,9 @@ describe('LoginPage', () => {
     it('has proper heading hierarchy', () => {
       renderLoginPage()
 
-      const heading = screen.getByRole('heading', { name: /sign in to your account/i })
+      const heading = screen.getByRole('heading', {
+        name: /sign in to your account/i,
+      })
       expect(heading.tagName).toBe('H2')
     })
 
@@ -482,16 +500,24 @@ describe('LoginPage', () => {
     it('does not show error message initially', () => {
       renderLoginPage()
 
-      expect(screen.queryByText(/invalid email or password/i)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/invalid email or password/i),
+      ).not.toBeInTheDocument()
     })
 
     it('renders social login buttons', () => {
       renderLoginPage()
 
       // Check for social login buttons (Google, Kakao, Naver)
-      expect(screen.getByRole('button', { name: /sign in with google/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /sign in with kakao/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /sign in with naver/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /sign in with kakao/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /sign in with naver/i }),
+      ).toBeInTheDocument()
       expect(screen.getByText(/or continue with/i)).toBeInTheDocument()
     })
 
@@ -525,7 +551,9 @@ describe('LoginPage', () => {
 
       renderLoginPage()
 
-      const submitButton = screen.getByRole('button', { name: /signing in.../i })
+      const submitButton = screen.getByRole('button', {
+        name: /signing in.../i,
+      })
       expect(submitButton).toHaveClass('disabled:opacity-50')
       expect(submitButton).toHaveClass('disabled:cursor-not-allowed')
     })

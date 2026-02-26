@@ -10,7 +10,15 @@
  * - Freeze/unfreeze functionality
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest'
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+  type Mock,
+} from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useOrderBook } from '../useOrderBook'
 import type { OrderBookData } from '@/types/stock'
@@ -26,8 +34,12 @@ const mockWebSocketService = {
   disconnect: vi.fn(),
   subscribe: vi.fn(),
   unsubscribe: vi.fn(),
-  onMessage: vi.fn(() => vi.fn()) as Mock<(handler: MessageHandler) => () => void>,
-  onStateChange: vi.fn(() => vi.fn()) as Mock<(handler: StateChangeHandler) => () => void>,
+  onMessage: vi.fn(() => vi.fn()) as Mock<
+    (handler: MessageHandler) => () => void
+  >,
+  onStateChange: vi.fn(() => vi.fn()) as Mock<
+    (handler: StateChangeHandler) => () => void
+  >,
 }
 
 vi.mock('@/services/websocketService', () => ({
@@ -36,7 +48,9 @@ vi.mock('@/services/websocketService', () => ({
 }))
 
 // Helper to create mock order book data
-function createMockOrderBookData(overrides?: Partial<OrderBookData>): OrderBookData {
+function createMockOrderBookData(
+  overrides?: Partial<OrderBookData>,
+): OrderBookData {
   return {
     stock_code: '005930',
     timestamp: new Date().toISOString(),
@@ -79,15 +93,19 @@ describe('useOrderBook Hook', () => {
       const stateChangeHandler = vi.fn()
       const messageHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -127,15 +145,19 @@ describe('useOrderBook Hook', () => {
       const stateChangeHandler = vi.fn()
       const messageHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -174,15 +196,19 @@ describe('useOrderBook Hook', () => {
       const stateChangeHandler = vi.fn()
       const messageHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -214,23 +240,31 @@ describe('useOrderBook Hook', () => {
       })
 
       expect(result.current.imbalance?.direction).toBe('neutral')
-      expect(result.current.imbalance?.imbalance_ratio).toBeGreaterThanOrEqual(0.45)
-      expect(result.current.imbalance?.imbalance_ratio).toBeLessThanOrEqual(0.55)
+      expect(result.current.imbalance?.imbalance_ratio).toBeGreaterThanOrEqual(
+        0.45,
+      )
+      expect(result.current.imbalance?.imbalance_ratio).toBeLessThanOrEqual(
+        0.55,
+      )
     })
 
     it('should handle empty order book with zero volume', async () => {
       const stateChangeHandler = vi.fn()
       const messageHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -265,15 +299,19 @@ describe('useOrderBook Hook', () => {
       const stateChangeHandler = vi.fn()
       const messageHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -309,15 +347,19 @@ describe('useOrderBook Hook', () => {
       const stateChangeHandler = vi.fn()
       const messageHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -351,15 +393,19 @@ describe('useOrderBook Hook', () => {
       const stateChangeHandler = vi.fn()
       const messageHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -431,16 +477,21 @@ describe('useOrderBook Hook', () => {
       renderHook(() => useOrderBook('005930'))
 
       expect(mockWebSocketService.connect).toHaveBeenCalled()
-      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith('stock', '005930')
+      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
     })
 
     it('should update connection state on state change', async () => {
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -458,10 +509,12 @@ describe('useOrderBook Hook', () => {
     it('should set error on connection error', async () => {
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -489,7 +542,10 @@ describe('useOrderBook Hook', () => {
 
       expect(unsubscribeState).toHaveBeenCalled()
       expect(unsubscribeMessage).toHaveBeenCalled()
-      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith('stock', '005930')
+      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
       expect(mockWebSocketService.disconnect).toHaveBeenCalled()
     })
   })
@@ -499,15 +555,19 @@ describe('useOrderBook Hook', () => {
       const messageHandler = vi.fn()
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -534,15 +594,19 @@ describe('useOrderBook Hook', () => {
       const messageHandler = vi.fn()
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -569,15 +633,19 @@ describe('useOrderBook Hook', () => {
       const messageHandler = vi.fn()
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -621,15 +689,19 @@ describe('useOrderBook Hook', () => {
       const messageHandler = vi.fn()
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result, rerender } = renderHook(() => useOrderBook('005930'))
 
@@ -669,10 +741,12 @@ describe('useOrderBook Hook', () => {
     it('should re-subscribe on refresh', async () => {
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -688,8 +762,14 @@ describe('useOrderBook Hook', () => {
         result.current.refresh()
       })
 
-      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith('stock', '005930')
-      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith('stock', '005930')
+      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
+      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
     })
 
     it('should not refresh without WebSocket service', () => {
@@ -709,15 +789,19 @@ describe('useOrderBook Hook', () => {
       const messageHandler = vi.fn()
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 
@@ -750,30 +834,40 @@ describe('useOrderBook Hook', () => {
 
       const { rerender } = renderHook(
         ({ stockCode }) => useOrderBook(stockCode),
-        { initialProps: { stockCode: '005930' } }
+        { initialProps: { stockCode: '005930' } },
       )
 
       // Change stock code
       rerender({ stockCode: '000660' })
 
       // Should have cleaned up old subscription and created new one
-      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith('stock', '005930')
-      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith('stock', '000660')
+      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
+      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith(
+        'stock',
+        '000660',
+      )
     })
 
     it('should handle very large volumes without overflow', async () => {
       const messageHandler = vi.fn()
       const stateChangeHandler = vi.fn()
 
-      mockWebSocketService.onStateChange.mockImplementation((handler: StateChangeHandler) => {
-        stateChangeHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onStateChange.mockImplementation(
+        (handler: StateChangeHandler) => {
+          stateChangeHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
-      mockWebSocketService.onMessage.mockImplementation((handler: MessageHandler) => {
-        messageHandler.mockImplementation(handler)
-        return vi.fn()
-      })
+      mockWebSocketService.onMessage.mockImplementation(
+        (handler: MessageHandler) => {
+          messageHandler.mockImplementation(handler)
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useOrderBook('005930'))
 

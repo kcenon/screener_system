@@ -48,9 +48,7 @@ const queryClient = new QueryClient({
 function TestWrapper({ children }: { children: React.ReactNode }) {
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </BrowserRouter>
   )
 }
@@ -60,7 +58,7 @@ describe('SectorHeatmapAdvanced', () => {
     render(
       <TestWrapper>
         <SectorHeatmapAdvanced />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText(/섹터 성과 맵/i)).toBeInTheDocument()
@@ -70,7 +68,7 @@ describe('SectorHeatmapAdvanced', () => {
     render(
       <TestWrapper>
         <SectorHeatmapAdvanced />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('1일')).toBeInTheDocument()
@@ -83,7 +81,7 @@ describe('SectorHeatmapAdvanced', () => {
     render(
       <TestWrapper>
         <SectorHeatmapAdvanced />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('+3% 이상')).toBeInTheDocument()
@@ -97,7 +95,7 @@ describe('SectorHeatmapAdvanced', () => {
     render(
       <TestWrapper>
         <SectorHeatmapAdvanced />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText(/크기는 시가총액에 비례하며/)).toBeInTheDocument()
@@ -107,7 +105,7 @@ describe('SectorHeatmapAdvanced', () => {
     const { container } = render(
       <TestWrapper>
         <SectorHeatmapAdvanced height={600} />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(container).toBeInTheDocument()
@@ -117,7 +115,7 @@ describe('SectorHeatmapAdvanced', () => {
     render(
       <TestWrapper>
         <SectorHeatmapAdvanced autoRefresh={true} />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText(/섹터 성과 맵/i)).toBeInTheDocument()
@@ -127,7 +125,7 @@ describe('SectorHeatmapAdvanced', () => {
     render(
       <TestWrapper>
         <SectorHeatmapAdvanced defaultTimeframe="1W" />
-      </TestWrapper>
+      </TestWrapper>,
     )
 
     expect(screen.getByText('1주')).toBeInTheDocument()

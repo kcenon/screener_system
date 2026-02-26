@@ -55,8 +55,12 @@ function PerformanceMetrics({ performance }: { performance: any }) {
           <span className="text-sm text-gray-600">Total Value</span>
           <DollarSign className="w-4 h-4 text-gray-400" />
         </div>
-        <div className="text-2xl font-bold text-gray-900">₩{totalValue.toLocaleString()}</div>
-        <div className="text-xs text-gray-500 mt-1">Cost: ₩{totalCost.toLocaleString()}</div>
+        <div className="text-2xl font-bold text-gray-900">
+          ₩{totalValue.toLocaleString()}
+        </div>
+        <div className="text-xs text-gray-500 mt-1">
+          Cost: ₩{totalCost.toLocaleString()}
+        </div>
       </div>
 
       {/* Total Gain/Loss */}
@@ -69,11 +73,16 @@ function PerformanceMetrics({ performance }: { performance: any }) {
             <TrendingDown className="w-4 h-4 text-red-600" />
           )}
         </div>
-        <div className={`text-2xl font-bold ${isPositiveReturn ? 'text-green-600' : 'text-red-600'}`}>
+        <div
+          className={`text-2xl font-bold ${isPositiveReturn ? 'text-green-600' : 'text-red-600'}`}
+        >
           {isPositiveReturn ? '+' : ''}₩{totalGain.toLocaleString()}
         </div>
-        <div className={`text-xs mt-1 ${isPositiveReturn ? 'text-green-600' : 'text-red-600'}`}>
-          {isPositiveReturn ? '+' : ''}{totalReturnPercent.toFixed(2)}%
+        <div
+          className={`text-xs mt-1 ${isPositiveReturn ? 'text-green-600' : 'text-red-600'}`}
+        >
+          {isPositiveReturn ? '+' : ''}
+          {totalReturnPercent.toFixed(2)}%
         </div>
       </div>
 
@@ -87,11 +96,16 @@ function PerformanceMetrics({ performance }: { performance: any }) {
             <TrendingDown className="w-4 h-4 text-red-600" />
           )}
         </div>
-        <div className={`text-2xl font-bold ${isPositiveDay ? 'text-green-600' : 'text-red-600'}`}>
+        <div
+          className={`text-2xl font-bold ${isPositiveDay ? 'text-green-600' : 'text-red-600'}`}
+        >
           {isPositiveDay ? '+' : ''}₩{dayChange.toLocaleString()}
         </div>
-        <div className={`text-xs mt-1 ${isPositiveDay ? 'text-green-600' : 'text-red-600'}`}>
-          {isPositiveDay ? '+' : ''}{dayChangePercent.toFixed(2)}%
+        <div
+          className={`text-xs mt-1 ${isPositiveDay ? 'text-green-600' : 'text-red-600'}`}
+        >
+          {isPositiveDay ? '+' : ''}
+          {dayChangePercent.toFixed(2)}%
         </div>
       </div>
 
@@ -101,7 +115,9 @@ function PerformanceMetrics({ performance }: { performance: any }) {
           <span className="text-sm text-gray-600">Holdings</span>
           <Package className="w-4 h-4 text-gray-400" />
         </div>
-        <div className="text-2xl font-bold text-gray-900">{performance.holding_count || 0}</div>
+        <div className="text-2xl font-bold text-gray-900">
+          {performance.holding_count || 0}
+        </div>
         <div className="text-xs text-gray-500 mt-1">Total positions</div>
       </div>
     </div>
@@ -126,35 +142,70 @@ function HoldingsTable({ holdings }: { holdings: any[] }) {
       <table className="w-full">
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Symbol</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">Name</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">Shares</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">Avg Cost</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">Current</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">Value</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">Gain/Loss</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">Return %</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">
+              Symbol
+            </th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">
+              Name
+            </th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">
+              Shares
+            </th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">
+              Avg Cost
+            </th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">
+              Current
+            </th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">
+              Value
+            </th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">
+              Gain/Loss
+            </th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">
+              Return %
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {holdings.map((holding) => {
+          {holdings.map(holding => {
             const gain = parseFloat(holding.unrealized_gain || '0')
-            const gainPercent = parseFloat(holding.unrealized_gain_percent || '0')
+            const gainPercent = parseFloat(
+              holding.unrealized_gain_percent || '0',
+            )
             const isPositive = gain >= 0
 
             return (
               <tr key={holding.id} className="hover:bg-gray-50">
-                <td className="px-4 py-3 text-sm font-medium text-gray-900">{holding.stock_symbol}</td>
-                <td className="px-4 py-3 text-sm text-gray-600">{holding.stock_name || '-'}</td>
-                <td className="px-4 py-3 text-sm text-right text-gray-900">{parseFloat(holding.shares).toLocaleString()}</td>
-                <td className="px-4 py-3 text-sm text-right text-gray-900">₩{parseFloat(holding.average_cost).toLocaleString()}</td>
-                <td className="px-4 py-3 text-sm text-right text-gray-900">₩{parseFloat(holding.current_price || '0').toLocaleString()}</td>
-                <td className="px-4 py-3 text-sm text-right font-medium text-gray-900">₩{parseFloat(holding.current_value || '0').toLocaleString()}</td>
-                <td className={`px-4 py-3 text-sm text-right font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                  {holding.stock_symbol}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-600">
+                  {holding.stock_name || '-'}
+                </td>
+                <td className="px-4 py-3 text-sm text-right text-gray-900">
+                  {parseFloat(holding.shares).toLocaleString()}
+                </td>
+                <td className="px-4 py-3 text-sm text-right text-gray-900">
+                  ₩{parseFloat(holding.average_cost).toLocaleString()}
+                </td>
+                <td className="px-4 py-3 text-sm text-right text-gray-900">
+                  ₩{parseFloat(holding.current_price || '0').toLocaleString()}
+                </td>
+                <td className="px-4 py-3 text-sm text-right font-medium text-gray-900">
+                  ₩{parseFloat(holding.current_value || '0').toLocaleString()}
+                </td>
+                <td
+                  className={`px-4 py-3 text-sm text-right font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}
+                >
                   {isPositive ? '+' : ''}₩{gain.toLocaleString()}
                 </td>
-                <td className={`px-4 py-3 text-sm text-right font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                  {isPositive ? '+' : ''}{gainPercent.toFixed(2)}%
+                <td
+                  className={`px-4 py-3 text-sm text-right font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}
+                >
+                  {isPositive ? '+' : ''}
+                  {gainPercent.toFixed(2)}%
                 </td>
               </tr>
             )
@@ -212,15 +263,27 @@ function AddTransactionForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Transaction</h3>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white border border-gray-200 rounded-lg p-6"
+    >
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        Add Transaction
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Type
+          </label>
           <select
             value={formData.transaction_type}
-            onChange={(e) => setFormData({ ...formData, transaction_type: e.target.value as TransactionType })}
+            onChange={e =>
+              setFormData({
+                ...formData,
+                transaction_type: e.target.value as TransactionType,
+              })
+            }
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           >
             <option value={TransactionType.BUY}>Buy</option>
@@ -229,11 +292,15 @@ function AddTransactionForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Symbol</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Symbol
+          </label>
           <input
             type="text"
             value={formData.stock_symbol}
-            onChange={(e) => setFormData({ ...formData, stock_symbol: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, stock_symbol: e.target.value })
+            }
             placeholder="e.g., 005930"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -241,12 +308,14 @@ function AddTransactionForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Shares</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Shares
+          </label>
           <input
             type="number"
             step="0.01"
             value={formData.shares}
-            onChange={(e) => setFormData({ ...formData, shares: e.target.value })}
+            onChange={e => setFormData({ ...formData, shares: e.target.value })}
             placeholder="10"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -254,12 +323,14 @@ function AddTransactionForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Price
+          </label>
           <input
             type="number"
             step="0.01"
             value={formData.price}
-            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+            onChange={e => setFormData({ ...formData, price: e.target.value })}
             placeholder="70000"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -267,23 +338,29 @@ function AddTransactionForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Commission (₩)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Commission (₩)
+          </label>
           <input
             type="number"
             step="0.01"
             value={formData.commission}
-            onChange={(e) => setFormData({ ...formData, commission: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, commission: e.target.value })
+            }
             placeholder="500"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
         </div>
 
         <div className="md:col-span-2 lg:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Notes (optional)
+          </label>
           <input
             type="text"
             value={formData.notes}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            onChange={e => setFormData({ ...formData, notes: e.target.value })}
             placeholder="Add notes..."
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
@@ -313,9 +390,18 @@ export default function PortfolioDetailPage() {
   const portfolioId = id ? parseInt(id, 10) : undefined
 
   const { user, isAuthenticated } = useAuthStore()
-  const { portfolio, holdings, isLoading, isError, error, refresh } = usePortfolioDetail(portfolioId)
-  const { performance, allocation, isLoading: isPerfLoading } = usePortfolioPerformance(portfolioId)
-  const { transactions, isLoading: isTransLoading } = useTransactions(portfolioId, 0, 10)
+  const { portfolio, holdings, isLoading, isError, error, refresh } =
+    usePortfolioDetail(portfolioId)
+  const {
+    performance,
+    allocation,
+    isLoading: isPerfLoading,
+  } = usePortfolioPerformance(portfolioId)
+  const { transactions, isLoading: isTransLoading } = useTransactions(
+    portfolioId,
+    0,
+    10,
+  )
 
   // Set page title - must be called before any conditional returns
   useEffect(() => {
@@ -345,9 +431,13 @@ export default function PortfolioDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
           <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-red-900 text-center mb-2">Error</h2>
+          <h2 className="text-xl font-semibold text-red-900 text-center mb-2">
+            Error
+          </h2>
           <p className="text-red-700 text-center">
-            {error instanceof Error ? error.message : 'Failed to load portfolio'}
+            {error instanceof Error
+              ? error.message
+              : 'Failed to load portfolio'}
           </p>
           <button
             onClick={() => navigate('/portfolios')}
@@ -375,7 +465,9 @@ export default function PortfolioDetailPage() {
 
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{portfolio.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {portfolio.name}
+              </h1>
               {portfolio.description && (
                 <p className="mt-2 text-gray-600">{portfolio.description}</p>
               )}
@@ -393,7 +485,9 @@ export default function PortfolioDetailPage() {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Performance Metrics */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Performance</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Performance
+          </h2>
           <PerformanceMetrics performance={performance} />
         </section>
 
@@ -413,40 +507,63 @@ export default function PortfolioDetailPage() {
         {/* Charts Section */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Performance Chart */}
-          <PerformanceChart performance={performance} title="Performance Overview" />
+          <PerformanceChart
+            performance={performance}
+            title="Performance Overview"
+          />
 
           {/* Allocation Charts */}
-          <AllocationChart allocation={allocation} type="stock" title="Stock Allocation" />
+          <AllocationChart
+            allocation={allocation}
+            type="stock"
+            title="Stock Allocation"
+          />
         </section>
 
         {/* Sector Allocation */}
         <section>
-          <AllocationChart allocation={allocation} type="sector" title="Sector Allocation" />
+          <AllocationChart
+            allocation={allocation}
+            type="sector"
+            title="Sector Allocation"
+          />
         </section>
 
         {/* Recent Transactions */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Transactions</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Recent Transactions
+          </h2>
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             {isTransLoading ? (
-              <p className="text-center text-gray-500">Loading transactions...</p>
+              <p className="text-center text-gray-500">
+                Loading transactions...
+              </p>
             ) : transactions.length === 0 ? (
               <p className="text-center text-gray-500">No transactions yet</p>
             ) : (
               <div className="space-y-3">
-                {transactions.slice(0, 5).map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                {transactions.slice(0, 5).map(tx => (
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                  >
                     <div className="flex items-center gap-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded ${
-                        tx.transaction_type === TransactionType.BUY
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-700'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded ${
+                          tx.transaction_type === TransactionType.BUY
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700'
+                        }`}
+                      >
                         {tx.transaction_type}
                       </span>
-                      <span className="font-medium text-gray-900">{tx.stock_symbol}</span>
+                      <span className="font-medium text-gray-900">
+                        {tx.stock_symbol}
+                      </span>
                       <span className="text-sm text-gray-600">
-                        {parseFloat(tx.shares).toLocaleString()} shares @ ₩{parseFloat(tx.price).toLocaleString()}
+                        {parseFloat(tx.shares).toLocaleString()} shares @ ₩
+                        {parseFloat(tx.price).toLocaleString()}
                       </span>
                     </div>
                     <span className="text-sm text-gray-500">

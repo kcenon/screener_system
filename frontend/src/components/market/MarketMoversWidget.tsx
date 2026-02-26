@@ -34,7 +34,9 @@ function MoverItem({ stock, rank }: { stock: MarketMover; rank: number }) {
       {/* Stock info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-900 truncate">{stock.name}</span>
+          <span className="font-medium text-gray-900 truncate">
+            {stock.name}
+          </span>
           {isSignificant && <span>🔥</span>}
         </div>
         <div className="text-xs text-gray-500">{stock.code}</div>
@@ -86,7 +88,8 @@ export function MarketMoversWidget({
   autoRefresh = true,
   className = '',
 }: MarketMoversWidgetProps) {
-  const [selectedMarket, setSelectedMarket] = useState<MarketType>(defaultMarket)
+  const [selectedMarket, setSelectedMarket] =
+    useState<MarketType>(defaultMarket)
 
   const { data, isLoading, error } = useMarketMovers({
     market: selectedMarket,
@@ -99,12 +102,15 @@ export function MarketMoversWidget({
       {/* Header with market filter */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-base font-semibold text-gray-900">
-          시장 주도주 <span className="text-sm font-normal text-gray-500">Market Movers</span>
+          시장 주도주{' '}
+          <span className="text-sm font-normal text-gray-500">
+            Market Movers
+          </span>
         </h2>
 
         {/* Market filter */}
         <div className="flex gap-1.5">
-          {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map((market) => (
+          {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map(market => (
             <button
               key={market}
               onClick={() => setSelectedMarket(market)}
@@ -123,7 +129,9 @@ export function MarketMoversWidget({
       {/* Error State */}
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-          <p className="text-sm text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-red-600">
+            데이터를 불러오는 중 오류가 발생했습니다.
+          </p>
         </div>
       )}
 
@@ -133,7 +141,10 @@ export function MarketMoversWidget({
           {[...Array(2)].map((_, col) => (
             <div key={col} className="space-y-2">
               {[...Array(5)].map((_, row) => (
-                <div key={row} className="h-16 animate-pulse rounded-lg bg-gray-200"></div>
+                <div
+                  key={row}
+                  className="h-16 animate-pulse rounded-lg bg-gray-200"
+                ></div>
               ))}
             </div>
           ))}

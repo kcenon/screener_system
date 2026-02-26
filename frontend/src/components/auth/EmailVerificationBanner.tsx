@@ -10,7 +10,7 @@ import { authService } from '@/services/authService'
  * their email. Includes a link to resend verification email.
  */
 export default function EmailVerificationBanner() {
-  const user = useAuthStore((state) => state.user)
+  const user = useAuthStore(state => state.user)
   const [isDismissed, setIsDismissed] = useState(false)
 
   const resendMutation = useMutation({
@@ -61,7 +61,9 @@ export default function EmailVerificationBanner() {
               disabled={resendMutation.isPending}
               className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-yellow-600 bg-white hover:bg-yellow-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {resendMutation.isPending ? 'Sending...' : 'Resend Verification Email'}
+              {resendMutation.isPending
+                ? 'Sending...'
+                : 'Resend Verification Email'}
             </button>
             {resendMutation.isSuccess && (
               <span className="ml-2 text-sm text-yellow-700">Email sent!</span>

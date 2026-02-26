@@ -158,7 +158,7 @@ interface AuthState {
  */
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    set => ({
       user: null,
       accessToken: null,
       refreshToken: null,
@@ -186,7 +186,7 @@ export const useAuthStore = create<AuthState>()(
         })
       },
 
-      setUser: (user) => set({ user }),
+      setUser: user => set({ user }),
 
       updateTokens: (accessToken, refreshToken) => {
         // Update tokens in localStorage
@@ -196,6 +196,6 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-    }
-  )
+    },
+  ),
 )

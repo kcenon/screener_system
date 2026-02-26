@@ -17,7 +17,7 @@ const mockCanvasContext = {
 describe('InCellSparkline', () => {
   beforeEach(() => {
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
-      mockCanvasContext as unknown as CanvasRenderingContext2D
+      mockCanvasContext as unknown as CanvasRenderingContext2D,
     )
   })
 
@@ -29,7 +29,11 @@ describe('InCellSparkline', () => {
   describe('Rendering', () => {
     it('renders canvas element with correct dimensions', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 102, 101, 103, 105]} width={40} height={20} />
+        <InCellSparkline
+          data={[100, 102, 101, 103, 105]}
+          width={40}
+          height={20}
+        />,
       )
 
       const canvas = container.querySelector('canvas')
@@ -40,19 +44,23 @@ describe('InCellSparkline', () => {
     it('renders placeholder when data is empty', () => {
       render(<InCellSparkline data={[]} />)
 
-      expect(screen.getByLabelText('No price data available')).toBeInTheDocument()
+      expect(
+        screen.getByLabelText('No price data available'),
+      ).toBeInTheDocument()
       expect(screen.getByText('-')).toBeInTheDocument()
     })
 
     it('renders placeholder when data has single point', () => {
       render(<InCellSparkline data={[100]} />)
 
-      expect(screen.getByLabelText('No price data available')).toBeInTheDocument()
+      expect(
+        screen.getByLabelText('No price data available'),
+      ).toBeInTheDocument()
     })
 
     it('applies custom width and height', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 105, 103]} width={60} height={30} />
+        <InCellSparkline data={[100, 105, 103]} width={60} height={30} />,
       )
 
       const canvas = container.querySelector('canvas')
@@ -61,7 +69,7 @@ describe('InCellSparkline', () => {
 
     it('applies custom className', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 105]} className="custom-class" />
+        <InCellSparkline data={[100, 105]} className="custom-class" />,
       )
 
       const canvas = container.querySelector('canvas')
@@ -76,7 +84,7 @@ describe('InCellSparkline', () => {
       const canvas = screen.getByRole('img')
       expect(canvas).toHaveAttribute(
         'aria-label',
-        expect.stringContaining('up')
+        expect.stringContaining('up'),
       )
     })
 
@@ -86,7 +94,7 @@ describe('InCellSparkline', () => {
       const canvas = screen.getByRole('img')
       expect(canvas).toHaveAttribute(
         'aria-label',
-        expect.stringContaining('down')
+        expect.stringContaining('down'),
       )
     })
   })
@@ -94,7 +102,7 @@ describe('InCellSparkline', () => {
   describe('Tooltip', () => {
     it('shows tooltip with trend percentage when showTooltip is true', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 110]} showTooltip={true} />
+        <InCellSparkline data={[100, 110]} showTooltip={true} />,
       )
 
       const canvas = container.querySelector('canvas')
@@ -103,7 +111,7 @@ describe('InCellSparkline', () => {
 
     it('does not show tooltip when showTooltip is false', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 110]} showTooltip={false} />
+        <InCellSparkline data={[100, 110]} showTooltip={false} />,
       )
 
       const canvas = container.querySelector('canvas')
@@ -139,9 +147,7 @@ describe('InCellSparkline', () => {
 
   describe('Color modes', () => {
     it('uses auto color mode by default', () => {
-      const { container } = render(
-        <InCellSparkline data={[100, 105]} />
-      )
+      const { container } = render(<InCellSparkline data={[100, 105]} />)
 
       const canvas = container.querySelector('canvas')
       expect(canvas).toBeInTheDocument()
@@ -150,7 +156,7 @@ describe('InCellSparkline', () => {
 
     it('accepts green color prop', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 95]} color="green" />
+        <InCellSparkline data={[100, 95]} color="green" />,
       )
 
       expect(container.querySelector('canvas')).toBeInTheDocument()
@@ -158,7 +164,7 @@ describe('InCellSparkline', () => {
 
     it('accepts red color prop', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 105]} color="red" />
+        <InCellSparkline data={[100, 105]} color="red" />,
       )
 
       expect(container.querySelector('canvas')).toBeInTheDocument()
@@ -166,7 +172,7 @@ describe('InCellSparkline', () => {
 
     it('accepts gray color prop', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 100]} color="gray" />
+        <InCellSparkline data={[100, 100]} color="gray" />,
       )
 
       expect(container.querySelector('canvas')).toBeInTheDocument()
@@ -176,7 +182,7 @@ describe('InCellSparkline', () => {
   describe('Edge cases', () => {
     it('handles identical values gracefully', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 100, 100, 100, 100]} />
+        <InCellSparkline data={[100, 100, 100, 100, 100]} />,
       )
 
       expect(container.querySelector('canvas')).toBeInTheDocument()
@@ -184,7 +190,7 @@ describe('InCellSparkline', () => {
 
     it('handles negative values', () => {
       const { container } = render(
-        <InCellSparkline data={[-10, -5, 0, 5, 10]} />
+        <InCellSparkline data={[-10, -5, 0, 5, 10]} />,
       )
 
       expect(container.querySelector('canvas')).toBeInTheDocument()
@@ -192,7 +198,7 @@ describe('InCellSparkline', () => {
 
     it('handles large value ranges', () => {
       const { container } = render(
-        <InCellSparkline data={[1, 1000000, 500000, 2000000]} />
+        <InCellSparkline data={[1, 1000000, 500000, 2000000]} />,
       )
 
       expect(container.querySelector('canvas')).toBeInTheDocument()
@@ -200,7 +206,7 @@ describe('InCellSparkline', () => {
 
     it('handles 7 data points (typical use case)', () => {
       const { container } = render(
-        <InCellSparkline data={[100, 102, 99, 101, 103, 105, 104]} />
+        <InCellSparkline data={[100, 102, 99, 101, 103, 105, 104]} />,
       )
 
       expect(container.querySelector('canvas')).toBeInTheDocument()

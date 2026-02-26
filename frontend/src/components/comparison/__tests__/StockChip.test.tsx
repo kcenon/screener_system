@@ -58,7 +58,7 @@ describe('StockChip', () => {
 
   it('should apply custom className', () => {
     const { container } = render(
-      <StockChip {...defaultProps} className="custom-class" />
+      <StockChip {...defaultProps} className="custom-class" />,
     )
 
     const chip = container.firstChild as HTMLElement

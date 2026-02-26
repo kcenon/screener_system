@@ -106,7 +106,9 @@ export default function PerformanceChart({
     const totalValue = parseFloat(performance.total_value || '0')
     const totalCost = parseFloat(performance.total_cost || '0')
     const totalGain = parseFloat(performance.total_gain || '0')
-    const totalReturnPercent = parseFloat(performance.total_return_percent || '0')
+    const totalReturnPercent = parseFloat(
+      performance.total_return_percent || '0',
+    )
     const dayChange = parseFloat(performance.day_change || '0')
     const dayChangePercent = parseFloat(performance.day_change_percent || '0')
 
@@ -126,11 +128,15 @@ export default function PerformanceChart({
   if (!performance || chartData.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        {title && <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>}
+        {title && (
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+        )}
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
             <p>No performance data available</p>
-            <p className="text-sm mt-1">Add some holdings to track performance</p>
+            <p className="text-sm mt-1">
+              Add some holdings to track performance
+            </p>
           </div>
         </div>
       </div>
@@ -141,7 +147,9 @@ export default function PerformanceChart({
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
-      {title && <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>}
+      {title && (
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+      )}
 
       {/* Performance Summary Cards */}
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -187,7 +195,8 @@ export default function PerformanceChart({
               metrics.isDayPositive ? 'text-green-600' : 'text-red-600'
             }`}
           >
-            {metrics.isDayPositive ? '+' : ''}₩{metrics.dayChange.toLocaleString()}
+            {metrics.isDayPositive ? '+' : ''}₩
+            {metrics.dayChange.toLocaleString()}
           </div>
           <div
             className={`text-sm ${
@@ -212,7 +221,7 @@ export default function PerformanceChart({
           <YAxis
             tick={{ fill: '#6B7280', fontSize: 12 }}
             axisLine={{ stroke: '#D1D5DB' }}
-            tickFormatter={(value) => `₩${(value / 1000).toFixed(0)}k`}
+            tickFormatter={value => `₩${(value / 1000).toFixed(0)}k`}
           />
           <Tooltip content={<CustomTooltip />} />
           <Bar dataKey="value" radius={[8, 8, 0, 0]}>
@@ -226,8 +235,8 @@ export default function PerformanceChart({
       {/* Historical Note */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <p className="text-xs text-gray-500">
-          💡 Historical performance tracking will be available soon. Currently showing
-          current snapshot.
+          💡 Historical performance tracking will be available soon. Currently
+          showing current snapshot.
         </p>
       </div>
     </div>

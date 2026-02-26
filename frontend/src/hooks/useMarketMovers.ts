@@ -36,9 +36,14 @@ export interface UseMarketMoversOptions {
  * ```
  */
 export function useMarketMovers(
-  options: UseMarketMoversOptions = {}
+  options: UseMarketMoversOptions = {},
 ): UseQueryResult<MarketMoversResponse, Error> {
-  const { market = 'ALL', limit = 10, refetchInterval = 60000, enabled = true } = options
+  const {
+    market = 'ALL',
+    limit = 10,
+    refetchInterval = 60000,
+    enabled = true,
+  } = options
 
   return useQuery<MarketMoversResponse, Error>({
     queryKey: ['market', 'movers', market, limit],

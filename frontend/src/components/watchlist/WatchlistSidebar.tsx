@@ -41,7 +41,7 @@ export function WatchlistSidebar({
     return (
       <div className="w-64 bg-white border-r border-gray-200 p-4">
         <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div
               key={i}
               className="h-16 bg-gray-100 rounded-lg animate-pulse"
@@ -85,7 +85,7 @@ export function WatchlistSidebar({
           </div>
         ) : (
           <div className="space-y-1">
-            {watchlists.map((watchlist) => {
+            {watchlists.map(watchlist => {
               const isActive = watchlist.id === activeWatchlistId
 
               return (
@@ -123,7 +123,8 @@ export function WatchlistSidebar({
                         {watchlist.name}
                       </h3>
                       <p className="text-xs text-gray-500 mt-0.5">
-                        {watchlist.stocks.length} stock{watchlist.stocks.length !== 1 ? 's' : ''}
+                        {watchlist.stocks.length} stock
+                        {watchlist.stocks.length !== 1 ? 's' : ''}
                       </p>
                     </div>
 
@@ -136,7 +137,7 @@ export function WatchlistSidebar({
                       `}
                     >
                       <button
-                        onClick={(e) => handleEdit(e, watchlist)}
+                        onClick={e => handleEdit(e, watchlist)}
                         className="
                           p-1 rounded
                           text-gray-400 hover:text-blue-600 hover:bg-blue-100
@@ -147,7 +148,7 @@ export function WatchlistSidebar({
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={(e) => handleDelete(e, watchlist.id)}
+                        onClick={e => handleDelete(e, watchlist.id)}
                         className="
                           p-1 rounded
                           text-gray-400 hover:text-red-600 hover:bg-red-100
@@ -175,9 +176,7 @@ export function WatchlistSidebar({
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-200 text-xs text-gray-500">
-        <p>
-          {watchlists.length} / 10 watchlists
-        </p>
+        <p>{watchlists.length} / 10 watchlists</p>
       </div>
     </aside>
   )

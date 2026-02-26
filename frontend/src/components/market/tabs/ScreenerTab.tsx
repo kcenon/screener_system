@@ -19,7 +19,10 @@ import ResultsTable from '@/components/screener/ResultsTable'
 import Pagination from '@/components/common/Pagination'
 import ExportButton from '@/components/screener/ExportButton'
 import { FreemiumBanner, LimitReachedModal } from '@/components/freemium'
-import type { ScreeningSortField, StockScreeningResult } from '@/types/screening'
+import type {
+  ScreeningSortField,
+  StockScreeningResult,
+} from '@/types/screening'
 
 interface ScreenerTabProps {
   // Optional: can accept filters from parent (e.g., sector filter from heatmap)
@@ -92,11 +95,13 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
   const currentPage = Math.floor(pagination.offset / pagination.limit) + 1
 
   // Apply freemium limits
-  const displayedStocks = !isAuthenticated && data?.stocks && maxScreeningResults > 0
-    ? data.stocks.slice(0, maxScreeningResults)
-    : data?.stocks || []
+  const displayedStocks =
+    !isAuthenticated && data?.stocks && maxScreeningResults > 0
+      ? data.stocks.slice(0, maxScreeningResults)
+      : data?.stocks || []
 
-  const isResultsLimited = !isAuthenticated && (data?.stocks?.length || 0) > maxScreeningResults
+  const isResultsLimited =
+    !isAuthenticated && (data?.stocks?.length || 0) > maxScreeningResults
 
   return (
     <div className="space-y-4">
@@ -113,7 +118,11 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
         <div className="rounded-md bg-red-50 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <svg
+                className="h-5 w-5 text-red-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -122,7 +131,9 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error loading data</h3>
+              <h3 className="text-sm font-medium text-red-800">
+                Error loading data
+              </h3>
               <p className="mt-1 text-sm text-red-700">{error.message}</p>
             </div>
           </div>
@@ -138,7 +149,9 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
             onFiltersChange={setFilters}
             onClearFilters={handleClearFilters}
             presets={presets}
-            onSavePreset={(name, description) => savePreset(name, filters, description)}
+            onSavePreset={(name, description) =>
+              savePreset(name, filters, description)
+            }
             onDeletePreset={deletePreset}
           />
         </FilterPanelCollapsible>
@@ -151,17 +164,25 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
               <p className="text-sm text-gray-700">
                 {isResultsLimited ? (
                   <>
-                    Showing <span className="font-semibold">{maxScreeningResults}</span> of{' '}
-                    <span className="font-semibold">{data.meta.total}</span> stocks{' '}
-                    <span className="text-blue-600 font-medium">(Sign up for full results)</span>
+                    Showing{' '}
+                    <span className="font-semibold">{maxScreeningResults}</span>{' '}
+                    of <span className="font-semibold">{data.meta.total}</span>{' '}
+                    stocks{' '}
+                    <span className="text-blue-600 font-medium">
+                      (Sign up for full results)
+                    </span>
                   </>
                 ) : (
                   <>
-                    Found <span className="font-semibold">{data.meta.total}</span> stocks
+                    Found{' '}
+                    <span className="font-semibold">{data.meta.total}</span>{' '}
+                    stocks
                   </>
                 )}
                 {data.query_time_ms && (
-                  <span className="text-gray-500 ml-2">({data.query_time_ms}ms)</span>
+                  <span className="text-gray-500 ml-2">
+                    ({data.query_time_ms}ms)
+                  </span>
                 )}
               </p>
               {canExportResults ? (
@@ -191,10 +212,12 @@ export function ScreenerTab({ initialFilters }: ScreenerTabProps) {
           {isResultsLimited && (
             <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 text-center">
               <p className="text-blue-900 font-medium mb-2">
-                📊 {data!.meta.total - maxScreeningResults} more stocks match your criteria
+                📊 {data!.meta.total - maxScreeningResults} more stocks match
+                your criteria
               </p>
               <p className="text-blue-700 text-sm mb-3">
-                Sign up for free to view all {data!.meta.total} results and unlock unlimited searches
+                Sign up for free to view all {data!.meta.total} results and
+                unlock unlimited searches
               </p>
               <div className="flex gap-2 justify-center">
                 <button

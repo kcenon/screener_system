@@ -60,7 +60,9 @@ export default function FilterPresetManager({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Saved Presets</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Saved Presets
+        </label>
         <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <Dialog.Trigger asChild>
             <button className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
@@ -80,14 +82,17 @@ export default function FilterPresetManager({
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="preset-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label
+                    htmlFor="preset-name"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
                     Preset Name *
                   </label>
                   <input
                     id="preset-name"
                     type="text"
                     value={presetName}
-                    onChange={(e) => setPresetName(e.target.value)}
+                    onChange={e => setPresetName(e.target.value)}
                     placeholder="e.g., High Growth Tech Stocks"
                     className="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
                     autoFocus
@@ -95,13 +100,16 @@ export default function FilterPresetManager({
                 </div>
 
                 <div>
-                  <label htmlFor="preset-description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label
+                    htmlFor="preset-description"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
                     Description (Optional)
                   </label>
                   <textarea
                     id="preset-description"
                     value={presetDescription}
-                    onChange={(e) => setPresetDescription(e.target.value)}
+                    onChange={e => setPresetDescription(e.target.value)}
                     placeholder="e.g., Technology stocks with >20% revenue growth"
                     rows={3}
                     className="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 resize-none transition-colors"
@@ -137,27 +145,36 @@ export default function FilterPresetManager({
             Click &ldquo;Save Current&rdquo; to save your filters.
           </p>
         ) : (
-          presets.map((preset) => (
+          presets.map(preset => (
             <div
               key={preset.id}
               className="group flex items-start justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer transition-colors"
               onClick={() => handleLoad(preset)}
             >
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{preset.name}</h4>
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                  {preset.name}
+                </h4>
                 {preset.description && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">{preset.description}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+                    {preset.description}
+                  </p>
                 )}
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   {new Date(preset.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <button
-                onClick={(e) => handleDelete(preset.id, e)}
+                onClick={e => handleDelete(preset.id, e)}
                 className="ml-2 p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"
                 aria-label="Delete preset"
               >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

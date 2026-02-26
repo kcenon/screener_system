@@ -185,7 +185,8 @@ export function useFreemiumAccess(): FreemiumLimits {
       maxWatchlists: limits.maxWatchlists,
       maxStocksPerWatchlist: limits.maxStocksPerWatchlist,
       chartTimeframes: limits.chartTimeframes,
-      aiRecommendations: 'aiRecommendations' in limits ? limits.aiRecommendations : false,
+      aiRecommendations:
+        'aiRecommendations' in limits ? limits.aiRecommendations : false,
       apiAccess: 'apiAccess' in limits ? limits.apiAccess : false,
       priceAlerts: 'priceAlerts' in limits ? limits.priceAlerts : false,
     }

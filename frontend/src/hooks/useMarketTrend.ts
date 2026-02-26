@@ -35,7 +35,7 @@ export interface UseMarketTrendOptions {
  * ```
  */
 export function useMarketTrend(
-  options: UseMarketTrendOptions = {}
+  options: UseMarketTrendOptions = {},
 ): UseQueryResult<MarketTrendResponse, Error> {
   const {
     timeframe = '3M',

@@ -17,7 +17,12 @@ interface StockTabsProps {
   canViewAllTechnicals?: boolean
 }
 
-type TabValue = 'overview' | 'financials' | 'valuation' | 'technical' | 'orderbook'
+type TabValue =
+  | 'overview'
+  | 'financials'
+  | 'valuation'
+  | 'technical'
+  | 'orderbook'
 
 /**
  * Stock Tabs Component
@@ -62,12 +67,12 @@ export default function StockTabs({
   return (
     <Tabs.Root
       value={activeTab}
-      onValueChange={(value) => setActiveTab(value as TabValue)}
+      onValueChange={value => setActiveTab(value as TabValue)}
       className="w-full"
     >
       {/* Tab List */}
       <Tabs.List className="flex border-b border-gray-200 mb-6">
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <Tabs.Trigger
             key={tab.value}
             value={tab.value}
@@ -122,7 +127,12 @@ export default function StockTabs({
         {orderBookError ? (
           <div className="bg-white rounded-lg shadow-sm p-8 text-center">
             <div className="text-red-600 mb-2">
-              <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                className="w-12 h-12 mx-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -132,7 +142,9 @@ export default function StockTabs({
               </svg>
             </div>
             <p className="text-sm text-gray-600 mb-4">{orderBookError}</p>
-            <p className="text-xs text-gray-500">실시간 호가 데이터를 사용하려면 로그인이 필요합니다.</p>
+            <p className="text-xs text-gray-500">
+              실시간 호가 데이터를 사용하려면 로그인이 필요합니다.
+            </p>
           </div>
         ) : (
           <OrderBook

@@ -24,7 +24,9 @@ vi.mock('@/utils/format', () => ({
 }))
 
 // Helper to create mock order book data
-function createMockOrderBookData(overrides?: Partial<OrderBookData>): OrderBookData {
+function createMockOrderBookData(
+  overrides?: Partial<OrderBookData>,
+): OrderBookData {
   return {
     stock_code: '005930',
     timestamp: '2024-01-15T10:30:00Z',
@@ -53,7 +55,9 @@ function createMockOrderBookData(overrides?: Partial<OrderBookData>): OrderBookD
 }
 
 // Helper to create mock imbalance data
-function createMockImbalance(overrides?: Partial<OrderImbalance>): OrderImbalance {
+function createMockImbalance(
+  overrides?: Partial<OrderImbalance>,
+): OrderImbalance {
   return {
     total_bid_volume: 3900,
     total_ask_volume: 4100,
@@ -76,7 +80,9 @@ describe('OrderBook Component', () => {
     })
 
     it('should show loading animation', () => {
-      const { container } = render(<OrderBook data={null} imbalance={null} isLoading={true} />)
+      const { container } = render(
+        <OrderBook data={null} imbalance={null} isLoading={true} />,
+      )
 
       const spinner = container.querySelector('.animate-spin')
       expect(spinner).toBeInTheDocument()
@@ -112,7 +118,9 @@ describe('OrderBook Component', () => {
     it('should display correct number of levels', () => {
       const mockData = createMockOrderBookData()
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} levels={5} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} levels={5} />,
+      )
 
       // Should display 5 ask and 5 bid levels (total 10 level rows)
       const levelRows = container.querySelectorAll('.grid.grid-cols-3')
@@ -218,7 +226,9 @@ describe('OrderBook Component', () => {
         direction: 'neutral',
       })
 
-      render(<OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />)
+      render(
+        <OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />,
+      )
 
       expect(screen.getByText('주문 불균형')).toBeInTheDocument()
       expect(screen.getByText('균형')).toBeInTheDocument()
@@ -233,7 +243,9 @@ describe('OrderBook Component', () => {
         total_ask_volume: 3500,
       })
 
-      render(<OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />)
+      render(
+        <OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />,
+      )
 
       expect(screen.getByText('매수 우세')).toBeInTheDocument()
     })
@@ -247,7 +259,9 @@ describe('OrderBook Component', () => {
         total_ask_volume: 6500,
       })
 
-      render(<OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />)
+      render(
+        <OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />,
+      )
 
       expect(screen.getByText('매도 우세')).toBeInTheDocument()
     })
@@ -259,7 +273,9 @@ describe('OrderBook Component', () => {
         total_ask_volume: 3000,
       })
 
-      render(<OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />)
+      render(
+        <OrderBook data={mockData} imbalance={mockImbalance} detailed={true} />,
+      )
 
       expect(screen.getByText('매수:')).toBeInTheDocument()
       expect(screen.getByText('매도:')).toBeInTheDocument()
@@ -269,7 +285,13 @@ describe('OrderBook Component', () => {
       const mockData = createMockOrderBookData()
       const mockImbalance = createMockImbalance()
 
-      render(<OrderBook data={mockData} imbalance={mockImbalance} detailed={false} />)
+      render(
+        <OrderBook
+          data={mockData}
+          imbalance={mockImbalance}
+          detailed={false}
+        />,
+      )
 
       expect(screen.queryByText('주문 불균형')).not.toBeInTheDocument()
     })
@@ -294,7 +316,7 @@ describe('OrderBook Component', () => {
           imbalance={null}
           frozen={false}
           onToggleFreeze={onToggleFreeze}
-        />
+        />,
       )
 
       expect(screen.getByText('▶ 실시간')).toBeInTheDocument()
@@ -310,7 +332,7 @@ describe('OrderBook Component', () => {
           imbalance={null}
           frozen={true}
           onToggleFreeze={onToggleFreeze}
-        />
+        />,
       )
 
       expect(screen.getByText('⏸ 정지됨')).toBeInTheDocument()
@@ -326,7 +348,7 @@ describe('OrderBook Component', () => {
           imbalance={null}
           frozen={false}
           onToggleFreeze={onToggleFreeze}
-        />
+        />,
       )
 
       const button = screen.getByText('▶ 실시간')
@@ -354,7 +376,7 @@ describe('OrderBook Component', () => {
           imbalance={null}
           frozen={true}
           onToggleFreeze={onToggleFreeze}
-        />
+        />,
       )
 
       const button = screen.getByText('⏸ 정지됨')
@@ -366,7 +388,9 @@ describe('OrderBook Component', () => {
     it('should render bid levels with blue styling', () => {
       const mockData = createMockOrderBookData()
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
 
       // Check for blue-colored bid level elements
       const blueElements = container.querySelectorAll('.bg-blue-50')
@@ -376,7 +400,9 @@ describe('OrderBook Component', () => {
     it('should render ask levels with red styling', () => {
       const mockData = createMockOrderBookData()
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
 
       // Check for red-colored ask level elements
       const redElements = container.querySelectorAll('.bg-red-50')
@@ -386,7 +412,9 @@ describe('OrderBook Component', () => {
     it('should highlight best bid (first bid row)', () => {
       const mockData = createMockOrderBookData()
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
 
       // Best bid should have highlighted border
       const highlightedBid = container.querySelector('.border-blue-600')
@@ -396,7 +424,9 @@ describe('OrderBook Component', () => {
     it('should highlight best ask (last ask row in reversed display)', () => {
       const mockData = createMockOrderBookData()
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
 
       // Best ask should have highlighted border
       const highlightedAsk = container.querySelector('.border-red-600')
@@ -417,7 +447,9 @@ describe('OrderBook Component', () => {
         ],
       })
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
 
       // Volume bars should have varying widths based on volume
       const volumeBars = container.querySelectorAll('[style*="width"]')
@@ -431,7 +463,9 @@ describe('OrderBook Component', () => {
       })
 
       // Should render without error
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
       expect(container).toBeInTheDocument()
     })
   })
@@ -440,7 +474,9 @@ describe('OrderBook Component', () => {
     it('should apply flash animation class on data update', async () => {
       const mockData1 = createMockOrderBookData({ sequence: 1 })
 
-      const { rerender, container } = render(<OrderBook data={mockData1} imbalance={null} />)
+      const { rerender, container } = render(
+        <OrderBook data={mockData1} imbalance={null} />,
+      )
 
       // Check for animate-pulse class (flash animation)
       const animatedElements = container.querySelectorAll('.animate-pulse')
@@ -473,7 +509,9 @@ describe('OrderBook Component', () => {
       })
 
       // Request 10 levels but only 1 available each side
-      const { container } = render(<OrderBook data={mockData} imbalance={null} levels={10} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} levels={10} />,
+      )
 
       // Should only render available levels
       expect(container).toBeInTheDocument()
@@ -500,7 +538,7 @@ describe('OrderBook Component', () => {
           imbalance={null}
           frozen={false}
           onToggleFreeze={onToggleFreeze}
-        />
+        />,
       )
 
       const button = screen.getByTitle('업데이트 중지')
@@ -517,7 +555,7 @@ describe('OrderBook Component', () => {
           imbalance={null}
           frozen={true}
           onToggleFreeze={onToggleFreeze}
-        />
+        />,
       )
 
       const button = screen.getByTitle('업데이트 재개')
@@ -531,7 +569,9 @@ describe('OrderBook Component', () => {
         asks: [],
       })
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
       expect(container).toBeInTheDocument()
     })
 
@@ -540,7 +580,9 @@ describe('OrderBook Component', () => {
         bids: [],
       })
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
       expect(container).toBeInTheDocument()
     })
 
@@ -550,7 +592,9 @@ describe('OrderBook Component', () => {
         bids: [],
       })
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
       expect(container).toBeInTheDocument()
     })
 
@@ -564,7 +608,9 @@ describe('OrderBook Component', () => {
         mid_price: 999999998.5,
       })
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
       expect(container).toBeInTheDocument()
     })
 
@@ -576,10 +622,12 @@ describe('OrderBook Component', () => {
         best_bid: 100.45,
         spread: 0.1,
         spread_pct: 0.1,
-        mid_price: 100.50,
+        mid_price: 100.5,
       })
 
-      const { container } = render(<OrderBook data={mockData} imbalance={null} detailed={true} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} detailed={true} />,
+      )
       expect(container).toBeInTheDocument()
     })
 
@@ -589,7 +637,9 @@ describe('OrderBook Component', () => {
       })
 
       // Should not throw
-      const { container } = render(<OrderBook data={mockData} imbalance={null} />)
+      const { container } = render(
+        <OrderBook data={mockData} imbalance={null} />,
+      )
       expect(container).toBeInTheDocument()
     })
   })
@@ -599,7 +649,9 @@ describe('OrderBook Component', () => {
       const mockData = createMockOrderBookData()
       const mockImbalance = createMockImbalance()
 
-      const { rerender } = render(<OrderBook data={mockData} imbalance={mockImbalance} />)
+      const { rerender } = render(
+        <OrderBook data={mockData} imbalance={mockImbalance} />,
+      )
 
       // Re-render with same props (reference equality)
       rerender(<OrderBook data={mockData} imbalance={mockImbalance} />)

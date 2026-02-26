@@ -1,6 +1,10 @@
 import { useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import type { ScreeningFilters, ScreeningSortField, SortOrder } from '@/types/screening'
+import type {
+  ScreeningFilters,
+  ScreeningSortField,
+  SortOrder,
+} from '@/types/screening'
 
 /**
  * Serialize filters to URL search params
@@ -54,14 +58,38 @@ function deserializeFilters(params: URLSearchParams): ScreeningFilters {
 
   // Extract range filters
   const rangeFields = [
-    'per', 'pbr', 'psr', 'pcr', 'dividend_yield',
-    'roe', 'roa', 'roic', 'gross_margin', 'operating_margin', 'net_margin',
-    'revenue_growth_yoy', 'profit_growth_yoy', 'eps_growth_yoy',
-    'debt_to_equity', 'current_ratio', 'altman_z_score', 'piotroski_f_score',
-    'price_change_1d', 'price_change_1w', 'price_change_1m', 'price_change_3m', 'price_change_6m', 'price_change_1y',
+    'per',
+    'pbr',
+    'psr',
+    'pcr',
+    'dividend_yield',
+    'roe',
+    'roa',
+    'roic',
+    'gross_margin',
+    'operating_margin',
+    'net_margin',
+    'revenue_growth_yoy',
+    'profit_growth_yoy',
+    'eps_growth_yoy',
+    'debt_to_equity',
+    'current_ratio',
+    'altman_z_score',
+    'piotroski_f_score',
+    'price_change_1d',
+    'price_change_1w',
+    'price_change_1m',
+    'price_change_3m',
+    'price_change_6m',
+    'price_change_1y',
     'volume_surge_pct',
-    'quality_score', 'value_score', 'growth_score', 'momentum_score', 'overall_score',
-    'current_price', 'market_cap',
+    'quality_score',
+    'value_score',
+    'growth_score',
+    'momentum_score',
+    'overall_score',
+    'current_price',
+    'market_cap',
   ] as const
 
   rangeFields.forEach(field => {
@@ -99,7 +127,7 @@ export function useURLSync(
   sort: { sortBy: ScreeningSortField; order: SortOrder },
   setSort: (sort: { sortBy: ScreeningSortField; order: SortOrder }) => void,
   pagination: { offset: number; limit: number },
-  setPagination: (pagination: { offset: number; limit: number }) => void
+  setPagination: (pagination: { offset: number; limit: number }) => void,
 ) {
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -121,8 +149,12 @@ export function useURLSync(
 
     // Extract pagination params
     if (searchParams.has('offset') || searchParams.has('limit')) {
-      const offset = searchParams.has('offset') ? Number(searchParams.get('offset')) : 0
-      const limit = searchParams.has('limit') ? Number(searchParams.get('limit')) : 50
+      const offset = searchParams.has('offset')
+        ? Number(searchParams.get('offset'))
+        : 0
+      const limit = searchParams.has('limit')
+        ? Number(searchParams.get('limit'))
+        : 50
       setPagination({ offset, limit })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

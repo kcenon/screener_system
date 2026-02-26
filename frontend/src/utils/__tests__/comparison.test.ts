@@ -87,14 +87,14 @@ describe('Comparison Utilities', () => {
       const values = [10, 10, 10]
       const highlights = highlightBestWorst(values, true)
 
-      expect(highlights.every((h) => h === 'neutral')).toBe(true)
+      expect(highlights.every(h => h === 'neutral')).toBe(true)
     })
 
     it('should handle all null values', () => {
       const values = [null, null, null]
       const highlights = highlightBestWorst(values, true)
 
-      expect(highlights.every((h) => h === 'neutral')).toBe(true)
+      expect(highlights.every(h => h === 'neutral')).toBe(true)
     })
 
     it('should ignore null values in comparison', () => {

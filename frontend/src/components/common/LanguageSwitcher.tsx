@@ -46,7 +46,7 @@ export function LanguageSwitcher() {
             {t('language.title')}
           </DropdownMenu.Label>
 
-          {SUPPORTED_LANGUAGES.map((lang) => (
+          {SUPPORTED_LANGUAGES.map(lang => (
             <DropdownMenu.Item
               key={lang}
               onClick={() => handleLanguageChange(lang)}
@@ -61,7 +61,9 @@ export function LanguageSwitcher() {
               <span className="text-base">{LANGUAGE_FLAGS[lang]}</span>
               <span>{LANGUAGE_NAMES[lang]}</span>
               {currentLanguage === lang && (
-                <span className="ml-auto text-blue-600 dark:text-blue-400">✓</span>
+                <span className="ml-auto text-blue-600 dark:text-blue-400">
+                  ✓
+                </span>
               )}
             </DropdownMenu.Item>
           ))}

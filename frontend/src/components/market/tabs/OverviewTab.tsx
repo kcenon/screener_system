@@ -25,7 +25,7 @@ export function OverviewTab({
   autoRefresh = true,
   refreshInterval = 60000,
   onSwitchToMovers,
-  onSwitchToSectors
+  onSwitchToSectors,
 }: OverviewTabProps) {
   return (
     <div className="space-y-6">
@@ -43,10 +43,7 @@ export function OverviewTab({
 
       {/* Sector Heatmap Preview */}
       <div className="relative">
-        <SectorHeatmap
-          defaultTimeframe="1D"
-          autoRefresh={autoRefresh}
-        />
+        <SectorHeatmap defaultTimeframe="1D" autoRefresh={autoRefresh} />
         {onSwitchToSectors && (
           <button
             onClick={onSwitchToSectors}

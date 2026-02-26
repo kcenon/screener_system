@@ -1,4 +1,11 @@
-import { Search, BarChart3, TrendingUp, Briefcase, Bell, Zap } from 'lucide-react'
+import {
+  Search,
+  BarChart3,
+  TrendingUp,
+  Briefcase,
+  Bell,
+  Zap,
+} from 'lucide-react'
 
 interface Feature {
   icon: React.ReactNode
@@ -54,7 +61,9 @@ export default function FeatureShowcase() {
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800 transition-colors">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors">강력한 기능들</h2>
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 transition-colors">
+            강력한 기능들
+          </h2>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors">
             전문 투자자부터 개인 투자자까지,
             <br />
@@ -88,7 +97,9 @@ export default function FeatureShowcase() {
               </h3>
 
               {/* Description */}
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed transition-colors">{feature.description}</p>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed transition-colors">
+                {feature.description}
+              </p>
 
               {/* Hover Effect */}
               <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-blue-600 dark:from-blue-500 dark:to-blue-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl"></div>

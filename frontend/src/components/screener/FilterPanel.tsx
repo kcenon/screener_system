@@ -173,17 +173,22 @@ export default function FilterPanel({
   const [openSections, setOpenSections] = useState<string[]>(['basic'])
 
   const updateFilter = useCallback(
-    <K extends keyof ScreeningFilters>(key: K, value: ScreeningFilters[K]): void => {
+    <K extends keyof ScreeningFilters>(
+      key: K,
+      value: ScreeningFilters[K],
+    ): void => {
       onFiltersChange({ ...filters, [key]: value })
     },
-    [filters, onFiltersChange]
+    [filters, onFiltersChange],
   )
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 space-y-4 transition-colors">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Filters</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Filters
+        </h2>
         <button
           onClick={onClearFilters}
           className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
@@ -203,23 +208,29 @@ export default function FilterPanel({
       )}
 
       {/* Divider */}
-      {onSavePreset && onDeletePreset && <div className="border-t border-gray-200 dark:border-gray-700" />}
+      {onSavePreset && onDeletePreset && (
+        <div className="border-t border-gray-200 dark:border-gray-700" />
+      )}
 
       {/* Search Bar */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Search</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Search
+        </label>
         <SearchBar
           value={filters.search || ''}
-          onChange={(value) => updateFilter('search', value || null)}
+          onChange={value => updateFilter('search', value || null)}
           enableShortcut={true}
         />
       </div>
 
       {/* Market Selector */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Market</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Market
+        </label>
         <div className="flex space-x-2">
-          {(['ALL', 'KOSPI', 'KOSDAQ'] as const).map((market) => (
+          {(['ALL', 'KOSPI', 'KOSDAQ'] as const).map(market => (
             <button
               key={market}
               onClick={() => updateFilter('market', market)}
@@ -238,27 +249,33 @@ export default function FilterPanel({
       {/* Sector/Industry */}
       <div className="space-y-3">
         <div>
-          <label htmlFor="sector" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label
+            htmlFor="sector"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
             Sector
           </label>
           <input
             id="sector"
             type="text"
             value={filters.sector || ''}
-            onChange={(e) => updateFilter('sector', e.target.value || null)}
+            onChange={e => updateFilter('sector', e.target.value || null)}
             placeholder="e.g., Technology"
             className="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
           />
         </div>
         <div>
-          <label htmlFor="industry" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label
+            htmlFor="industry"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
             Industry
           </label>
           <input
             id="industry"
             type="text"
             value={filters.industry || ''}
-            onChange={(e) => updateFilter('industry', e.target.value || null)}
+            onChange={e => updateFilter('industry', e.target.value || null)}
             placeholder="e.g., Semiconductors"
             className="block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 px-3 py-2 text-sm shadow-sm focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
           />
@@ -273,7 +290,10 @@ export default function FilterPanel({
         className="space-y-2"
       >
         {/* Valuation Filters */}
-        <Accordion.Item value="valuation" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
+        <Accordion.Item
+          value="valuation"
+          className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors"
+        >
           <Accordion.Header>
             <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Valuation
@@ -296,29 +316,32 @@ export default function FilterPanel({
             <RangeFilter
               label="PER"
               value={filters.per}
-              onChange={(value) => updateFilter('per', value)}
+              onChange={value => updateFilter('per', value)}
             />
             <RangeFilter
               label="PBR"
               value={filters.pbr}
-              onChange={(value) => updateFilter('pbr', value)}
+              onChange={value => updateFilter('pbr', value)}
             />
             <RangeFilter
               label="PSR"
               value={filters.psr}
-              onChange={(value) => updateFilter('psr', value)}
+              onChange={value => updateFilter('psr', value)}
             />
             <RangeFilter
               label="Dividend Yield"
               value={filters.dividend_yield}
-              onChange={(value) => updateFilter('dividend_yield', value)}
+              onChange={value => updateFilter('dividend_yield', value)}
               unit="%"
             />
           </Accordion.Content>
         </Accordion.Item>
 
         {/* Profitability Filters */}
-        <Accordion.Item value="profitability" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
+        <Accordion.Item
+          value="profitability"
+          className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors"
+        >
           <Accordion.Header>
             <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Profitability
@@ -341,44 +364,47 @@ export default function FilterPanel({
             <RangeFilter
               label="ROE"
               value={filters.roe}
-              onChange={(value) => updateFilter('roe', value)}
+              onChange={value => updateFilter('roe', value)}
               unit="%"
             />
             <RangeFilter
               label="ROA"
               value={filters.roa}
-              onChange={(value) => updateFilter('roa', value)}
+              onChange={value => updateFilter('roa', value)}
               unit="%"
             />
             <RangeFilter
               label="ROIC"
               value={filters.roic}
-              onChange={(value) => updateFilter('roic', value)}
+              onChange={value => updateFilter('roic', value)}
               unit="%"
             />
             <RangeFilter
               label="Gross Margin"
               value={filters.gross_margin}
-              onChange={(value) => updateFilter('gross_margin', value)}
+              onChange={value => updateFilter('gross_margin', value)}
               unit="%"
             />
             <RangeFilter
               label="Operating Margin"
               value={filters.operating_margin}
-              onChange={(value) => updateFilter('operating_margin', value)}
+              onChange={value => updateFilter('operating_margin', value)}
               unit="%"
             />
             <RangeFilter
               label="Net Margin"
               value={filters.net_margin}
-              onChange={(value) => updateFilter('net_margin', value)}
+              onChange={value => updateFilter('net_margin', value)}
               unit="%"
             />
           </Accordion.Content>
         </Accordion.Item>
 
         {/* Growth Filters */}
-        <Accordion.Item value="growth" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
+        <Accordion.Item
+          value="growth"
+          className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors"
+        >
           <Accordion.Header>
             <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Growth
@@ -401,26 +427,29 @@ export default function FilterPanel({
             <RangeFilter
               label="Revenue Growth YoY"
               value={filters.revenue_growth_yoy}
-              onChange={(value) => updateFilter('revenue_growth_yoy', value)}
+              onChange={value => updateFilter('revenue_growth_yoy', value)}
               unit="%"
             />
             <RangeFilter
               label="Profit Growth YoY"
               value={filters.profit_growth_yoy}
-              onChange={(value) => updateFilter('profit_growth_yoy', value)}
+              onChange={value => updateFilter('profit_growth_yoy', value)}
               unit="%"
             />
             <RangeFilter
               label="EPS Growth YoY"
               value={filters.eps_growth_yoy}
-              onChange={(value) => updateFilter('eps_growth_yoy', value)}
+              onChange={value => updateFilter('eps_growth_yoy', value)}
               unit="%"
             />
           </Accordion.Content>
         </Accordion.Item>
 
         {/* Stability Filters */}
-        <Accordion.Item value="stability" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
+        <Accordion.Item
+          value="stability"
+          className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors"
+        >
           <Accordion.Header>
             <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Stability
@@ -443,22 +472,22 @@ export default function FilterPanel({
             <RangeFilter
               label="Debt-to-Equity"
               value={filters.debt_to_equity}
-              onChange={(value) => updateFilter('debt_to_equity', value)}
+              onChange={value => updateFilter('debt_to_equity', value)}
             />
             <RangeFilter
               label="Current Ratio"
               value={filters.current_ratio}
-              onChange={(value) => updateFilter('current_ratio', value)}
+              onChange={value => updateFilter('current_ratio', value)}
             />
             <RangeFilter
               label="Altman Z-Score"
               value={filters.altman_z_score}
-              onChange={(value) => updateFilter('altman_z_score', value)}
+              onChange={value => updateFilter('altman_z_score', value)}
             />
             <RangeFilter
               label="Piotroski F-Score"
               value={filters.piotroski_f_score}
-              onChange={(value) => updateFilter('piotroski_f_score', value)}
+              onChange={value => updateFilter('piotroski_f_score', value)}
               minPlaceholder="0"
               maxPlaceholder="9"
             />
@@ -466,7 +495,10 @@ export default function FilterPanel({
         </Accordion.Item>
 
         {/* Momentum Filters */}
-        <Accordion.Item value="momentum" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
+        <Accordion.Item
+          value="momentum"
+          className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors"
+        >
           <Accordion.Header>
             <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Momentum
@@ -489,44 +521,47 @@ export default function FilterPanel({
             <RangeFilter
               label="1-Day Change"
               value={filters.price_change_1d}
-              onChange={(value) => updateFilter('price_change_1d', value)}
+              onChange={value => updateFilter('price_change_1d', value)}
               unit="%"
             />
             <RangeFilter
               label="1-Week Change"
               value={filters.price_change_1w}
-              onChange={(value) => updateFilter('price_change_1w', value)}
+              onChange={value => updateFilter('price_change_1w', value)}
               unit="%"
             />
             <RangeFilter
               label="1-Month Change"
               value={filters.price_change_1m}
-              onChange={(value) => updateFilter('price_change_1m', value)}
+              onChange={value => updateFilter('price_change_1m', value)}
               unit="%"
             />
             <RangeFilter
               label="3-Month Change"
               value={filters.price_change_3m}
-              onChange={(value) => updateFilter('price_change_3m', value)}
+              onChange={value => updateFilter('price_change_3m', value)}
               unit="%"
             />
             <RangeFilter
               label="6-Month Change"
               value={filters.price_change_6m}
-              onChange={(value) => updateFilter('price_change_6m', value)}
+              onChange={value => updateFilter('price_change_6m', value)}
               unit="%"
             />
             <RangeFilter
               label="1-Year Change"
               value={filters.price_change_1y}
-              onChange={(value) => updateFilter('price_change_1y', value)}
+              onChange={value => updateFilter('price_change_1y', value)}
               unit="%"
             />
           </Accordion.Content>
         </Accordion.Item>
 
         {/* Scores */}
-        <Accordion.Item value="scores" className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors">
+        <Accordion.Item
+          value="scores"
+          className="border border-gray-200 dark:border-gray-700 rounded-md transition-colors"
+        >
           <Accordion.Header>
             <Accordion.Trigger className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
               Composite Scores
@@ -549,35 +584,35 @@ export default function FilterPanel({
             <RangeFilter
               label="Quality Score"
               value={filters.quality_score}
-              onChange={(value) => updateFilter('quality_score', value)}
+              onChange={value => updateFilter('quality_score', value)}
               minPlaceholder="0"
               maxPlaceholder="100"
             />
             <RangeFilter
               label="Value Score"
               value={filters.value_score}
-              onChange={(value) => updateFilter('value_score', value)}
+              onChange={value => updateFilter('value_score', value)}
               minPlaceholder="0"
               maxPlaceholder="100"
             />
             <RangeFilter
               label="Growth Score"
               value={filters.growth_score}
-              onChange={(value) => updateFilter('growth_score', value)}
+              onChange={value => updateFilter('growth_score', value)}
               minPlaceholder="0"
               maxPlaceholder="100"
             />
             <RangeFilter
               label="Momentum Score"
               value={filters.momentum_score}
-              onChange={(value) => updateFilter('momentum_score', value)}
+              onChange={value => updateFilter('momentum_score', value)}
               minPlaceholder="0"
               maxPlaceholder="100"
             />
             <RangeFilter
               label="Overall Score"
               value={filters.overall_score}
-              onChange={(value) => updateFilter('overall_score', value)}
+              onChange={value => updateFilter('overall_score', value)}
               minPlaceholder="0"
               maxPlaceholder="100"
             />

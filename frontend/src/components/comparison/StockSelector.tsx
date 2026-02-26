@@ -49,9 +49,9 @@ export function StockSelector({
         const response = await stockService.listStocks(undefined, 0, 20)
         // Filter by query (code or name)
         const filtered = response.data.filter(
-          (stock) =>
+          stock =>
             stock.code.toLowerCase().includes(query.toLowerCase()) ||
-            stock.name.toLowerCase().includes(query.toLowerCase())
+            stock.name.toLowerCase().includes(query.toLowerCase()),
         )
         setResults(filtered)
         setIsOpen(filtered.length > 0)
@@ -90,13 +90,11 @@ export function StockSelector({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
-        setSelectedIndex((prev) =>
-          prev < results.length - 1 ? prev + 1 : prev
-        )
+        setSelectedIndex(prev => (prev < results.length - 1 ? prev + 1 : prev))
         break
       case 'ArrowUp':
         e.preventDefault()
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev))
+        setSelectedIndex(prev => (prev > 0 ? prev - 1 : prev))
         break
       case 'Enter':
         e.preventDefault()
@@ -130,7 +128,7 @@ export function StockSelector({
           ref={inputRef}
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={e => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => query.length >= 2 && setIsOpen(results.length > 0)}
           placeholder={
@@ -171,7 +169,9 @@ export function StockSelector({
             return (
               <button
                 key={stock.code}
-                onClick={() => !isAlreadySelected && handleSelectStock(stock.code)}
+                onClick={() =>
+                  !isAlreadySelected && handleSelectStock(stock.code)
+                }
                 disabled={isAlreadySelected}
                 className={`
                   w-full px-4 py-3 text-left

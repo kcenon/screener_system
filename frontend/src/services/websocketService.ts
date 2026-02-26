@@ -19,7 +19,12 @@ import { OrderBookData } from '@/types/stock'
 /**
  * WebSocket connection state
  */
-export type WSConnectionState = 'connecting' | 'connected' | 'disconnecting' | 'disconnected' | 'error'
+export type WSConnectionState =
+  | 'connecting'
+  | 'connected'
+  | 'disconnecting'
+  | 'disconnected'
+  | 'error'
 
 /**
  * Subscription types supported by backend
@@ -85,7 +90,11 @@ interface ErrorMessage extends WSMessage {
 /**
  * Union type for all possible messages
  */
-type WSIncomingMessage = PriceUpdateMessage | OrderBookUpdateMessage | ErrorMessage | WSMessage
+type WSIncomingMessage =
+  | PriceUpdateMessage
+  | OrderBookUpdateMessage
+  | ErrorMessage
+  | WSMessage
 
 /**
  * Message handler callback type
@@ -287,7 +296,7 @@ export class WebSocketService {
     this.startHeartbeat()
 
     // Re-subscribe to all previous subscriptions
-    this.subscriptions.forEach((key) => {
+    this.subscriptions.forEach(key => {
       const [type, identifier] = key.split(':')
       this.send({
         action: 'subscribe',
@@ -310,7 +319,7 @@ export class WebSocketService {
       }
 
       // Notify all handlers
-      this.messageHandlers.forEach((handler) => {
+      this.messageHandlers.forEach(handler => {
         try {
           handler(message)
         } catch (error) {
@@ -404,10 +413,12 @@ export class WebSocketService {
     // Exponential backoff: delay * 2^attempts, capped at maxReconnectDelay
     const delay = Math.min(
       this.config.reconnectDelay! * Math.pow(2, this.reconnectAttempts - 1),
-      this.config.maxReconnectDelay!
+      this.config.maxReconnectDelay!,
     )
 
-    console.log(`Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})...`)
+    console.log(
+      `Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})...`,
+    )
 
     this.reconnectTimer = setTimeout(() => {
       this.connect()
@@ -435,7 +446,7 @@ export class WebSocketService {
     console.log(`WebSocket state: ${this.state} -> ${newState}`)
     this.state = newState
 
-    this.stateHandlers.forEach((handler) => {
+    this.stateHandlers.forEach(handler => {
       try {
         handler(newState)
       } catch (error) {

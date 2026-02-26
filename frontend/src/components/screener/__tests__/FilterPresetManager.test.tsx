@@ -54,7 +54,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       expect(screen.getByText('Saved Presets')).toBeInTheDocument()
@@ -67,10 +67,12 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      expect(screen.getByRole('button', { name: /save current/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /save current/i }),
+      ).toBeInTheDocument()
     })
 
     it('displays empty state message when no presets', () => {
@@ -80,11 +82,13 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       expect(screen.getByText(/no saved presets yet/i)).toBeInTheDocument()
-      expect(screen.getByText(/click.*save current.*to save your filters/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/click.*save current.*to save your filters/i),
+      ).toBeInTheDocument()
     })
 
     it('renders list of presets', () => {
@@ -94,7 +98,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       expect(screen.getByText('Value Stocks')).toBeInTheDocument()
@@ -109,7 +113,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       expect(screen.getByText('Low PER, high ROE stocks')).toBeInTheDocument()
@@ -123,7 +127,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       // Dates should be formatted as locale date strings
@@ -143,10 +147,12 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      expect(screen.queryByText(/no saved presets yet/i)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(/no saved presets yet/i),
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -159,7 +165,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       const saveButton = screen.getByRole('button', { name: /save current/i })
@@ -177,14 +183,17 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
 
       const nameInput = screen.getByLabelText(/preset name/i)
       expect(nameInput).toBeInTheDocument()
-      expect(nameInput).toHaveAttribute('placeholder', 'e.g., High Growth Tech Stocks')
+      expect(nameInput).toHaveAttribute(
+        'placeholder',
+        'e.g., High Growth Tech Stocks',
+      )
     })
 
     it('renders optional description textarea in dialog', async () => {
@@ -195,12 +204,14 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
 
-      const descriptionInput = screen.getByLabelText(/description \(optional\)/i)
+      const descriptionInput = screen.getByLabelText(
+        /description \(optional\)/i,
+      )
       expect(descriptionInput).toBeInTheDocument()
       expect(descriptionInput.tagName).toBe('TEXTAREA')
     })
@@ -213,7 +224,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -230,13 +241,17 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
 
-      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /save preset/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /cancel/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /save preset/i }),
+      ).toBeInTheDocument()
     })
 
     it('disables Save button when preset name is empty', async () => {
@@ -247,7 +262,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -264,7 +279,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -284,7 +299,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -304,7 +319,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -326,13 +341,15 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
 
       const nameInput = screen.getByLabelText(/preset name/i)
-      const descriptionInput = screen.getByLabelText(/description \(optional\)/i)
+      const descriptionInput = screen.getByLabelText(
+        /description \(optional\)/i,
+      )
 
       await user.type(nameInput, 'My Preset')
       await user.type(descriptionInput, 'My description')
@@ -340,7 +357,10 @@ describe('FilterPresetManager', () => {
       const saveButton = screen.getByRole('button', { name: /save preset/i })
       await user.click(saveButton)
 
-      expect(onSavePresetMock).toHaveBeenCalledWith('My Preset', 'My description')
+      expect(onSavePresetMock).toHaveBeenCalledWith(
+        'My Preset',
+        'My description',
+      )
     })
 
     it('calls onSavePreset with undefined description when description is only whitespace', async () => {
@@ -351,13 +371,15 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
 
       const nameInput = screen.getByLabelText(/preset name/i)
-      const descriptionInput = screen.getByLabelText(/description \(optional\)/i)
+      const descriptionInput = screen.getByLabelText(
+        /description \(optional\)/i,
+      )
 
       await user.type(nameInput, 'My Preset')
       await user.type(descriptionInput, '   ')
@@ -376,7 +398,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -398,7 +420,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       // First save
@@ -427,7 +449,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -447,7 +469,7 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       await user.click(screen.getByRole('button', { name: /save current/i }))
@@ -471,10 +493,12 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      const preset = screen.getByText('Value Stocks').closest('div[class*="cursor-pointer"]')!
+      const preset = screen
+        .getByText('Value Stocks')
+        .closest('div[class*="cursor-pointer"]')!
       await user.click(preset)
 
       expect(onLoadPresetMock).toHaveBeenCalledWith(mockPresets[0].filters)
@@ -488,11 +512,13 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
       // Click second preset
-      const preset2 = screen.getByText('Growth Stocks').closest('div[class*="cursor-pointer"]')!
+      const preset2 = screen
+        .getByText('Growth Stocks')
+        .closest('div[class*="cursor-pointer"]')!
       await user.click(preset2)
 
       expect(onLoadPresetMock).toHaveBeenCalledWith(mockPresets[1].filters)
@@ -507,10 +533,12 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      const deleteButtons = screen.getAllByRole('button', { name: /delete preset/i })
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /delete preset/i,
+      })
       expect(deleteButtons).toHaveLength(mockPresets.length)
     })
 
@@ -524,13 +552,17 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      const deleteButtons = screen.getAllByRole('button', { name: /delete preset/i })
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /delete preset/i,
+      })
       await user.click(deleteButtons[0])
 
-      expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to delete this preset?')
+      expect(confirmSpy).toHaveBeenCalledWith(
+        'Are you sure you want to delete this preset?',
+      )
       confirmSpy.mockRestore()
     })
 
@@ -544,10 +576,12 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      const deleteButtons = screen.getAllByRole('button', { name: /delete preset/i })
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /delete preset/i,
+      })
       await user.click(deleteButtons[0])
 
       expect(onDeletePresetMock).toHaveBeenCalledWith(mockPresets[0].id)
@@ -564,10 +598,12 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      const deleteButtons = screen.getAllByRole('button', { name: /delete preset/i })
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /delete preset/i,
+      })
       await user.click(deleteButtons[0])
 
       expect(onDeletePresetMock).not.toHaveBeenCalled()
@@ -584,10 +620,12 @@ describe('FilterPresetManager', () => {
           onLoadPreset={onLoadPresetMock}
           onSavePreset={onSavePresetMock}
           onDeletePreset={onDeletePresetMock}
-        />
+        />,
       )
 
-      const deleteButtons = screen.getAllByRole('button', { name: /delete preset/i })
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /delete preset/i,
+      })
       await user.click(deleteButtons[0])
 
       // onLoadPreset should NOT be called (event should not propagate to parent div)

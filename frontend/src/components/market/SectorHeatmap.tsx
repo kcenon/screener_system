@@ -48,9 +48,7 @@ function SectorTile({ sector }: { sector: SectorPerformance }) {
       title={`${sector.name}: ${isPositive ? '+' : ''}${sector.change_percent.toFixed(2)}%`}
     >
       {/* Sector name */}
-      <div className="mb-1 text-center text-xs font-medium">
-        {sector.name}
-      </div>
+      <div className="mb-1 text-center text-xs font-medium">{sector.name}</div>
 
       {/* Change percentage */}
       <div className="text-xl font-bold">
@@ -59,14 +57,15 @@ function SectorTile({ sector }: { sector: SectorPerformance }) {
       </div>
 
       {/* Stock count */}
-      <div className="mt-1 text-xs opacity-80">
-        {sector.stock_count}개
-      </div>
+      <div className="mt-1 text-xs opacity-80">{sector.stock_count}개</div>
 
       {/* Tooltip on hover */}
       <div className="absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white shadow-lg group-hover:block">
         <div className="mb-1 font-medium">{sector.name}</div>
-        <div>변동률: {isPositive ? '+' : ''}{sector.change_percent.toFixed(2)}%</div>
+        <div>
+          변동률: {isPositive ? '+' : ''}
+          {sector.change_percent.toFixed(2)}%
+        </div>
         <div>종목 수: {sector.stock_count}개</div>
         {sector.market_cap && (
           <div>시가총액: {formatCompactMarketCap(sector.market_cap)}</div>
@@ -104,7 +103,9 @@ export function SectorHeatmap({
   autoRefresh = false,
   className = '',
 }: SectorHeatmapProps) {
-  const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M'>(defaultTimeframe)
+  const [timeframe, setTimeframe] = useState<'1D' | '1W' | '1M' | '3M'>(
+    defaultTimeframe,
+  )
 
   const { data, isLoading, error } = useSectorPerformance({
     timeframe,
@@ -119,16 +120,21 @@ export function SectorHeatmap({
   ]
 
   return (
-    <div className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}>
+    <div
+      className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}
+    >
       {/* Header with timeframe selector */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className={`${typography.h2} text-gray-900`}>
-          섹터 성과 <span className="text-xs font-normal text-gray-500">Sector Performance</span>
+          섹터 성과{' '}
+          <span className="text-xs font-normal text-gray-500">
+            Sector Performance
+          </span>
         </h2>
 
         {/* Timeframe selector */}
         <div className="flex gap-1.5">
-          {timeframes.map((tf) => (
+          {timeframes.map(tf => (
             <button
               key={tf.value}
               onClick={() => setTimeframe(tf.value)}
@@ -175,7 +181,9 @@ export function SectorHeatmap({
       {/* Error State */}
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-          <p className="text-sm text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-red-600">
+            데이터를 불러오는 중 오류가 발생했습니다.
+          </p>
         </div>
       )}
 
@@ -183,7 +191,10 @@ export function SectorHeatmap({
       {isLoading && (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="h-28 animate-pulse rounded-lg bg-gray-200"></div>
+            <div
+              key={i}
+              className="h-28 animate-pulse rounded-lg bg-gray-200"
+            ></div>
           ))}
         </div>
       )}
@@ -191,7 +202,7 @@ export function SectorHeatmap({
       {/* Data State */}
       {data && !isLoading && (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-          {data.sectors.map((sector) => (
+          {data.sectors.map(sector => (
             <SectorTile key={sector.code} sector={sector} />
           ))}
         </div>

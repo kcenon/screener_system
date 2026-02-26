@@ -23,12 +23,14 @@ export const AlertForm: React.FC<AlertFormProps> = ({
 }) => {
   const [stockCode, setStockCode] = useState(initialData?.stock_code || '')
   const [alertType, setAlertType] = useState<AlertType>(
-    initialData?.alert_type || AlertType.PRICE_ABOVE
+    initialData?.alert_type || AlertType.PRICE_ABOVE,
   )
   const [conditionValue, setConditionValue] = useState(
-    initialData?.condition_value?.toString() || ''
+    initialData?.condition_value?.toString() || '',
   )
-  const [isRecurring, setIsRecurring] = useState(initialData?.is_recurring || false)
+  const [isRecurring, setIsRecurring] = useState(
+    initialData?.is_recurring || false,
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,7 +74,7 @@ export const AlertForm: React.FC<AlertFormProps> = ({
           id="stock_code"
           type="text"
           value={stockCode}
-          onChange={(e) => setStockCode(e.target.value)}
+          onChange={e => setStockCode(e.target.value)}
           placeholder="e.g., 005930"
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           required
@@ -90,7 +92,7 @@ export const AlertForm: React.FC<AlertFormProps> = ({
         <select
           id="alert_type"
           value={alertType}
-          onChange={(e) => setAlertType(e.target.value as AlertType)}
+          onChange={e => setAlertType(e.target.value as AlertType)}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           required
         >
@@ -115,7 +117,7 @@ export const AlertForm: React.FC<AlertFormProps> = ({
           type="number"
           step="any"
           value={conditionValue}
-          onChange={(e) => setConditionValue(e.target.value)}
+          onChange={e => setConditionValue(e.target.value)}
           placeholder={alertType === AlertType.VOLUME_SPIKE ? '2.0' : '70000'}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           required
@@ -128,7 +130,7 @@ export const AlertForm: React.FC<AlertFormProps> = ({
           id="is_recurring"
           type="checkbox"
           checked={isRecurring}
-          onChange={(e) => setIsRecurring(e.target.checked)}
+          onChange={e => setIsRecurring(e.target.checked)}
           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
         <label

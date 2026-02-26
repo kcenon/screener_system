@@ -59,7 +59,9 @@ function IndexCard({ index }: { index?: MarketIndex }) {
       </div>
 
       <div className="mb-1">
-        <div className="text-2xl font-bold text-gray-900">{formatNumber(index.current)}</div>
+        <div className="text-2xl font-bold text-gray-900">
+          {formatNumber(index.current)}
+        </div>
       </div>
 
       <div className={`text-sm font-medium ${colorClass}`}>

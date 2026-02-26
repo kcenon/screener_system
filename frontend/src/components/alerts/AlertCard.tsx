@@ -65,7 +65,8 @@ export const AlertCard: React.FC<AlertCardProps> = ({
           </div>
 
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            <span className="font-medium">{typeDisplay}:</span> {conditionDisplay}
+            <span className="font-medium">{typeDisplay}:</span>{' '}
+            {conditionDisplay}
           </p>
 
           {alert.triggered_at && (

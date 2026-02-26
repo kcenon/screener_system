@@ -12,7 +12,11 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { OrderBookData, OrderImbalance } from '@/types/stock'
-import { WebSocketService, createWebSocketService, WSConnectionState } from '@/services/websocketService'
+import {
+  WebSocketService,
+  createWebSocketService,
+  WSConnectionState,
+} from '@/services/websocketService'
 
 /**
  * Order book hook return type
@@ -40,8 +44,14 @@ export interface UseOrderBookReturn {
  * Calculate order imbalance from order book data
  */
 function calculateImbalance(orderBook: OrderBookData): OrderImbalance {
-  const totalBidVolume = orderBook.bids.reduce((sum, level) => sum + level.volume, 0)
-  const totalAskVolume = orderBook.asks.reduce((sum, level) => sum + level.volume, 0)
+  const totalBidVolume = orderBook.bids.reduce(
+    (sum, level) => sum + level.volume,
+    0,
+  )
+  const totalAskVolume = orderBook.asks.reduce(
+    (sum, level) => sum + level.volume,
+    0,
+  )
   const totalVolume = totalBidVolume + totalAskVolume
 
   const imbalanceRatio = totalVolume > 0 ? totalBidVolume / totalVolume : 0.5
@@ -111,10 +121,14 @@ function enhanceOrderBook(data: OrderBookData): OrderBookData {
  * )
  * ```
  */
-export function useOrderBook(stockCode: string | undefined, enabled: boolean = true): UseOrderBookReturn {
+export function useOrderBook(
+  stockCode: string | undefined,
+  enabled: boolean = true,
+): UseOrderBookReturn {
   const [orderBook, setOrderBook] = useState<OrderBookData | null>(null)
   const [imbalance, setImbalance] = useState<OrderImbalance | null>(null)
-  const [connectionState, setConnectionState] = useState<WSConnectionState>('disconnected')
+  const [connectionState, setConnectionState] =
+    useState<WSConnectionState>('disconnected')
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [frozen, setFrozen] = useState<boolean>(false)
@@ -125,7 +139,7 @@ export function useOrderBook(stockCode: string | undefined, enabled: boolean = t
    * Toggle freeze state
    */
   const toggleFreeze = useCallback(() => {
-    setFrozen((prev) => !prev)
+    setFrozen(prev => !prev)
   }, [])
 
   /**
@@ -160,7 +174,7 @@ export function useOrderBook(stockCode: string | undefined, enabled: boolean = t
       wsServiceRef.current = wsService
 
       // Handle state changes
-      const unsubscribeState = wsService.onStateChange((state) => {
+      const unsubscribeState = wsService.onStateChange(state => {
         setConnectionState(state)
 
         if (state === 'connected') {
@@ -173,14 +187,17 @@ export function useOrderBook(stockCode: string | undefined, enabled: boolean = t
       })
 
       // Handle incoming messages
-      const unsubscribeMessage = wsService.onMessage((message) => {
+      const unsubscribeMessage = wsService.onMessage(message => {
         // Skip updates if frozen
         if (frozen) {
           return
         }
 
         if (message.type === 'orderbook_update') {
-          const orderBookMessage = message as { type: 'orderbook_update'; data: OrderBookData }
+          const orderBookMessage = message as {
+            type: 'orderbook_update'
+            data: OrderBookData
+          }
           const data = orderBookMessage.data
 
           // Only process updates for the subscribed stock
@@ -190,7 +207,10 @@ export function useOrderBook(stockCode: string | undefined, enabled: boolean = t
             setImbalance(calculateImbalance(enhanced))
           }
         } else if (message.type === 'error') {
-          const errorMessage = message as { type: 'error'; error: { message: string } }
+          const errorMessage = message as {
+            type: 'error'
+            error: { message: string }
+          }
           console.error('WebSocket error:', errorMessage)
           setError(errorMessage.error?.message || 'Unknown error')
         }

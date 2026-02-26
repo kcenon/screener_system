@@ -22,7 +22,7 @@ export default function StockComparisonPage() {
   const { stocks, isLoading, errors, refetch } = useComparisonData(stockCodes)
 
   const handleExport = () => {
-    const metricKeys = COMPARISON_METRICS.map((m) => m.key)
+    const metricKeys = COMPARISON_METRICS.map(m => m.key)
     const blob = exportToCSV(stocks, metricKeys)
     const timestamp = new Date().toISOString().split('T')[0]
     downloadBlob(blob, `stock-comparison-${timestamp}.csv`)
@@ -63,7 +63,9 @@ export default function StockComparisonPage() {
                     flex items-center gap-2
                   "
                 >
-                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
+                  />
                   Refresh
                 </button>
                 <button
@@ -129,7 +131,7 @@ export default function StockComparisonPage() {
           {/* Selected Stocks */}
           {stockCodes.length > 0 && (
             <div className="flex flex-wrap gap-3">
-              {stocks.map((stock) => (
+              {stocks.map(stock => (
                 <StockChip
                   key={stock.code}
                   code={stock.code}

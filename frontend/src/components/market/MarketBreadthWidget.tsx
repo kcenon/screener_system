@@ -136,7 +136,8 @@ export function MarketBreadthWidget({
   refreshInterval = 60000,
   className = '',
 }: MarketBreadthWidgetProps) {
-  const [selectedMarket, setSelectedMarket] = useState<MarketType>(defaultMarket)
+  const [selectedMarket, setSelectedMarket] =
+    useState<MarketType>(defaultMarket)
 
   const { data, isLoading, error } = useMarketBreadth({
     market: selectedMarket,
@@ -144,16 +145,21 @@ export function MarketBreadthWidget({
   })
 
   return (
-    <div className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}>
+    <div
+      className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}
+    >
       {/* Header with market filter */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className={`${typography.h2} text-gray-900`}>
-          시장 폭 <span className="text-xs font-normal text-gray-500">Market Breadth</span>
+          시장 폭{' '}
+          <span className="text-xs font-normal text-gray-500">
+            Market Breadth
+          </span>
         </h2>
 
         {/* Market filter buttons */}
         <div className="flex gap-1.5">
-          {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map((market) => (
+          {(['ALL', 'KOSPI', 'KOSDAQ'] as MarketType[]).map(market => (
             <button
               key={market}
               onClick={() => setSelectedMarket(market)}
@@ -172,7 +178,9 @@ export function MarketBreadthWidget({
       {/* Error State */}
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-          <p className="text-sm text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-red-600">
+            데이터를 불러오는 중 오류가 발생했습니다.
+          </p>
         </div>
       )}
 
@@ -196,7 +204,9 @@ export function MarketBreadthWidget({
             {/* Advancing */}
             <div className="flex items-baseline gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2">
               <span className="text-xs text-gray-600">상승</span>
-              <span className="text-lg font-bold text-green-600">{data.advancing.toLocaleString()}</span>
+              <span className="text-lg font-bold text-green-600">
+                {data.advancing.toLocaleString()}
+              </span>
               <span className="text-xs text-gray-500">
                 ({((data.advancing / data.total) * 100).toFixed(1)}%)
               </span>
@@ -205,7 +215,9 @@ export function MarketBreadthWidget({
             {/* Declining */}
             <div className="flex items-baseline gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2">
               <span className="text-xs text-gray-600">하락</span>
-              <span className="text-lg font-bold text-red-600">{data.declining.toLocaleString()}</span>
+              <span className="text-lg font-bold text-red-600">
+                {data.declining.toLocaleString()}
+              </span>
               <span className="text-xs text-gray-500">
                 ({((data.declining / data.total) * 100).toFixed(1)}%)
               </span>
@@ -214,7 +226,9 @@ export function MarketBreadthWidget({
             {/* Unchanged */}
             <div className="flex items-baseline gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2">
               <span className="text-xs text-gray-600">보합</span>
-              <span className="text-lg font-bold text-gray-600">{data.unchanged.toLocaleString()}</span>
+              <span className="text-lg font-bold text-gray-600">
+                {data.unchanged.toLocaleString()}
+              </span>
               <span className="text-xs text-gray-500">
                 ({((data.unchanged / data.total) * 100).toFixed(1)}%)
               </span>
@@ -223,7 +237,9 @@ export function MarketBreadthWidget({
             {/* A/D Ratio */}
             <div className="flex items-baseline gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
               <span className="text-xs text-gray-600">A/D 비율</span>
-              <span className="text-lg font-bold text-blue-600">{data.ad_ratio.toFixed(2)}</span>
+              <span className="text-lg font-bold text-blue-600">
+                {data.ad_ratio.toFixed(2)}
+              </span>
               <SentimentBadge sentiment={data.sentiment} />
             </div>
           </div>

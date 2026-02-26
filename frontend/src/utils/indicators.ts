@@ -97,7 +97,7 @@ export function calculateEMA(data: OHLCV[], period: number): IndicatorPoint[] {
 export function calculateBollingerBands(
   data: OHLCV[],
   period: number = 20,
-  stdDev: number = 2
+  stdDev: number = 2,
 ): BollingerBand[] {
   if (data.length < period) return []
 
@@ -136,7 +136,10 @@ export function calculateBollingerBands(
  * @param period - RSI period (default: 14)
  * @returns Array of RSI values (0-100)
  */
-export function calculateRSI(data: OHLCV[], period: number = 14): IndicatorPoint[] {
+export function calculateRSI(
+  data: OHLCV[],
+  period: number = 14,
+): IndicatorPoint[] {
   if (data.length < period + 1) return []
 
   const result: IndicatorPoint[] = []
@@ -184,7 +187,7 @@ export function calculateMACD(
   data: OHLCV[],
   fastPeriod: number = 12,
   slowPeriod: number = 26,
-  signalPeriod: number = 9
+  signalPeriod: number = 9,
 ): MACDResult[] {
   if (data.length < slowPeriod + signalPeriod) return []
 
@@ -246,7 +249,7 @@ export function calculateMACD(
 export function calculateStochastic(
   data: OHLCV[],
   kPeriod: number = 14,
-  dPeriod: number = 3
+  dPeriod: number = 3,
 ): { time: string; k: number; d: number }[] {
   if (data.length < kPeriod + dPeriod - 1) return []
 
@@ -262,9 +265,10 @@ export function calculateStochastic(
       lowestLow = Math.min(lowestLow, data[i - j].low)
     }
 
-    const k = highestHigh === lowestLow
-      ? 50
-      : ((data[i].close - lowestLow) / (highestHigh - lowestLow)) * 100
+    const k =
+      highestHigh === lowestLow
+        ? 50
+        : ((data[i].close - lowestLow) / (highestHigh - lowestLow)) * 100
 
     kValues.push({ time: data[i].time, value: k })
   }
@@ -302,7 +306,12 @@ export function convertToHeikinAshi(data: OHLCV[]): OHLCV[] {
   const firstHA: OHLCV = {
     time: firstCandle.time,
     open: (firstCandle.open + firstCandle.close) / 2,
-    close: (firstCandle.open + firstCandle.high + firstCandle.low + firstCandle.close) / 4,
+    close:
+      (firstCandle.open +
+        firstCandle.high +
+        firstCandle.low +
+        firstCandle.close) /
+      4,
     high: firstCandle.high,
     low: firstCandle.low,
     volume: firstCandle.volume,

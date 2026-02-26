@@ -18,21 +18,126 @@ import {
 
 // Sample OHLCV data for testing
 const sampleData: OHLCV[] = [
-  { time: '2024-01-01', open: 100, high: 105, low: 98, close: 102, volume: 1000 },
-  { time: '2024-01-02', open: 102, high: 108, low: 100, close: 106, volume: 1200 },
-  { time: '2024-01-03', open: 106, high: 110, low: 104, close: 108, volume: 1100 },
-  { time: '2024-01-04', open: 108, high: 112, low: 106, close: 110, volume: 1300 },
-  { time: '2024-01-05', open: 110, high: 114, low: 108, close: 112, volume: 1400 },
-  { time: '2024-01-06', open: 112, high: 115, low: 110, close: 111, volume: 1000 },
-  { time: '2024-01-07', open: 111, high: 113, low: 108, close: 109, volume: 900 },
-  { time: '2024-01-08', open: 109, high: 111, low: 106, close: 107, volume: 800 },
-  { time: '2024-01-09', open: 107, high: 110, low: 105, close: 108, volume: 950 },
-  { time: '2024-01-10', open: 108, high: 112, low: 107, close: 111, volume: 1100 },
-  { time: '2024-01-11', open: 111, high: 116, low: 110, close: 115, volume: 1500 },
-  { time: '2024-01-12', open: 115, high: 118, low: 113, close: 117, volume: 1600 },
-  { time: '2024-01-13', open: 117, high: 120, low: 115, close: 118, volume: 1400 },
-  { time: '2024-01-14', open: 118, high: 121, low: 116, close: 119, volume: 1300 },
-  { time: '2024-01-15', open: 119, high: 122, low: 117, close: 120, volume: 1200 },
+  {
+    time: '2024-01-01',
+    open: 100,
+    high: 105,
+    low: 98,
+    close: 102,
+    volume: 1000,
+  },
+  {
+    time: '2024-01-02',
+    open: 102,
+    high: 108,
+    low: 100,
+    close: 106,
+    volume: 1200,
+  },
+  {
+    time: '2024-01-03',
+    open: 106,
+    high: 110,
+    low: 104,
+    close: 108,
+    volume: 1100,
+  },
+  {
+    time: '2024-01-04',
+    open: 108,
+    high: 112,
+    low: 106,
+    close: 110,
+    volume: 1300,
+  },
+  {
+    time: '2024-01-05',
+    open: 110,
+    high: 114,
+    low: 108,
+    close: 112,
+    volume: 1400,
+  },
+  {
+    time: '2024-01-06',
+    open: 112,
+    high: 115,
+    low: 110,
+    close: 111,
+    volume: 1000,
+  },
+  {
+    time: '2024-01-07',
+    open: 111,
+    high: 113,
+    low: 108,
+    close: 109,
+    volume: 900,
+  },
+  {
+    time: '2024-01-08',
+    open: 109,
+    high: 111,
+    low: 106,
+    close: 107,
+    volume: 800,
+  },
+  {
+    time: '2024-01-09',
+    open: 107,
+    high: 110,
+    low: 105,
+    close: 108,
+    volume: 950,
+  },
+  {
+    time: '2024-01-10',
+    open: 108,
+    high: 112,
+    low: 107,
+    close: 111,
+    volume: 1100,
+  },
+  {
+    time: '2024-01-11',
+    open: 111,
+    high: 116,
+    low: 110,
+    close: 115,
+    volume: 1500,
+  },
+  {
+    time: '2024-01-12',
+    open: 115,
+    high: 118,
+    low: 113,
+    close: 117,
+    volume: 1600,
+  },
+  {
+    time: '2024-01-13',
+    open: 117,
+    high: 120,
+    low: 115,
+    close: 118,
+    volume: 1400,
+  },
+  {
+    time: '2024-01-14',
+    open: 118,
+    high: 121,
+    low: 116,
+    close: 119,
+    volume: 1300,
+  },
+  {
+    time: '2024-01-15',
+    open: 119,
+    high: 122,
+    low: 117,
+    close: 120,
+    volume: 1200,
+  },
 ]
 
 describe('calculateSMA', () => {
@@ -120,7 +225,7 @@ describe('calculateRSI', () => {
   it('should calculate RSI values between 0 and 100', () => {
     const result = calculateRSI(sampleData, 5)
 
-    result.forEach((point) => {
+    result.forEach(point => {
       expect(point.value).toBeGreaterThanOrEqual(0)
       expect(point.value).toBeLessThanOrEqual(100)
     })
@@ -165,7 +270,7 @@ describe('calculateMACD', () => {
     const result = calculateMACD(longData, 12, 26, 9)
     expect(result.length).toBeGreaterThan(0)
 
-    result.forEach((point) => {
+    result.forEach(point => {
       // Histogram should equal MACD - Signal
       expect(point.histogram).toBeCloseTo(point.macd - point.signal, 6)
     })
@@ -181,7 +286,7 @@ describe('calculateStochastic', () => {
   it('should calculate values between 0 and 100', () => {
     const result = calculateStochastic(sampleData, 5, 3)
 
-    result.forEach((point) => {
+    result.forEach(point => {
       expect(point.k).toBeGreaterThanOrEqual(0)
       expect(point.k).toBeLessThanOrEqual(100)
       expect(point.d).toBeGreaterThanOrEqual(0)
@@ -201,7 +306,12 @@ describe('convertToHeikinAshi', () => {
     expect(result).toHaveLength(sampleData.length)
 
     // First HA candle close = (O + H + L + C) / 4
-    const firstClose = (sampleData[0].open + sampleData[0].high + sampleData[0].low + sampleData[0].close) / 4
+    const firstClose =
+      (sampleData[0].open +
+        sampleData[0].high +
+        sampleData[0].low +
+        sampleData[0].close) /
+      4
     expect(result[0].close).toBeCloseTo(firstClose, 2)
 
     // First HA candle open = (O + C) / 2

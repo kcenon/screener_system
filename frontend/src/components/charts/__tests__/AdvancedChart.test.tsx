@@ -43,9 +43,30 @@ global.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver
 import AdvancedChart from '../AdvancedChart'
 
 const sampleData: OHLCV[] = [
-  { time: '2024-01-01', open: 100, high: 105, low: 98, close: 102, volume: 1000 },
-  { time: '2024-01-02', open: 102, high: 108, low: 100, close: 106, volume: 1200 },
-  { time: '2024-01-03', open: 106, high: 110, low: 104, close: 108, volume: 1100 },
+  {
+    time: '2024-01-01',
+    open: 100,
+    high: 105,
+    low: 98,
+    close: 102,
+    volume: 1000,
+  },
+  {
+    time: '2024-01-02',
+    open: 102,
+    high: 108,
+    low: 100,
+    close: 106,
+    volume: 1200,
+  },
+  {
+    time: '2024-01-03',
+    open: 106,
+    high: 110,
+    low: 104,
+    close: 108,
+    volume: 1100,
+  },
 ]
 
 describe('AdvancedChart', () => {
@@ -54,36 +75,20 @@ describe('AdvancedChart', () => {
   })
 
   it('should render loading state', () => {
-    render(
-      <AdvancedChart
-        symbol="005930"
-        data={[]}
-        loading={true}
-      />
-    )
+    render(<AdvancedChart symbol="005930" data={[]} loading={true} />)
 
     expect(screen.getByText('차트 로딩 중...')).toBeInTheDocument()
   })
 
   it('should render empty state when no data', () => {
-    render(
-      <AdvancedChart
-        symbol="005930"
-        data={[]}
-        loading={false}
-      />
-    )
+    render(<AdvancedChart symbol="005930" data={[]} loading={false} />)
 
     expect(screen.getByText('차트 데이터가 없습니다')).toBeInTheDocument()
   })
 
   it('should render chart container with data', () => {
     const { container } = render(
-      <AdvancedChart
-        symbol="005930"
-        data={sampleData}
-        loading={false}
-      />
+      <AdvancedChart symbol="005930" data={sampleData} loading={false} />,
     )
 
     // Chart container should have data-symbol attribute
@@ -93,11 +98,7 @@ describe('AdvancedChart', () => {
 
   it('should apply correct height', () => {
     const { container } = render(
-      <AdvancedChart
-        symbol="005930"
-        data={sampleData}
-        height={600}
-      />
+      <AdvancedChart symbol="005930" data={sampleData} height={600} />,
     )
 
     const chartContainer = container.querySelector('[data-symbol="005930"]')
@@ -105,15 +106,21 @@ describe('AdvancedChart', () => {
   })
 
   it('should render with different chart types', () => {
-    const chartTypes = ['candlestick', 'line', 'area', 'ohlc', 'heikin-ashi'] as const
+    const chartTypes = [
+      'candlestick',
+      'line',
+      'area',
+      'ohlc',
+      'heikin-ashi',
+    ] as const
 
-    chartTypes.forEach((chartType) => {
+    chartTypes.forEach(chartType => {
       const { container, unmount } = render(
         <AdvancedChart
           symbol="005930"
           data={sampleData}
           chartType={chartType}
-        />
+        />,
       )
 
       const chartContainer = container.querySelector('[data-symbol="005930"]')
@@ -124,23 +131,13 @@ describe('AdvancedChart', () => {
 
   it('should handle theme prop', () => {
     const { rerender, container } = render(
-      <AdvancedChart
-        symbol="005930"
-        data={sampleData}
-        theme="light"
-      />
+      <AdvancedChart symbol="005930" data={sampleData} theme="light" />,
     )
 
     let chartContainer = container.querySelector('[data-symbol="005930"]')
     expect(chartContainer).toBeInTheDocument()
 
-    rerender(
-      <AdvancedChart
-        symbol="005930"
-        data={sampleData}
-        theme="dark"
-      />
-    )
+    rerender(<AdvancedChart symbol="005930" data={sampleData} theme="dark" />)
 
     chartContainer = container.querySelector('[data-symbol="005930"]')
     expect(chartContainer).toBeInTheDocument()

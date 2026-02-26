@@ -9,7 +9,7 @@ import type { ComparisonStock, MetricHighlight } from '../types/comparison'
  */
 export function getMetricValue(
   stock: ComparisonStock,
-  metricKey: string
+  metricKey: string,
 ): number | null {
   // Handle nested properties
   const value = (stock as any)[metricKey]
@@ -32,12 +32,12 @@ export function getMetricValue(
  */
 export function highlightBestWorst(
   values: (number | null)[],
-  higherIsBetter: boolean
+  higherIsBetter: boolean,
 ): MetricHighlight[] {
   // Filter out null values for comparison
   const validValues = values
     .map((v, i) => ({ value: v, index: i }))
-    .filter((v) => v.value !== null) as { value: number; index: number }[]
+    .filter(v => v.value !== null) as { value: number; index: number }[]
 
   if (validValues.length === 0) {
     return values.map(() => 'neutral')
@@ -45,7 +45,7 @@ export function highlightBestWorst(
 
   // Find best and worst
   const sorted = [...validValues].sort((a, b) =>
-    higherIsBetter ? b.value - a.value : a.value - b.value
+    higherIsBetter ? b.value - a.value : a.value - b.value,
   )
 
   const bestIndex = sorted[0]?.index
@@ -73,7 +73,7 @@ export function highlightBestWorst(
  */
 export function formatMetricValue(
   value: number | null,
-  format: 'currency' | 'percent' | 'number' | 'ratio'
+  format: 'currency' | 'percent' | 'number' | 'ratio',
 ): string {
   if (value === null || value === undefined) {
     return 'N/A'
@@ -139,15 +139,15 @@ export function getHighlightClass(highlight: MetricHighlight): string {
  */
 export function exportToCSV(
   stocks: ComparisonStock[],
-  metricKeys: string[]
+  metricKeys: string[],
 ): Blob {
   // Header row
-  const headers = ['Metric', ...stocks.map((s) => `${s.code} (${s.name})`)]
+  const headers = ['Metric', ...stocks.map(s => `${s.code} (${s.name})`)]
 
   // Data rows
-  const rows = metricKeys.map((key) => {
+  const rows = metricKeys.map(key => {
     const label = key.replace(/_/g, ' ').toUpperCase()
-    const values = stocks.map((stock) => {
+    const values = stocks.map(stock => {
       const value = getMetricValue(stock, key)
       return value !== null ? value : 'N/A'
     })
@@ -156,7 +156,7 @@ export function exportToCSV(
 
   // Convert to CSV string
   const csvContent = [headers, ...rows]
-    .map((row) => row.map((cell) => `"${cell}"`).join(','))
+    .map(row => row.map(cell => `"${cell}"`).join(','))
     .join('\n')
 
   return new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })

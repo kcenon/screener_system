@@ -28,18 +28,21 @@ class PWAService {
       onOfflineReady: () => {
         callbacks.onOfflineReady?.()
       },
-      onRegistered: (r) => {
+      onRegistered: r => {
         if (r) {
           this.registration = r
           callbacks.onRegistered?.(r)
 
           // Check for updates periodically (every hour)
-          setInterval(() => {
-            r.update()
-          }, 60 * 60 * 1000)
+          setInterval(
+            () => {
+              r.update()
+            },
+            60 * 60 * 1000,
+          )
         }
       },
-      onRegisterError: (error) => {
+      onRegisterError: error => {
         console.error('SW registration error:', error)
         callbacks.onRegisterError?.(error as Error)
       },
@@ -70,7 +73,8 @@ class PWAService {
 
     return (
       window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone ===
+        true ||
       document.referrer.includes('android-app://')
     )
   }

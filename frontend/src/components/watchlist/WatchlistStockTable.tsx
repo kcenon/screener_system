@@ -4,9 +4,20 @@
  */
 
 import { useState, useMemo } from 'react'
-import { TrendingUp, TrendingDown, Minus, Trash2, ArrowUpDown, ExternalLink } from 'lucide-react'
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Trash2,
+  ArrowUpDown,
+  ExternalLink,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
-import type { WatchlistStock, WatchlistSortField, SortDirection } from '@/types/watchlist'
+import type {
+  WatchlistStock,
+  WatchlistSortField,
+  SortDirection,
+} from '@/types/watchlist'
 
 interface WatchlistStockTableProps {
   stocks: WatchlistStock[]
@@ -19,7 +30,8 @@ export function WatchlistStockTable({
   onRemoveStock,
   isLoading = false,
 }: WatchlistStockTableProps) {
-  const [sortField, setSortField] = useState<WatchlistSortField>('change_percent')
+  const [sortField, setSortField] =
+    useState<WatchlistSortField>('change_percent')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -43,9 +55,9 @@ export function WatchlistStockTable({
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
       result = result.filter(
-        (stock) =>
+        stock =>
           stock.code.toLowerCase().includes(query) ||
-          stock.name.toLowerCase().includes(query)
+          stock.name.toLowerCase().includes(query),
       )
     }
 
@@ -130,7 +142,13 @@ export function WatchlistStockTable({
     return `₩${(marketCap / 1_000_000).toFixed(1)}M`
   }
 
-  const SortButton = ({ field, children }: { field: WatchlistSortField; children: React.ReactNode }) => (
+  const SortButton = ({
+    field,
+    children,
+  }: {
+    field: WatchlistSortField
+    children: React.ReactNode
+  }) => (
     <button
       onClick={() => handleSort(field)}
       className="flex items-center gap-1 hover:text-gray-900 transition-colors"
@@ -175,7 +193,7 @@ export function WatchlistStockTable({
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={e => setSearchQuery(e.target.value)}
           placeholder="Search by code or name..."
           className="
             w-full px-4 py-2 rounded-lg
@@ -212,7 +230,7 @@ export function WatchlistStockTable({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {processedStocks.map((stock) => {
+            {processedStocks.map(stock => {
               const changeColor =
                 stock.change_percent > 0
                   ? 'text-red-600'
@@ -248,7 +266,9 @@ export function WatchlistStockTable({
                   <td className="px-4 py-3 text-sm text-right font-medium">
                     {formatPrice(stock.current_price)}
                   </td>
-                  <td className={`px-4 py-3 text-sm text-right font-medium ${changeColor}`}>
+                  <td
+                    className={`px-4 py-3 text-sm text-right font-medium ${changeColor}`}
+                  >
                     <div className="flex items-center justify-end gap-1">
                       <ChangeIcon className="w-4 h-4" />
                       {stock.change_percent > 0 ? '+' : ''}
@@ -264,7 +284,9 @@ export function WatchlistStockTable({
                   <td className="px-4 py-3 text-center">
                     <button
                       onClick={() => {
-                        if (window.confirm(`Remove ${stock.name} from watchlist?`)) {
+                        if (
+                          window.confirm(`Remove ${stock.name} from watchlist?`)
+                        ) {
                           onRemoveStock(stock.code)
                         }
                       }}
@@ -289,21 +311,22 @@ export function WatchlistStockTable({
       <div className="px-4 py-3 border-t border-gray-200 bg-gray-50">
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600">
-            {processedStocks.length} stock{processedStocks.length !== 1 ? 's' : ''}
+            {processedStocks.length} stock
+            {processedStocks.length !== 1 ? 's' : ''}
             {searchQuery && ` (filtered from ${stocks.length})`}
           </span>
           <div className="flex items-center gap-4 text-xs">
             <span className="flex items-center gap-1 text-red-600">
               <TrendingUp className="w-3 h-3" />
-              {stocks.filter((s) => s.change_percent > 0).length} up
+              {stocks.filter(s => s.change_percent > 0).length} up
             </span>
             <span className="flex items-center gap-1 text-blue-600">
               <TrendingDown className="w-3 h-3" />
-              {stocks.filter((s) => s.change_percent < 0).length} down
+              {stocks.filter(s => s.change_percent < 0).length} down
             </span>
             <span className="flex items-center gap-1 text-gray-600">
               <Minus className="w-3 h-3" />
-              {stocks.filter((s) => s.change_percent === 0).length} unchanged
+              {stocks.filter(s => s.change_percent === 0).length} unchanged
             </span>
           </div>
         </div>

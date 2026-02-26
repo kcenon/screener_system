@@ -26,7 +26,7 @@ class OAuthService {
    */
   async getAuthorizationUrl(
     provider: OAuthProvider,
-    redirectUrl?: string
+    redirectUrl?: string,
   ): Promise<OAuthAuthorizationResponse> {
     const params = new URLSearchParams()
     if (redirectUrl) {
@@ -35,7 +35,7 @@ class OAuthService {
 
     const response = await api.get<OAuthAuthorizationResponse>(
       `${this.OAUTH_BASE_URL}/${provider}/login`,
-      { params }
+      { params },
     )
     return response.data
   }
@@ -46,11 +46,11 @@ class OAuthService {
   async handleCallback(
     provider: OAuthProvider,
     code: string,
-    state: string
+    state: string,
   ): Promise<TokenResponse> {
     const response = await api.get<TokenResponse>(
       `${this.OAUTH_BASE_URL}/${provider}/callback`,
-      { params: { code, state } }
+      { params: { code, state } },
     )
 
     // Store tokens
@@ -65,7 +65,7 @@ class OAuthService {
    */
   async getLinkUrl(
     provider: OAuthProvider,
-    redirectUrl?: string
+    redirectUrl?: string,
   ): Promise<OAuthAuthorizationResponse> {
     const params = new URLSearchParams()
     if (redirectUrl) {
@@ -74,7 +74,7 @@ class OAuthService {
 
     const response = await api.get<OAuthAuthorizationResponse>(
       `${this.OAUTH_BASE_URL}/${provider}/link`,
-      { params }
+      { params },
     )
     return response.data
   }
@@ -84,11 +84,11 @@ class OAuthService {
    */
   async linkAccount(
     provider: OAuthProvider,
-    data: OAuthCallbackRequest
+    data: OAuthCallbackRequest,
   ): Promise<SocialAccount> {
     const response = await api.post<SocialAccount>(
       `${this.OAUTH_BASE_URL}/${provider}/link`,
-      data
+      data,
     )
     return response.data
   }
@@ -98,7 +98,7 @@ class OAuthService {
    */
   async unlinkAccount(provider: OAuthProvider): Promise<OAuthUnlinkResponse> {
     const response = await api.delete<OAuthUnlinkResponse>(
-      `${this.OAUTH_BASE_URL}/${provider}/unlink`
+      `${this.OAUTH_BASE_URL}/${provider}/unlink`,
     )
     return response.data
   }
@@ -108,7 +108,7 @@ class OAuthService {
    */
   async getLinkedAccounts(): Promise<SocialAccountsListResponse> {
     const response = await api.get<SocialAccountsListResponse>(
-      `${this.OAUTH_BASE_URL}/accounts`
+      `${this.OAUTH_BASE_URL}/accounts`,
     )
     return response.data
   }
@@ -118,7 +118,7 @@ class OAuthService {
    */
   async getAvailableProviders(): Promise<OAuthProvidersResponse> {
     const response = await api.get<OAuthProvidersResponse>(
-      `${this.OAUTH_BASE_URL}/providers`
+      `${this.OAUTH_BASE_URL}/providers`,
     )
     return response.data
   }

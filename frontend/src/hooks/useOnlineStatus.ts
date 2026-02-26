@@ -44,7 +44,7 @@ export function useOnlineStatus(): OnlineStatusState & {
 
   useEffect(() => {
     const handleOnline = () => {
-      setState((prev) => ({
+      setState(prev => ({
         isOnline: true,
         wasOffline: !prev.isOnline || prev.wasOffline,
         lastOnlineAt: new Date(),
@@ -52,7 +52,7 @@ export function useOnlineStatus(): OnlineStatusState & {
     }
 
     const handleOffline = () => {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         isOnline: false,
       }))
@@ -62,9 +62,9 @@ export function useOnlineStatus(): OnlineStatusState & {
     window.addEventListener('offline', handleOffline)
 
     // Initial connection check
-    checkConnection().then((isActuallyOnline) => {
+    checkConnection().then(isActuallyOnline => {
       if (!isActuallyOnline && state.isOnline) {
-        setState((prev) => ({ ...prev, isOnline: false }))
+        setState(prev => ({ ...prev, isOnline: false }))
       }
     })
 

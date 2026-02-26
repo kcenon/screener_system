@@ -123,7 +123,8 @@ function InCellSparklineComponent({
 
     data.forEach((value, i) => {
       const x = (i / (data.length - 1)) * (width - padding * 2) + padding
-      const y = height - padding - ((value - min) / range) * (height - padding * 2)
+      const y =
+        height - padding - ((value - min) / range) * (height - padding * 2)
 
       if (i === 0) {
         ctx.moveTo(x, y)
@@ -137,7 +138,9 @@ function InCellSparklineComponent({
     // Draw end dot for emphasis
     const lastX = width - padding
     const lastY =
-      height - padding - ((data[data.length - 1] - min) / range) * (height - padding * 2)
+      height -
+      padding -
+      ((data[data.length - 1] - min) / range) * (height - padding * 2)
     ctx.fillStyle = trendColor
     ctx.beginPath()
     ctx.arc(lastX, lastY, 2, 0, Math.PI * 2)

@@ -9,7 +9,7 @@ export default function NavMenu({ className }: NavMenuProps) {
   return (
     <nav className={className}>
       <ul className="flex items-center gap-1">
-        {navigationConfig.map((item) => (
+        {navigationConfig.map(item => (
           <li key={item.path || item.labelKey}>
             {item.path && (
               <NavLink

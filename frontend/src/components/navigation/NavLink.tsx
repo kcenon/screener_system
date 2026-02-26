@@ -12,10 +12,17 @@ interface NavLinkProps {
   className?: string
 }
 
-export default function NavLink({ to, labelKey, icon: Icon, onClick, className }: NavLinkProps) {
+export default function NavLink({
+  to,
+  labelKey,
+  icon: Icon,
+  onClick,
+  className,
+}: NavLinkProps) {
   const { t } = useTranslation()
   const location = useLocation()
-  const isActive = location.pathname === to || location.pathname.startsWith(to + '/')
+  const isActive =
+    location.pathname === to || location.pathname.startsWith(to + '/')
 
   return (
     <Link
@@ -26,7 +33,7 @@ export default function NavLink({ to, labelKey, icon: Icon, onClick, className }
         isActive
           ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
           : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
-        className
+        className,
       )}
     >
       {Icon && <Icon size={18} />}

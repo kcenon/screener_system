@@ -8,7 +8,11 @@ interface PushSubscriptionData {
   }
 }
 
-export type NotificationType = 'price_alert' | 'watchlist' | 'market' | 'portfolio'
+export type NotificationType =
+  | 'price_alert'
+  | 'watchlist'
+  | 'market'
+  | 'portfolio'
 
 interface NotificationPreferences {
   priceAlerts: boolean
@@ -63,7 +67,9 @@ class PushNotificationService {
   /**
    * Subscribe to push notifications
    */
-  async subscribe(vapidPublicKey: string): Promise<PushSubscriptionData | null> {
+  async subscribe(
+    vapidPublicKey: string,
+  ): Promise<PushSubscriptionData | null> {
     if (!this.isSupported()) {
       console.warn('Push notifications not supported')
       return null
@@ -148,7 +154,10 @@ class PushNotificationService {
    */
   setPreferences(preferences: Partial<NotificationPreferences>): void {
     this.preferences = { ...this.preferences, ...preferences }
-    localStorage.setItem('notificationPreferences', JSON.stringify(this.preferences))
+    localStorage.setItem(
+      'notificationPreferences',
+      JSON.stringify(this.preferences),
+    )
   }
 
   /**
@@ -156,7 +165,7 @@ class PushNotificationService {
    */
   async showLocalNotification(
     title: string,
-    options?: NotificationOptions
+    options?: NotificationOptions,
   ): Promise<void> {
     if (!this.isSupported()) return
 

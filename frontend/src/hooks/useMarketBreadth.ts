@@ -33,7 +33,7 @@ export interface UseMarketBreadthOptions {
  * ```
  */
 export function useMarketBreadth(
-  options: UseMarketBreadthOptions = {}
+  options: UseMarketBreadthOptions = {},
 ): UseQueryResult<MarketBreadth, Error> {
   const { market = 'ALL', refetchInterval = 60000, enabled = true } = options
 

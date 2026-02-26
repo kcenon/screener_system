@@ -17,15 +17,13 @@ const pathLabels: Record<string, string> = {
 
 export default function Breadcrumb() {
   const location = useLocation()
-  const pathnames = location.pathname.split('/').filter((x) => x)
+  const pathnames = location.pathname.split('/').filter(x => x)
 
   if (pathnames.length === 0) {
     return null
   }
 
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Home', path: '/' },
-  ]
+  const breadcrumbs: BreadcrumbItem[] = [{ label: 'Home', path: '/' }]
 
   let currentPath = ''
   pathnames.forEach((segment, index) => {
@@ -36,7 +34,8 @@ export default function Breadcrumb() {
       return
     }
 
-    const label = pathLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
+    const label =
+      pathLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
     const isLast = index === pathnames.length - 1
 
     breadcrumbs.push({
@@ -51,7 +50,10 @@ export default function Breadcrumb() {
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors">
+    <nav
+      aria-label="Breadcrumb"
+      className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <ol className="flex items-center space-x-2 text-sm">
           {breadcrumbs.map((crumb, index) => {
@@ -60,7 +62,10 @@ export default function Breadcrumb() {
             return (
               <li key={crumb.path || crumb.label} className="flex items-center">
                 {index > 0 && (
-                  <ChevronRight className="text-gray-400 dark:text-gray-500 mx-2" size={16} />
+                  <ChevronRight
+                    className="text-gray-400 dark:text-gray-500 mx-2"
+                    size={16}
+                  />
                 )}
                 {crumb.path ? (
                   <Link
@@ -71,7 +76,9 @@ export default function Breadcrumb() {
                     <span>{crumb.label}</span>
                   </Link>
                 ) : (
-                  <span className="text-gray-900 dark:text-white font-medium">{crumb.label}</span>
+                  <span className="text-gray-900 dark:text-white font-medium">
+                    {crumb.label}
+                  </span>
                 )}
               </li>
             )

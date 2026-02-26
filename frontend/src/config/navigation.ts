@@ -1,4 +1,10 @@
-import { LucideIcon, TrendingUp, Filter, ListTodo, BarChart3 } from 'lucide-react'
+import {
+  LucideIcon,
+  TrendingUp,
+  Filter,
+  ListTodo,
+  BarChart3,
+} from 'lucide-react'
 
 export interface NavigationItem {
   /** Translation key for the label (e.g., 'nav.market') */

@@ -16,7 +16,8 @@ import { notificationService } from '../services/notificationService'
  *
  * @returns Query key array
  */
-export const unreadCountQueryKey = () => ['notifications', 'unread-count'] as const
+export const unreadCountQueryKey = () =>
+  ['notifications', 'unread-count'] as const
 
 /**
  * Hook for tracking unread notification count.

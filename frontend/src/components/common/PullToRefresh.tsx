@@ -69,7 +69,8 @@ export function PullToRefresh({
       {/* Content with transform applied during pull */}
       <div
         style={{
-          transform: pullDistance > 0 ? `translateY(${pullDistance}px)` : 'none',
+          transform:
+            pullDistance > 0 ? `translateY(${pullDistance}px)` : 'none',
           transition: pullDistance > 0 ? 'none' : 'transform 0.3s ease-out',
         }}
       >

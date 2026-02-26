@@ -55,8 +55,10 @@ export default function FreemiumBanner({
 }: FreemiumBannerProps) {
   // Default messages by type
   const defaultMessages = {
-    screener: 'Sign up for unlimited stock screening and save your custom filters!',
-    'stock-detail': 'Sign up to view full financial data, technical indicators, and add to watchlist',
+    screener:
+      'Sign up for unlimited stock screening and save your custom filters!',
+    'stock-detail':
+      'Sign up to view full financial data, technical indicators, and add to watchlist',
     comparison: 'Sign up to compare more stocks and save your comparisons',
     general: 'Sign up for free to unlock all features!',
   }

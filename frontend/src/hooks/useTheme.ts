@@ -61,7 +61,9 @@ interface ThemeStore {
 function getSystemTheme(): ResolvedTheme {
   if (typeof window === 'undefined') return 'light'
 
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
 }
 
 /**
@@ -105,7 +107,7 @@ export const useTheme = create<ThemeStore>()(
       theme: 'system',
       resolvedTheme: 'light',
 
-      setTheme: (theme) => {
+      setTheme: theme => {
         const resolved = resolveTheme(theme)
 
         set({ theme, resolvedTheme: resolved })
@@ -139,9 +141,9 @@ export const useTheme = create<ThemeStore>()(
     {
       name: 'theme-preference', // localStorage key
       // Only persist the 'theme' preference, not resolvedTheme
-      partialize: (state) => ({ theme: state.theme }),
-    }
-  )
+      partialize: state => ({ theme: state.theme }),
+    },
+  ),
 )
 
 /**

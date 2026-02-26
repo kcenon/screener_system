@@ -90,7 +90,9 @@ export function useExperiment(experiment: Experiment) {
  * ```
  */
 export function useCompactTableExperiment() {
-  const { variant, isVariant, trackConversion } = useExperiment(COMPACT_TABLE_EXPERIMENT)
+  const { variant, isVariant, trackConversion } = useExperiment(
+    COMPACT_TABLE_EXPERIMENT,
+  )
 
   return {
     variant,
@@ -112,7 +114,9 @@ export function useCompactTableExperiment() {
  * ```
  */
 export function useSimplifiedFiltersExperiment() {
-  const { variant, isVariant, trackConversion } = useExperiment(SIMPLIFIED_FILTERS_EXPERIMENT)
+  const { variant, isVariant, trackConversion } = useExperiment(
+    SIMPLIFIED_FILTERS_EXPERIMENT,
+  )
 
   return {
     variant,
@@ -174,7 +178,9 @@ export function useCTAColorExperiment() {
  * ```
  */
 export function useOnboardingExperiment() {
-  const { variant, isVariant, trackConversion } = useExperiment(ONBOARDING_FLOW_EXPERIMENT)
+  const { variant, isVariant, trackConversion } = useExperiment(
+    ONBOARDING_FLOW_EXPERIMENT,
+  )
 
   return {
     variant,

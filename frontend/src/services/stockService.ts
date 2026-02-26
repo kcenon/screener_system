@@ -37,7 +37,7 @@ class StockService {
     sortBy: ScreeningSortField = 'market_cap',
     order: SortOrder = 'desc',
     offset: number = 0,
-    limit: number = 50
+    limit: number = 50,
   ): Promise<ScreeningResponse> {
     // Convert offset/limit to page/per_page for backend API
     const page = Math.floor(offset / limit) + 1
@@ -53,7 +53,7 @@ class StockService {
 
     const response = await api.post<ScreeningResponse>(
       `${this.SCREENING_BASE_URL}/screen`,
-      requestData
+      requestData,
     )
     return response.data
   }
@@ -66,7 +66,7 @@ class StockService {
    */
   async getStock(code: string): Promise<StockDetail> {
     const response = await api.get<StockDetail>(
-      `${this.STOCKS_BASE_URL}/${code}`
+      `${this.STOCKS_BASE_URL}/${code}`,
     )
     return response.data
   }
@@ -84,7 +84,7 @@ class StockService {
     code: string,
     fromDate: string,
     toDate: string,
-    interval: string = '1D'
+    interval: string = '1D',
   ): Promise<PriceHistoryResponse> {
     const response = await api.get<PriceHistoryResponse>(
       `${this.STOCKS_BASE_URL}/${code}/prices`,
@@ -94,7 +94,7 @@ class StockService {
           to_date: toDate,
           interval,
         },
-      }
+      },
     )
     return response.data
   }
@@ -110,7 +110,7 @@ class StockService {
   async getFinancials(
     code: string,
     periodType: FinancialPeriod = 'Y',
-    years: number = 5
+    years: number = 5,
   ): Promise<FinancialsResponse> {
     const response = await api.get<FinancialsResponse>(
       `${this.STOCKS_BASE_URL}/${code}/financials`,
@@ -119,7 +119,7 @@ class StockService {
           period_type: periodType,
           years,
         },
-      }
+      },
     )
     return response.data
   }
@@ -135,7 +135,7 @@ class StockService {
   async listStocks(
     market?: 'KOSPI' | 'KOSDAQ',
     offset: number = 0,
-    limit: number = 50
+    limit: number = 50,
   ): Promise<PaginatedResponse<Stock>> {
     const page = Math.floor(offset / limit) + 1
 
@@ -150,7 +150,7 @@ class StockService {
 
     const response = await api.get<PaginatedResponse<Stock>>(
       this.STOCKS_BASE_URL,
-      { params }
+      { params },
     )
     return response.data
   }

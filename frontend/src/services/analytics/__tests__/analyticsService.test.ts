@@ -63,7 +63,9 @@ describe('AnalyticsService', () => {
 
       analytics.track('Test Event', {})
 
-      const callArgs = consoleSpy.mock.calls.find((call) => call[0] === '[Analytics] track:')
+      const callArgs = consoleSpy.mock.calls.find(
+        call => call[0] === '[Analytics] track:',
+      )
       expect(callArgs).toBeTruthy()
       expect(callArgs![1].properties.timestamp).toBeTruthy()
       consoleSpy.mockRestore()
@@ -114,7 +116,9 @@ describe('AnalyticsService', () => {
         username: 'john',
       })
 
-      const callArgs = consoleSpy.mock.calls.find((call) => call[0] === '[Analytics] track:')
+      const callArgs = consoleSpy.mock.calls.find(
+        call => call[0] === '[Analytics] track:',
+      )
       expect(callArgs![1].properties.password).toBeUndefined()
       expect(callArgs![1].properties.username).toBe('john')
       consoleSpy.mockRestore()
@@ -126,8 +130,12 @@ describe('AnalyticsService', () => {
 
       analytics.track('Test Event', { description: longString })
 
-      const callArgs = consoleSpy.mock.calls.find((call) => call[0] === '[Analytics] track:')
-      expect(callArgs![1].properties.description.length).toBeLessThanOrEqual(258)
+      const callArgs = consoleSpy.mock.calls.find(
+        call => call[0] === '[Analytics] track:',
+      )
+      expect(callArgs![1].properties.description.length).toBeLessThanOrEqual(
+        258,
+      )
       consoleSpy.mockRestore()
     })
   })

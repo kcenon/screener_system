@@ -209,7 +209,9 @@ class AlertService {
    * ```
    */
   async toggleAlert(id: number): Promise<Alert> {
-    const response = await api.post<AlertToggleResponse>(`${this.basePath}/${id}/toggle`)
+    const response = await api.post<AlertToggleResponse>(
+      `${this.basePath}/${id}/toggle`,
+    )
     return response.data.alert
   }
 

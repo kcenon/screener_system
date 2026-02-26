@@ -29,15 +29,26 @@ vi.mock('@/components/stock/StockHeader', () => ({
       <h1>{stock.name}</h1>
       <span data-testid="stock-code">{stock.code}</span>
       <span data-testid="stock-price">{stock.current_price}</span>
-      <span data-testid="stock-change" className={(stock.price_change_1d ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}>
-        {(stock.price_change_1d ?? 0) > 0 ? '+' : ''}{stock.price_change_1d}
+      <span
+        data-testid="stock-change"
+        className={
+          (stock.price_change_1d ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'
+        }
+      >
+        {(stock.price_change_1d ?? 0) > 0 ? '+' : ''}
+        {stock.price_change_1d}
       </span>
     </div>
   ),
 }))
 
 vi.mock('@/components/stock/PriceChart', () => ({
-  default: ({ data, loading, timeframe, onTimeframeChange }: {
+  default: ({
+    data,
+    loading,
+    timeframe,
+    onTimeframeChange,
+  }: {
     data: PriceHistoryResponse | undefined
     loading: boolean
     timeframe: string
@@ -48,7 +59,9 @@ vi.mock('@/components/stock/PriceChart', () => ({
         <div data-testid="chart-loading">Loading chart...</div>
       ) : data ? (
         <>
-          <div data-testid="chart-data">Chart with {data.candles.length} candles</div>
+          <div data-testid="chart-data">
+            Chart with {data.candles.length} candles
+          </div>
           <div data-testid="chart-timeframe">{timeframe}</div>
           <button onClick={() => onTimeframeChange('1Y')}>1Y</button>
         </>
@@ -60,7 +73,12 @@ vi.mock('@/components/stock/PriceChart', () => ({
 }))
 
 vi.mock('@/components/charts', () => ({
-  AdvancedChartContainer: ({ data, loading, timeframe, onTimeframeChange }: {
+  AdvancedChartContainer: ({
+    data,
+    loading,
+    timeframe,
+    onTimeframeChange,
+  }: {
     symbol: string
     data: PriceHistoryResponse | undefined
     loading: boolean
@@ -73,7 +91,9 @@ vi.mock('@/components/charts', () => ({
         <div data-testid="chart-loading">Loading chart...</div>
       ) : data ? (
         <>
-          <div data-testid="chart-data">Chart with {data.candles.length} candles</div>
+          <div data-testid="chart-data">
+            Chart with {data.candles.length} candles
+          </div>
           <div data-testid="chart-timeframe">{timeframe}</div>
           <button onClick={() => onTimeframeChange('1Y')}>1Y</button>
         </>
@@ -156,7 +176,7 @@ function renderWithProviders(code: string) {
           <Route path="/" element={<div>Home Page</div>} />
         </Routes>
       </MemoryRouter>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   )
 }
 
@@ -204,9 +224,13 @@ describe('StockDetailPage Rendering', () => {
     renderWithProviders('INVALID')
 
     await waitFor(() => {
-      expect(screen.getByText('주식 정보를 불러올 수 없습니다')).toBeInTheDocument()
+      expect(
+        screen.getByText('주식 정보를 불러올 수 없습니다'),
+      ).toBeInTheDocument()
       expect(screen.getByText('Stock not found')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: '스크리너로 돌아가기' })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: '스크리너로 돌아가기' }),
+      ).toBeInTheDocument()
     })
   })
 
@@ -257,7 +281,9 @@ describe('StockDetailPage Rendering', () => {
 
       // Advanced chart should be rendered (default mode)
       expect(screen.getByTestId('advanced-chart')).toBeInTheDocument()
-      expect(screen.getByTestId('chart-data')).toHaveTextContent('Chart with 2 candles')
+      expect(screen.getByTestId('chart-data')).toHaveTextContent(
+        'Chart with 2 candles',
+      )
 
       // Stock tabs should be rendered
       expect(screen.getByTestId('stock-tabs')).toBeInTheDocument()
@@ -282,9 +308,13 @@ describe('StockDetailPage Rendering', () => {
     renderWithProviders('005930')
 
     await waitFor(() => {
-      expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument()
+      expect(
+        screen.getByRole('navigation', { name: 'Breadcrumb' }),
+      ).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /홈/ })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /스크리너/ })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /스크리너/ }),
+      ).toBeInTheDocument()
       const stockNames = screen.getAllByText('Samsung Electronics')
       expect(stockNames.length).toBeGreaterThan(0)
     })
@@ -388,7 +418,9 @@ describe('StockDetailPage Chart', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('advanced-chart')).toBeInTheDocument()
-      expect(screen.getByTestId('chart-data')).toHaveTextContent('Chart with 2 candles')
+      expect(screen.getByTestId('chart-data')).toHaveTextContent(
+        'Chart with 2 candles',
+      )
     })
   })
 
@@ -409,7 +441,9 @@ describe('StockDetailPage Chart', () => {
     renderWithProviders('005930')
 
     await waitFor(() => {
-      expect(screen.getByTestId('chart-loading')).toHaveTextContent('Loading chart...')
+      expect(screen.getByTestId('chart-loading')).toHaveTextContent(
+        'Loading chart...',
+      )
     })
   })
 

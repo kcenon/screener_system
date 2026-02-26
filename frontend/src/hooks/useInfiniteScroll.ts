@@ -90,7 +90,7 @@ export interface UseInfiniteScrollReturn {
  */
 export function useInfiniteScroll(
   fetchMore: () => void | Promise<void>,
-  options: UseInfiniteScrollOptions = {}
+  options: UseInfiniteScrollOptions = {},
 ): UseInfiniteScrollReturn {
   const {
     threshold = 500,

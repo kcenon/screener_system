@@ -82,7 +82,9 @@ export default function SocialLoginButtons({
   onError,
   className = '',
 }: SocialLoginButtonsProps) {
-  const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(null)
+  const [loadingProvider, setLoadingProvider] = useState<OAuthProvider | null>(
+    null,
+  )
 
   const handleClick = async (provider: OAuthProvider) => {
     try {
@@ -114,7 +116,7 @@ export default function SocialLoginButtons({
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        {providers.map((provider) => {
+        {providers.map(provider => {
           const config = PROVIDER_CONFIGS[provider]
           const isLoading = loadingProvider === provider
 

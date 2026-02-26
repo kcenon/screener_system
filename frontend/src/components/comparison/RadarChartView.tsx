@@ -44,7 +44,12 @@ const RADAR_METRICS = [
     format: 'percent' as const,
     inverse: false,
   },
-  { key: 'debt_ratio', label: 'Debt', format: 'percent' as const, inverse: true },
+  {
+    key: 'debt_ratio',
+    label: 'Debt',
+    format: 'percent' as const,
+    inverse: true,
+  },
 ]
 
 /**
@@ -54,11 +59,11 @@ const RADAR_METRICS = [
 function normalizeValue(
   value: number | null,
   allValues: (number | null)[],
-  inverse: boolean
+  inverse: boolean,
 ): number {
   if (value === null) return 0
 
-  const validValues = allValues.filter((v) => v !== null) as number[]
+  const validValues = allValues.filter(v => v !== null) as number[]
   if (validValues.length === 0) return 0
 
   const min = Math.min(...validValues)
@@ -74,17 +79,20 @@ function normalizeValue(
   return inverse ? 100 - normalized : normalized
 }
 
-export function RadarChartView({ stocks, className = '' }: RadarChartViewProps) {
+export function RadarChartView({
+  stocks,
+  className = '',
+}: RadarChartViewProps) {
   // Prepare radar chart data
-  const radarData = RADAR_METRICS.map((metric) => {
+  const radarData = RADAR_METRICS.map(metric => {
     const dataPoint: any = {
       metric: metric.label,
       fullName: metric.label,
     }
 
-    stocks.forEach((stock) => {
+    stocks.forEach(stock => {
       const value = getMetricValue(stock, metric.key)
-      const allValues = stocks.map((s) => getMetricValue(s, metric.key))
+      const allValues = stocks.map(s => getMetricValue(s, metric.key))
 
       // Normalized value for radar display
       dataPoint[stock.code] = normalizeValue(value, allValues, metric.inverse)
@@ -172,11 +180,10 @@ export function RadarChartView({ stocks, className = '' }: RadarChartViewProps) 
       {/* Legend explanation */}
       <div className="mt-4 text-sm text-gray-600 text-center">
         <p>
-          Radar chart shows normalized comparison (0-100 scale) across key metrics
+          Radar chart shows normalized comparison (0-100 scale) across key
+          metrics
         </p>
-        <p className="text-xs mt-1">
-          Larger area = Better overall performance
-        </p>
+        <p className="text-xs mt-1">Larger area = Better overall performance</p>
       </div>
     </div>
   )

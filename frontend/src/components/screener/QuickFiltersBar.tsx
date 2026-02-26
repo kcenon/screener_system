@@ -184,7 +184,7 @@ export function QuickFiltersBar({
 
       // Remove filter values
       const clearedFilters: Partial<ScreeningFilters> = {}
-      Object.keys(filter.filters).forEach((key) => {
+      Object.keys(filter.filters).forEach(key => {
         clearedFilters[key as keyof ScreeningFilters] = undefined as any
       })
       onFilterChange(clearedFilters)
@@ -210,11 +210,16 @@ export function QuickFiltersBar({
 
   return (
     <Tooltip.Provider>
-      <div className={`rounded-lg bg-white dark:bg-gray-900 p-4 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors ${className}`}>
+      <div
+        className={`rounded-lg bg-white dark:bg-gray-900 p-4 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors ${className}`}
+      >
         {/* Header */}
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 transition-colors">
-            인기 필터 <span className="text-xs font-normal text-gray-500 dark:text-gray-400">Quick Filters</span>
+            인기 필터{' '}
+            <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+              Quick Filters
+            </span>
           </h3>
 
           {activeFilters.size > 0 && (
@@ -229,7 +234,7 @@ export function QuickFiltersBar({
 
         {/* Filter buttons - horizontal scrollable on mobile */}
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {QUICK_FILTERS.map((filter) => {
+          {QUICK_FILTERS.map(filter => {
             const isActive = activeFilters.has(filter.id)
 
             return (

@@ -13,7 +13,10 @@ interface MetricTooltipProps {
   className?: string
 }
 
-export function MetricTooltip({ description, className = '' }: MetricTooltipProps) {
+export function MetricTooltip({
+  description,
+  className = '',
+}: MetricTooltipProps) {
   const [isVisible, setIsVisible] = useState(false)
 
   return (

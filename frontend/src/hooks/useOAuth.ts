@@ -12,7 +12,8 @@ import type { OAuthProvider, SocialAccount } from '@/types'
  */
 export function useOAuthLogin() {
   return useMutation({
-    mutationFn: (provider: OAuthProvider) => oauthService.initiateLogin(provider),
+    mutationFn: (provider: OAuthProvider) =>
+      oauthService.initiateLogin(provider),
   })
 }
 
@@ -47,7 +48,8 @@ export function useLinkAccount() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (provider: OAuthProvider) => oauthService.initiateLink(provider),
+    mutationFn: (provider: OAuthProvider) =>
+      oauthService.initiateLink(provider),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['linkedAccounts'] })
     },
@@ -61,7 +63,8 @@ export function useUnlinkAccount() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (provider: OAuthProvider) => oauthService.unlinkAccount(provider),
+    mutationFn: (provider: OAuthProvider) =>
+      oauthService.unlinkAccount(provider),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['linkedAccounts'] })
     },
@@ -75,7 +78,7 @@ export function useLinkedAccounts() {
   return useQuery({
     queryKey: ['linkedAccounts'],
     queryFn: () => oauthService.getLinkedAccounts(),
-    select: (data) => data.accounts,
+    select: data => data.accounts,
   })
 }
 
@@ -86,7 +89,7 @@ export function useAvailableProviders() {
   return useQuery({
     queryKey: ['oauthProviders'],
     queryFn: () => oauthService.getAvailableProviders(),
-    select: (data) => data.providers,
+    select: data => data.providers,
   })
 }
 
@@ -95,5 +98,7 @@ export function useAvailableProviders() {
  */
 export function useIsProviderLinked(provider: OAuthProvider) {
   const { data: accounts = [] } = useLinkedAccounts()
-  return accounts.some((account: SocialAccount) => account.provider === provider)
+  return accounts.some(
+    (account: SocialAccount) => account.provider === provider,
+  )
 }

@@ -42,16 +42,17 @@ export function usePWA(): UsePWAReturn {
     isOfflineReady: false,
   })
 
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null)
 
   // Initialize PWA service
   useEffect(() => {
     pwaService.init({
       onNeedRefresh: () => {
-        setState((prev) => ({ ...prev, needsUpdate: true }))
+        setState(prev => ({ ...prev, needsUpdate: true }))
       },
       onOfflineReady: () => {
-        setState((prev) => ({ ...prev, isOfflineReady: true }))
+        setState(prev => ({ ...prev, isOfflineReady: true }))
       },
     })
   }, [])
@@ -61,12 +62,12 @@ export function usePWA(): UsePWAReturn {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e as BeforeInstallPromptEvent)
-      setState((prev) => ({ ...prev, isInstallable: true }))
+      setState(prev => ({ ...prev, isInstallable: true }))
     }
 
     const handleAppInstalled = () => {
       setDeferredPrompt(null)
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         isInstallable: false,
         isInstalled: true,
@@ -77,7 +78,10 @@ export function usePWA(): UsePWAReturn {
     window.addEventListener('appinstalled', handleAppInstalled)
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt,
+      )
       window.removeEventListener('appinstalled', handleAppInstalled)
     }
   }, [])
@@ -86,7 +90,7 @@ export function usePWA(): UsePWAReturn {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(display-mode: standalone)')
     const handleChange = (e: MediaQueryListEvent) => {
-      setState((prev) => ({ ...prev, isInstalled: e.matches }))
+      setState(prev => ({ ...prev, isInstalled: e.matches }))
     }
 
     mediaQuery.addEventListener('change', handleChange)
@@ -102,7 +106,7 @@ export function usePWA(): UsePWAReturn {
 
       if (outcome === 'accepted') {
         setDeferredPrompt(null)
-        setState((prev) => ({ ...prev, isInstallable: false }))
+        setState(prev => ({ ...prev, isInstallable: false }))
         return true
       }
     } catch (error) {
@@ -114,11 +118,11 @@ export function usePWA(): UsePWAReturn {
 
   const update = useCallback(async () => {
     await pwaService.update()
-    setState((prev) => ({ ...prev, needsUpdate: false }))
+    setState(prev => ({ ...prev, needsUpdate: false }))
   }, [])
 
   const dismissUpdate = useCallback(() => {
-    setState((prev) => ({ ...prev, needsUpdate: false }))
+    setState(prev => ({ ...prev, needsUpdate: false }))
   }, [])
 
   return {

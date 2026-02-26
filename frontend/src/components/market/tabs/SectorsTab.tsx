@@ -32,10 +32,7 @@ export function SectorsTab({ autoRefresh = true }: SectorsTabProps) {
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Current Performance (Today)
         </h3>
-        <SectorHeatmap
-          defaultTimeframe="1D"
-          autoRefresh={autoRefresh}
-        />
+        <SectorHeatmap defaultTimeframe="1D" autoRefresh={autoRefresh} />
       </div>
 
       {/* Historical Sector Trends */}
@@ -45,10 +42,7 @@ export function SectorsTab({ autoRefresh = true }: SectorsTabProps) {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             7-Day Performance
           </h3>
-          <SectorHeatmap
-            defaultTimeframe="1W"
-            autoRefresh={false}
-          />
+          <SectorHeatmap defaultTimeframe="1W" autoRefresh={false} />
         </div>
 
         {/* 1 Month */}
@@ -56,10 +50,7 @@ export function SectorsTab({ autoRefresh = true }: SectorsTabProps) {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             1-Month Performance
           </h3>
-          <SectorHeatmap
-            defaultTimeframe="1M"
-            autoRefresh={false}
-          />
+          <SectorHeatmap defaultTimeframe="1M" autoRefresh={false} />
         </div>
       </div>
 
@@ -81,15 +72,17 @@ export function SectorsTab({ autoRefresh = true }: SectorsTabProps) {
           🚀 Coming Soon: Sector Composition Details
         </h3>
         <p className="text-sm text-gray-600">
-          Top stocks per sector, market cap distribution, and sector weight in indices
+          Top stocks per sector, market cap distribution, and sector weight in
+          indices
         </p>
       </div>
 
       {/* Info */}
       <div className="bg-blue-50 rounded-lg p-4">
         <p className="text-sm text-blue-900">
-          💡 <strong>Tip:</strong> Click on a sector in any heatmap to filter the screener by that sector.
-          Use the historical views to identify sector rotation and trends.
+          💡 <strong>Tip:</strong> Click on a sector in any heatmap to filter
+          the screener by that sector. Use the historical views to identify
+          sector rotation and trends.
         </p>
       </div>
     </div>

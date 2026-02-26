@@ -214,8 +214,8 @@ export function initializeCSSVariables(theme: 'light' | 'dark'): void {
   applyCSSVariables(theme)
 
   // Watch for theme changes
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
       if (mutation.attributeName === 'class') {
         const classList = document.documentElement.classList
         const isDark = classList.contains('dark')

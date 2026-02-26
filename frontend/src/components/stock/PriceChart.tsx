@@ -89,7 +89,10 @@ export default function PriceChart({
     // Create chart
     const chart = createChart(chartContainerRef.current, {
       layout: {
-        background: { type: ColorType.Solid, color: chartColors.backgroundColor },
+        background: {
+          type: ColorType.Solid,
+          color: chartColors.backgroundColor,
+        },
         textColor: chartColors.textColor,
       },
       width: chartContainerRef.current.clientWidth,
@@ -189,7 +192,10 @@ export default function PriceChart({
     // Update chart colors without recreating
     chartRef.current.applyOptions({
       layout: {
-        background: { type: ColorType.Solid, color: chartColors.backgroundColor },
+        background: {
+          type: ColorType.Solid,
+          color: chartColors.backgroundColor,
+        },
         textColor: chartColors.textColor,
       },
       grid: {
@@ -207,12 +213,17 @@ export default function PriceChart({
 
   // Update data when changed
   useEffect(() => {
-    if (!chartReady || !data || !candlestickSeriesRef.current || !volumeSeriesRef.current) {
+    if (
+      !chartReady ||
+      !data ||
+      !candlestickSeriesRef.current ||
+      !volumeSeriesRef.current
+    ) {
       return
     }
 
     // Transform data to chart format
-    const candleData: CandlestickData[] = data.candles.map((candle) => ({
+    const candleData: CandlestickData[] = data.candles.map(candle => ({
       time: candle.date,
       open: candle.open,
       high: candle.high,
@@ -243,11 +254,13 @@ export default function PriceChart({
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 transition-colors">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">가격 차트</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          가격 차트
+        </h3>
 
         {/* Timeframe Selector */}
         <div className="inline-flex rounded-md shadow-sm" role="group">
-          {timeframes.map((tf) => (
+          {timeframes.map(tf => (
             <button
               key={tf.value}
               type="button"
@@ -269,7 +282,9 @@ export default function PriceChart({
         <div className="flex items-center justify-center h-[400px] bg-gray-50 dark:bg-gray-700 rounded transition-colors">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-blue-600 dark:border-blue-400 border-r-transparent mb-2"></div>
-            <p className="text-sm text-gray-600 dark:text-gray-300">차트 로딩 중...</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              차트 로딩 중...
+            </p>
           </div>
         </div>
       ) : !data || data.candles.length === 0 ? (
@@ -288,7 +303,9 @@ export default function PriceChart({
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">차트 데이터가 없습니다</p>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+              차트 데이터가 없습니다
+            </p>
           </div>
         </div>
       ) : (

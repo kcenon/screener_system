@@ -101,7 +101,8 @@ export function CompactThemeToggle() {
     else setTheme('light')
   }
 
-  const Icon = theme === 'system' ? Monitor : resolvedTheme === 'dark' ? Moon : Sun
+  const Icon =
+    theme === 'system' ? Monitor : resolvedTheme === 'dark' ? Moon : Sun
 
   return (
     <button

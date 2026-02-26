@@ -17,8 +17,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
-              <BarChart3 className="text-blue-600 dark:text-blue-400" size={28} />
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white"
+            >
+              <BarChart3
+                className="text-blue-600 dark:text-blue-400"
+                size={28}
+              />
               <span className="hidden sm:inline">{t('app.name')}</span>
             </Link>
 
