@@ -46,9 +46,11 @@ for module_name in [
         sys.modules[module_name] = MagicMock()
 
 import app.db.models  # noqa: F401, E402
+import app.middleware.rate_limit as rl_module  # noqa: E402
 from app.db.base import Base  # noqa: E402
 from app.db.session import get_db  # noqa: E402
 from app.main import app  # noqa: E402
+from app.middleware.rate_limit import _fallback_limiter  # noqa: E402
 
 # Test database URL
 # 1. Use TEST_DATABASE_URL env var if set
@@ -69,6 +71,16 @@ elif DEFAULT_TEST_DB_URL.startswith("postgres://"):
     )
 
 TEST_DATABASE_URL = DEFAULT_TEST_DB_URL
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limit_fallback():
+    """Reset in-memory rate limiter between tests to prevent cross-test interference."""
+    _fallback_limiter.reset()
+    rl_module._fallback_logged = False
+    yield
+    _fallback_limiter.reset()
+    rl_module._fallback_logged = False
 
 
 @pytest.fixture(scope="function")
