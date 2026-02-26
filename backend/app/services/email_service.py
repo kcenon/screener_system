@@ -325,8 +325,144 @@ class EmailService:
             f"Current Value: {current_value}"
         )
 
+        html_body = self._render_template(
+            "price_alert.html",
+            {
+                "stock_symbol": stock_symbol,
+                "alert_type": alert_type,
+                "condition_value": condition_value,
+                "current_value": current_value,
+                "dashboard_url": f"{self.frontend_url}/dashboard",
+            },
+        )
+
         return await self.send_notification_email(
             to_email=to_email,
             subject=subject,
             body=body,
+            html_body=html_body,
+        )
+
+    async def send_payment_failure_email(
+        self,
+        to_email: str,
+        amount: float,
+        currency: str,
+        failure_reason: Optional[str] = None,
+    ) -> bool:
+        """Send a payment failure notification email.
+
+        Args:
+            to_email: Recipient email address.
+            amount: Failed payment amount.
+            currency: Payment currency code.
+            failure_reason: Optional reason for failure.
+
+        Returns:
+            True if email was sent successfully.
+        """
+        body = (
+            f"Payment Failed\n\n"
+            f"We were unable to process your payment of {currency} {amount}.\n"
+        )
+        if failure_reason:
+            body += f"Reason: {failure_reason}\n"
+        body += "\nPlease update your payment method to avoid service interruption."
+
+        html_body = self._render_template(
+            "payment_failure.html",
+            {
+                "amount": f"{amount:.2f}",
+                "currency": currency.upper(),
+                "failure_reason": failure_reason,
+                "billing_url": f"{self.frontend_url}/billing",
+            },
+        )
+
+        return await self.send_notification_email(
+            to_email=to_email,
+            subject="Payment Failed - Action Required",
+            body=body,
+            html_body=html_body,
+        )
+
+    async def send_upcoming_invoice_email(
+        self,
+        to_email: str,
+        amount: float,
+        currency: str,
+        due_date: str,
+    ) -> bool:
+        """Send an upcoming invoice notification email.
+
+        Args:
+            to_email: Recipient email address.
+            amount: Invoice amount.
+            currency: Payment currency code.
+            due_date: Date string for the upcoming charge.
+
+        Returns:
+            True if email was sent successfully.
+        """
+        body = (
+            f"Upcoming Invoice\n\n"
+            f"Amount: {currency} {amount}\n"
+            f"Due Date: {due_date}\n\n"
+            f"Your payment method on file will be charged automatically."
+        )
+
+        html_body = self._render_template(
+            "upcoming_invoice.html",
+            {
+                "amount": f"{amount:.2f}",
+                "currency": currency.upper(),
+                "due_date": due_date,
+                "billing_url": f"{self.frontend_url}/billing",
+            },
+        )
+
+        return await self.send_notification_email(
+            to_email=to_email,
+            subject="Upcoming Invoice",
+            body=body,
+            html_body=html_body,
+        )
+
+    async def send_trial_ending_email(
+        self,
+        to_email: str,
+        trial_end_date: str,
+        plan_name: str,
+    ) -> bool:
+        """Send a trial ending soon notification email.
+
+        Args:
+            to_email: Recipient email address.
+            trial_end_date: Date string when the trial ends.
+            plan_name: Name of the subscription plan.
+
+        Returns:
+            True if email was sent successfully.
+        """
+        body = (
+            f"Your free trial for the {plan_name} plan is ending soon.\n\n"
+            f"Trial Ends: {trial_end_date}\n\n"
+            f"After your trial ends, your subscription will begin "
+            f"and your payment method will be charged."
+        )
+
+        html_body = self._render_template(
+            "trial_ending.html",
+            {
+                "plan_name": plan_name,
+                "trial_end_date": trial_end_date,
+                "billing_url": f"{self.frontend_url}/billing",
+            },
+        )
+
+        return await self.send_notification_email(
+            to_email=to_email,
+            subject=f"Your {plan_name} Trial is Ending Soon",
+            body=body,
+            html_body=html_body,
         )

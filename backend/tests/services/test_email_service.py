@@ -238,6 +238,148 @@ class TestEmailService:
             )
             mock_server.sendmail.assert_called_once()
 
+    @pytest.mark.asyncio
+    async def test_send_alert_email_with_html_template(self, email_service):
+        """Test stock alert email renders HTML template with correct context"""
+        with patch.object(
+            email_service, "_render_template", return_value="<html>rendered</html>"
+        ) as mock_render, patch.object(
+            email_service, "send_notification_email"
+        ) as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_alert_email(
+                to_email="user@example.com",
+                alert_type="PRICE_ABOVE",
+                stock_symbol="AAPL",
+                condition_value=150.0,
+                current_value=155.0,
+            )
+
+        assert result is True
+        mock_render.assert_called_once()
+        template_name, ctx = mock_render.call_args[0]
+        assert template_name == "price_alert.html"
+        assert ctx["stock_symbol"] == "AAPL"
+        assert ctx["alert_type"] == "PRICE_ABOVE"
+        assert ctx["condition_value"] == 150.0
+        assert ctx["current_value"] == 155.0
+        assert "dashboard_url" in ctx
+
+        call_kwargs = mock_send.call_args[1]
+        assert call_kwargs["html_body"] == "<html>rendered</html>"
+
+    @pytest.mark.asyncio
+    async def test_send_payment_failure_email(self, email_service):
+        """Test payment failure email with amount, currency, and template context"""
+        with patch.object(
+            email_service, "_render_template", return_value="<html>pf</html>"
+        ) as mock_render, patch.object(
+            email_service, "send_notification_email"
+        ) as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_payment_failure_email(
+                to_email="user@example.com",
+                amount=29.99,
+                currency="USD",
+                failure_reason="Card declined",
+            )
+
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args[1]
+        assert call_kwargs["subject"] == "Payment Failed - Action Required"
+        assert "29.99" in call_kwargs["body"]
+        assert "Card declined" in call_kwargs["body"]
+
+        mock_render.assert_called_once()
+        template_name, ctx = mock_render.call_args[0]
+        assert template_name == "payment_failure.html"
+        assert ctx["amount"] == "29.99"
+        assert ctx["currency"] == "USD"
+        assert ctx["failure_reason"] == "Card declined"
+        assert "billing_url" in ctx
+
+    @pytest.mark.asyncio
+    async def test_send_payment_failure_email_no_reason(self, email_service):
+        """Test payment failure email without failure reason"""
+        with patch.object(email_service, "send_notification_email") as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_payment_failure_email(
+                to_email="user@example.com",
+                amount=9.99,
+                currency="USD",
+            )
+
+        assert result is True
+        call_kwargs = mock_send.call_args[1]
+        assert "9.99" in call_kwargs["body"]
+        assert "Reason" not in call_kwargs["body"]
+
+    @pytest.mark.asyncio
+    async def test_send_upcoming_invoice_email(self, email_service):
+        """Test upcoming invoice email with amount, due date, and template context"""
+        with patch.object(
+            email_service, "_render_template", return_value="<html>ui</html>"
+        ) as mock_render, patch.object(
+            email_service, "send_notification_email"
+        ) as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_upcoming_invoice_email(
+                to_email="user@example.com",
+                amount=49.99,
+                currency="USD",
+                due_date="2025-02-01",
+            )
+
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args[1]
+        assert call_kwargs["subject"] == "Upcoming Invoice"
+        assert "49.99" in call_kwargs["body"]
+        assert "2025-02-01" in call_kwargs["body"]
+
+        mock_render.assert_called_once()
+        template_name, ctx = mock_render.call_args[0]
+        assert template_name == "upcoming_invoice.html"
+        assert ctx["amount"] == "49.99"
+        assert ctx["currency"] == "USD"
+        assert ctx["due_date"] == "2025-02-01"
+        assert "billing_url" in ctx
+
+    @pytest.mark.asyncio
+    async def test_send_trial_ending_email(self, email_service):
+        """Test trial ending email with plan name, date, and template context"""
+        with patch.object(
+            email_service, "_render_template", return_value="<html>te</html>"
+        ) as mock_render, patch.object(
+            email_service, "send_notification_email"
+        ) as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_trial_ending_email(
+                to_email="user@example.com",
+                trial_end_date="2025-02-15",
+                plan_name="Pro",
+            )
+
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args[1]
+        assert "Pro" in call_kwargs["subject"]
+        assert "2025-02-15" in call_kwargs["body"]
+        assert "Pro" in call_kwargs["body"]
+
+        mock_render.assert_called_once()
+        template_name, ctx = mock_render.call_args[0]
+        assert template_name == "trial_ending.html"
+        assert ctx["plan_name"] == "Pro"
+        assert ctx["trial_end_date"] == "2025-02-15"
+        assert "billing_url" in ctx
+
     def test_render_template_missing(self, email_service):
         """Test template rendering when template doesn't exist"""
         email_service._jinja_env = None

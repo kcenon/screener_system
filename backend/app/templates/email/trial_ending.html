@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Your Trial is Ending Soon{% endblock %}
+
+{% block content %}
+<p>Your free trial for the <strong>{{ plan_name }}</strong> plan is ending soon.</p>
+
+<table style="width:100%; border-collapse:collapse; margin:20px 0;">
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600; width:40%;">Plan</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ plan_name }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600;">Trial Ends</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ trial_end_date }}</td>
+  </tr>
+</table>
+
+<p>After your trial ends, your subscription will begin and your payment method will be charged.</p>
+
+<div class="btn-wrapper">
+  <a href="{{ billing_url }}" class="btn">Manage Subscription</a>
+</div>
+
+<p class="muted">To cancel before the trial ends, visit your billing settings.</p>
+{% endblock %}

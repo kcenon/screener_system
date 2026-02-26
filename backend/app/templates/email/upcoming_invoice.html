@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Upcoming Invoice{% endblock %}
+
+{% block content %}
+<p>Your upcoming invoice is ready for review.</p>
+
+<table style="width:100%; border-collapse:collapse; margin:20px 0;">
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600; width:40%;">Amount</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ currency }} {{ amount }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600;">Due Date</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ due_date }}</td>
+  </tr>
+</table>
+
+<p>Your payment method on file will be charged automatically.</p>
+
+<div class="btn-wrapper">
+  <a href="{{ billing_url }}" class="btn">View Billing</a>
+</div>
+
+<p class="muted">No action is required if your payment details are up to date.</p>
+{% endblock %}
