@@ -88,27 +88,31 @@ scrape_configs:
   # ============================================================================
   # CELERY WORKERS
   # ============================================================================
+  # Celery does not natively expose Prometheus metrics.
+  # Uncomment and configure when a celery-exporter or Flower with metrics is deployed.
 
-  - job_name: 'celery'
-    scrape_interval: 30s
-    metrics_path: '/metrics'
-    static_configs:
-      - targets: ['celery_worker:8001']
-        labels:
-          service: 'celery-worker'
-          tier: 'background-jobs'
+  # - job_name: 'celery'
+  #   scrape_interval: 30s
+  #   metrics_path: '/metrics'
+  #   static_configs:
+  #     - targets: ['celery-exporter:9808']
+  #       labels:
+  #         service: 'celery-worker'
+  #         tier: 'background-jobs'
 
   # ============================================================================
   # AIRFLOW
   # ============================================================================
+  # Requires Airflow to be configured with statsd-exporter or
+  # the apache-airflow[statsd] extra. Uncomment when metrics are enabled.
 
-  - job_name: 'airflow'
-    scrape_interval: 30s
-    static_configs:
-      - targets: ['airflow-exporter:9112']
-        labels:
-          service: 'airflow'
-          tier: 'data-pipeline'
+  # - job_name: 'airflow'
+  #   scrape_interval: 30s
+  #   static_configs:
+  #     - targets: ['airflow-statsd-exporter:9102']
+  #       labels:
+  #         service: 'airflow'
+  #         tier: 'data-pipeline'
 
   # ============================================================================
   # NODE EXPORTER (System Metrics)
