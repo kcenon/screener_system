@@ -17,7 +17,7 @@ export function useStockComparison() {
     if (codesParam) {
       const codes = codesParam
         .split(',')
-        .filter((code) => code.trim())
+        .filter(code => code.trim())
         .slice(0, MAX_COMPARISON_STOCKS)
       setStockCodes(codes)
     }
@@ -39,15 +39,15 @@ export function useStockComparison() {
         stockCodes.length < MAX_COMPARISON_STOCKS &&
         !stockCodes.includes(code)
       ) {
-        setStockCodes((prev) => [...prev, code])
+        setStockCodes(prev => [...prev, code])
       }
     },
-    [stockCodes]
+    [stockCodes],
   )
 
   // Remove stock
   const removeStock = useCallback((code: string) => {
-    setStockCodes((prev) => prev.filter((c) => c !== code))
+    setStockCodes(prev => prev.filter(c => c !== code))
   }, [])
 
   // Clear all stocks

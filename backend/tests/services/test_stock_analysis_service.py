@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+
 from app.services.llm.manager import LLMManager, LLMResponse
 from app.services.stock_analysis_service import StockAnalysisService
 

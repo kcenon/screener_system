@@ -45,7 +45,8 @@ export default function StockDetailPage() {
   } = usePriceChart(code, '1M')
 
   // Freemium access control
-  const { isAuthenticated, canViewFinancials, canViewAllTechnicals } = useFreemiumAccess()
+  const { isAuthenticated, canViewFinancials, canViewAllTechnicals } =
+    useFreemiumAccess()
 
   // Loading state
   if (stockLoading) {
@@ -142,9 +143,7 @@ export default function StockDetailPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Freemium Banner for unauthenticated users */}
-        {!isAuthenticated && (
-          <FreemiumBanner type="stock-detail" />
-        )}
+        {!isAuthenticated && <FreemiumBanner type="stock-detail" />}
 
         {/* Breadcrumb */}
         <nav className="flex" aria-label="Breadcrumb">
@@ -208,7 +207,9 @@ export default function StockDetailPage() {
 
         {/* Chart Mode Toggle */}
         <div className="flex items-center justify-end gap-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400">차트 모드:</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            차트 모드:
+          </span>
           <button
             onClick={() => setUseAdvancedChart(false)}
             className={`px-3 py-1 text-sm rounded-l-md border ${

@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from typing import Optional
 from uuid import UUID
 
-from app.db.models import (UserActivity, UserPreferences, Watchlist,
-                           WatchlistStock)
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models import UserActivity, UserPreferences, Watchlist, WatchlistStock
 
 
 class WatchlistRepository:

@@ -21,9 +21,12 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   limit,
   onNotificationClick,
 }) => {
-  const { notifications, isLoading, hasMore, loadMore, markAsRead } = useNotifications()
+  const { notifications, isLoading, hasMore, loadMore, markAsRead } =
+    useNotifications()
 
-  const displayNotifications = limit ? notifications.slice(0, limit) : notifications
+  const displayNotifications = limit
+    ? notifications.slice(0, limit)
+    : notifications
 
   if (isLoading && notifications.length === 0) {
     return (
@@ -51,14 +54,16 @@ export const NotificationList: React.FC<NotificationListProps> = ({
           />
         </svg>
         <p className="text-lg font-medium">No notifications yet</p>
-        <p className="text-sm mt-1">We'll notify you when something important happens</p>
+        <p className="text-sm mt-1">
+          We'll notify you when something important happens
+        </p>
       </div>
     )
   }
 
   return (
     <div>
-      {displayNotifications.map((notification) => (
+      {displayNotifications.map(notification => (
         <NotificationItem
           key={notification.id}
           notification={notification}
@@ -102,7 +107,9 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     onClick?.()
   }
 
-  const priorityColor = notificationService.getPriorityColor(notification.priority)
+  const priorityColor = notificationService.getPriorityColor(
+    notification.priority,
+  )
   const timeAgo = notificationService.formatTimeAgo(notification.created_at)
 
   return (

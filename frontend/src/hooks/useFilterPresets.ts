@@ -57,7 +57,11 @@ export function useFilterPresets() {
   /**
    * Save current filters as a new preset
    */
-  const savePreset = (name: string, filters: ScreeningFilters, description?: string) => {
+  const savePreset = (
+    name: string,
+    filters: ScreeningFilters,
+    description?: string,
+  ) => {
     const newPreset: FilterPreset = {
       id: Date.now().toString(),
       name,
@@ -66,7 +70,7 @@ export function useFilterPresets() {
       createdAt: new Date().toISOString(),
     }
 
-    setPresets((prev) => [...prev, newPreset])
+    setPresets(prev => [...prev, newPreset])
     return newPreset
   }
 
@@ -75,17 +79,21 @@ export function useFilterPresets() {
    */
   const updatePreset = (
     id: string,
-    updates: { name?: string; description?: string; filters?: ScreeningFilters }
+    updates: {
+      name?: string
+      description?: string
+      filters?: ScreeningFilters
+    },
   ) => {
-    setPresets((prev) =>
-      prev.map((preset) =>
+    setPresets(prev =>
+      prev.map(preset =>
         preset.id === id
           ? {
               ...preset,
               ...updates,
             }
-          : preset
-      )
+          : preset,
+      ),
     )
   }
 
@@ -93,14 +101,14 @@ export function useFilterPresets() {
    * Delete a preset by ID
    */
   const deletePreset = (id: string) => {
-    setPresets((prev) => prev.filter((preset) => preset.id !== id))
+    setPresets(prev => prev.filter(preset => preset.id !== id))
   }
 
   /**
    * Get a preset by ID
    */
   const getPreset = (id: string): FilterPreset | undefined => {
-    return presets.find((preset) => preset.id === id)
+    return presets.find(preset => preset.id === id)
   }
 
   /**

@@ -55,7 +55,10 @@ export function getUsageCount(): number {
 
     // Reset if data is from a previous day
     if (data.date !== today) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: today, count: 0 }))
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ date: today, count: 0 }),
+      )
       return 0
     }
 
@@ -93,7 +96,10 @@ export function trackScreening(): number {
       // If same day, increment count
       if (data.date === today) {
         const newCount = data.count + 1
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: today, count: newCount }))
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ date: today, count: newCount }),
+        )
         return newCount
       }
     }

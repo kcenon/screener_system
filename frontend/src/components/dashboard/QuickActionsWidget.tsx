@@ -61,7 +61,10 @@ function getColorClasses(color: string): {
   text: string
   iconBg: string
 } {
-  const colorMap: Record<string, { bg: string; hover: string; text: string; iconBg: string }> = {
+  const colorMap: Record<
+    string,
+    { bg: string; hover: string; text: string; iconBg: string }
+  > = {
     blue: {
       bg: 'bg-blue-50',
       hover: 'hover:bg-blue-100',
@@ -109,7 +112,9 @@ function QuickActionButton({ action }: { action: QuickAction }) {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className={`font-semibold ${colors.text} mb-1`}>{action.title}</h3>
+          <h3 className={`font-semibold ${colors.text} mb-1`}>
+            {action.title}
+          </h3>
           <p className="text-sm text-gray-600">{action.description}</p>
         </div>
       </div>
@@ -123,7 +128,7 @@ function QuickActionButton({ action }: { action: QuickAction }) {
 export default function QuickActionsWidget() {
   return (
     <div className="space-y-3">
-      {quickActions.map((action) => (
+      {quickActions.map(action => (
         <QuickActionButton key={action.id} action={action} />
       ))}
     </div>

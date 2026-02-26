@@ -1,11 +1,11 @@
 from typing import List
 
-from app.api.dependencies import get_current_user, get_db
-from app.schemas.recommendation import (RecommendationFeedback,
-                                        RecommendationResponse)
-from app.services.recommendation_service import RecommendationService
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+
+from app.api.dependencies import get_current_user, get_db
+from app.schemas.recommendation import RecommendationFeedback, RecommendationResponse
+from app.services.recommendation_service import RecommendationService
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 

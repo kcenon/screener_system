@@ -3,7 +3,12 @@ import { memo, useMemo } from 'react'
 /**
  * Trend strength levels
  */
-export type TrendStrength = 'strong_up' | 'up' | 'neutral' | 'down' | 'strong_down'
+export type TrendStrength =
+  | 'strong_up'
+  | 'up'
+  | 'neutral'
+  | 'down'
+  | 'strong_down'
 
 /**
  * Props for TrendBadge component
@@ -81,7 +86,7 @@ const TREND_CONFIGS: Record<TrendStrength, TrendConfig> = {
  */
 function calculateTrendStrength(
   shortTermChange: number | null | undefined,
-  longTermChange: number | null | undefined
+  longTermChange: number | null | undefined,
 ): TrendStrength {
   // Default to neutral if no data
   if (
@@ -165,7 +170,8 @@ function TrendBadgeComponent({
   }
 
   const tooltipContent = (() => {
-    const hasShortTerm = shortTermChange !== null && shortTermChange !== undefined
+    const hasShortTerm =
+      shortTermChange !== null && shortTermChange !== undefined
     const hasLongTerm = longTermChange !== null && longTermChange !== undefined
 
     if (!hasShortTerm && !hasLongTerm) {
@@ -174,10 +180,14 @@ function TrendBadgeComponent({
 
     const parts = [`Trend: ${config.label}`]
     if (hasShortTerm) {
-      parts.push(`Short-term: ${shortTermChange > 0 ? '+' : ''}${shortTermChange.toFixed(2)}%`)
+      parts.push(
+        `Short-term: ${shortTermChange > 0 ? '+' : ''}${shortTermChange.toFixed(2)}%`,
+      )
     }
     if (hasLongTerm) {
-      parts.push(`Long-term: ${longTermChange > 0 ? '+' : ''}${longTermChange.toFixed(2)}%`)
+      parts.push(
+        `Long-term: ${longTermChange > 0 ? '+' : ''}${longTermChange.toFixed(2)}%`,
+      )
     }
     return parts.join('\n')
   })()

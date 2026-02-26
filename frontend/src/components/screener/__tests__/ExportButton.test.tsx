@@ -142,7 +142,11 @@ describe('ExportButton', () => {
       await user.click(screen.getByRole('button', { name: /export/i }))
       await user.click(screen.getByText(/export as csv/i))
 
-      expect(exportUtils.exportStocks).toHaveBeenCalledWith(mockData, 'csv', undefined)
+      expect(exportUtils.exportStocks).toHaveBeenCalledWith(
+        mockData,
+        'csv',
+        undefined,
+      )
     })
 
     it('passes custom filename to exportStocks for CSV', async () => {
@@ -152,7 +156,11 @@ describe('ExportButton', () => {
       await user.click(screen.getByRole('button', { name: /export/i }))
       await user.click(screen.getByText(/export as csv/i))
 
-      expect(exportUtils.exportStocks).toHaveBeenCalledWith(mockData, 'csv', 'my-stocks')
+      expect(exportUtils.exportStocks).toHaveBeenCalledWith(
+        mockData,
+        'csv',
+        'my-stocks',
+      )
     })
 
     it('closes dropdown after CSV export', async () => {
@@ -177,7 +185,11 @@ describe('ExportButton', () => {
       await user.click(screen.getByRole('button', { name: /export/i }))
       await user.click(screen.getByText(/export as json/i))
 
-      expect(exportUtils.exportStocks).toHaveBeenCalledWith(mockData, 'json', undefined)
+      expect(exportUtils.exportStocks).toHaveBeenCalledWith(
+        mockData,
+        'json',
+        undefined,
+      )
     })
 
     it('passes custom filename to exportStocks for JSON', async () => {
@@ -187,7 +199,11 @@ describe('ExportButton', () => {
       await user.click(screen.getByRole('button', { name: /export/i }))
       await user.click(screen.getByText(/export as json/i))
 
-      expect(exportUtils.exportStocks).toHaveBeenCalledWith(mockData, 'json', 'my-stocks')
+      expect(exportUtils.exportStocks).toHaveBeenCalledWith(
+        mockData,
+        'json',
+        'my-stocks',
+      )
     })
 
     it('closes dropdown after JSON export', async () => {
@@ -217,13 +233,17 @@ describe('ExportButton', () => {
       await user.click(screen.getByRole('button', { name: /export/i }))
       await user.click(screen.getByText(/export as csv/i))
 
-      expect(alertSpy).toHaveBeenCalledWith('Failed to export data. Please try again.')
+      expect(alertSpy).toHaveBeenCalledWith(
+        'Failed to export data. Please try again.',
+      )
       alertSpy.mockRestore()
     })
 
     it('logs error to console when export fails', async () => {
       const user = userEvent.setup()
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
       const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {})
       const testError = new Error('Export failed')
 

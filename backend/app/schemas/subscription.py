@@ -312,9 +312,7 @@ class CreateCheckoutSessionRequest(BaseModel):
     success_url: str = Field(
         ..., description="URL to redirect after successful checkout"
     )
-    cancel_url: str = Field(
-        ..., description="URL to redirect after canceled checkout"
-    )
+    cancel_url: str = Field(..., description="URL to redirect after canceled checkout")
 
 
 class CheckoutSessionResponse(BaseModel):

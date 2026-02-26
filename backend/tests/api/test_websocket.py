@@ -383,6 +383,7 @@ class TestPhase4Features:
     async def test_message_batching(self):
         """Test message batching functionality"""
         from unittest.mock import AsyncMock, Mock
+
         from app.schemas.websocket import PriceUpdate
 
         # Create connection with batching enabled
@@ -419,6 +420,7 @@ class TestPhase4Features:
     async def test_immediate_message_bypass_batching(self):
         """Test immediate messages bypass batching"""
         from unittest.mock import AsyncMock, Mock
+
         from app.schemas.websocket import ErrorMessage
 
         mock_ws = Mock()
@@ -441,8 +443,9 @@ class TestPhase4Features:
     async def test_rate_limiting(self):
         """Test rate limiting functionality"""
         from unittest.mock import AsyncMock, Mock
-        from app.schemas.websocket import PriceUpdate
+
         from app.core.websocket import ConnectionManager
+        from app.schemas.websocket import PriceUpdate
 
         # Create manager with low rate limit for testing
         test_manager = ConnectionManager(
@@ -479,6 +482,7 @@ class TestPhase4Features:
     async def test_batch_stats(self):
         """Test Phase 4 statistics"""
         from unittest.mock import AsyncMock, Mock
+
         from app.schemas.websocket import PriceUpdate
 
         mock_ws = Mock()
@@ -514,6 +518,7 @@ class TestPhase4Features:
         """Test batch flush loop runs periodically"""
         import asyncio
         from unittest.mock import AsyncMock, Mock
+
         from app.schemas.websocket import PriceUpdate
 
         mock_ws = Mock()
@@ -581,6 +586,7 @@ class TestVerifyToken:
     async def test_verify_token_expired_jwt(self):
         """Test verify_token with expired JWT"""
         from datetime import timedelta
+
         from app.api.v1.endpoints.websocket import verify_token
         from app.core.security import create_access_token
 
@@ -675,6 +681,7 @@ class TestHandleSubscribe:
     async def test_handle_subscribe_invalid_request(self):
         """Test handle_subscribe with invalid request data"""
         from unittest.mock import AsyncMock, patch
+
         from app.api.v1.endpoints.websocket import handle_subscribe
 
         with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
@@ -696,6 +703,7 @@ class TestHandleUnsubscribe:
     async def test_handle_unsubscribe_success(self):
         """Test handle_unsubscribe success"""
         from unittest.mock import AsyncMock, MagicMock, patch
+
         from app.api.v1.endpoints.websocket import handle_unsubscribe
 
         with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
@@ -717,6 +725,7 @@ class TestHandleUnsubscribe:
     async def test_handle_unsubscribe_error(self):
         """Test handle_unsubscribe with invalid data"""
         from unittest.mock import AsyncMock, patch
+
         from app.api.v1.endpoints.websocket import handle_unsubscribe
 
         with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
@@ -735,6 +744,7 @@ class TestHandleRefreshToken:
     async def test_handle_refresh_token_invalid_request(self):
         """Test handle_refresh_token with invalid request"""
         from unittest.mock import AsyncMock, patch
+
         from app.api.v1.endpoints.websocket import handle_refresh_token
 
         with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:
@@ -748,6 +758,7 @@ class TestHandleRefreshToken:
     async def test_handle_refresh_token_not_refresh_type(self):
         """Test handle_refresh_token with access token (not refresh)"""
         from unittest.mock import AsyncMock, patch
+
         from app.api.v1.endpoints.websocket import handle_refresh_token
         from app.core.security import create_access_token
 
@@ -767,6 +778,7 @@ class TestHandleRefreshToken:
     async def test_handle_refresh_token_expired(self):
         """Test handle_refresh_token with expired token"""
         from unittest.mock import AsyncMock, patch
+
         from app.api.v1.endpoints.websocket import handle_refresh_token
 
         with patch("app.api.v1.endpoints.websocket.connection_manager") as mock_cm:

@@ -27,7 +27,7 @@ class WatchlistServiceError extends Error {
   constructor(
     public code: WatchlistError['code'],
     message: string,
-    public details?: Record<string, unknown>
+    public details?: Record<string, unknown>,
   ) {
     super(message)
     this.name = 'WatchlistServiceError'
@@ -55,9 +55,13 @@ function saveWatchlists(watchlists: Watchlist[]): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlists))
   } catch (error) {
     console.error('Failed to save watchlists to localStorage:', error)
-    throw new WatchlistServiceError('SERVER_ERROR', 'Failed to save watchlists', {
-      originalError: error,
-    })
+    throw new WatchlistServiceError(
+      'SERVER_ERROR',
+      'Failed to save watchlists',
+      {
+        originalError: error,
+      },
+    )
   }
 }
 
@@ -84,7 +88,7 @@ export const watchlistService = {
    */
   async getAll(): Promise<Watchlist[]> {
     // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
     return getStoredWatchlists()
   },
 
@@ -92,13 +96,16 @@ export const watchlistService = {
    * Get a single watchlist by ID
    */
   async getById(id: string): Promise<Watchlist> {
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await new Promise(resolve => setTimeout(resolve, 50))
 
     const watchlists = getStoredWatchlists()
-    const watchlist = watchlists.find((w) => w.id === id)
+    const watchlist = watchlists.find(w => w.id === id)
 
     if (!watchlist) {
-      throw new WatchlistServiceError('NOT_FOUND', `Watchlist with ID ${id} not found`)
+      throw new WatchlistServiceError(
+        'NOT_FOUND',
+        `Watchlist with ID ${id} not found`,
+      )
     }
 
     return watchlist
@@ -108,7 +115,7 @@ export const watchlistService = {
    * Create a new watchlist
    */
   async create(data: CreateWatchlistDto): Promise<Watchlist> {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     const watchlists = getStoredWatchlists()
 
@@ -117,25 +124,33 @@ export const watchlistService = {
       throw new WatchlistServiceError(
         'LIMIT_EXCEEDED',
         `Maximum number of watchlists (${MAX_WATCHLISTS}) reached`,
-        { limit: MAX_WATCHLISTS, current: watchlists.length }
+        { limit: MAX_WATCHLISTS, current: watchlists.length },
       )
     }
 
     // Check for duplicate name
-    if (watchlists.some((w) => w.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      watchlists.some(w => w.name.toLowerCase() === data.name.toLowerCase())
+    ) {
       throw new WatchlistServiceError(
         'DUPLICATE',
-        `Watchlist with name "${data.name}" already exists`
+        `Watchlist with name "${data.name}" already exists`,
       )
     }
 
     // Validate name
     if (!data.name.trim()) {
-      throw new WatchlistServiceError('INVALID_INPUT', 'Watchlist name cannot be empty')
+      throw new WatchlistServiceError(
+        'INVALID_INPUT',
+        'Watchlist name cannot be empty',
+      )
     }
 
     if (data.name.length > 50) {
-      throw new WatchlistServiceError('INVALID_INPUT', 'Watchlist name too long (max 50 characters)')
+      throw new WatchlistServiceError(
+        'INVALID_INPUT',
+        'Watchlist name too long (max 50 characters)',
+      )
     }
 
     const newWatchlist: Watchlist = {
@@ -160,37 +175,44 @@ export const watchlistService = {
    * Update an existing watchlist
    */
   async update(id: string, data: UpdateWatchlistDto): Promise<Watchlist> {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     const watchlists = getStoredWatchlists()
-    const index = watchlists.findIndex((w) => w.id === id)
+    const index = watchlists.findIndex(w => w.id === id)
 
     if (index === -1) {
-      throw new WatchlistServiceError('NOT_FOUND', `Watchlist with ID ${id} not found`)
+      throw new WatchlistServiceError(
+        'NOT_FOUND',
+        `Watchlist with ID ${id} not found`,
+      )
     }
 
     // Check for duplicate name (excluding current watchlist)
     if (
       data.name &&
       watchlists.some(
-        (w, i) => i !== index && w.name.toLowerCase() === data.name?.toLowerCase()
+        (w, i) =>
+          i !== index && w.name.toLowerCase() === data.name?.toLowerCase(),
       )
     ) {
       throw new WatchlistServiceError(
         'DUPLICATE',
-        `Watchlist with name "${data.name}" already exists`
+        `Watchlist with name "${data.name}" already exists`,
       )
     }
 
     // Validate name if provided
     if (data.name !== undefined) {
       if (!data.name.trim()) {
-        throw new WatchlistServiceError('INVALID_INPUT', 'Watchlist name cannot be empty')
+        throw new WatchlistServiceError(
+          'INVALID_INPUT',
+          'Watchlist name cannot be empty',
+        )
       }
       if (data.name.length > 50) {
         throw new WatchlistServiceError(
           'INVALID_INPUT',
-          'Watchlist name too long (max 50 characters)'
+          'Watchlist name too long (max 50 characters)',
         )
       }
     }
@@ -198,7 +220,9 @@ export const watchlistService = {
     const updatedWatchlist: Watchlist = {
       ...watchlists[index],
       ...(data.name && { name: data.name.trim() }),
-      ...(data.description !== undefined && { description: data.description?.trim() }),
+      ...(data.description !== undefined && {
+        description: data.description?.trim(),
+      }),
       ...(data.icon !== undefined && { icon: data.icon }),
       ...(data.color !== undefined && { color: data.color }),
       updated_at: now(),
@@ -214,13 +238,16 @@ export const watchlistService = {
    * Delete a watchlist
    */
   async delete(id: string): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     const watchlists = getStoredWatchlists()
-    const index = watchlists.findIndex((w) => w.id === id)
+    const index = watchlists.findIndex(w => w.id === id)
 
     if (index === -1) {
-      throw new WatchlistServiceError('NOT_FOUND', `Watchlist with ID ${id} not found`)
+      throw new WatchlistServiceError(
+        'NOT_FOUND',
+        `Watchlist with ID ${id} not found`,
+      )
     }
 
     watchlists.splice(index, 1)
@@ -231,13 +258,16 @@ export const watchlistService = {
    * Add a stock to a watchlist
    */
   async addStock(id: string, dto: AddStockDto): Promise<Watchlist> {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     const watchlists = getStoredWatchlists()
-    const index = watchlists.findIndex((w) => w.id === id)
+    const index = watchlists.findIndex(w => w.id === id)
 
     if (index === -1) {
-      throw new WatchlistServiceError('NOT_FOUND', `Watchlist with ID ${id} not found`)
+      throw new WatchlistServiceError(
+        'NOT_FOUND',
+        `Watchlist with ID ${id} not found`,
+      )
     }
 
     const watchlist = watchlists[index]
@@ -247,15 +277,15 @@ export const watchlistService = {
       throw new WatchlistServiceError(
         'LIMIT_EXCEEDED',
         `Maximum number of stocks (${MAX_STOCKS_PER_WATCHLIST}) reached for this watchlist`,
-        { limit: MAX_STOCKS_PER_WATCHLIST, current: watchlist.stocks.length }
+        { limit: MAX_STOCKS_PER_WATCHLIST, current: watchlist.stocks.length },
       )
     }
 
     // Check if stock already exists
-    if (watchlist.stocks.some((s) => s.code === dto.stock_code)) {
+    if (watchlist.stocks.some(s => s.code === dto.stock_code)) {
       throw new WatchlistServiceError(
         'DUPLICATE',
-        `Stock ${dto.stock_code} already exists in this watchlist`
+        `Stock ${dto.stock_code} already exists in this watchlist`,
       )
     }
 
@@ -277,7 +307,7 @@ export const watchlistService = {
       throw new WatchlistServiceError(
         'INVALID_INPUT',
         `Failed to fetch details for stock ${dto.stock_code}`,
-        { stock_code: dto.stock_code, originalError: error }
+        { stock_code: dto.stock_code, originalError: error },
       )
     }
 
@@ -293,22 +323,25 @@ export const watchlistService = {
    * Remove a stock from a watchlist
    */
   async removeStock(id: string, stockCode: string): Promise<Watchlist> {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     const watchlists = getStoredWatchlists()
-    const index = watchlists.findIndex((w) => w.id === id)
+    const index = watchlists.findIndex(w => w.id === id)
 
     if (index === -1) {
-      throw new WatchlistServiceError('NOT_FOUND', `Watchlist with ID ${id} not found`)
+      throw new WatchlistServiceError(
+        'NOT_FOUND',
+        `Watchlist with ID ${id} not found`,
+      )
     }
 
     const watchlist = watchlists[index]
-    const stockIndex = watchlist.stocks.findIndex((s) => s.code === stockCode)
+    const stockIndex = watchlist.stocks.findIndex(s => s.code === stockCode)
 
     if (stockIndex === -1) {
       throw new WatchlistServiceError(
         'NOT_FOUND',
-        `Stock ${stockCode} not found in this watchlist`
+        `Stock ${stockCode} not found in this watchlist`,
       )
     }
 
@@ -326,7 +359,9 @@ export const watchlistService = {
    */
   async refreshStockPrices(): Promise<void> {
     const watchlists = getStoredWatchlists()
-    const allStockCodes = [...new Set(watchlists.flatMap((w) => w.stocks.map((s) => s.code)))]
+    const allStockCodes = [
+      ...new Set(watchlists.flatMap(w => w.stocks.map(s => s.code))),
+    ]
 
     if (allStockCodes.length === 0) {
       return
@@ -335,7 +370,7 @@ export const watchlistService = {
     try {
       // Fetch fresh data for all stocks
       const stockUpdates = await Promise.all(
-        allStockCodes.map(async (code) => {
+        allStockCodes.map(async code => {
           try {
             const stockDetail = await stockService.getStock(code)
             return {
@@ -349,16 +384,18 @@ export const watchlistService = {
             console.warn(`Failed to refresh stock ${code}:`, error)
             return null
           }
-        })
+        }),
       )
 
       // Update watchlists with fresh data
       const stockMap = new Map(
-        stockUpdates.filter((s): s is NonNullable<typeof s> => s !== null).map((s) => [s.code, s])
+        stockUpdates
+          .filter((s): s is NonNullable<typeof s> => s !== null)
+          .map(s => [s.code, s]),
       )
 
-      watchlists.forEach((watchlist) => {
-        watchlist.stocks.forEach((stock) => {
+      watchlists.forEach(watchlist => {
+        watchlist.stocks.forEach(stock => {
           const update = stockMap.get(stock.code)
           if (update) {
             stock.current_price = update.current_price
@@ -375,9 +412,13 @@ export const watchlistService = {
       saveWatchlists(watchlists)
     } catch (error) {
       console.error('Failed to refresh stock prices:', error)
-      throw new WatchlistServiceError('SERVER_ERROR', 'Failed to refresh stock prices', {
-        originalError: error,
-      })
+      throw new WatchlistServiceError(
+        'SERVER_ERROR',
+        'Failed to refresh stock prices',
+        {
+          originalError: error,
+        },
+      )
     }
   },
 }

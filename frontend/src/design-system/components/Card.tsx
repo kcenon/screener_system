@@ -86,7 +86,8 @@ const cardVariants = cva(
  * Card Props Interface
  */
 export interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {
   /**
    * Card content
@@ -236,11 +237,7 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string
 }
 
-export function CardFooter({
-  children,
-  className,
-  ...props
-}: CardFooterProps) {
+export function CardFooter({ children, className, ...props }: CardFooterProps) {
   return (
     <div
       className={cn(

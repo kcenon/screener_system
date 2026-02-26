@@ -141,8 +141,7 @@ export function GradientText({
       className={cn(
         gradientClass,
         'bg-clip-text text-transparent font-bold',
-        animated &&
-          'transition-all duration-300 hover:scale-105 inline-block',
+        animated && 'transition-all duration-300 hover:scale-105 inline-block',
         className,
       )}
     >
@@ -163,8 +162,7 @@ export function GradientText({
  * </GradientButton>
  * ```
  */
-export interface GradientButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface GradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * Gradient preset
    */

@@ -76,7 +76,7 @@ export function SwipeableRow({
 
       setSwipeOffset(newOffset)
     },
-    [leftAction, rightAction, threshold]
+    [leftAction, rightAction, threshold],
   )
 
   const handleSwipeEnd = useCallback(
@@ -93,7 +93,7 @@ export function SwipeableRow({
 
       resetPosition()
     },
-    [leftAction, rightAction, threshold, resetPosition]
+    [leftAction, rightAction, threshold, resetPosition],
   )
 
   const handlers = useSwipeable({
@@ -138,7 +138,9 @@ export function SwipeableRow({
           className={`absolute inset-y-0 right-0 flex items-center justify-end
             px-4 ${rightAction.color} transition-opacity duration-150`}
           style={{
-            opacity: showRightAction ? Math.min(Math.abs(swipeOffset) / threshold, 1) : 0,
+            opacity: showRightAction
+              ? Math.min(Math.abs(swipeOffset) / threshold, 1)
+              : 0,
             width: Math.max(-swipeOffset, 0),
           }}
         >

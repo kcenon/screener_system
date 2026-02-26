@@ -73,16 +73,19 @@ class TestGetMarketIndices:
         mock_index.trading_value = 5000000000
         mock_index.timestamp = datetime.now()
 
-        with patch.object(
-            market_service.market_repo,
-            "get_current_indices",
-            new_callable=AsyncMock,
-            return_value=[mock_index],
-        ), patch.object(
-            market_service.market_repo,
-            "get_index_sparkline",
-            new_callable=AsyncMock,
-            return_value=[2490, 2500, 2510],
+        with (
+            patch.object(
+                market_service.market_repo,
+                "get_current_indices",
+                new_callable=AsyncMock,
+                return_value=[mock_index],
+            ),
+            patch.object(
+                market_service.market_repo,
+                "get_index_sparkline",
+                new_callable=AsyncMock,
+                return_value=[2490, 2500, 2510],
+            ),
         ):
             result = await market_service.get_market_indices()
 
@@ -280,16 +283,19 @@ class TestGetSectorPerformance:
             }
         ]
 
-        with patch.object(
-            market_service.market_repo,
-            "get_sector_performance",
-            new_callable=AsyncMock,
-            return_value=sector_data,
-        ), patch.object(
-            market_service.market_repo,
-            "get_sector_top_stock",
-            new_callable=AsyncMock,
-            return_value=("005930", "삼성전자", 2.5),
+        with (
+            patch.object(
+                market_service.market_repo,
+                "get_sector_performance",
+                new_callable=AsyncMock,
+                return_value=sector_data,
+            ),
+            patch.object(
+                market_service.market_repo,
+                "get_sector_top_stock",
+                new_callable=AsyncMock,
+                return_value=("005930", "삼성전자", 2.5),
+            ),
         ):
             result = await market_service.get_sector_performance()
 
@@ -314,16 +320,19 @@ class TestGetSectorPerformance:
             }
         ]
 
-        with patch.object(
-            market_service.market_repo,
-            "get_sector_performance",
-            new_callable=AsyncMock,
-            return_value=sector_data,
-        ), patch.object(
-            market_service.market_repo,
-            "get_sector_top_stock",
-            new_callable=AsyncMock,
-            return_value=None,
+        with (
+            patch.object(
+                market_service.market_repo,
+                "get_sector_performance",
+                new_callable=AsyncMock,
+                return_value=sector_data,
+            ),
+            patch.object(
+                market_service.market_repo,
+                "get_sector_top_stock",
+                new_callable=AsyncMock,
+                return_value=None,
+            ),
         ):
             result = await market_service.get_sector_performance()
             assert result["sectors"][0]["top_stock"] is None

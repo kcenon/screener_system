@@ -21,7 +21,9 @@ export default function MobileMenu() {
   const closeMenu = () => setIsOpen(false)
 
   const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/')
+    return (
+      location.pathname === path || location.pathname.startsWith(path + '/')
+    )
   }
 
   return (
@@ -48,7 +50,9 @@ export default function MobileMenu() {
           <div className="fixed top-0 left-0 bottom-0 w-64 bg-white dark:bg-gray-800 shadow-xl z-50 lg:hidden overflow-y-auto transition-colors">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('app.name')}</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t('app.name')}
+              </h2>
               <button
                 onClick={closeMenu}
                 className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors"
@@ -61,7 +65,7 @@ export default function MobileMenu() {
             {/* Navigation Links */}
             <nav className="p-4">
               <ul className="space-y-1">
-                {navigationConfig.map((item) => {
+                {navigationConfig.map(item => {
                   const Icon = item.icon
                   if (!item.path) return null
 
@@ -74,7 +78,7 @@ export default function MobileMenu() {
                           'flex items-center gap-3 px-3 py-2 rounded-md text-base font-medium transition-colors',
                           isActive(item.path)
                             ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
+                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
                         )}
                       >
                         {Icon && <Icon size={20} />}
@@ -95,8 +99,12 @@ export default function MobileMenu() {
                       {user.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {user.name}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
                   <button

@@ -1,6 +1,10 @@
 import { useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import type { StockScreeningResult, ScreeningSortField, SortOrder } from '@/types/screening'
+import type {
+  StockScreeningResult,
+  ScreeningSortField,
+  SortOrder,
+} from '@/types/screening'
 import { AddToWatchlistButton } from '@/components/watchlist'
 import {
   formatCompactPrice,
@@ -55,8 +59,12 @@ interface Column {
 /**
  * Format number with null handling
  */
-const formatNumber = (value: string | number | null | undefined, decimals = 2): string => {
-  if (value === null || value === undefined || typeof value === 'string') return '-'
+const formatNumber = (
+  value: string | number | null | undefined,
+  decimals = 2,
+): string => {
+  if (value === null || value === undefined || typeof value === 'string')
+    return '-'
   return value.toFixed(decimals)
 }
 
@@ -64,7 +72,8 @@ const formatNumber = (value: string | number | null | undefined, decimals = 2): 
  * Format percentage with null handling and icon indicator
  */
 const formatPercent = (value: string | number | null | undefined): string => {
-  if (value === null || value === undefined || typeof value === 'string') return '-'
+  if (value === null || value === undefined || typeof value === 'string')
+    return '-'
   return formatChangePercentage(value)
 }
 
@@ -82,8 +91,11 @@ const getChangeIcon = (value: number | null | undefined): string => {
  * Format volume with high volume indicator
  * High volume threshold: 1M shares (can be adjusted based on market)
  */
-const formatVolumeWithIcon = (volume: string | number | null | undefined): string => {
-  if (volume === null || volume === undefined || typeof volume === 'string') return '-'
+const formatVolumeWithIcon = (
+  volume: string | number | null | undefined,
+): string => {
+  if (volume === null || volume === undefined || typeof volume === 'string')
+    return '-'
   const HIGH_VOLUME_THRESHOLD = 1_000_000 // 1 million shares
   const isHighVolume = volume > HIGH_VOLUME_THRESHOLD
   return `${formatCompactVolume(volume)}${isHighVolume ? ' 🔥' : ''}`
@@ -92,8 +104,11 @@ const formatVolumeWithIcon = (volume: string | number | null | undefined): strin
 /**
  * Format market cap
  */
-const formatMarketCapValue = (value: string | number | null | undefined): string => {
-  if (value === null || value === undefined || typeof value === 'string') return '-'
+const formatMarketCapValue = (
+  value: string | number | null | undefined,
+): string => {
+  if (value === null || value === undefined || typeof value === 'string')
+    return '-'
   return formatCompactMarketCap(value)
 }
 
@@ -101,7 +116,8 @@ const formatMarketCapValue = (value: string | number | null | undefined): string
  * Format large numbers (market cap, price) - use compact format
  */
 const formatPrice = (value: string | number | null | undefined): string => {
-  if (value === null || value === undefined || typeof value === 'string') return '-'
+  if (value === null || value === undefined || typeof value === 'string')
+    return '-'
   return formatCompactPrice(value)
 }
 
@@ -110,8 +126,20 @@ const formatPrice = (value: string | number | null | undefined): string => {
  * Note: 'id' must be unique for React keys, 'sortField' is used for sorting
  */
 const columns: Column[] = [
-  { id: 'col-code', sortField: 'code', label: 'Code', sortable: true, align: 'left' },
-  { id: 'col-name', sortField: 'name', label: 'Name', sortable: true, align: 'left' },
+  {
+    id: 'col-code',
+    sortField: 'code',
+    label: 'Code',
+    sortable: true,
+    align: 'left',
+  },
+  {
+    id: 'col-name',
+    sortField: 'name',
+    label: 'Name',
+    sortable: true,
+    align: 'left',
+  },
   {
     id: 'col-price',
     sortField: 'current_price',
@@ -150,15 +178,29 @@ const columns: Column[] = [
     align: 'right',
     format: formatMarketCapValue,
   },
-  { id: 'col-per', sortField: 'per', label: 'PER', sortable: true, align: 'right', format: formatNumber },
-  { id: 'col-pbr', sortField: 'pbr', label: 'PBR', sortable: true, align: 'right', format: formatNumber },
+  {
+    id: 'col-per',
+    sortField: 'per',
+    label: 'PER',
+    sortable: true,
+    align: 'right',
+    format: formatNumber,
+  },
+  {
+    id: 'col-pbr',
+    sortField: 'pbr',
+    label: 'PBR',
+    sortable: true,
+    align: 'right',
+    format: formatNumber,
+  },
   {
     id: 'col-roe',
     sortField: 'roe',
     label: 'ROE%',
     sortable: true,
     align: 'right',
-    format: (v) => formatNumber(v, 1),
+    format: v => formatNumber(v, 1),
   },
   {
     id: 'col-dividend',
@@ -166,7 +208,7 @@ const columns: Column[] = [
     label: 'Div%',
     sortable: true,
     align: 'right',
-    format: (v) => formatNumber(v, 2),
+    format: v => formatNumber(v, 2),
   },
   {
     id: 'col-quality',
@@ -174,7 +216,7 @@ const columns: Column[] = [
     label: 'Quality',
     sortable: true,
     align: 'right',
-    format: (v) => formatNumber(v, 0),
+    format: v => formatNumber(v, 0),
   },
   {
     id: 'col-actions',
@@ -244,7 +286,9 @@ export default function ResultsTable({
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">No results found</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">
+            No results found
+          </h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
             Try adjusting your filters to see more results.
           </p>
@@ -257,7 +301,12 @@ export default function ResultsTable({
   const renderSortIcon = (sortField: ScreeningSortField) => {
     if (currentSort.field !== sortField) {
       return (
-        <svg className="h-4 w-4 text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="h-4 w-4 text-gray-400 dark:text-gray-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -269,23 +318,47 @@ export default function ResultsTable({
     }
 
     return currentSort.order === 'asc' ? (
-      <svg className="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+      <svg
+        className="h-4 w-4 text-blue-600 dark:text-blue-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M5 15l7-7 7 7"
+        />
       </svg>
     ) : (
-      <svg className="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      <svg
+        className="h-4 w-4 text-blue-600 dark:text-blue-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 9l-7 7-7-7"
+        />
       </svg>
     )
   }
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
-      <div className="overflow-x-auto" ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
+      <div
+        className="overflow-x-auto"
+        ref={parentRef}
+        style={{ height: '600px', overflow: 'auto' }}
+      >
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800 sticky top-0 z-20 transition-colors">
             <tr>
-              {columns.map((column) => (
+              {columns.map(column => (
                 <th
                   key={column.id}
                   scope="col"
@@ -293,8 +366,8 @@ export default function ResultsTable({
                     column.align === 'right'
                       ? 'text-right'
                       : column.align === 'center'
-                      ? 'text-center'
-                      : 'text-left'
+                        ? 'text-center'
+                        : 'text-left'
                   }`}
                 >
                   {column.sortable ? (
@@ -316,7 +389,7 @@ export default function ResultsTable({
             <tr style={{ height: `${rowVirtualizer.getTotalSize()}px` }}>
               <td></td>
             </tr>
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            {rowVirtualizer.getVirtualItems().map(virtualRow => {
               const stock = data[virtualRow.index]
               return (
                 <tr
@@ -332,14 +405,14 @@ export default function ResultsTable({
                     transform: `translateY(${virtualRow.start}px)`,
                   }}
                 >
-                  {columns.map((column) => {
+                  {columns.map(column => {
                     // Special handling for Actions column
                     if (column.label === 'Actions') {
                       return (
                         <td
                           key="actions"
                           className="px-2.5 py-1 text-center whitespace-nowrap"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           <AddToWatchlistButton
                             stock={{
@@ -347,7 +420,8 @@ export default function ResultsTable({
                               name: stock.name,
                               market: stock.market as 'KOSPI' | 'KOSDAQ',
                               current_price: stock.current_price || undefined,
-                              change_percent: stock.price_change_1d || undefined,
+                              change_percent:
+                                stock.price_change_1d || undefined,
                               volume: stock.current_volume || undefined,
                             }}
                             variant="icon"
@@ -366,14 +440,15 @@ export default function ResultsTable({
                         >
                           <div className="flex items-center justify-center gap-1">
                             {/* Sparkline (if price history available) */}
-                            {stock.price_history_7d && stock.price_history_7d.length >= 2 && (
-                              <InCellSparkline
-                                data={stock.price_history_7d}
-                                width={36}
-                                height={16}
-                                color="auto"
-                              />
-                            )}
+                            {stock.price_history_7d &&
+                              stock.price_history_7d.length >= 2 && (
+                                <InCellSparkline
+                                  data={stock.price_history_7d}
+                                  width={36}
+                                  height={16}
+                                  color="auto"
+                                />
+                              )}
                             {/* Trend Badge */}
                             <TrendBadge
                               shortTermChange={stock.price_change_1w}
@@ -406,9 +481,10 @@ export default function ResultsTable({
                       const volumeSurge = stock.volume_surge_pct
 
                       // If we have volume surge percentage, calculate implied average
-                      const impliedAvgVolume = volumeSurge && volume
-                        ? volume / (1 + volumeSurge / 100)
-                        : avgVolume
+                      const impliedAvgVolume =
+                        volumeSurge && volume
+                          ? volume / (1 + volumeSurge / 100)
+                          : avgVolume
 
                       return (
                         <td
@@ -431,34 +507,56 @@ export default function ResultsTable({
                       )
                     }
 
-                    const value = stock[column.sortField as keyof StockScreeningResult]
+                    const value =
+                      stock[column.sortField as keyof StockScreeningResult]
                     // Skip array values (like price_history_7d) for text formatting
                     const displayValue = Array.isArray(value) ? null : value
-                    let formattedValue: string | number | null | undefined = column.format
-                      ? column.format(displayValue as string | number | null | undefined)
-                      : displayValue
+                    let formattedValue: string | number | null | undefined =
+                      column.format
+                        ? column.format(
+                            displayValue as string | number | null | undefined,
+                          )
+                        : displayValue
 
                     // Add change icon for Change% column
-                    if (column.label === 'Change%' && typeof value === 'number') {
+                    if (
+                      column.label === 'Change%' &&
+                      typeof value === 'number'
+                    ) {
                       const icon = getChangeIcon(value)
                       formattedValue = `${icon} ${formattedValue}`
                     }
 
                     // Add value indicator for PER
-                    if (column.sortField === 'per' && typeof value === 'number') {
+                    if (
+                      column.sortField === 'per' &&
+                      typeof value === 'number'
+                    ) {
                       if (value > 0 && value < 10) {
                         formattedValue = `${formattedValue} 💎` // Low P/E indicator
                       }
                     }
 
                     // Special styling for Change%
-                    let cellClassName = 'px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap transition-colors'
-                    if (column.label === 'Change%' && typeof value === 'number') {
-                      cellClassName += value > 0 ? ' text-green-600 dark:text-green-400' : value < 0 ? ' text-red-600 dark:text-red-400' : ''
+                    let cellClassName =
+                      'px-2.5 py-1 text-xs text-gray-900 dark:text-gray-100 whitespace-nowrap transition-colors'
+                    if (
+                      column.label === 'Change%' &&
+                      typeof value === 'number'
+                    ) {
+                      cellClassName +=
+                        value > 0
+                          ? ' text-green-600 dark:text-green-400'
+                          : value < 0
+                            ? ' text-red-600 dark:text-red-400'
+                            : ''
                     }
 
                     // Conditional formatting: bold for top/bottom performers
-                    if (column.label === 'Change%' && typeof value === 'number') {
+                    if (
+                      column.label === 'Change%' &&
+                      typeof value === 'number'
+                    ) {
                       if (Math.abs(value) > 5) {
                         cellClassName += ' font-bold'
                       }
@@ -467,12 +565,17 @@ export default function ResultsTable({
                     // Fade low volume stocks (less than 100K shares)
                     const currentVolume = stock.current_volume
                     const LOW_VOLUME_THRESHOLD = 100_000 // 100K shares
-                    if (currentVolume && typeof currentVolume === 'number' && currentVolume < LOW_VOLUME_THRESHOLD) {
+                    if (
+                      currentVolume &&
+                      typeof currentVolume === 'number' &&
+                      currentVolume < LOW_VOLUME_THRESHOLD
+                    ) {
                       cellClassName += ' opacity-70'
                     }
 
                     if (column.align === 'right') cellClassName += ' text-right'
-                    if (column.align === 'center') cellClassName += ' text-center'
+                    if (column.align === 'center')
+                      cellClassName += ' text-center'
 
                     return (
                       <td key={column.id} className={cellClassName}>

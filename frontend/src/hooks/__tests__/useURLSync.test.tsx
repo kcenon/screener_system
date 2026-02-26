@@ -1,25 +1,46 @@
-import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest'
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+  type Mock,
+} from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { useURLSync } from '../useURLSync'
-import type { ScreeningFilters, ScreeningSortField, SortOrder } from '@/types/screening'
+import type {
+  ScreeningFilters,
+  ScreeningSortField,
+  SortOrder,
+} from '@/types/screening'
 import { ReactNode } from 'react'
 
 // Wrapper component for react-router
 function createWrapper(initialEntries: string[] = ['/']) {
   return function Wrapper({ children }: { children: ReactNode }) {
-    return <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+    return (
+      <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+    )
   }
 }
 
 describe('useURLSync', () => {
   const defaultFilters: ScreeningFilters = {}
-  const defaultSort = { sortBy: 'overall_score' as ScreeningSortField, order: 'desc' as SortOrder }
+  const defaultSort = {
+    sortBy: 'overall_score' as ScreeningSortField,
+    order: 'desc' as SortOrder,
+  }
   const defaultPagination = { offset: 0, limit: 50 }
 
   let setFiltersMock: Mock<(filters: ScreeningFilters) => void>
-  let setSortMock: Mock<(sort: { sortBy: ScreeningSortField; order: SortOrder }) => void>
-  let setPaginationMock: Mock<(pagination: { offset: number; limit: number }) => void>
+  let setSortMock: Mock<
+    (sort: { sortBy: ScreeningSortField; order: SortOrder }) => void
+  >
+  let setPaginationMock: Mock<
+    (pagination: { offset: number; limit: number }) => void
+  >
 
   beforeEach(() => {
     setFiltersMock = vi.fn()
@@ -45,9 +66,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setFiltersMock).toHaveBeenCalledWith({
@@ -68,9 +89,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setSortMock).toHaveBeenCalledWith({ sortBy: 'per', order: 'asc' })
@@ -87,9 +108,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setPaginationMock).toHaveBeenCalledWith({ offset: 20, limit: 100 })
@@ -106,9 +127,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setSortMock).toHaveBeenCalledWith({ sortBy: 'pbr', order: 'desc' })
@@ -125,9 +146,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setPaginationMock).toHaveBeenCalledWith({ offset: 0, limit: 100 })
@@ -144,9 +165,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setPaginationMock).toHaveBeenCalledWith({ offset: 20, limit: 50 })
@@ -161,9 +182,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper(['/']) }
+        { wrapper: createWrapper(['/']) },
       )
 
       expect(setFiltersMock).not.toHaveBeenCalled()
@@ -182,9 +203,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setFiltersMock).toHaveBeenCalledWith({
@@ -205,9 +226,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       expect(setFiltersMock).toHaveBeenCalledWith({
@@ -227,9 +248,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper([initialURL]) }
+        { wrapper: createWrapper([initialURL]) },
       )
 
       // Invalid market value should be ignored - setFilters not called for empty filters
@@ -240,7 +261,7 @@ describe('useURLSync', () => {
     it('accepts valid market values (ALL, KOSPI, KOSDAQ)', () => {
       const testCases = ['ALL', 'KOSPI', 'KOSDAQ']
 
-      testCases.forEach((market) => {
+      testCases.forEach(market => {
         setFiltersMock.mockClear()
 
         renderHook(
@@ -251,9 +272,9 @@ describe('useURLSync', () => {
               defaultSort,
               setSortMock,
               defaultPagination,
-              setPaginationMock
+              setPaginationMock,
             ),
-          { wrapper: createWrapper([`/?market=${market}`]) }
+          { wrapper: createWrapper([`/?market=${market}`]) },
         )
 
         expect(setFiltersMock).toHaveBeenCalledWith({ market })
@@ -271,12 +292,12 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
         {
           wrapper: createWrapper(['/screener']),
           initialProps: { filters: defaultFilters },
-        }
+        },
       )
 
       // Change filters
@@ -306,9 +327,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper(['/screener']) }
+        { wrapper: createWrapper(['/screener']) },
       )
 
       act(() => {
@@ -320,7 +341,10 @@ describe('useURLSync', () => {
     })
 
     it('includes sort and pagination in URL', () => {
-      const sort = { sortBy: 'per' as ScreeningSortField, order: 'asc' as SortOrder }
+      const sort = {
+        sortBy: 'per' as ScreeningSortField,
+        order: 'asc' as SortOrder,
+      }
       const pagination = { offset: 20, limit: 100 }
 
       renderHook(
@@ -331,9 +355,9 @@ describe('useURLSync', () => {
             sort,
             setSortMock,
             pagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper(['/screener']) }
+        { wrapper: createWrapper(['/screener']) },
       )
 
       act(() => {
@@ -359,9 +383,9 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
-        { wrapper: createWrapper(['/screener']) }
+        { wrapper: createWrapper(['/screener']) },
       )
 
       act(() => {
@@ -383,12 +407,12 @@ describe('useURLSync', () => {
             defaultSort,
             setSortMock,
             defaultPagination,
-            setPaginationMock
+            setPaginationMock,
           ),
         {
           wrapper: createWrapper(['/screener']),
           initialProps: { filters: { search: '' } },
-        }
+        },
       )
 
       // Rapidly change filters

@@ -3,13 +3,19 @@
 from typing import Annotated
 from uuid import UUID
 
-from app.api.dependencies import CurrentActiveUser, get_watchlist_service
-from app.schemas.watchlist import (DashboardSummary, UserActivityListResponse,
-                                   WatchlistCreate, WatchlistListResponse,
-                                   WatchlistResponse, WatchlistSummary,
-                                   WatchlistUpdate)
-from app.services.watchlist_service import WatchlistService
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+
+from app.api.dependencies import CurrentActiveUser, get_watchlist_service
+from app.schemas.watchlist import (
+    DashboardSummary,
+    UserActivityListResponse,
+    WatchlistCreate,
+    WatchlistListResponse,
+    WatchlistResponse,
+    WatchlistSummary,
+    WatchlistUpdate,
+)
+from app.services.watchlist_service import WatchlistService
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -34,9 +40,10 @@ async def build_watchlist_response(
         WatchlistResponse with all stock data loaded
     """
     # from app.db.models import WatchlistStock  # Unused
+    from sqlalchemy import select
+
     from app.db.models.stock import Stock
     from app.repositories.watchlist_repository import WatchlistRepository
-    from sqlalchemy import select
 
     stock_responses = []
     stock_count = 0

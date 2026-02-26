@@ -5,9 +5,10 @@ from decimal import Decimal
 from typing import List
 
 import pytest
-from app.db.models import DailyPrice, MarketIndex, Stock
 from httpx import AsyncClient
 from sqlalchemy import delete
+
+from app.db.models import DailyPrice, MarketIndex, Stock
 
 # =============================================================================
 # FIXTURES

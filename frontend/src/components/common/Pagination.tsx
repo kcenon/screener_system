@@ -59,7 +59,11 @@ export default function Pagination({
     }
 
     // Show pages around current page
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(totalPages - 1, currentPage + 1);
+      i++
+    ) {
       pages.push(i)
     }
 
@@ -92,10 +96,10 @@ export default function Pagination({
             <select
               id="pageSize"
               value={pageSize}
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              onChange={e => onPageSizeChange(Number(e.target.value))}
               className="block rounded-md border border-gray-300 py-1 pl-2 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              {PAGE_SIZE_OPTIONS.map((size) => (
+              {PAGE_SIZE_OPTIONS.map(size => (
                 <option key={size} value={size}>
                   {size}
                 </option>

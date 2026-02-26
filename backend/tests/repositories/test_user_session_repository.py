@@ -7,8 +7,8 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.repositories.user_session_repository import UserSessionRepository
 from app.db.models import UserSession
+from app.repositories.user_session_repository import UserSessionRepository
 
 
 class TestUserSessionRepository:

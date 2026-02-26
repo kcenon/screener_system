@@ -2,8 +2,9 @@ from datetime import datetime, timedelta
 
 import mlflow
 import numpy as np
-from airflow import DAG
 from airflow.operators.python import PythonOperator
+
+from airflow import DAG
 
 # Default arguments for the DAG
 default_args = {

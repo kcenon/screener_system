@@ -7,21 +7,24 @@ listing, marking as read, and managing notification preferences.
 import logging
 from typing import Optional
 
-from app.api.dependencies import get_current_user
-from app.db.models import Notification, NotificationPreference, User
-from app.db.session import get_db
-from app.schemas.notification import (NotificationDeleteResponse,
-                                      NotificationListResponse,
-                                      NotificationMarkAllReadResponse,
-                                      NotificationMarkReadResponse,
-                                      NotificationPreferenceResponse,
-                                      NotificationPreferenceUpdate,
-                                      NotificationResponse,
-                                      NotificationUnreadCountResponse)
-from app.services.notification_service import NotificationService
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.dependencies import get_current_user
+from app.db.models import Notification, NotificationPreference, User
+from app.db.session import get_db
+from app.schemas.notification import (
+    NotificationDeleteResponse,
+    NotificationListResponse,
+    NotificationMarkAllReadResponse,
+    NotificationMarkReadResponse,
+    NotificationPreferenceResponse,
+    NotificationPreferenceUpdate,
+    NotificationResponse,
+    NotificationUnreadCountResponse,
+)
+from app.services.notification_service import NotificationService
 
 logger = logging.getLogger(__name__)
 

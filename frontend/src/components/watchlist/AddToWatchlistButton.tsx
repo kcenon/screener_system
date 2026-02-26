@@ -49,12 +49,12 @@ export function AddToWatchlistButton({
 
   // Handle toggle watchlist
   const handleToggleWatchlist = async (watchlistId: string) => {
-    const isInWatchlist = watchlistsWithStock.some((w) => w.id === watchlistId)
+    const isInWatchlist = watchlistsWithStock.some(w => w.id === watchlistId)
 
     if (isInWatchlist) {
       await removeStockFromWatchlist(watchlistId, stock.code)
     } else {
-      const watchlist = watchlists.find((w) => w.id === watchlistId)
+      const watchlist = watchlists.find(w => w.id === watchlistId)
       if (watchlist && watchlist.stocks.length >= 100) {
         alert('Watchlist is full (100 stocks maximum)')
         return
@@ -98,7 +98,7 @@ export function AddToWatchlistButton({
     return (
       <div className="relative">
         <button
-          onClick={(e) => {
+          onClick={e => {
             e.preventDefault()
             e.stopPropagation()
             setIsOpen(!isOpen)
@@ -114,7 +114,11 @@ export function AddToWatchlistButton({
             }
             transition-colors
           `}
-          title={isInAnyWatchlist ? `In ${watchlistsWithStock.length} watchlist(s)` : 'Add to watchlist'}
+          title={
+            isInAnyWatchlist
+              ? `In ${watchlistsWithStock.length} watchlist(s)`
+              : 'Add to watchlist'
+          }
         >
           <Star
             className={`${iconSizeClasses[size]} ${isInAnyWatchlist || isHovered ? 'fill-current' : ''}`}
@@ -129,12 +133,14 @@ export function AddToWatchlistButton({
               w-64 bg-white rounded-lg shadow-lg border border-gray-200
               py-2
             "
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             {/* Header */}
             <div className="px-4 py-2 border-b border-gray-200">
               <p className="font-medium text-gray-900">Add to Watchlist</p>
-              <p className="text-xs text-gray-500 mt-0.5">{stock.code} - {stock.name}</p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {stock.code} - {stock.name}
+              </p>
             </div>
 
             {/* Watchlist items */}
@@ -144,8 +150,10 @@ export function AddToWatchlistButton({
                   No watchlists yet
                 </div>
               ) : (
-                watchlists.map((watchlist) => {
-                  const isInWatchlist = watchlistsWithStock.some((w) => w.id === watchlist.id)
+                watchlists.map(watchlist => {
+                  const isInWatchlist = watchlistsWithStock.some(
+                    w => w.id === watchlist.id,
+                  )
                   const isFull = watchlist.stocks.length >= 100
 
                   return (
@@ -162,7 +170,9 @@ export function AddToWatchlistButton({
                       "
                     >
                       <div className="flex items-center gap-2 flex-1">
-                        <span className="text-lg">{watchlist.icon || '📋'}</span>
+                        <span className="text-lg">
+                          {watchlist.icon || '📋'}
+                        </span>
                         <div className="text-left">
                           <p className="text-sm font-medium text-gray-900">
                             {watchlist.name}
@@ -223,7 +233,7 @@ export function AddToWatchlistButton({
   return (
     <div className="relative">
       <button
-        onClick={(e) => {
+        onClick={e => {
           e.preventDefault()
           e.stopPropagation()
           setIsOpen(!isOpen)
@@ -240,8 +250,12 @@ export function AddToWatchlistButton({
           transition-colors
         `}
       >
-        <Star className={`${iconSizeClasses[size]} ${isInAnyWatchlist ? 'fill-current' : ''}`} />
-        {isInAnyWatchlist ? `In ${watchlistsWithStock.length} list(s)` : 'Add to Watchlist'}
+        <Star
+          className={`${iconSizeClasses[size]} ${isInAnyWatchlist ? 'fill-current' : ''}`}
+        />
+        {isInAnyWatchlist
+          ? `In ${watchlistsWithStock.length} list(s)`
+          : 'Add to Watchlist'}
       </button>
 
       {/* Dropdown - same as icon variant */}
@@ -252,12 +266,14 @@ export function AddToWatchlistButton({
             w-64 bg-white rounded-lg shadow-lg border border-gray-200
             py-2
           "
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {/* Header */}
           <div className="px-4 py-2 border-b border-gray-200">
             <p className="font-medium text-gray-900">Add to Watchlist</p>
-            <p className="text-xs text-gray-500 mt-0.5">{stock.code} - {stock.name}</p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {stock.code} - {stock.name}
+            </p>
           </div>
 
           {/* Watchlist items */}
@@ -267,8 +283,10 @@ export function AddToWatchlistButton({
                 No watchlists yet
               </div>
             ) : (
-              watchlists.map((watchlist) => {
-                const isInWatchlist = watchlistsWithStock.some((w) => w.id === watchlist.id)
+              watchlists.map(watchlist => {
+                const isInWatchlist = watchlistsWithStock.some(
+                  w => w.id === watchlist.id,
+                )
                 const isFull = watchlist.stocks.length >= 100
 
                 return (

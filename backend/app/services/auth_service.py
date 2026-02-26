@@ -3,15 +3,21 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Tuple
 
+from jose import JWTError
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.exceptions import UnauthorizedException
-from app.core.security import (create_access_token, create_refresh_token,
-                               decode_token, get_password_hash,
-                               verify_password, verify_token_type)
+from app.core.security import (
+    create_access_token,
+    create_refresh_token,
+    decode_token,
+    get_password_hash,
+    verify_password,
+    verify_token_type,
+)
 from app.db.models import User, UserSession
 from app.repositories import UserRepository, UserSessionRepository
 from app.schemas import TokenResponse, UserCreate, UserLogin, UserResponse
-from jose import JWTError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class AuthService:

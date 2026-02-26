@@ -1,7 +1,8 @@
 """Celery application for background tasks"""
 
-from app.core.config import settings
 from celery import Celery
+
+from app.core.config import settings
 
 # Create Celery app
 celery_app = Celery(

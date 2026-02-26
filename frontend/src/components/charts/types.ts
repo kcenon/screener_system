@@ -95,7 +95,10 @@ export const DEFAULT_INDICATOR_COLORS: Record<IndicatorType, string> = {
   stochastic: '#00BCD4',
 }
 
-export const DEFAULT_INDICATOR_PARAMS: Record<IndicatorType, Record<string, number>> = {
+export const DEFAULT_INDICATOR_PARAMS: Record<
+  IndicatorType,
+  Record<string, number>
+> = {
   sma: { period: 20 },
   ema: { period: 12 },
   bollinger: { period: 20, stdDev: 2 },

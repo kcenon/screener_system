@@ -323,7 +323,9 @@ export const portfolioService = {
    * @returns List of holdings with current values
    */
   getHoldings: (portfolioId: number) => {
-    return api.get<HoldingListResponse>(`/api/v1/portfolios/${portfolioId}/holdings`)
+    return api.get<HoldingListResponse>(
+      `/api/v1/portfolios/${portfolioId}/holdings`,
+    )
   },
 
   /**
@@ -345,8 +347,15 @@ export const portfolioService = {
    * @param data - Fields to update
    * @returns Updated holding
    */
-  updateHolding: (portfolioId: number, holdingId: number, data: HoldingUpdate) => {
-    return api.put<Holding>(`/api/v1/portfolios/${portfolioId}/holdings/${holdingId}`, data)
+  updateHolding: (
+    portfolioId: number,
+    holdingId: number,
+    data: HoldingUpdate,
+  ) => {
+    return api.put<Holding>(
+      `/api/v1/portfolios/${portfolioId}/holdings/${holdingId}`,
+      data,
+    )
   },
 
   /**
@@ -371,10 +380,17 @@ export const portfolioService = {
    * @param limit - Maximum items to return
    * @returns Paginated transaction history
    */
-  getTransactions: (portfolioId: number, skip: number = 0, limit: number = 50) => {
-    return api.get<TransactionListResponse>(`/api/v1/portfolios/${portfolioId}/transactions`, {
-      params: { skip, limit },
-    })
+  getTransactions: (
+    portfolioId: number,
+    skip: number = 0,
+    limit: number = 50,
+  ) => {
+    return api.get<TransactionListResponse>(
+      `/api/v1/portfolios/${portfolioId}/transactions`,
+      {
+        params: { skip, limit },
+      },
+    )
   },
 
   /**
@@ -387,7 +403,10 @@ export const portfolioService = {
    * @returns Created transaction
    */
   addTransaction: (portfolioId: number, data: TransactionCreate) => {
-    return api.post<Transaction>(`/api/v1/portfolios/${portfolioId}/transactions`, data)
+    return api.post<Transaction>(
+      `/api/v1/portfolios/${portfolioId}/transactions`,
+      data,
+    )
   },
 
   /**
@@ -400,7 +419,9 @@ export const portfolioService = {
    * @param transactionId - Transaction ID
    */
   deleteTransaction: (portfolioId: number, transactionId: number) => {
-    return api.delete(`/api/v1/portfolios/${portfolioId}/transactions/${transactionId}`)
+    return api.delete(
+      `/api/v1/portfolios/${portfolioId}/transactions/${transactionId}`,
+    )
   },
 }
 

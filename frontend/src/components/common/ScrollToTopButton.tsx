@@ -18,7 +18,10 @@ interface ScrollToTopButtonProps {
   className?: string
 }
 
-export function ScrollToTopButton({ threshold = 200, className = '' }: ScrollToTopButtonProps) {
+export function ScrollToTopButton({
+  threshold = 200,
+  className = '',
+}: ScrollToTopButtonProps) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {

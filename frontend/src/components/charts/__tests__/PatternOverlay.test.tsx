@@ -6,14 +6,14 @@ import { Pattern } from '@/types/pattern'
 describe('PatternOverlay', () => {
   const mockChart = {
     timeScale: vi.fn(() => ({
-      timeToCoordinate: vi.fn((_time) => 100),
+      timeToCoordinate: vi.fn(_time => 100),
       subscribeVisibleLogicalRangeChange: vi.fn(),
       unsubscribeVisibleLogicalRangeChange: vi.fn(),
     })),
   } as any
 
   const mockSeries = {
-    priceToCoordinate: vi.fn((_price) => 100),
+    priceToCoordinate: vi.fn(_price => 100),
   } as any
 
   const mockPatterns: Pattern[] = [
@@ -39,7 +39,7 @@ describe('PatternOverlay', () => {
         patterns={mockPatterns}
         width={800}
         height={600}
-      />
+      />,
     )
 
     const svg = container.querySelector('svg')
@@ -55,13 +55,13 @@ describe('PatternOverlay', () => {
         patterns={mockPatterns}
         width={800}
         height={600}
-      />
+      />,
     )
 
     // Should render a path for the pattern
     const path = container.querySelector('path')
     expect(path).toBeInTheDocument()
-    
+
     // Should render circles for points
     const circles = container.querySelectorAll('circle')
     expect(circles).toHaveLength(2)

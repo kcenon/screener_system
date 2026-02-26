@@ -10,7 +10,10 @@
 
 import { useMarketIndices } from '../../hooks/useMarketIndices'
 import { Sparkline } from './Sparkline'
-import { formatCompactVolume, formatChangePercentage } from '../../utils/formatNumber'
+import {
+  formatCompactVolume,
+  formatChangePercentage,
+} from '../../utils/formatNumber'
 import { componentSpacing, typography } from '../../config/theme'
 import type { MarketIndex } from '../../types/market'
 
@@ -24,7 +27,9 @@ function IndexCard({ index }: { index: MarketIndex }) {
   const bgClass = isPositive ? 'bg-green-50' : 'bg-red-50'
 
   return (
-    <div className={`rounded-lg border border-gray-200 p-2 ${bgClass} transition-all hover:shadow-md`}>
+    <div
+      className={`rounded-lg border border-gray-200 p-2 ${bgClass} transition-all hover:shadow-md`}
+    >
       {/* Top row: Name and Code */}
       <div className="flex items-center justify-between mb-1.5">
         <h3 className="text-xs font-semibold text-gray-700">{index.code}</h3>
@@ -42,7 +47,9 @@ function IndexCard({ index }: { index: MarketIndex }) {
         </p>
 
         {/* Change percentage */}
-        <div className={`flex items-center gap-1 text-xs font-semibold ${changeClass}`}>
+        <div
+          className={`flex items-center gap-1 text-xs font-semibold ${changeClass}`}
+        >
           <span>{isPositive ? '▲' : '▼'}</span>
           <span>{formatChangePercentage(index.change_percent)}</span>
         </div>
@@ -50,7 +57,10 @@ function IndexCard({ index }: { index: MarketIndex }) {
 
       {/* Sparkline chart (reduced height) */}
       <div className="h-8 mb-1.5">
-        <Sparkline data={index.sparkline} color={isPositive ? '#16a34a' : '#dc2626'} />
+        <Sparkline
+          data={index.sparkline}
+          color={isPositive ? '#16a34a' : '#dc2626'}
+        />
       </div>
 
       {/* Bottom row: High/Low and Volume */}
@@ -61,9 +71,7 @@ function IndexCard({ index }: { index: MarketIndex }) {
         <span>
           저 {index.low.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}
         </span>
-        <span>
-          {formatCompactVolume(index.volume)}
-        </span>
+        <span>{formatCompactVolume(index.volume)}</span>
       </div>
     </div>
   )
@@ -136,11 +144,16 @@ export function MarketIndicesWidget({
     : ''
 
   return (
-    <div className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}>
+    <div
+      className={`rounded-lg bg-white ${componentSpacing.widget} shadow-sm ${className}`}
+    >
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className={`${typography.h2} text-gray-900`}>
-          시장 지수 <span className="text-xs font-normal text-gray-500">Market Indices</span>
+          시장 지수{' '}
+          <span className="text-xs font-normal text-gray-500">
+            Market Indices
+          </span>
         </h2>
         {lastUpdated && (
           <span className="text-xs text-gray-500">
@@ -171,7 +184,7 @@ export function MarketIndicesWidget({
       {/* Data State */}
       {data && !isLoading && (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {data.indices.map((index) => (
+          {data.indices.map(index => (
             <IndexCard key={index.code} index={index} />
           ))}
         </div>

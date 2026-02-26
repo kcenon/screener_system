@@ -7,12 +7,24 @@ import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 export default function GlobalSearch() {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
-  const { query, setQuery, results, isLoading, isOpen, setIsOpen, clearSearch } = useGlobalSearch()
+  const {
+    query,
+    setQuery,
+    results,
+    isLoading,
+    isOpen,
+    setIsOpen,
+    clearSearch,
+  } = useGlobalSearch()
 
-  useKeyboardShortcut('k', () => {
-    setIsOpen(true)
-    inputRef.current?.focus()
-  }, ['cmd', 'ctrl'])
+  useKeyboardShortcut(
+    'k',
+    () => {
+      setIsOpen(true)
+      inputRef.current?.focus()
+    },
+    ['cmd', 'ctrl'],
+  )
 
   useEffect(() => {
     if (isOpen) {
@@ -58,7 +70,7 @@ export default function GlobalSearch() {
           type="text"
           placeholder="Search stocks... (Cmd+K)"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={e => setQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           className="w-full md:w-64 pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -78,10 +90,12 @@ export default function GlobalSearch() {
       {isOpen && query.length >= 2 && (
         <div className="absolute top-full mt-2 w-full md:w-96 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-96 overflow-y-auto">
           {isLoading ? (
-            <div className="p-4 text-center text-sm text-gray-500">Searching...</div>
+            <div className="p-4 text-center text-sm text-gray-500">
+              Searching...
+            </div>
           ) : results.length > 0 ? (
             <ul className="py-2">
-              {results.map((stock) => (
+              {results.map(stock => (
                 <li key={stock.code}>
                   <button
                     onClick={() => handleSelectStock(stock.code)}
@@ -89,7 +103,9 @@ export default function GlobalSearch() {
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{stock.name}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {stock.name}
+                        </p>
                         <p className="text-xs text-gray-500">
                           {stock.code} • {stock.market}
                         </p>

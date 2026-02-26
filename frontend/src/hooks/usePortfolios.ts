@@ -10,7 +10,10 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { portfolioService } from '../services/portfolioService'
-import type { PortfolioCreate, PortfolioUpdate } from '../services/portfolioService'
+import type {
+  PortfolioCreate,
+  PortfolioUpdate,
+} from '../services/portfolioService'
 
 /**
  * Query key for portfolios list.

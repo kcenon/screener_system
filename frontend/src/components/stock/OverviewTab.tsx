@@ -154,8 +154,8 @@ export default function OverviewTab({ stock }: OverviewTabProps) {
               stock.revenue_growth_yoy && stock.revenue_growth_yoy > 0
                 ? 'positive'
                 : stock.revenue_growth_yoy && stock.revenue_growth_yoy < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -167,8 +167,8 @@ export default function OverviewTab({ stock }: OverviewTabProps) {
               stock.profit_growth_yoy && stock.profit_growth_yoy > 0
                 ? 'positive'
                 : stock.profit_growth_yoy && stock.profit_growth_yoy < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -180,8 +180,8 @@ export default function OverviewTab({ stock }: OverviewTabProps) {
               stock.eps_growth_yoy && stock.eps_growth_yoy > 0
                 ? 'positive'
                 : stock.eps_growth_yoy && stock.eps_growth_yoy < 0
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
         </div>
@@ -200,8 +200,8 @@ export default function OverviewTab({ stock }: OverviewTabProps) {
               stock.debt_to_equity && stock.debt_to_equity < 100
                 ? 'positive'
                 : stock.debt_to_equity && stock.debt_to_equity > 200
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -223,8 +223,8 @@ export default function OverviewTab({ stock }: OverviewTabProps) {
               stock.altman_z_score && stock.altman_z_score > 3
                 ? 'positive'
                 : stock.altman_z_score && stock.altman_z_score < 1.8
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
           <MetricCard
@@ -235,8 +235,8 @@ export default function OverviewTab({ stock }: OverviewTabProps) {
               stock.piotroski_f_score && stock.piotroski_f_score >= 7
                 ? 'positive'
                 : stock.piotroski_f_score && stock.piotroski_f_score <= 3
-                ? 'negative'
-                : 'default'
+                  ? 'negative'
+                  : 'default'
             }
           />
         </div>

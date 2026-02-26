@@ -3,8 +3,9 @@ import os
 import shutil
 
 import numpy as np
-from app.ml.data.chart_generator import ChartImageGenerator
 from PIL import Image
+
+from app.ml.data.chart_generator import ChartImageGenerator
 
 
 def generate_synthetic_data(pattern_type, length=60):

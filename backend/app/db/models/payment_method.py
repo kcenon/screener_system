@@ -3,10 +3,18 @@
 from enum import Enum
 from typing import Optional
 
-from app.db.base import BaseModel
-from sqlalchemy import (JSON, Boolean, CheckConstraint, Column, ForeignKey,
-                        Integer, String)
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    CheckConstraint,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
+
+from app.db.base import BaseModel
 
 
 class PaymentMethodType(str, Enum):

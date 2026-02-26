@@ -19,20 +19,26 @@ function arrayToCSV(data: Record<string, unknown>[]): string {
 
   // Create CSV data rows
   const dataRows = data.map(row => {
-    return headers.map(header => {
-      const value = row[header]
+    return headers
+      .map(header => {
+        const value = row[header]
 
-      // Handle null/undefined
-      if (value === null || value === undefined) return ''
+        // Handle null/undefined
+        if (value === null || value === undefined) return ''
 
-      // Convert to string and escape if contains comma, quote, or newline
-      const stringValue = String(value)
-      if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
-        return `"${stringValue.replace(/"/g, '""')}"`
-      }
+        // Convert to string and escape if contains comma, quote, or newline
+        const stringValue = String(value)
+        if (
+          stringValue.includes(',') ||
+          stringValue.includes('"') ||
+          stringValue.includes('\n')
+        ) {
+          return `"${stringValue.replace(/"/g, '""')}"`
+        }
 
-      return stringValue
-    }).join(',')
+        return stringValue
+      })
+      .join(',')
   })
 
   return [headerRow, ...dataRows].join('\n')
@@ -57,18 +63,20 @@ function downloadFile(content: string, filename: string, mimeType: string) {
  * Prepare stock screening results for export
  * Converts StockScreeningResult to a flat object with readable keys
  */
-function prepareStockDataForExport(stocks: StockScreeningResult[]): Record<string, unknown>[] {
+function prepareStockDataForExport(
+  stocks: StockScreeningResult[],
+): Record<string, unknown>[] {
   return stocks.map(stock => ({
     'Stock Code': stock.code,
     'Stock Name': stock.name,
-    'Market': stock.market,
-    'Sector': stock.sector || '',
-    'Industry': stock.industry || '',
+    Market: stock.market,
+    Sector: stock.sector || '',
+    Industry: stock.industry || '',
     'Price (KRW)': stock.current_price || '',
     'Market Cap (B KRW)': stock.market_cap || '',
-    'PER': stock.per || '',
-    'PBR': stock.pbr || '',
-    'PSR': stock.psr || '',
+    PER: stock.per || '',
+    PBR: stock.pbr || '',
+    PSR: stock.psr || '',
     'Dividend Yield (%)': stock.dividend_yield || '',
     'ROE (%)': stock.roe || '',
     'ROA (%)': stock.roa || '',
@@ -113,7 +121,10 @@ export function exportToCSV(stocks: StockScreeningResult[], filename?: string) {
 /**
  * Export stock screening results to JSON
  */
-export function exportToJSON(stocks: StockScreeningResult[], filename?: string) {
+export function exportToJSON(
+  stocks: StockScreeningResult[],
+  filename?: string,
+) {
   const json = JSON.stringify(stocks, null, 2)
   const timestamp = new Date().toISOString().split('T')[0]
   const finalFilename = filename || `stock_screening_${timestamp}.json`
@@ -127,7 +138,7 @@ export function exportToJSON(stocks: StockScreeningResult[], filename?: string) 
 export function exportStocks(
   stocks: StockScreeningResult[],
   format: ExportFormat,
-  filename?: string
+  filename?: string,
 ) {
   if (stocks.length === 0) {
     throw new Error('No data to export')

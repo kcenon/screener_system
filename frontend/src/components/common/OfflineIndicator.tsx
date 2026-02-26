@@ -67,12 +67,8 @@ export function OfflineIndicator({ className = '' }: OfflineIndicatorProps) {
     >
       <WifiOff className="w-5 h-5 text-amber-600 flex-shrink-0" />
       <div className="flex-1">
-        <p className="text-amber-800 text-sm font-medium">
-          You're offline
-        </p>
-        <p className="text-amber-700 text-xs mt-0.5">
-          Showing cached data
-        </p>
+        <p className="text-amber-800 text-sm font-medium">You're offline</p>
+        <p className="text-amber-700 text-xs mt-0.5">Showing cached data</p>
       </div>
       <button
         onClick={handleRetry}

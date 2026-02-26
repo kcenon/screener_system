@@ -36,9 +36,14 @@ export interface UseMostActiveOptions {
  * ```
  */
 export function useMostActive(
-  options: UseMostActiveOptions = {}
+  options: UseMostActiveOptions = {},
 ): UseQueryResult<MostActiveResponse, Error> {
-  const { market = 'ALL', limit = 20, refetchInterval = 60000, enabled = true } = options
+  const {
+    market = 'ALL',
+    limit = 20,
+    refetchInterval = 60000,
+    enabled = true,
+  } = options
 
   return useQuery<MostActiveResponse, Error>({
     queryKey: ['market', 'active', market, limit],

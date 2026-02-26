@@ -71,7 +71,9 @@ export default function StatisticsSection() {
                   {stat.value}
                 </div>
                 <div className="text-lg font-semibold mb-2">{stat.label}</div>
-                <div className="text-sm text-blue-100 dark:text-blue-200">{stat.description}</div>
+                <div className="text-sm text-blue-100 dark:text-blue-200">
+                  {stat.description}
+                </div>
               </div>
             </div>
           ))}

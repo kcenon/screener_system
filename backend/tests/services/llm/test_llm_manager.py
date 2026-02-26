@@ -1,9 +1,14 @@
 from unittest.mock import AsyncMock
 
 import pytest
+
 from app.services.llm.base import LLMProvider
-from app.services.llm.manager import (LLMManager, LLMMessage, LLMProviderError,
-                                      LLMResponse)
+from app.services.llm.manager import (
+    LLMManager,
+    LLMMessage,
+    LLMProviderError,
+    LLMResponse,
+)
 
 
 @pytest.fixture

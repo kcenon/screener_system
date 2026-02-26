@@ -17,7 +17,7 @@ describe('TrendBadge', () => {
           shortTermChange={5}
           longTermChange={10}
           className="custom-class"
-        />
+        />,
       )
 
       expect(screen.getByRole('status')).toHaveClass('custom-class')
@@ -140,7 +140,7 @@ describe('TrendBadge', () => {
 
     it('explicit trend overrides calculated trend', () => {
       render(
-        <TrendBadge trend="down" shortTermChange={10} longTermChange={15} />
+        <TrendBadge trend="down" shortTermChange={10} longTermChange={15} />,
       )
 
       // Despite positive changes, should show down trend

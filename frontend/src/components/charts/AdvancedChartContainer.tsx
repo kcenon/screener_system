@@ -57,29 +57,33 @@ export default function AdvancedChartContainer({
   const { drawings, addDrawing, clearAll } = useDrawings(symbol)
 
   // Transform API data to OHLCV format
-  const chartData: OHLCV[] = data?.candles.map((candle) => ({
-    time: candle.date,
-    open: candle.open,
-    high: candle.high,
-    low: candle.low,
-    close: candle.close,
-    volume: candle.volume,
-  })) || []
+  const chartData: OHLCV[] =
+    data?.candles.map(candle => ({
+      time: candle.date,
+      open: candle.open,
+      high: candle.high,
+      low: candle.low,
+      close: candle.close,
+      volume: candle.volume,
+    })) || []
 
   // Indicator handlers
   const handleAddIndicator = useCallback((indicator: IndicatorConfig) => {
-    setIndicators((prev) => [...prev, indicator])
+    setIndicators(prev => [...prev, indicator])
   }, [])
 
   const handleRemoveIndicator = useCallback((id: string) => {
-    setIndicators((prev) => prev.filter((i) => i.id !== id))
+    setIndicators(prev => prev.filter(i => i.id !== id))
   }, [])
 
-  const handleUpdateIndicator = useCallback((id: string, updates: Partial<IndicatorConfig>) => {
-    setIndicators((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, ...updates } : i))
-    )
-  }, [])
+  const handleUpdateIndicator = useCallback(
+    (id: string, updates: Partial<IndicatorConfig>) => {
+      setIndicators(prev =>
+        prev.map(i => (i.id === id ? { ...i, ...updates } : i)),
+      )
+    },
+    [],
+  )
 
   // Zoom handlers (placeholder - actual implementation requires chart ref)
   const handleZoomIn = useCallback(() => {
@@ -122,11 +126,14 @@ export default function AdvancedChartContainer({
   }, [])
 
   // Drawing change handler
-  const handleDrawingsChange = useCallback((newDrawings: Drawing[]) => {
-    // Sync with localStorage-backed state
-    clearAll()
-    newDrawings.forEach(addDrawing)
-  }, [clearAll, addDrawing])
+  const handleDrawingsChange = useCallback(
+    (newDrawings: Drawing[]) => {
+      // Sync with localStorage-backed state
+      clearAll()
+      newDrawings.forEach(addDrawing)
+    },
+    [clearAll, addDrawing],
+  )
 
   return (
     <div
@@ -154,7 +161,9 @@ export default function AdvancedChartContainer({
         drawingTool={drawingTool}
         onDrawingToolChange={setDrawingTool}
         showIndicatorPanel={showIndicatorPanel}
-        onToggleIndicatorPanel={() => setShowIndicatorPanel(!showIndicatorPanel)}
+        onToggleIndicatorPanel={() =>
+          setShowIndicatorPanel(!showIndicatorPanel)
+        }
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
         onResetZoom={handleResetZoom}
@@ -204,14 +213,14 @@ export default function AdvancedChartContainer({
           <input
             type="checkbox"
             checked={showVolume}
-            onChange={(e) => setShowVolume(e.target.checked)}
+            onChange={e => setShowVolume(e.target.checked)}
             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
           거래량 표시
         </label>
 
         <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-          <span>활성 지표: {indicators.filter((i) => i.visible).length}</span>
+          <span>활성 지표: {indicators.filter(i => i.visible).length}</span>
           <span>•</span>
           <span>그리기: {drawings.length}</span>
         </div>

@@ -152,7 +152,7 @@ export function getTierLimits(tier: FreemiumTier) {
  */
 export function isFeatureAvailable(
   tier: FreemiumTier,
-  feature: keyof typeof FREEMIUM_LIMITS.public
+  feature: keyof typeof FREEMIUM_LIMITS.public,
 ): boolean {
   const limits = getTierLimits(tier)
   const value = limits[feature as keyof typeof limits]

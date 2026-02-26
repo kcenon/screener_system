@@ -57,9 +57,7 @@ export function PWAInstallPrompt() {
           <Smartphone className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-white font-semibold">
-            Install Stock Screener
-          </h3>
+          <h3 className="text-white font-semibold">Install Stock Screener</h3>
           <p className="text-green-100 text-sm mt-1">
             Add to your home screen for quick access and offline support
           </p>

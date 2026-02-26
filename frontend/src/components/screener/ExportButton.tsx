@@ -24,7 +24,11 @@ interface ExportButtonProps {
  * - Dropdown menu for format selection
  * - Disabled state when no data
  */
-export default function ExportButton({ data, disabled = false, filename }: ExportButtonProps) {
+export default function ExportButton({
+  data,
+  disabled = false,
+  filename,
+}: ExportButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleExport = (format: ExportFormat) => {
@@ -86,7 +90,12 @@ export default function ExportButton({ data, disabled = false, filename }: Expor
             className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer outline-none transition-colors"
             onSelect={() => handleExport('csv')}
           >
-            <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -101,7 +110,12 @@ export default function ExportButton({ data, disabled = false, filename }: Expor
             className="flex items-center px-3 py-2 text-sm text-gray-700 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer outline-none transition-colors"
             onSelect={() => handleExport('json')}
           >
-            <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

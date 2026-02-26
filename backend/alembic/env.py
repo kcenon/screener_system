@@ -8,15 +8,15 @@ import os
 import re
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
-
-# Import Base metadata — this is the target for autogenerate.
-from app.db.base import Base
 
 # Import ALL models so they register with Base.metadata.
 # The __init__.py re-exports every model; importing it is sufficient.
 import app.db.models  # noqa: F401
+from alembic import context
+
+# Import Base metadata — this is the target for autogenerate.
+from app.db.base import Base
 
 # Alembic Config object (provides access to alembic.ini values).
 config = context.config

@@ -179,12 +179,15 @@ class TestScreeningEndpoints:
 
     async def test_apply_screening_template(self, client: AsyncClient):
         """Test POST /v1/screen/templates/{template_id}"""
-        with patch(
-            "app.repositories.screening_repository.ScreeningRepository"
-            ".get_screening_templates"
-        ) as mock_templates, patch(
-            "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
-        ) as mock_screen:
+        with (
+            patch(
+                "app.repositories.screening_repository.ScreeningRepository"
+                ".get_screening_templates"
+            ) as mock_templates,
+            patch(
+                "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
+            ) as mock_screen,
+        ):
             # Mock templates
             mock_templates.return_value = [
                 {
@@ -244,12 +247,15 @@ class TestScreeningEndpoints:
         self, client: AsyncClient
     ):
         """Test POST /v1/screen/templates/{template_id} custom pagination"""
-        with patch(
-            "app.repositories.screening_repository.ScreeningRepository"
-            ".get_screening_templates"
-        ) as mock_templates, patch(
-            "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
-        ) as mock_screen:
+        with (
+            patch(
+                "app.repositories.screening_repository.ScreeningRepository"
+                ".get_screening_templates"
+            ) as mock_templates,
+            patch(
+                "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
+            ) as mock_screen,
+        ):
             mock_templates.return_value = [
                 {
                     "id": "value_stocks",

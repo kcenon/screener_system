@@ -28,12 +28,21 @@ interface WatchlistState {
 
   // Actions - Watchlist CRUD
   createWatchlist: (data: CreateWatchlistDto) => Promise<Watchlist | null>
-  updateWatchlist: (id: string, data: UpdateWatchlistDto) => Promise<Watchlist | null>
+  updateWatchlist: (
+    id: string,
+    data: UpdateWatchlistDto,
+  ) => Promise<Watchlist | null>
   deleteWatchlist: (id: string) => Promise<boolean>
 
   // Actions - Stock management
-  addStockToWatchlist: (watchlistId: string, dto: AddStockDto) => Promise<boolean>
-  removeStockFromWatchlist: (watchlistId: string, stockCode: string) => Promise<boolean>
+  addStockToWatchlist: (
+    watchlistId: string,
+    dto: AddStockDto,
+  ) => Promise<boolean>
+  removeStockFromWatchlist: (
+    watchlistId: string,
+    stockCode: string,
+  ) => Promise<boolean>
 
   // Actions - UI state
   setActiveWatchlist: (id: string | null) => void
@@ -41,7 +50,13 @@ interface WatchlistState {
 
   // Actions - Utilities
   refreshStockPrices: () => Promise<void>
-  updateStockPrice: (stockCode: string, price: number, change: number, changePct: number, volume: number) => void
+  updateStockPrice: (
+    stockCode: string,
+    price: number,
+    change: number,
+    changePct: number,
+    volume: number,
+  ) => void
   getWatchlistById: (id: string) => Watchlist | undefined
   isStockInWatchlist: (watchlistId: string, stockCode: string) => boolean
   getWatchlistsContainingStock: (stockCode: string) => Watchlist[]
@@ -63,7 +78,10 @@ export const useWatchlistStore = create<WatchlistState>()(
           const watchlists = await watchlistService.getAll()
           set({ watchlists, isLoading: false })
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch watchlists'
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Failed to fetch watchlists'
           set({ error: errorMessage, isLoading: false })
         }
       },
@@ -73,12 +91,15 @@ export const useWatchlistStore = create<WatchlistState>()(
         try {
           const watchlist = await watchlistService.getById(id)
           // Update in store if exists
-          set((state) => ({
-            watchlists: state.watchlists.map((w) => (w.id === id ? watchlist : w)),
+          set(state => ({
+            watchlists: state.watchlists.map(w =>
+              w.id === id ? watchlist : w,
+            ),
           }))
           return watchlist
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to fetch watchlist'
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to fetch watchlist'
           set({ error: errorMessage })
           return null
         }
@@ -89,7 +110,7 @@ export const useWatchlistStore = create<WatchlistState>()(
         set({ isLoading: true, error: null })
         try {
           const newWatchlist = await watchlistService.create(data)
-          set((state) => ({
+          set(state => ({
             watchlists: [...state.watchlists, newWatchlist],
             activeWatchlistId: newWatchlist.id,
             isLoading: false,
@@ -97,7 +118,9 @@ export const useWatchlistStore = create<WatchlistState>()(
           return newWatchlist
         } catch (error) {
           const errorMessage =
-            error instanceof Error ? error.message : 'Failed to create watchlist'
+            error instanceof Error
+              ? error.message
+              : 'Failed to create watchlist'
           set({ error: errorMessage, isLoading: false })
           return null
         }
@@ -108,13 +131,17 @@ export const useWatchlistStore = create<WatchlistState>()(
         set({ error: null })
         try {
           const updatedWatchlist = await watchlistService.update(id, data)
-          set((state) => ({
-            watchlists: state.watchlists.map((w) => (w.id === id ? updatedWatchlist : w)),
+          set(state => ({
+            watchlists: state.watchlists.map(w =>
+              w.id === id ? updatedWatchlist : w,
+            ),
           }))
           return updatedWatchlist
         } catch (error) {
           const errorMessage =
-            error instanceof Error ? error.message : 'Failed to update watchlist'
+            error instanceof Error
+              ? error.message
+              : 'Failed to update watchlist'
           set({ error: errorMessage })
           return null
         }
@@ -125,14 +152,17 @@ export const useWatchlistStore = create<WatchlistState>()(
         set({ error: null })
         try {
           await watchlistService.delete(id)
-          set((state) => ({
-            watchlists: state.watchlists.filter((w) => w.id !== id),
-            activeWatchlistId: state.activeWatchlistId === id ? null : state.activeWatchlistId,
+          set(state => ({
+            watchlists: state.watchlists.filter(w => w.id !== id),
+            activeWatchlistId:
+              state.activeWatchlistId === id ? null : state.activeWatchlistId,
           }))
           return true
         } catch (error) {
           const errorMessage =
-            error instanceof Error ? error.message : 'Failed to delete watchlist'
+            error instanceof Error
+              ? error.message
+              : 'Failed to delete watchlist'
           set({ error: errorMessage })
           return false
         }
@@ -144,9 +174,12 @@ export const useWatchlistStore = create<WatchlistState>()(
 
         // Optimistic update: Add placeholder stock
         const tempStockCode = dto.stock_code
-        set((state) => ({
-          watchlists: state.watchlists.map((w) => {
-            if (w.id === watchlistId && !w.stocks.some((s) => s.code === tempStockCode)) {
+        set(state => ({
+          watchlists: state.watchlists.map(w => {
+            if (
+              w.id === watchlistId &&
+              !w.stocks.some(s => s.code === tempStockCode)
+            ) {
               return {
                 ...w,
                 stocks: [
@@ -168,40 +201,51 @@ export const useWatchlistStore = create<WatchlistState>()(
         }))
 
         try {
-          const updatedWatchlist = await watchlistService.addStock(watchlistId, dto)
-          set((state) => ({
-            watchlists: state.watchlists.map((w) =>
-              w.id === watchlistId ? updatedWatchlist : w
+          const updatedWatchlist = await watchlistService.addStock(
+            watchlistId,
+            dto,
+          )
+          set(state => ({
+            watchlists: state.watchlists.map(w =>
+              w.id === watchlistId ? updatedWatchlist : w,
             ),
           }))
           return true
         } catch (error) {
           // Rollback optimistic update
-          set((state) => ({
-            watchlists: state.watchlists.map((w) => {
+          set(state => ({
+            watchlists: state.watchlists.map(w => {
               if (w.id === watchlistId) {
                 return {
                   ...w,
-                  stocks: w.stocks.filter((s) => s.code !== tempStockCode || s.name !== 'Loading...'),
+                  stocks: w.stocks.filter(
+                    s => s.code !== tempStockCode || s.name !== 'Loading...',
+                  ),
                 }
               }
               return w
             }),
           }))
 
-          const errorMessage = error instanceof Error ? error.message : 'Failed to add stock'
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to add stock'
           set({ error: errorMessage })
           return false
         }
       },
 
       // Remove stock from watchlist with optimistic update
-      removeStockFromWatchlist: async (watchlistId: string, stockCode: string) => {
+      removeStockFromWatchlist: async (
+        watchlistId: string,
+        stockCode: string,
+      ) => {
         set({ error: null })
 
         // Store original state for rollback
         const originalWatchlists = get().watchlists
-        const targetWatchlist = originalWatchlists.find((w) => w.id === watchlistId)
+        const targetWatchlist = originalWatchlists.find(
+          w => w.id === watchlistId,
+        )
 
         if (!targetWatchlist) {
           set({ error: 'Watchlist not found' })
@@ -209,12 +253,12 @@ export const useWatchlistStore = create<WatchlistState>()(
         }
 
         // Optimistic update: Remove stock
-        set((state) => ({
-          watchlists: state.watchlists.map((w) => {
+        set(state => ({
+          watchlists: state.watchlists.map(w => {
             if (w.id === watchlistId) {
               return {
                 ...w,
-                stocks: w.stocks.filter((s) => s.code !== stockCode),
+                stocks: w.stocks.filter(s => s.code !== stockCode),
               }
             }
             return w
@@ -228,7 +272,8 @@ export const useWatchlistStore = create<WatchlistState>()(
           // Rollback optimistic update
           set({ watchlists: originalWatchlists })
 
-          const errorMessage = error instanceof Error ? error.message : 'Failed to remove stock'
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to remove stock'
           set({ error: errorMessage })
           return false
         }
@@ -258,11 +303,17 @@ export const useWatchlistStore = create<WatchlistState>()(
       },
 
       // Update stock price in real-time (from WebSocket)
-      updateStockPrice: (stockCode: string, price: number, _change: number, changePct: number, volume: number) => {
-        set((state) => ({
-          watchlists: state.watchlists.map((watchlist) => ({
+      updateStockPrice: (
+        stockCode: string,
+        price: number,
+        _change: number,
+        changePct: number,
+        volume: number,
+      ) => {
+        set(state => ({
+          watchlists: state.watchlists.map(watchlist => ({
             ...watchlist,
-            stocks: watchlist.stocks.map((stock) =>
+            stocks: watchlist.stocks.map(stock =>
               stock.code === stockCode
                 ? {
                     ...stock,
@@ -270,7 +321,7 @@ export const useWatchlistStore = create<WatchlistState>()(
                     change_percent: changePct,
                     volume,
                   }
-                : stock
+                : stock,
             ),
           })),
         }))
@@ -278,22 +329,24 @@ export const useWatchlistStore = create<WatchlistState>()(
 
       // Get watchlist by ID (from current state)
       getWatchlistById: (id: string) => {
-        return get().watchlists.find((w) => w.id === id)
+        return get().watchlists.find(w => w.id === id)
       },
 
       // Check if stock is in a specific watchlist
       isStockInWatchlist: (watchlistId: string, stockCode: string) => {
-        const watchlist = get().watchlists.find((w) => w.id === watchlistId)
-        return watchlist?.stocks.some((s) => s.code === stockCode) ?? false
+        const watchlist = get().watchlists.find(w => w.id === watchlistId)
+        return watchlist?.stocks.some(s => s.code === stockCode) ?? false
       },
 
       // Get all watchlists containing a specific stock
       getWatchlistsContainingStock: (stockCode: string) => {
-        return get().watchlists.filter((w) => w.stocks.some((s) => s.code === stockCode))
+        return get().watchlists.filter(w =>
+          w.stocks.some(s => s.code === stockCode),
+        )
       },
     }),
-    { name: 'WatchlistStore' }
-  )
+    { name: 'WatchlistStore' },
+  ),
 )
 
 /**
@@ -303,7 +356,7 @@ export const watchlistSelectors = {
   /** Get the active watchlist */
   selectActiveWatchlist: (state: WatchlistState) => {
     if (!state.activeWatchlistId) return null
-    return state.watchlists.find((w) => w.id === state.activeWatchlistId) || null
+    return state.watchlists.find(w => w.id === state.activeWatchlistId) || null
   },
 
   /** Get total number of watchlists */
@@ -319,6 +372,7 @@ export const watchlistSelectors = {
   /** Get watchlists sorted by update time (most recent first) */
   selectWatchlistsByRecent: (state: WatchlistState) =>
     [...state.watchlists].sort(
-      (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      (a, b) =>
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
     ),
 }

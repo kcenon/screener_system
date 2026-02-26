@@ -35,7 +35,7 @@ export function MoversTab({ autoRefresh = true }: MoversTabProps) {
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Market:</span>
           <div className="flex bg-gray-100 rounded-md p-1">
-            {(['ALL', 'KOSPI', 'KOSDAQ'] as const).map((m) => (
+            {(['ALL', 'KOSPI', 'KOSDAQ'] as const).map(m => (
               <button
                 key={m}
                 onClick={() => setMarket(m)}
@@ -64,8 +64,9 @@ export function MoversTab({ autoRefresh = true }: MoversTabProps) {
       {/* Info */}
       <div className="bg-blue-50 rounded-lg p-4">
         <p className="text-sm text-blue-900">
-          💡 <strong>Tip:</strong> Click on any stock to view detailed information and technical analysis.
-          Data updates every minute when auto-refresh is enabled.
+          💡 <strong>Tip:</strong> Click on any stock to view detailed
+          information and technical analysis. Data updates every minute when
+          auto-refresh is enabled.
         </p>
       </div>
     </div>

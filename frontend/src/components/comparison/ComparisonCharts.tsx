@@ -40,11 +40,16 @@ const CHART_TABS = [
   },
 ]
 
-export function ComparisonCharts({ stocks, className = '' }: ComparisonChartsProps) {
+export function ComparisonCharts({
+  stocks,
+  className = '',
+}: ComparisonChartsProps) {
   const [activeView, setActiveView] = useState<ChartView>('radar')
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
+    <div
+      className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}
+    >
       {/* Header */}
       <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
         <h3 className="text-lg font-semibold text-gray-900">
@@ -58,7 +63,7 @@ export function ComparisonCharts({ stocks, className = '' }: ComparisonChartsPro
       {/* Tab Navigation */}
       <div className="border-b border-gray-200">
         <div className="flex overflow-x-auto">
-          {CHART_TABS.map((tab) => {
+          {CHART_TABS.map(tab => {
             const Icon = tab.icon
             const isActive = activeView === tab.id
 
@@ -97,9 +102,9 @@ export function ComparisonCharts({ stocks, className = '' }: ComparisonChartsPro
       {/* Footer Help Text */}
       <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 text-sm text-gray-600">
         <p>
-          <span className="font-medium">💡 Tip:</span> Switch between chart views to
-          analyze stocks from different perspectives. Hover over data points for
-          detailed values.
+          <span className="font-medium">💡 Tip:</span> Switch between chart
+          views to analyze stocks from different perspectives. Hover over data
+          points for detailed values.
         </p>
       </div>
     </div>

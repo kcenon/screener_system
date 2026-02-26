@@ -17,7 +17,8 @@ import { portfolioService } from '../services/portfolioService'
  * @param id - Portfolio ID
  * @returns Query key array
  */
-export const portfolioDetailQueryKey = (id: number) => ['portfolio', id] as const
+export const portfolioDetailQueryKey = (id: number) =>
+  ['portfolio', id] as const
 
 /**
  * Hook for fetching single portfolio details with holdings.
@@ -87,8 +88,12 @@ export function usePortfolioDetail(portfolioId: number | undefined) {
    */
   const refresh = () => {
     if (portfolioId) {
-      queryClient.invalidateQueries({ queryKey: portfolioDetailQueryKey(portfolioId) })
-      queryClient.invalidateQueries({ queryKey: ['portfolio', portfolioId, 'holdings'] })
+      queryClient.invalidateQueries({
+        queryKey: portfolioDetailQueryKey(portfolioId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['portfolio', portfolioId, 'holdings'],
+      })
     }
   }
 

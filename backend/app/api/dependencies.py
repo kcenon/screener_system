@@ -2,16 +2,23 @@
 
 from typing import Annotated
 
-from app.core.exceptions import UnauthorizedException
-from app.db.models import User
-from app.db.session import get_db
-from app.services import (AIService, AuthService, EmailVerificationService,
-                          OAuthService, PasswordResetService, StripeService,
-                          SubscriptionService)
-from app.services.watchlist_service import WatchlistService
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.exceptions import UnauthorizedException
+from app.db.models import User
+from app.db.session import get_db
+from app.services import (
+    AIService,
+    AuthService,
+    EmailVerificationService,
+    OAuthService,
+    PasswordResetService,
+    StripeService,
+    SubscriptionService,
+)
+from app.services.watchlist_service import WatchlistService
 
 # HTTP Bearer token scheme
 security = HTTPBearer()

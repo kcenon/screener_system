@@ -3,8 +3,9 @@
 import json
 from typing import Any, Optional
 
-from app.core.config import settings
 from redis import asyncio as aioredis
+
+from app.core.config import settings
 
 
 class CacheManager:

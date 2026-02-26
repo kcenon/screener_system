@@ -10,16 +10,21 @@ Tests the core dependency injection infrastructure that provides:
 from unittest.mock import AsyncMock, Mock
 
 import pytest
-from app.api.dependencies import (get_auth_service, get_current_active_user,
-                                  get_current_user, get_watchlist_service)
-from app.core.exceptions import UnauthorizedException
-from app.db.models import User
-from app.services import AuthService
-from app.services.watchlist_service import WatchlistService
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.dependencies import (
+    get_auth_service,
+    get_current_active_user,
+    get_current_user,
+    get_watchlist_service,
+)
+from app.core.exceptions import UnauthorizedException
+from app.db.models import User
+from app.services import AuthService
+from app.services.watchlist_service import WatchlistService
 
 # =============================================================================
 # Database Session Injection Tests

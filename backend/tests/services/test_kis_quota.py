@@ -4,9 +4,9 @@ import asyncio
 from unittest.mock import patch
 
 import pytest
+
 from app.core.cache import cache_manager
-from app.services.kis_quota import (CircuitState, KISQuotaManager,
-                                    RequestPriority)
+from app.services.kis_quota import CircuitState, KISQuotaManager, RequestPriority
 
 
 @pytest.fixture
@@ -229,9 +229,7 @@ class TestPriorityQueue:
             return "queued_success"
 
         # Note: This will queue but not wait for execution in current implementation
-        await quota_manager._queue_request(
-            mock_callback, RequestPriority.HIGH, 30
-        )
+        await quota_manager._queue_request(mock_callback, RequestPriority.HIGH, 30)
 
         # Verify queued
         assert len(quota_manager.queues[RequestPriority.HIGH]) > 0
@@ -321,9 +319,7 @@ class TestKISQuotaIntegration:
             return "success"
 
         # Make many concurrent requests
-        tasks = [
-            quota_manager.execute_request(counting_callback) for _ in range(30)
-        ]
+        tasks = [quota_manager.execute_request(counting_callback) for _ in range(30)]
 
         # Some should succeed, some should fail or queue
         results = await asyncio.gather(*tasks, return_exceptions=True)

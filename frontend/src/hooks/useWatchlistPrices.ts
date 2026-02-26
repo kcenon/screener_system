@@ -11,7 +11,11 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { WebSocketService, createWebSocketService, WSConnectionState } from '@/services/websocketService'
+import {
+  WebSocketService,
+  createWebSocketService,
+  WSConnectionState,
+} from '@/services/websocketService'
 import { useWatchlistStore } from '@/store/watchlistStore'
 
 /**
@@ -49,8 +53,11 @@ export interface UseWatchlistPricesReturn {
  * )
  * ```
  */
-export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesReturn {
-  const [connectionState, setConnectionState] = useState<WSConnectionState>('disconnected')
+export function useWatchlistPrices(
+  enabled: boolean = true,
+): UseWatchlistPricesReturn {
+  const [connectionState, setConnectionState] =
+    useState<WSConnectionState>('disconnected')
   const [error, setError] = useState<string | null>(null)
   const [subscriptionCount, setSubscriptionCount] = useState<number>(0)
 
@@ -58,8 +65,8 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
   const subscribedCodesRef = useRef<Set<string>>(new Set())
 
   // Get watchlists and updateStockPrice from store
-  const watchlists = useWatchlistStore((state) => state.watchlists)
-  const updateStockPrice = useWatchlistStore((state) => state.updateStockPrice)
+  const watchlists = useWatchlistStore(state => state.watchlists)
+  const updateStockPrice = useWatchlistStore(state => state.updateStockPrice)
 
   /**
    * Initialize WebSocket connection and manage subscriptions
@@ -83,7 +90,7 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
       wsServiceRef.current = wsService
 
       // Handle state changes
-      const unsubscribeState = wsService.onStateChange((state) => {
+      const unsubscribeState = wsService.onStateChange(state => {
         setConnectionState(state)
 
         if (state === 'connected') {
@@ -94,7 +101,7 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
       })
 
       // Handle incoming messages
-      const unsubscribeMessage = wsService.onMessage((message) => {
+      const unsubscribeMessage = wsService.onMessage(message => {
         if (message.type === 'price_update') {
           const priceMessage = message as {
             type: 'price_update'
@@ -107,12 +114,16 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
             }
           }
 
-          const { stock_code, price, change, change_pct, volume } = priceMessage.data
+          const { stock_code, price, change, change_pct, volume } =
+            priceMessage.data
 
           // Update stock price in all watchlists containing this stock
           updateStockPrice(stock_code, price, change, change_pct, volume)
         } else if (message.type === 'error') {
-          const errorMessage = message as { type: 'error'; error: { message: string } }
+          const errorMessage = message as {
+            type: 'error'
+            error: { message: string }
+          }
           console.error('WebSocket error:', errorMessage)
           setError(errorMessage.error?.message || 'Unknown error')
         }
@@ -127,7 +138,7 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
         unsubscribeMessage()
 
         // Unsubscribe from all stocks
-        subscribedCodesRef.current.forEach((code) => {
+        subscribedCodesRef.current.forEach(code => {
           wsService.unsubscribe('stock', code)
         })
         subscribedCodesRef.current.clear()
@@ -151,8 +162,8 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
 
     // Collect all unique stock codes from all watchlists
     const allStockCodes = new Set<string>()
-    watchlists.forEach((watchlist) => {
-      watchlist.stocks.forEach((stock) => {
+    watchlists.forEach(watchlist => {
+      watchlist.stocks.forEach(stock => {
         allStockCodes.add(stock.code)
       })
     })
@@ -162,7 +173,7 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
     const newCodes = allStockCodes
 
     // Unsubscribe from stocks no longer in watchlists
-    currentCodes.forEach((code) => {
+    currentCodes.forEach(code => {
       if (!newCodes.has(code)) {
         wsService.unsubscribe('stock', code)
         currentCodes.delete(code)
@@ -170,7 +181,7 @@ export function useWatchlistPrices(enabled: boolean = true): UseWatchlistPricesR
     })
 
     // Subscribe to new stocks
-    newCodes.forEach((code) => {
+    newCodes.forEach(code => {
       if (!currentCodes.has(code)) {
         wsService.subscribe('stock', code)
         currentCodes.add(code)

@@ -22,7 +22,7 @@ describe('SearchBar', () => {
       expect(input).toBeInTheDocument()
       expect(input).toHaveAttribute(
         'placeholder',
-        'Search by stock code or name (e.g., 005930 or Samsung)'
+        'Search by stock code or name (e.g., 005930 or Samsung)',
       )
     })
 
@@ -32,7 +32,7 @@ describe('SearchBar', () => {
           value=""
           onChange={onChangeMock}
           placeholder="Custom placeholder"
-        />
+        />,
       )
 
       const input = screen.getByRole('textbox')
@@ -40,14 +40,18 @@ describe('SearchBar', () => {
     })
 
     it('renders keyboard shortcut hint when enabled and input is empty', () => {
-      render(<SearchBar value="" onChange={onChangeMock} enableShortcut={true} />)
+      render(
+        <SearchBar value="" onChange={onChangeMock} enableShortcut={true} />,
+      )
 
       // Keyboard shortcut hint should be visible
       expect(screen.getByText('⌘K')).toBeInTheDocument()
     })
 
     it('does not render keyboard shortcut hint when disabled', () => {
-      render(<SearchBar value="" onChange={onChangeMock} enableShortcut={false} />)
+      render(
+        <SearchBar value="" onChange={onChangeMock} enableShortcut={false} />,
+      )
 
       expect(screen.queryByText('⌘K')).not.toBeInTheDocument()
     })
@@ -88,7 +92,7 @@ describe('SearchBar', () => {
         () => {
           expect(onChangeMock).toHaveBeenCalledWith('Sam')
         },
-        { timeout: 500 }
+        { timeout: 500 },
       )
 
       expect(onChangeMock).toHaveBeenCalledTimes(1)
@@ -111,7 +115,7 @@ describe('SearchBar', () => {
         () => {
           expect(onChangeMock).toHaveBeenCalledWith('Sam')
         },
-        { timeout: 500 }
+        { timeout: 500 },
       )
 
       // Should call onChange only once with final value
@@ -130,7 +134,9 @@ describe('SearchBar', () => {
     it('does not show clear button when input is empty', () => {
       render(<SearchBar value="" onChange={onChangeMock} />)
 
-      const clearButton = screen.queryByRole('button', { name: /clear search/i })
+      const clearButton = screen.queryByRole('button', {
+        name: /clear search/i,
+      })
       expect(clearButton).not.toBeInTheDocument()
     })
 
@@ -160,7 +166,9 @@ describe('SearchBar', () => {
 
   describe('Keyboard Shortcut', () => {
     it('focuses input on Ctrl+K', async () => {
-      render(<SearchBar value="" onChange={onChangeMock} enableShortcut={true} />)
+      render(
+        <SearchBar value="" onChange={onChangeMock} enableShortcut={true} />,
+      )
 
       const input = screen.getByRole('textbox')
       expect(input).not.toHaveFocus()
@@ -177,7 +185,9 @@ describe('SearchBar', () => {
     })
 
     it('focuses input on Cmd+K (Meta key)', async () => {
-      render(<SearchBar value="" onChange={onChangeMock} enableShortcut={true} />)
+      render(
+        <SearchBar value="" onChange={onChangeMock} enableShortcut={true} />,
+      )
 
       const input = screen.getByRole('textbox')
       expect(input).not.toHaveFocus()
@@ -194,7 +204,9 @@ describe('SearchBar', () => {
     })
 
     it('does not focus input when shortcut is disabled', async () => {
-      render(<SearchBar value="" onChange={onChangeMock} enableShortcut={false} />)
+      render(
+        <SearchBar value="" onChange={onChangeMock} enableShortcut={false} />,
+      )
 
       const input = screen.getByRole('textbox')
 
@@ -210,7 +222,9 @@ describe('SearchBar', () => {
     })
 
     it('prevents default browser behavior on Ctrl+K', async () => {
-      render(<SearchBar value="" onChange={onChangeMock} enableShortcut={true} />)
+      render(
+        <SearchBar value="" onChange={onChangeMock} enableShortcut={true} />,
+      )
 
       const event = new KeyboardEvent('keydown', {
         key: 'k',
@@ -228,7 +242,9 @@ describe('SearchBar', () => {
 
   describe('Value Synchronization', () => {
     it('syncs local value when prop value changes', () => {
-      const { rerender } = render(<SearchBar value="Initial" onChange={onChangeMock} />)
+      const { rerender } = render(
+        <SearchBar value="Initial" onChange={onChangeMock} />,
+      )
 
       const input = screen.getByRole('textbox')
       expect(input).toHaveValue('Initial')
@@ -240,12 +256,14 @@ describe('SearchBar', () => {
     })
 
     it('does not call onChange when value prop is updated externally', async () => {
-      const { rerender } = render(<SearchBar value="" onChange={onChangeMock} />)
+      const { rerender } = render(
+        <SearchBar value="" onChange={onChangeMock} />,
+      )
 
       rerender(<SearchBar value="External Update" onChange={onChangeMock} />)
 
       // Wait to ensure debounce would have completed
-      await new Promise((resolve) => setTimeout(resolve, 400))
+      await new Promise(resolve => setTimeout(resolve, 400))
 
       // Should not call onChange (external update, not user input)
       expect(onChangeMock).not.toHaveBeenCalled()
@@ -268,7 +286,9 @@ describe('SearchBar', () => {
     })
 
     it('marks search icon as aria-hidden', () => {
-      const { container } = render(<SearchBar value="" onChange={onChangeMock} />)
+      const { container } = render(
+        <SearchBar value="" onChange={onChangeMock} />,
+      )
 
       const searchIcon = container.querySelector('svg[aria-hidden="true"]')
       expect(searchIcon).toBeInTheDocument()

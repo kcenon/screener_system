@@ -35,7 +35,7 @@ class LLMProvider(ABC):
         messages: List[LLMMessage],
         temperature: float = 0.7,
         max_tokens: int = 2000,
-        **kwargs
+        **kwargs,
     ) -> LLMResponse:
         """Generate completion from messages"""
         pass
@@ -46,7 +46,7 @@ class LLMProvider(ABC):
         messages: List[LLMMessage],
         temperature: float = 0.7,
         max_tokens: int = 2000,
-        **kwargs
+        **kwargs,
     ) -> AsyncIterator[str]:
         """Generate completion with streaming"""
         pass

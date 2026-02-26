@@ -141,7 +141,13 @@ export function useEventTracking() {
     (
       code: string,
       name: string,
-      source: 'screener' | 'search' | 'watchlist' | 'portfolio' | 'direct' | 'alert',
+      source:
+        | 'screener'
+        | 'search'
+        | 'watchlist'
+        | 'portfolio'
+        | 'direct'
+        | 'alert',
     ) => {
       analytics.track(AnalyticsEvents.STOCK_VIEWED, {
         stock_code: code,
@@ -153,7 +159,11 @@ export function useEventTracking() {
   )
 
   const trackSearch = useCallback(
-    (query: string, resultsCount: number, searchType: 'stock' | 'filter' | 'global') => {
+    (
+      query: string,
+      resultsCount: number,
+      searchType: 'stock' | 'filter' | 'global',
+    ) => {
       analytics.track(AnalyticsEvents.SEARCH_PERFORMED, {
         query,
         results_count: resultsCount,
@@ -225,13 +235,16 @@ export function useEventTracking() {
     })
   }, [])
 
-  const trackPagination = useCallback((page: number, pageSize: number, totalItems: number) => {
-    analytics.track(AnalyticsEvents.RESULTS_PAGINATED, {
-      page_number: page,
-      page_size: pageSize,
-      total_items: totalItems,
-    })
-  }, [])
+  const trackPagination = useCallback(
+    (page: number, pageSize: number, totalItems: number) => {
+      analytics.track(AnalyticsEvents.RESULTS_PAGINATED, {
+        page_number: page,
+        page_size: pageSize,
+        total_items: totalItems,
+      })
+    },
+    [],
+  )
 
   const trackTabSwitch = useCallback((tabName: string, tabIndex: number) => {
     analytics.track(AnalyticsEvents.TAB_SWITCHED, {
@@ -240,13 +253,18 @@ export function useEventTracking() {
     })
   }, [])
 
-  const trackModal = useCallback((modalName: string, action: 'opened' | 'closed') => {
-    const event =
-      action === 'opened' ? AnalyticsEvents.MODAL_OPENED : AnalyticsEvents.MODAL_CLOSED
-    analytics.track(event, {
-      modal_name: modalName,
-    })
-  }, [])
+  const trackModal = useCallback(
+    (modalName: string, action: 'opened' | 'closed') => {
+      const event =
+        action === 'opened'
+          ? AnalyticsEvents.MODAL_OPENED
+          : AnalyticsEvents.MODAL_CLOSED
+      analytics.track(event, {
+        modal_name: modalName,
+      })
+    },
+    [],
+  )
 
   const trackThemeChange = useCallback((theme: 'light' | 'dark' | 'system') => {
     analytics.track(AnalyticsEvents.THEME_CHANGED, {
@@ -254,9 +272,12 @@ export function useEventTracking() {
     })
   }, [])
 
-  const trackCustom = useCallback((event: string, properties?: Record<string, unknown>) => {
-    analytics.track(event, properties)
-  }, [])
+  const trackCustom = useCallback(
+    (event: string, properties?: Record<string, unknown>) => {
+      analytics.track(event, properties)
+    },
+    [],
+  )
 
   return {
     trackFilter,
@@ -308,7 +329,9 @@ export function useTiming(componentName: string) {
   const endTiming = useCallback(
     (label?: string) => {
       if (startTimeRef.current === null) {
-        console.warn(`[useTiming] startTiming() was not called for ${componentName}`)
+        console.warn(
+          `[useTiming] startTiming() was not called for ${componentName}`,
+        )
         return
       }
 
@@ -356,7 +379,10 @@ export function useTiming(componentName: string) {
  */
 export function useAuthTracking() {
   const trackSignup = useCallback(
-    (userId: string, traits?: { tier?: 'free' | 'premium' | 'pro'; source?: string }) => {
+    (
+      userId: string,
+      traits?: { tier?: 'free' | 'premium' | 'pro'; source?: string },
+    ) => {
       analytics.identify(userId, traits)
       analytics.track(AnalyticsEvents.USER_SIGNED_UP, {
         signup_source: traits?.source,
@@ -393,12 +419,15 @@ export function useAuthTracking() {
     })
   }, [])
 
-  const trackOAuthCompleted = useCallback((provider: string, success: boolean) => {
-    analytics.track(AnalyticsEvents.OAUTH_LOGIN_COMPLETED, {
-      oauth_provider: provider,
-      success,
-    })
-  }, [])
+  const trackOAuthCompleted = useCallback(
+    (provider: string, success: boolean) => {
+      analytics.track(AnalyticsEvents.OAUTH_LOGIN_COMPLETED, {
+        oauth_provider: provider,
+        success,
+      })
+    },
+    [],
+  )
 
   const trackEmailVerified = useCallback(() => {
     analytics.track(AnalyticsEvents.USER_VERIFIED_EMAIL)

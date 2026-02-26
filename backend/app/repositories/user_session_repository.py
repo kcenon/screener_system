@@ -4,9 +4,10 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from app.db.models import UserSession
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models import UserSession
 
 
 class UserSessionRepository:
@@ -86,8 +87,9 @@ class UserSessionRepository:
 
     async def delete_expired_sessions(self, before: Optional[datetime] = None) -> int:
         """Delete expired sessions. Returns count of deleted sessions."""
-        from app.db.base import utc_now
         from sqlalchemy import delete
+
+        from app.db.base import utc_now
 
         cutoff = before or utc_now()
         result = await self.session.execute(

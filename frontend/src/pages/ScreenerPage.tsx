@@ -12,7 +12,10 @@ import Pagination from '@/components/common/Pagination'
 import ExportButton from '@/components/screener/ExportButton'
 import ScrollToTopFAB from '@/components/common/ScrollToTopFAB'
 import { FreemiumBanner, LimitReachedModal } from '@/components/freemium'
-import type { ScreeningSortField, StockScreeningResult } from '@/types/screening'
+import type {
+  ScreeningSortField,
+  StockScreeningResult,
+} from '@/types/screening'
 
 /**
  * Main Stock Screener Page
@@ -28,8 +31,13 @@ import type { ScreeningSortField, StockScreeningResult } from '@/types/screening
  */
 export default function ScreenerPage() {
   const navigate = useNavigate()
-  const { trackSort, trackStockView, trackPagination, trackFilterCleared, trackConversion } =
-    useEventTracking()
+  const {
+    trackSort,
+    trackStockView,
+    trackPagination,
+    trackFilterCleared,
+    trackConversion,
+  } = useEventTracking()
   const {
     data,
     isLoading,
@@ -116,11 +124,13 @@ export default function ScreenerPage() {
   const currentPage = Math.floor(pagination.offset / pagination.limit) + 1
 
   // Apply freemium limits to results
-  const displayedStocks = !isAuthenticated && data?.stocks && maxScreeningResults > 0
-    ? data.stocks.slice(0, maxScreeningResults)
-    : data?.stocks || []
+  const displayedStocks =
+    !isAuthenticated && data?.stocks && maxScreeningResults > 0
+      ? data.stocks.slice(0, maxScreeningResults)
+      : data?.stocks || []
 
-  const isResultsLimited = !isAuthenticated && (data?.stocks?.length || 0) > maxScreeningResults
+  const isResultsLimited =
+    !isAuthenticated && (data?.stocks?.length || 0) > maxScreeningResults
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -129,7 +139,8 @@ export default function ScreenerPage() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">Stock Screener</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Filter and analyze Korean stocks based on fundamental and technical indicators
+            Filter and analyze Korean stocks based on fundamental and technical
+            indicators
           </p>
         </div>
 
@@ -159,7 +170,9 @@ export default function ScreenerPage() {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Error loading data</h3>
+                <h3 className="text-sm font-medium text-red-800">
+                  Error loading data
+                </h3>
                 <p className="mt-1 text-sm text-red-700">{error.message}</p>
               </div>
             </div>
@@ -176,7 +189,9 @@ export default function ScreenerPage() {
                 onFiltersChange={setFilters}
                 onClearFilters={handleClearFilters}
                 presets={presets}
-                onSavePreset={(name, description) => savePreset(name, filters, description)}
+                onSavePreset={(name, description) =>
+                  savePreset(name, filters, description)
+                }
                 onDeletePreset={deletePreset}
               />
             </div>
@@ -187,7 +202,9 @@ export default function ScreenerPage() {
             {/* Quick Filters Bar */}
             <QuickFiltersBar
               currentFilters={filters}
-              onFilterChange={(newFilters) => setFilters({ ...filters, ...newFilters })}
+              onFilterChange={newFilters =>
+                setFilters({ ...filters, ...newFilters })
+              }
               onClearAll={handleClearFilters}
             />
 
@@ -197,13 +214,22 @@ export default function ScreenerPage() {
                 <p className="text-sm text-gray-700">
                   {isResultsLimited ? (
                     <>
-                      Showing <span className="font-semibold">{maxScreeningResults}</span> of{' '}
-                      <span className="font-semibold">{data.meta.total}</span> stocks{' '}
-                      <span className="text-blue-600 font-medium">(Sign up for full results)</span>
+                      Showing{' '}
+                      <span className="font-semibold">
+                        {maxScreeningResults}
+                      </span>{' '}
+                      of{' '}
+                      <span className="font-semibold">{data.meta.total}</span>{' '}
+                      stocks{' '}
+                      <span className="text-blue-600 font-medium">
+                        (Sign up for full results)
+                      </span>
                     </>
                   ) : (
                     <>
-                      Found <span className="font-semibold">{data.meta.total}</span> stocks
+                      Found{' '}
+                      <span className="font-semibold">{data.meta.total}</span>{' '}
+                      stocks
                     </>
                   )}
                   {data.query_time_ms && (
@@ -238,10 +264,12 @@ export default function ScreenerPage() {
             {isResultsLimited && (
               <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 text-center">
                 <p className="text-blue-900 font-medium mb-2">
-                  📊 {data!.meta.total - maxScreeningResults} more stocks match your criteria
+                  📊 {data!.meta.total - maxScreeningResults} more stocks match
+                  your criteria
                 </p>
                 <p className="text-blue-700 text-sm mb-3">
-                  Sign up for free to view all {data!.meta.total} results and unlock unlimited searches
+                  Sign up for free to view all {data!.meta.total} results and
+                  unlock unlimited searches
                 </p>
                 <div className="flex gap-2 justify-center">
                   <button

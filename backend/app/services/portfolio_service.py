@@ -378,8 +378,9 @@ class PortfolioService:
         Returns:
             HoldingResponse with current price
         """
-        from app.schemas.portfolio import HoldingResponse
         from decimal import Decimal
+
+        from app.schemas.portfolio import HoldingResponse
 
         holding = await self.holding_repo.get_by_id(holding_id)
         if not holding:
@@ -434,8 +435,9 @@ class PortfolioService:
         Returns:
             PortfolioPerformance or None
         """
-        from app.schemas.portfolio import PortfolioPerformance
         from decimal import Decimal
+
+        from app.schemas.portfolio import PortfolioPerformance
 
         holdings = await self.holding_repo.get_portfolio_holdings(
             portfolio_id, active_only=True
@@ -508,9 +510,10 @@ class PortfolioService:
         Returns:
             PortfolioAllocation or None
         """
-        from app.schemas.portfolio import PortfolioAllocation
-        from decimal import Decimal
         from collections import defaultdict
+        from decimal import Decimal
+
+        from app.schemas.portfolio import PortfolioAllocation
 
         holdings = await self.holding_repo.get_portfolio_holdings(
             portfolio_id, active_only=True

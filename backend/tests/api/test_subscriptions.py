@@ -5,9 +5,10 @@ from decimal import Decimal
 
 import pytest
 import pytest_asyncio
-from app.db.models import SubscriptionPlan, User, UserSubscription
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models import SubscriptionPlan, User, UserSubscription
 
 
 @pytest_asyncio.fixture

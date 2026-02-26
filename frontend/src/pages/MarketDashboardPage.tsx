@@ -54,23 +54,32 @@ export function MarketDashboardPage() {
   const [activeTab, setActiveTab] = useState<TabValue>(getInitialTab())
 
   // Update URL when tab changes
-  const handleTabChange = useCallback((value: string) => {
-    const newTab = value as TabValue
-    setActiveTab(newTab)
-    setSearchParams({ tab: newTab }, { replace: true })
-    localStorage.setItem(LAST_TAB_KEY, newTab)
-  }, [setSearchParams])
+  const handleTabChange = useCallback(
+    (value: string) => {
+      const newTab = value as TabValue
+      setActiveTab(newTab)
+      setSearchParams({ tab: newTab }, { replace: true })
+      localStorage.setItem(LAST_TAB_KEY, newTab)
+    },
+    [setSearchParams],
+  )
 
   // Tab switching shortcuts (from other tabs)
-  const switchToTab = useCallback((tab: TabValue) => {
-    handleTabChange(tab)
-  }, [handleTabChange])
+  const switchToTab = useCallback(
+    (tab: TabValue) => {
+      handleTabChange(tab)
+    },
+    [handleTabChange],
+  )
 
   // Switch to screener with sector filter
-  const switchToScreenerWithSector = useCallback((sector: string) => {
-    setSectorFilter(sector)
-    handleTabChange('screener')
-  }, [handleTabChange])
+  const switchToScreenerWithSector = useCallback(
+    (sector: string) => {
+      setSectorFilter(sector)
+      handleTabChange('screener')
+    },
+    [handleTabChange],
+  )
 
   // Keyboard shortcuts: Cmd/Ctrl + 1-5
   useEffect(() => {
@@ -121,7 +130,7 @@ export function MarketDashboardPage() {
                 <input
                   type="checkbox"
                   checked={autoRefresh}
-                  onChange={(e) => setAutoRefresh(e.target.checked)}
+                  onChange={e => setAutoRefresh(e.target.checked)}
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm text-gray-700">Auto-refresh</span>
@@ -144,7 +153,7 @@ export function MarketDashboardPage() {
         >
           <div className="container mx-auto px-4">
             <Tabs.List className="flex gap-1">
-              {TAB_CONFIG.map((tab) => (
+              {TAB_CONFIG.map(tab => (
                 <Tabs.Trigger
                   key={tab.value}
                   value={tab.value}
@@ -173,7 +182,9 @@ export function MarketDashboardPage() {
 
           <Tabs.Content value="screener" className="focus:outline-none">
             <ScreenerTab
-              initialFilters={sectorFilter ? { sector: sectorFilter } : undefined}
+              initialFilters={
+                sectorFilter ? { sector: sectorFilter } : undefined
+              }
             />
           </Tabs.Content>
 
@@ -201,8 +212,9 @@ export function MarketDashboardPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="rounded-lg bg-blue-50 p-4 text-center">
           <p className="text-sm text-blue-800">
-            💡 <strong>Keyboard Shortcuts:</strong> Press Cmd/Ctrl + 1-5 to quickly switch between tabs.
-            Click on sectors or stocks to drill down into detailed analysis.
+            💡 <strong>Keyboard Shortcuts:</strong> Press Cmd/Ctrl + 1-5 to
+            quickly switch between tabs. Click on sectors or stocks to drill
+            down into detailed analysis.
           </p>
         </div>
       </div>

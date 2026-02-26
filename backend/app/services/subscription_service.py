@@ -9,10 +9,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.exceptions import (
-    BadRequestException,
-    NotFoundException,
-)
+from app.core.exceptions import BadRequestException, NotFoundException
 from app.db.models import (
     Payment,
     PaymentMethod,

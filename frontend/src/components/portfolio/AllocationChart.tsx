@@ -11,8 +11,18 @@
  */
 
 import { useMemo } from 'react'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
-import { PortfolioAllocation, AllocationItem } from '../../services/portfolioService'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from 'recharts'
+import {
+  PortfolioAllocation,
+  AllocationItem,
+} from '../../services/portfolioService'
 
 /**
  * Color palette for allocation charts
@@ -57,14 +67,17 @@ function CustomTooltip({ active, payload }: any) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
       <p className="font-medium text-gray-900">{data.label}</p>
-      <p className="text-sm text-gray-600 mt-1">Value: ₩{value.toLocaleString()}</p>
+      <p className="text-sm text-gray-600 mt-1">
+        Value: ₩{value.toLocaleString()}
+      </p>
       <p className="text-sm text-gray-600">Weight: {weight.toFixed(2)}%</p>
       <p
         className={`text-sm mt-1 ${
           gain >= 0 ? 'text-green-600' : 'text-red-600'
         }`}
       >
-        Gain: {gain >= 0 ? '+' : ''}₩{gain.toLocaleString()} ({gain >= 0 ? '+' : ''}
+        Gain: {gain >= 0 ? '+' : ''}₩{gain.toLocaleString()} (
+        {gain >= 0 ? '+' : ''}
         {gainPercent.toFixed(2)}%)
       </p>
     </div>
@@ -131,11 +144,15 @@ export default function AllocationChart({
   if (!allocation || chartData.length === 0) {
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        {title && <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>}
+        {title && (
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+        )}
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
             <p>No {type} allocation data available</p>
-            <p className="text-sm mt-1">Add some holdings to see the breakdown</p>
+            <p className="text-sm mt-1">
+              Add some holdings to see the breakdown
+            </p>
           </div>
         </div>
       </div>
@@ -146,7 +163,9 @@ export default function AllocationChart({
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
-      {title && <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>}
+      {title && (
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+      )}
 
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
@@ -168,7 +187,10 @@ export default function AllocationChart({
             dataKey="value"
           >
             {chartData.map((_entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
             ))}
           </Pie>
           <Tooltip content={<CustomTooltip />} />
@@ -179,9 +201,7 @@ export default function AllocationChart({
       {/* Summary */}
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">
-            Total Value:
-          </span>
+          <span className="text-gray-600">Total Value:</span>
           <span className="font-medium text-gray-900">
             ₩{parseFloat(allocation.total_value || '0').toLocaleString()}
           </span>

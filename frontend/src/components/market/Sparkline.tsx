@@ -76,9 +76,7 @@ export function Sparkline({
       .join(' ')
 
     // Generate area path (filled region under line)
-    const areaPath = showArea
-      ? `${linePath} L 100 100 L 0 100 Z`
-      : ''
+    const areaPath = showArea ? `${linePath} L 100 100 L 0 100 Z` : ''
 
     return {
       line: linePath,
@@ -105,11 +103,7 @@ export function Sparkline({
     >
       {/* Filled area under line */}
       {showArea && pathData.area && (
-        <path
-          d={pathData.area}
-          fill={color}
-          fillOpacity={0.1}
-        />
+        <path d={pathData.area} fill={color} fillOpacity={0.1} />
       )}
 
       {/* Line */}

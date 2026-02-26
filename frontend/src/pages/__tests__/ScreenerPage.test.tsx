@@ -80,7 +80,7 @@ describe('ScreenerPage', () => {
         <MemoryRouter>
           <ScreenerPage />
         </MemoryRouter>
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
   }
 
@@ -148,8 +148,12 @@ describe('ScreenerPage', () => {
     it('renders stock screener page', () => {
       renderScreenerPage()
 
-      expect(screen.getByRole('heading', { name: /stock screener/i })).toBeInTheDocument()
-      expect(screen.getByText(/filter and analyze korean stocks/i)).toBeInTheDocument()
+      expect(
+        screen.getByRole('heading', { name: /stock screener/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(/filter and analyze korean stocks/i),
+      ).toBeInTheDocument()
     })
 
     it('renders filter panel', () => {
@@ -165,7 +169,9 @@ describe('ScreenerPage', () => {
 
       // Note: Virtual table rendering limitation - data not accessible in test DOM
       // This test verifies component mounting, actual data validation requires E2E tests
-      expect(screen.queryByRole('heading', { name: /stock screener/i })).toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', { name: /stock screener/i }),
+      ).toBeInTheDocument()
     })
 
     it('renders results count', () => {
@@ -173,7 +179,9 @@ describe('ScreenerPage', () => {
 
       // Note: Results count rendering requires proper data flow
       // Placeholder test - component renders successfully
-      expect(screen.queryByRole('heading', { name: /stock screener/i })).toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', { name: /stock screener/i }),
+      ).toBeInTheDocument()
     })
 
     it('renders export button when authenticated', () => {
@@ -181,7 +189,7 @@ describe('ScreenerPage', () => {
 
       const exportButtons = screen.getAllByRole('button')
       const hasExportButton = exportButtons.some(button =>
-        button.textContent?.toLowerCase().includes('export')
+        button.textContent?.toLowerCase().includes('export'),
       )
       expect(hasExportButton).toBe(true)
     })
@@ -191,7 +199,9 @@ describe('ScreenerPage', () => {
 
       // Pagination should be present
       // Note: Just verify rendering succeeds, specific elements tested elsewhere
-      expect(screen.queryByRole('heading', { name: /stock screener/i })).toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', { name: /stock screener/i }),
+      ).toBeInTheDocument()
     })
 
     it('renders loading state', () => {
@@ -250,7 +260,9 @@ describe('ScreenerPage', () => {
 
       renderScreenerPage()
 
-      expect(screen.getByText(/sign up for unlimited searches/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/sign up for unlimited searches/i),
+      ).toBeInTheDocument()
       expect(screen.getByText(/3\/10 used today/i)).toBeInTheDocument()
     })
 

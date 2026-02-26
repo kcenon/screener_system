@@ -4,19 +4,27 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Tuple
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import settings
 from app.core.exceptions import BadRequestException, NotFoundException
 from app.core.security import create_access_token, create_refresh_token
 from app.db.models import OAuthState, SocialAccount, User, UserSession
-from app.repositories import (OAuthStateRepository, SocialAccountRepository,
-                              UserRepository, UserSessionRepository)
+from app.repositories import (
+    OAuthStateRepository,
+    SocialAccountRepository,
+    UserRepository,
+    UserSessionRepository,
+)
 from app.schemas import TokenResponse, UserResponse
-from app.schemas.oauth import (OAuthAuthorizationResponse, OAuthProviderEnum,
-                               OAuthUserInfo, SocialAccountResponse,
-                               SocialAccountsListResponse)
-from app.services.oauth_providers import (get_oauth_provider,
-                                          is_provider_configured)
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.schemas.oauth import (
+    OAuthAuthorizationResponse,
+    OAuthProviderEnum,
+    OAuthUserInfo,
+    SocialAccountResponse,
+    SocialAccountsListResponse,
+)
+from app.services.oauth_providers import get_oauth_provider, is_provider_configured
 
 
 class OAuthService:

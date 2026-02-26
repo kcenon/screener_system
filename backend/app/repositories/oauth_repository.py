@@ -3,9 +3,10 @@
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from app.db.models import OAuthState, SocialAccount
 from sqlalchemy import and_, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models import OAuthState, SocialAccount
 
 
 class SocialAccountRepository:

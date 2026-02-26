@@ -32,7 +32,7 @@ import type { PriceHistoryResponse, PriceInterval } from '@/types'
  */
 export function usePriceChart(
   code: string | undefined,
-  initialTimeframe: PriceInterval = '1M'
+  initialTimeframe: PriceInterval = '1M',
 ) {
   const [timeframe, setTimeframe] = useState<PriceInterval>(initialTimeframe)
 

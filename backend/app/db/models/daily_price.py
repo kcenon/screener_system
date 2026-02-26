@@ -1,9 +1,17 @@
 """Daily price database model"""
 
-from app.db.base import Base
-from sqlalchemy import (BigInteger, CheckConstraint, Column, Date, ForeignKey,
-                        Integer, String)
+from sqlalchemy import (
+    BigInteger,
+    CheckConstraint,
+    Column,
+    Date,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
+
+from app.db.base import Base
 
 
 class DailyPrice(Base):
@@ -28,8 +36,12 @@ class DailyPrice(Base):
 
     # Volume Data
     volume = Column(Integer, nullable=True)
-    trading_value = Column(BigInteger, nullable=True)  # Trading value in KRW (can exceed int32)
-    market_cap = Column(BigInteger, nullable=True)  # Market cap in KRW (can exceed int32)
+    trading_value = Column(
+        BigInteger, nullable=True
+    )  # Trading value in KRW (can exceed int32)
+    market_cap = Column(
+        BigInteger, nullable=True
+    )  # Market cap in KRW (can exceed int32)
 
     # Relationships
     stock = relationship("Stock", back_populates="daily_prices")

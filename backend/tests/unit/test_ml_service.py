@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import numpy as np
 import pytest
+
 from app.services.ml_service import ModelService
 
 
@@ -21,9 +22,10 @@ class TestModelService:
     async def test_predict_single_stock(self, model_service):
         """Test single stock prediction"""
         # Mock cache miss
-        with patch(
-            "app.services.ml_service.cache_manager.get", return_value=None
-        ), patch("app.services.ml_service.cache_manager.set") as mock_set:
+        with (
+            patch("app.services.ml_service.cache_manager.get", return_value=None),
+            patch("app.services.ml_service.cache_manager.set") as mock_set,
+        ):
 
             result = await model_service.predict("005930")
 

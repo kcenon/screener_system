@@ -14,7 +14,11 @@
 import { useEffect, useState } from 'react'
 import { useMarketIndices } from '../../hooks/useMarketIndices'
 import { useMarketBreadth } from '../../hooks/useMarketBreadth'
-import { getMarketColor, getChangeArrow, getMarketSentiment } from '../../config/theme'
+import {
+  getMarketColor,
+  getChangeArrow,
+  getMarketSentiment,
+} from '../../config/theme'
 import { formatChangePercentage } from '../../utils/formatNumber'
 import type { MarketIndex } from '../../types/market'
 
@@ -59,7 +63,8 @@ export function GlobalMarketBar() {
 
   // Get market sentiment display
   const getSentimentDisplay = () => {
-    if (!breadthData) return { text: '로딩중', icon: '⏳', color: 'text-gray-600' }
+    if (!breadthData)
+      return { text: '로딩중', icon: '⏳', color: 'text-gray-600' }
 
     const sentiment = breadthData.sentiment
     const colors = getMarketSentiment(sentiment)
@@ -83,8 +88,15 @@ export function GlobalMarketBar() {
 
     return (
       <div key={index.code} className="flex items-center gap-2">
-        <span className="font-semibold text-gray-700 dark:text-gray-300">{index.code}</span>
-        <span className="font-bold dark:text-white">{index.current.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+        <span className="font-semibold text-gray-700 dark:text-gray-300">
+          {index.code}
+        </span>
+        <span className="font-bold dark:text-white">
+          {index.current.toLocaleString('ko-KR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </span>
         <span className={`${color.text} font-medium flex items-center gap-1`}>
           <span>{arrow}</span>
           <span>{formatChangePercentage(index.change_percent)}</span>
@@ -109,7 +121,11 @@ export function GlobalMarketBar() {
   }
 
   // No data state
-  if (!indicesData || !indicesData.indices || indicesData.indices.length === 0) {
+  if (
+    !indicesData ||
+    !indicesData.indices ||
+    indicesData.indices.length === 0
+  ) {
     return (
       <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
         <div className="container mx-auto px-4 py-2">
@@ -121,8 +137,8 @@ export function GlobalMarketBar() {
     )
   }
 
-  const kospi = indicesData.indices.find((idx) => idx.code === 'KOSPI')
-  const kosdaq = indicesData.indices.find((idx) => idx.code === 'KOSDAQ')
+  const kospi = indicesData.indices.find(idx => idx.code === 'KOSPI')
+  const kosdaq = indicesData.indices.find(idx => idx.code === 'KOSDAQ')
 
   return (
     <div className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
@@ -139,8 +155,12 @@ export function GlobalMarketBar() {
           <div className="flex items-center gap-6">
             {/* Market Sentiment */}
             <div className="flex items-center gap-2">
-              <span className="text-gray-600 dark:text-gray-400">시장심리:</span>
-              <span className={`${sentiment.color} font-medium flex items-center gap-1`}>
+              <span className="text-gray-600 dark:text-gray-400">
+                시장심리:
+              </span>
+              <span
+                className={`${sentiment.color} font-medium flex items-center gap-1`}
+              >
                 <span>{sentiment.icon}</span>
                 <span>{sentiment.text}</span>
               </span>
@@ -166,7 +186,9 @@ export function GlobalMarketBar() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-gray-600 dark:text-gray-400">심리:</span>
-              <span className={`${sentiment.color} font-medium flex items-center gap-1`}>
+              <span
+                className={`${sentiment.color} font-medium flex items-center gap-1`}
+              >
                 <span>{sentiment.icon}</span>
                 <span>{sentiment.text}</span>
               </span>

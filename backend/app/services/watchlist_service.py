@@ -4,13 +4,21 @@ from datetime import datetime, timedelta
 from typing import Any, Optional
 from uuid import UUID
 
-from app.db.models import UserActivity, Watchlist, WatchlistStock
-from app.repositories import (UserActivityRepository,
-                              UserPreferencesRepository, WatchlistRepository)
-from app.repositories.stock_repository import StockRepository
-from app.schemas.watchlist import (DashboardSummary, ScreeningQuota,
-                                   WatchlistCreate, WatchlistUpdate)
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models import UserActivity, Watchlist, WatchlistStock
+from app.repositories import (
+    UserActivityRepository,
+    UserPreferencesRepository,
+    WatchlistRepository,
+)
+from app.repositories.stock_repository import StockRepository
+from app.schemas.watchlist import (
+    DashboardSummary,
+    ScreeningQuota,
+    WatchlistCreate,
+    WatchlistUpdate,
+)
 
 
 class WatchlistService:

@@ -4,10 +4,10 @@ import uuid
 from datetime import datetime, timedelta
 
 import pytest
-from app.db.models import (Stock, User, UserPreferences, Watchlist,
-                           WatchlistStock)
 from httpx import AsyncClient
 from sqlalchemy import select
+
+from app.db.models import Stock, User, UserPreferences, Watchlist, WatchlistStock
 
 
 @pytest.fixture

@@ -90,12 +90,14 @@ export default function ChartToolbar({
           title="차트 타입"
         >
           {chartTypeIcons[chartType]}
-          <span className="hidden sm:inline">{CHART_TYPE_LABELS[chartType]}</span>
+          <span className="hidden sm:inline">
+            {CHART_TYPE_LABELS[chartType]}
+          </span>
         </button>
 
         {showChartTypeMenu && (
           <div className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-50">
-            {(Object.keys(CHART_TYPE_LABELS) as ChartType[]).map((type) => (
+            {(Object.keys(CHART_TYPE_LABELS) as ChartType[]).map(type => (
               <button
                 key={type}
                 onClick={() => {
@@ -121,7 +123,7 @@ export default function ChartToolbar({
 
       {/* Timeframe Selector */}
       <div className="inline-flex rounded-md shadow-sm" role="group">
-        {timeframes.map((tf) => (
+        {timeframes.map(tf => (
           <button
             key={tf.value}
             type="button"
@@ -152,12 +154,14 @@ export default function ChartToolbar({
           title="그리기 도구"
         >
           <TrendingUp className="w-4 h-4" />
-          <span className="hidden sm:inline">{DRAWING_TOOL_LABELS[drawingTool]}</span>
+          <span className="hidden sm:inline">
+            {DRAWING_TOOL_LABELS[drawingTool]}
+          </span>
         </button>
 
         {showDrawingMenu && (
           <div className="absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-50">
-            {(Object.keys(DRAWING_TOOL_LABELS) as DrawingTool[]).map((tool) => (
+            {(Object.keys(DRAWING_TOOL_LABELS) as DrawingTool[]).map(tool => (
               <button
                 key={tool}
                 onClick={() => {

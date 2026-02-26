@@ -6,11 +6,17 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
-from app.core.logging import logger
-from app.schemas.websocket import (BatchMessage, ConnectionInfo, ErrorMessage,
-                                   PongMessage, SubscriptionType,
-                                   WebSocketMessage)
 from fastapi import WebSocket, WebSocketDisconnect
+
+from app.core.logging import logger
+from app.schemas.websocket import (
+    BatchMessage,
+    ConnectionInfo,
+    ErrorMessage,
+    PongMessage,
+    SubscriptionType,
+    WebSocketMessage,
+)
 
 
 class ConnectionManager:
@@ -505,15 +511,17 @@ class ConnectionManager:
                         ws_message = ErrorMessage(
                             code=payload.get("code", "ERROR"),
                             message=payload.get("message", "Unknown error"),
-                            details=payload.get("details")
+                            details=payload.get("details"),
                         )
                     else:
-                         ws_message = WebSocketMessage(**message)
+                        ws_message = WebSocketMessage(**message)
                 else:
                     ws_message = WebSocketMessage(**message)
             except Exception:
                 msg_type = message.get("type", "message")
-                ws_message = WebSocketMessage(type=msg_type, payload=message.get("payload"))
+                ws_message = WebSocketMessage(
+                    type=msg_type, payload=message.get("payload")
+                )
 
         for conn_id in target_connections:
             await self.send_message(conn_id, ws_message, immediate=True)

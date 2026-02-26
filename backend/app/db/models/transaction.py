@@ -4,10 +4,18 @@ from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from app.db.base import Base
-from sqlalchemy import (CheckConstraint, Column, DateTime, Float, ForeignKey,
-                        Integer, String)
+from sqlalchemy import (
+    CheckConstraint,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
+
+from app.db.base import Base
 
 if TYPE_CHECKING:
     from app.db.models.portfolio import Portfolio  # noqa: F401

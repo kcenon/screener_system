@@ -20,7 +20,8 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
  * @constant
  * @defaultValue 'http://localhost:8000/v1'
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/v1'
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/v1'
 
 /**
  * Pre-configured Axios instance for API communication.
@@ -98,7 +99,7 @@ let failedQueue: Array<{
  * @internal
  */
 const processQueue = (error: Error | null, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
+  failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error)
     } else {
@@ -111,23 +112,25 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 
 // Request interceptor for adding auth token
 api.interceptors.request.use(
-  (config) => {
+  config => {
     const token = localStorage.getItem('access_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
     return config
   },
-  (error) => {
+  error => {
     return Promise.reject(error)
-  }
+  },
 )
 
 // Response interceptor for handling errors and token refresh
 api.interceptors.response.use(
-  (response) => response,
+  response => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean
+    }
 
     // If error is not 401 or request already retried, reject immediately
     if (error.response?.status !== 401 || originalRequest._retry) {
@@ -147,13 +150,13 @@ api.interceptors.response.use(
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject })
       })
-        .then((token) => {
+        .then(token => {
           if (originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${token}`
           }
           return api(originalRequest)
         })
-        .catch((err) => {
+        .catch(err => {
           return Promise.reject(err)
         })
     }
@@ -202,5 +205,5 @@ api.interceptors.response.use(
     } finally {
       isRefreshing = false
     }
-  }
+  },
 )

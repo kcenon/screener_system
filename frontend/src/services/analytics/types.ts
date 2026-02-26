@@ -95,7 +95,8 @@ export const AnalyticsEvents = {
   EXPERIMENT_CONVERTED: 'Experiment Converted',
 } as const
 
-export type AnalyticsEvent = (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents]
+export type AnalyticsEvent =
+  (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents]
 
 // ============================================================================
 // Event Property Types
@@ -277,6 +278,7 @@ export type EventPropertiesMap = {
 /**
  * Get the property type for a specific event
  */
-export type EventProperties<E extends AnalyticsEvent> = E extends keyof EventPropertiesMap
-  ? EventPropertiesMap[E]
-  : BaseEventProperties & Record<string, unknown>
+export type EventProperties<E extends AnalyticsEvent> =
+  E extends keyof EventPropertiesMap
+    ? EventPropertiesMap[E]
+    : BaseEventProperties & Record<string, unknown>

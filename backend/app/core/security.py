@@ -4,8 +4,9 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional
 
 import bcrypt
-from app.core.config import settings
 from jose import JWTError, jwt
+
+from app.core.config import settings
 
 # Bcrypt rounds (cost factor 12 for security)
 BCRYPT_ROUNDS = 12

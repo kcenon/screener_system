@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from app.db.base import BaseModel
 from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
+from app.db.base import BaseModel
 
 
 class UserBehaviorEvent(BaseModel):

@@ -5,11 +5,22 @@ from decimal import Decimal
 from enum import Enum
 from typing import Optional
 
-from app.db.base import BaseModel
-from sqlalchemy import (JSON, CheckConstraint, Column, DateTime, ForeignKey,
-                        Integer, Numeric, String, Text)
+from sqlalchemy import (
+    JSON,
+    CheckConstraint,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+)
+
 # from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
+
+from app.db.base import BaseModel
 
 
 class PaymentStatus(str, Enum):

@@ -74,21 +74,19 @@ export function HeatMapTab({ autoRefresh = true }: HeatMapTabProps) {
       {/* Grid view */}
       {viewMode === 'grid' && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <SectorHeatmap
-            defaultTimeframe="1D"
-            autoRefresh={autoRefresh}
-          />
+          <SectorHeatmap defaultTimeframe="1D" autoRefresh={autoRefresh} />
         </div>
       )}
 
       {/* Info card */}
       <div className="bg-blue-50 rounded-lg p-4">
         <p className="text-sm text-blue-900">
-          💡 <strong>How to use:</strong> Click on a sector to filter the screener by that sector.
+          💡 <strong>How to use:</strong> Click on a sector to filter the
+          screener by that sector.
           {viewMode === 'treemap' && (
             <span> Treemap size is proportional to market capitalization.</span>
-          )}
-          {' '}Colors represent performance: green for gains, red for losses.
+          )}{' '}
+          Colors represent performance: green for gains, red for losses.
         </p>
       </div>
     </div>

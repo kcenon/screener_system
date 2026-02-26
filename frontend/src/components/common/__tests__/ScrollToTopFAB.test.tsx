@@ -21,19 +21,33 @@ describe('ScrollToTopFAB', () => {
   describe('Visibility Behavior', () => {
     it('is hidden when page scroll is below threshold', () => {
       // Set scroll position below default threshold (200px)
-      Object.defineProperty(window, 'pageYOffset', { value: 100, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 100, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 100,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 100,
+        writable: true,
+      })
 
       render(<ScrollToTopFAB />)
 
       // Button should not be in the document
-      expect(screen.queryByRole('button', { name: /scroll to top/i })).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: /scroll to top/i }),
+      ).not.toBeInTheDocument()
     })
 
     it('is visible when page scroll is above threshold', async () => {
       // Set scroll position above default threshold (200px)
-      Object.defineProperty(window, 'pageYOffset', { value: 300, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 300, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 300,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 300,
+        writable: true,
+      })
 
       render(<ScrollToTopFAB />)
 
@@ -41,58 +55,100 @@ describe('ScrollToTopFAB', () => {
       window.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /scroll to top/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /scroll to top/i }),
+        ).toBeInTheDocument()
       })
     })
 
     it('respects custom threshold prop', async () => {
       // Set scroll position at 250px
-      Object.defineProperty(window, 'pageYOffset', { value: 250, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 250, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 250,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 250,
+        writable: true,
+      })
 
       // Render with custom threshold of 300px
       render(<ScrollToTopFAB threshold={300} />)
 
       // Button should be hidden (250 < 300)
-      expect(screen.queryByRole('button', { name: /scroll to top/i })).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: /scroll to top/i }),
+      ).not.toBeInTheDocument()
 
       // Change scroll to 350px (above threshold)
-      Object.defineProperty(window, 'pageYOffset', { value: 350, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 350, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 350,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 350,
+        writable: true,
+      })
 
       window.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /scroll to top/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /scroll to top/i }),
+        ).toBeInTheDocument()
       })
     })
 
     it('shows and hides button on scroll events', async () => {
       // Start below threshold
-      Object.defineProperty(window, 'pageYOffset', { value: 100, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 100, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 100,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 100,
+        writable: true,
+      })
 
       render(<ScrollToTopFAB threshold={200} />)
 
       // Button should be hidden
-      expect(screen.queryByRole('button', { name: /scroll to top/i })).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: /scroll to top/i }),
+      ).not.toBeInTheDocument()
 
       // Scroll down (above threshold)
-      Object.defineProperty(window, 'pageYOffset', { value: 300, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 300, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 300,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 300,
+        writable: true,
+      })
       window.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /scroll to top/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /scroll to top/i }),
+        ).toBeInTheDocument()
       })
 
       // Scroll up (below threshold)
-      Object.defineProperty(window, 'pageYOffset', { value: 100, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 100, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 100,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 100,
+        writable: true,
+      })
       window.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.queryByRole('button', { name: /scroll to top/i })).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('button', { name: /scroll to top/i }),
+        ).not.toBeInTheDocument()
       })
     })
   })
@@ -100,8 +156,14 @@ describe('ScrollToTopFAB', () => {
   describe('Scroll Functionality', () => {
     beforeEach(() => {
       // Set scroll position above threshold to make button visible
-      Object.defineProperty(window, 'pageYOffset', { value: 500, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 500, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 500,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 500,
+        writable: true,
+      })
     })
 
     it('scrolls to top when button is clicked', async () => {
@@ -112,7 +174,9 @@ describe('ScrollToTopFAB', () => {
       window.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /scroll to top/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /scroll to top/i }),
+        ).toBeInTheDocument()
       })
 
       // Click button
@@ -133,7 +197,9 @@ describe('ScrollToTopFAB', () => {
       window.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /scroll to top/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /scroll to top/i }),
+        ).toBeInTheDocument()
       })
 
       const button = screen.getByRole('button', { name: /scroll to top/i })
@@ -148,8 +214,14 @@ describe('ScrollToTopFAB', () => {
 
   describe('Custom Positioning', () => {
     beforeEach(() => {
-      Object.defineProperty(window, 'pageYOffset', { value: 500, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 500, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 500,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 500,
+        writable: true,
+      })
     })
 
     it('uses default positioning (bottom: 2rem, right: 2rem)', async () => {
@@ -183,8 +255,14 @@ describe('ScrollToTopFAB', () => {
 
   describe('Accessibility', () => {
     beforeEach(() => {
-      Object.defineProperty(window, 'pageYOffset', { value: 500, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 500, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 500,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 500,
+        writable: true,
+      })
     })
 
     it('has accessible label', async () => {
@@ -229,8 +307,14 @@ describe('ScrollToTopFAB', () => {
 
   describe('Styling', () => {
     beforeEach(() => {
-      Object.defineProperty(window, 'pageYOffset', { value: 500, writable: true })
-      Object.defineProperty(document.documentElement, 'scrollTop', { value: 500, writable: true })
+      Object.defineProperty(window, 'pageYOffset', {
+        value: 500,
+        writable: true,
+      })
+      Object.defineProperty(document.documentElement, 'scrollTop', {
+        value: 500,
+        writable: true,
+      })
     })
 
     it('renders with correct CSS classes', async () => {
@@ -269,7 +353,10 @@ describe('ScrollToTopFAB', () => {
     it('works with custom scroll container element', async () => {
       // Create mock container
       const container = document.createElement('div')
-      Object.defineProperty(container, 'scrollTop', { value: 500, writable: true })
+      Object.defineProperty(container, 'scrollTop', {
+        value: 500,
+        writable: true,
+      })
       document.body.appendChild(container)
 
       const containerScrollToMock = vi.fn()
@@ -282,7 +369,9 @@ describe('ScrollToTopFAB', () => {
       container.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /scroll to top/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /scroll to top/i }),
+        ).toBeInTheDocument()
       })
 
       // Click button
@@ -304,7 +393,10 @@ describe('ScrollToTopFAB', () => {
       // Create mock container with ID
       const container = document.createElement('div')
       container.id = 'scroll-container'
-      Object.defineProperty(container, 'scrollTop', { value: 500, writable: true })
+      Object.defineProperty(container, 'scrollTop', {
+        value: 500,
+        writable: true,
+      })
       document.body.appendChild(container)
 
       const containerScrollToMock = vi.fn()
@@ -317,7 +409,9 @@ describe('ScrollToTopFAB', () => {
       container.dispatchEvent(new Event('scroll'))
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /scroll to top/i })).toBeInTheDocument()
+        expect(
+          screen.getByRole('button', { name: /scroll to top/i }),
+        ).toBeInTheDocument()
       })
 
       // Click button
@@ -343,7 +437,10 @@ describe('ScrollToTopFAB', () => {
 
       unmount()
 
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function))
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'scroll',
+        expect.any(Function),
+      )
 
       removeEventListenerSpy.mockRestore()
     })

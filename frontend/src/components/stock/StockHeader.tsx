@@ -23,10 +23,7 @@ interface StockHeaderProps {
 export default function StockHeader({ stock }: StockHeaderProps) {
   // Calculate price change
   const priceChange = useMemo<PriceChange | null>(() => {
-    if (
-      stock.current_price == null ||
-      stock.price_change_1d == null
-    ) {
+    if (stock.current_price == null || stock.price_change_1d == null) {
       return null
     }
 
@@ -120,8 +117,8 @@ export default function StockHeader({ stock }: StockHeaderProps) {
                     priceChange.is_positive
                       ? 'text-red-600'
                       : priceChange.value === 0
-                      ? 'text-gray-900'
-                      : 'text-blue-600'
+                        ? 'text-gray-900'
+                        : 'text-blue-600'
                   }`}
                 >
                   {priceChange.is_positive ? '+' : ''}
@@ -132,8 +129,8 @@ export default function StockHeader({ stock }: StockHeaderProps) {
                     priceChange.is_positive
                       ? 'text-red-600'
                       : priceChange.value === 0
-                      ? 'text-gray-900'
-                      : 'text-blue-600'
+                        ? 'text-gray-900'
+                        : 'text-blue-600'
                   }`}
                 >
                   ({priceChange.is_positive ? '+' : ''}

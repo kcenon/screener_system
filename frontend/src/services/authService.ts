@@ -22,7 +22,10 @@ class AuthService {
    * Register a new user
    */
   async register(data: RegisterRequest): Promise<TokenResponse> {
-    const response = await api.post<TokenResponse>(`${this.AUTH_BASE_URL}/register`, data)
+    const response = await api.post<TokenResponse>(
+      `${this.AUTH_BASE_URL}/register`,
+      data,
+    )
     return response.data
   }
 
@@ -30,7 +33,10 @@ class AuthService {
    * Login with email and password
    */
   async login(data: LoginRequest): Promise<TokenResponse> {
-    const response = await api.post<TokenResponse>(`${this.AUTH_BASE_URL}/login`, data)
+    const response = await api.post<TokenResponse>(
+      `${this.AUTH_BASE_URL}/login`,
+      data,
+    )
     return response.data
   }
 
@@ -41,7 +47,9 @@ class AuthService {
     const refreshToken = localStorage.getItem('refresh_token')
     if (refreshToken) {
       try {
-        await api.post(`${this.AUTH_BASE_URL}/logout`, { refresh_token: refreshToken })
+        await api.post(`${this.AUTH_BASE_URL}/logout`, {
+          refresh_token: refreshToken,
+        })
       } catch (error) {
         // Ignore errors during logout
         console.error('Logout error:', error)
@@ -66,7 +74,10 @@ class AuthService {
    * Refresh access token using refresh token
    */
   async refreshToken(data: RefreshTokenRequest): Promise<TokenResponse> {
-    const response = await api.post<TokenResponse>(`${this.AUTH_BASE_URL}/refresh`, data)
+    const response = await api.post<TokenResponse>(
+      `${this.AUTH_BASE_URL}/refresh`,
+      data,
+    )
     return response.data
   }
 
@@ -121,7 +132,7 @@ class AuthService {
   async verifyEmail(data: EmailVerificationRequest): Promise<SuccessResponse> {
     const response = await api.post<SuccessResponse>(
       `${this.AUTH_BASE_URL}/verify-email`,
-      data
+      data,
     )
     return response.data
   }
@@ -131,7 +142,7 @@ class AuthService {
    */
   async resendVerificationEmail(): Promise<SuccessResponse> {
     const response = await api.post<SuccessResponse>(
-      `${this.AUTH_BASE_URL}/resend-verification`
+      `${this.AUTH_BASE_URL}/resend-verification`,
     )
     return response.data
   }
@@ -141,7 +152,7 @@ class AuthService {
    */
   async getVerificationStatus(): Promise<VerificationStatusResponse> {
     const response = await api.get<VerificationStatusResponse>(
-      `${this.AUTH_BASE_URL}/verification-status`
+      `${this.AUTH_BASE_URL}/verification-status`,
     )
     return response.data
   }
@@ -149,10 +160,12 @@ class AuthService {
   /**
    * Request password reset for email address
    */
-  async requestPasswordReset(data: PasswordResetRequest): Promise<SuccessResponse> {
+  async requestPasswordReset(
+    data: PasswordResetRequest,
+  ): Promise<SuccessResponse> {
     const response = await api.post<SuccessResponse>(
       `${this.AUTH_BASE_URL}/forgot-password`,
-      data
+      data,
     )
     return response.data
   }
@@ -163,7 +176,7 @@ class AuthService {
   async validateResetToken(token: string): Promise<SuccessResponse> {
     const response = await api.get<SuccessResponse>(
       `${this.AUTH_BASE_URL}/validate-reset-token`,
-      { params: { token } }
+      { params: { token } },
     )
     return response.data
   }
@@ -174,7 +187,7 @@ class AuthService {
   async resetPassword(data: PasswordResetConfirm): Promise<SuccessResponse> {
     const response = await api.post<SuccessResponse>(
       `${this.AUTH_BASE_URL}/reset-password`,
-      data
+      data,
     )
     // Clear tokens after password reset (user is logged out)
     this.clearTokens()

@@ -91,7 +91,8 @@ export function WatchlistDialog({
 
   if (!isOpen) return null
 
-  const dialogTitle = title || (watchlist ? 'Edit Watchlist' : 'Create New Watchlist')
+  const dialogTitle =
+    title || (watchlist ? 'Edit Watchlist' : 'Create New Watchlist')
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -135,14 +136,17 @@ export function WatchlistDialog({
 
             {/* Name Input */}
             <div>
-              <label htmlFor="watchlist-name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="watchlist-name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Watchlist Name <span className="text-red-500">*</span>
               </label>
               <input
                 id="watchlist-name"
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
                 placeholder="e.g., My Favorites, Tech Stocks"
                 maxLength={50}
                 disabled={isSubmitting}
@@ -173,7 +177,7 @@ export function WatchlistDialog({
               <textarea
                 id="watchlist-description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 placeholder="Add a brief description..."
                 rows={3}
                 maxLength={200}
@@ -200,7 +204,7 @@ export function WatchlistDialog({
                 Icon (Optional)
               </label>
               <div className="flex flex-wrap gap-2">
-                {WATCHLIST_ICONS.map((icon) => (
+                {WATCHLIST_ICONS.map(icon => (
                   <button
                     key={icon}
                     type="button"

@@ -1,7 +1,9 @@
-from app.db.base import BaseModel
 from sqlalchemy import JSON, Column, ForeignKey, String
+
 # from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
+
+from app.db.base import BaseModel
 
 
 class MLFeature(BaseModel):

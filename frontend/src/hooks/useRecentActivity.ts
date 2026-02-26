@@ -19,7 +19,7 @@ interface UseRecentActivityOptions {
  * Fetch recent user activities
  */
 async function fetchRecentActivity(
-  options: UseRecentActivityOptions = {}
+  options: UseRecentActivityOptions = {},
 ): Promise<RecentActivityResponse> {
   const { page = 1, limit = 10 } = options
 

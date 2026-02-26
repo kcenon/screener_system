@@ -63,7 +63,7 @@ export function usePullToRefresh({
         isPulling.current = true
       }
     },
-    [disabled, isRefreshing]
+    [disabled, isRefreshing],
   )
 
   const handleTouchMove = useCallback(
@@ -82,7 +82,7 @@ export function usePullToRefresh({
         e.preventDefault()
       }
     },
-    [disabled, isRefreshing, threshold]
+    [disabled, isRefreshing, threshold],
   )
 
   const handleTouchEnd = useCallback(async () => {
@@ -108,7 +108,9 @@ export function usePullToRefresh({
     const container = containerRef.current
     if (!container) return
 
-    container.addEventListener('touchstart', handleTouchStart, { passive: true })
+    container.addEventListener('touchstart', handleTouchStart, {
+      passive: true,
+    })
     container.addEventListener('touchmove', handleTouchMove, { passive: false })
     container.addEventListener('touchend', handleTouchEnd)
 

@@ -56,7 +56,9 @@ function WatchlistCard({ watchlist }: { watchlist: WatchlistSummary }) {
 
       <div className="flex items-center justify-between text-sm">
         <span className="text-gray-600">{watchlist.stock_count} stocks</span>
-        <span className="text-gray-500">{formatRelativeTime(watchlist.updated_at)}</span>
+        <span className="text-gray-500">
+          {formatRelativeTime(watchlist.updated_at)}
+        </span>
       </div>
     </Link>
   )
@@ -68,7 +70,7 @@ function WatchlistCard({ watchlist }: { watchlist: WatchlistSummary }) {
 function LoadingSkeleton() {
   return (
     <div className="space-y-3">
-      {[1, 2, 3].map((i) => (
+      {[1, 2, 3].map(i => (
         <div key={i} className="animate-pulse p-4 bg-gray-50 rounded-lg">
           <div className="h-5 bg-gray-200 rounded w-32 mb-2"></div>
           <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
@@ -88,7 +90,9 @@ function EmptyState() {
       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <Eye className="w-8 h-8 text-gray-400" />
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">No Watchlists Yet</h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">
+        No Watchlists Yet
+      </h3>
       <p className="text-gray-600 mb-4">
         Create your first watchlist to track your favorite stocks
       </p>
@@ -106,7 +110,10 @@ function EmptyState() {
 /**
  * WatchlistWidget Component
  */
-export default function WatchlistWidget({ watchlists, isLoading = false }: WatchlistWidgetProps) {
+export default function WatchlistWidget({
+  watchlists,
+  isLoading = false,
+}: WatchlistWidgetProps) {
   if (isLoading) {
     return <LoadingSkeleton />
   }
@@ -117,7 +124,7 @@ export default function WatchlistWidget({ watchlists, isLoading = false }: Watch
 
   return (
     <div className="space-y-3">
-      {watchlists.slice(0, 5).map((watchlist) => (
+      {watchlists.slice(0, 5).map(watchlist => (
         <WatchlistCard key={watchlist.id} watchlist={watchlist} />
       ))}
 

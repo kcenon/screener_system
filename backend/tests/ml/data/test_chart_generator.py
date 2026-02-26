@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
+
 from app.ml.data.chart_generator import ChartImageGenerator
 
 
@@ -22,8 +23,13 @@ class TestChartImageGenerator:
                 # Write a valid small PNG header/content to the buffer
                 # This is a minimal 1x1 pixel PNG
                 minimal_png = (
-                    b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89'
-                    b'\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82'
+                    b"\x89PNG\r\n\x1a\n"
+                    b"\x00\x00\x00\rIHDR\x00\x00\x00\x01"
+                    b"\x00\x00\x00\x01\x08\x06\x00\x00"
+                    b"\x00\x1f\x15\xc4\x89"
+                    b"\x00\x00\x00\nIDATx\x9cc\x00"
+                    b"\x01\x00\x00\x05\x00\x01\r\n-\xb4"
+                    b"\x00\x00\x00\x00IEND\xaeB`\x82"
                 )
                 buf.write(minimal_png)
 
@@ -64,12 +70,13 @@ class TestChartImageGenerator:
 
     def test_generate_chart_values(self, generator, sample_ohlcv):
         """Test chart image generation logic"""
-        img = generator.generate_chart(sample_ohlcv)
+        generator.generate_chart(sample_ohlcv)
 
         # Verify plotting calls
         # We can't verify pixel values because we mocked the rendering
         # But we can verify that subplots was called
         import app.ml.data.chart_generator as cg
+
         cg.plt.subplots.assert_called_once()
 
     def test_generate_different_data(self, generator):

@@ -79,7 +79,7 @@ export default function LimitReachedModal({
   const defaultMessage =
     actionsUsed !== undefined && dailyLimit !== undefined
       ? `You've used all ${dailyLimit} of your free searches today. Sign up for unlimited access!`
-      : 'You\'ve reached the daily limit. Sign up for unlimited access!'
+      : "You've reached the daily limit. Sign up for unlimited access!"
 
   return (
     <Dialog.Root open={open} onOpenChange={onClose}>
@@ -92,7 +92,11 @@ export default function LimitReachedModal({
           {/* Header */}
           <div className="text-center mb-6">
             {/* Warning icon */}
-            <div className="text-5xl md:text-6xl mb-4" role="img" aria-label="Warning">
+            <div
+              className="text-5xl md:text-6xl mb-4"
+              role="img"
+              aria-label="Warning"
+            >
               ⚠️
             </div>
 
@@ -107,7 +111,9 @@ export default function LimitReachedModal({
 
           {/* Benefits section */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h4 className="font-semibold text-blue-900 mb-3">Free Account Benefits:</h4>
+            <h4 className="font-semibold text-blue-900 mb-3">
+              Free Account Benefits:
+            </h4>
             <ul className="space-y-2 text-blue-800 text-sm">
               <li className="flex items-start gap-2">
                 <span className="flex-shrink-0 mt-0.5">✅</span>

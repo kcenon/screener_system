@@ -181,26 +181,25 @@ export function useScreening() {
   })
 
   // Debounced filters state
-  const [debouncedFilters, setDebouncedFilters] = useState<ScreeningFilters>(filters)
+  const [debouncedFilters, setDebouncedFilters] =
+    useState<ScreeningFilters>(filters)
 
   // Debounce filter changes (500ms)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedFilters(filters)
       // Reset to first page when filters change
-      setPagination((prev) => ({ ...prev, offset: 0 }))
+      setPagination(prev => ({ ...prev, offset: 0 }))
     }, 500)
 
     return () => clearTimeout(timeoutId)
   }, [filters])
 
   // React Query for data fetching
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<ScreeningResponse, Error>({
+  const { data, isLoading, error, refetch } = useQuery<
+    ScreeningResponse,
+    Error
+  >({
     queryKey: ['screening', debouncedFilters, sort, pagination],
     queryFn: async () => {
       return await stockService.screenStocks(
@@ -208,7 +207,7 @@ export function useScreening() {
         sort.sortBy,
         sort.order,
         pagination.offset,
-        pagination.limit
+        pagination.limit,
       )
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

@@ -29,7 +29,9 @@ const MARKET_API_BASE = '/api/v1/market'
  * @throws Error if request fails
  */
 export async function getMarketIndices(): Promise<MarketIndicesResponse> {
-  const response = await api.get<MarketIndicesResponse>(`${MARKET_API_BASE}/indices`)
+  const response = await api.get<MarketIndicesResponse>(
+    `${MARKET_API_BASE}/indices`,
+  )
   return response.data
 }
 
@@ -40,7 +42,9 @@ export async function getMarketIndices(): Promise<MarketIndicesResponse> {
  * @returns Promise with market breadth data
  * @throws Error if request fails
  */
-export async function getMarketBreadth(market: MarketType = 'ALL'): Promise<MarketBreadth> {
+export async function getMarketBreadth(
+  market: MarketType = 'ALL',
+): Promise<MarketBreadth> {
   const response = await api.get<MarketBreadth>(`${MARKET_API_BASE}/breadth`, {
     params: { market },
   })
@@ -55,11 +59,14 @@ export async function getMarketBreadth(market: MarketType = 'ALL'): Promise<Mark
  * @throws Error if request fails
  */
 export async function getSectorPerformance(
-  timeframe: '1D' | '1W' | '1M' | '3M' = '1D'
+  timeframe: '1D' | '1W' | '1M' | '3M' = '1D',
 ): Promise<SectorsPerformanceResponse> {
-  const response = await api.get<SectorsPerformanceResponse>(`${MARKET_API_BASE}/sectors`, {
-    params: { timeframe },
-  })
+  const response = await api.get<SectorsPerformanceResponse>(
+    `${MARKET_API_BASE}/sectors`,
+    {
+      params: { timeframe },
+    },
+  )
   return response.data
 }
 
@@ -73,11 +80,14 @@ export async function getSectorPerformance(
  */
 export async function getMarketMovers(
   market: MarketType = 'ALL',
-  limit: number = 10
+  limit: number = 10,
 ): Promise<MarketMoversResponse> {
-  const response = await api.get<MarketMoversResponse>(`${MARKET_API_BASE}/movers`, {
-    params: { market, limit },
-  })
+  const response = await api.get<MarketMoversResponse>(
+    `${MARKET_API_BASE}/movers`,
+    {
+      params: { market, limit },
+    },
+  )
   return response.data
 }
 
@@ -91,11 +101,14 @@ export async function getMarketMovers(
  */
 export async function getMostActive(
   market: MarketType = 'ALL',
-  limit: number = 20
+  limit: number = 20,
 ): Promise<MostActiveResponse> {
-  const response = await api.get<MostActiveResponse>(`${MARKET_API_BASE}/active`, {
-    params: { market, limit },
-  })
+  const response = await api.get<MostActiveResponse>(
+    `${MARKET_API_BASE}/active`,
+    {
+      params: { market, limit },
+    },
+  )
   return response.data
 }
 
@@ -109,14 +122,17 @@ export async function getMostActive(
  */
 export async function getMarketTrend(
   timeframe: TrendTimeframe = '3M',
-  indices: string[] = ['KOSPI', 'KOSDAQ']
+  indices: string[] = ['KOSPI', 'KOSDAQ'],
 ): Promise<MarketTrendResponse> {
-  const response = await api.get<MarketTrendResponse>(`${MARKET_API_BASE}/trend`, {
-    params: {
-      timeframe,
-      indices: indices.join(','),
+  const response = await api.get<MarketTrendResponse>(
+    `${MARKET_API_BASE}/trend`,
+    {
+      params: {
+        timeframe,
+        indices: indices.join(','),
+      },
     },
-  })
+  )
   return response.data
 }
 

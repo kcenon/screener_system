@@ -179,7 +179,7 @@ class ExperimentService {
    */
   getAssignments(): Record<string, string> {
     const result: Record<string, string> = {}
-    this.assignments.forEach((assignment) => {
+    this.assignments.forEach(assignment => {
       result[assignment.experimentId] = assignment.variant
     })
     return result
@@ -209,7 +209,8 @@ class ExperimentService {
   // ============================================================================
 
   private assignVariant(experiment: Experiment): string {
-    const weights = experiment.weights || this.equalWeights(experiment.variants.length)
+    const weights =
+      experiment.weights || this.equalWeights(experiment.variants.length)
 
     // Validate weights
     const totalWeight = weights.reduce((sum, w) => sum + w, 0)
@@ -265,7 +266,7 @@ class ExperimentService {
       const stored = localStorage.getItem(STORAGE_KEY)
       if (stored) {
         const data = JSON.parse(stored) as ExperimentAssignment[]
-        data.forEach((assignment) => {
+        data.forEach(assignment => {
           this.assignments.set(assignment.experimentId, assignment)
         })
       }

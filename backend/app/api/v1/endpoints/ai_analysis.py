@@ -1,12 +1,12 @@
 from typing import Any, Dict
 
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import get_current_user, get_db
 from app.core.config import settings
 from app.services.llm.manager import LLMManager
-from app.services.stock_analysis_service import (StockAnalysisError,
-                                                 StockAnalysisService)
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from app.services.stock_analysis_service import StockAnalysisError, StockAnalysisService
 
 router = APIRouter()
 

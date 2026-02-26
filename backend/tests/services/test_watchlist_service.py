@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
+
 from app.services.watchlist_service import WatchlistService
 
 
@@ -45,16 +46,19 @@ class TestGetUserWatchlists:
         mock_watchlist.id = uuid4()
         mock_watchlist.name = "Test Watchlist"
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=[mock_watchlist],
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "count_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=1,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=[mock_watchlist],
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "count_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=1,
+            ),
         ):
             watchlists, total = await watchlist_service.get_user_watchlists(
                 user_id=1, skip=0, limit=10
@@ -66,16 +70,19 @@ class TestGetUserWatchlists:
     @pytest.mark.asyncio
     async def test_get_user_watchlists_with_stocks(self, watchlist_service):
         """Test fetching user watchlists with stock details"""
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=[],
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "count_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=0,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=[],
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "count_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=0,
+            ),
         ):
             watchlists, total = await watchlist_service.get_user_watchlists(
                 user_id=1, load_stocks=True
@@ -135,20 +142,24 @@ class TestCreateWatchlist:
         mock_watchlist.id = uuid4()
         mock_watchlist.name = "Test Watchlist"
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "count_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=0,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "create",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "count_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=0,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "create",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             data = WatchlistCreate(name="Test Watchlist", description="Test")
             result = await watchlist_service.create_watchlist(user_id=1, data=data)
@@ -177,16 +188,19 @@ class TestCreateWatchlist:
         """Test watchlist creation fails with invalid stock code"""
         from app.schemas.watchlist import WatchlistCreate
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "count_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=0,
-        ), patch.object(
-            watchlist_service.stock_repo,
-            "get_by_code",
-            new_callable=AsyncMock,
-            return_value=None,  # Stock doesn't exist
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "count_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=0,
+            ),
+            patch.object(
+                watchlist_service.stock_repo,
+                "get_by_code",
+                new_callable=AsyncMock,
+                return_value=None,  # Stock doesn't exist
+            ),
         ):
             data = WatchlistCreate(name="Test Watchlist", stock_codes=["999999"])
 
@@ -202,29 +216,35 @@ class TestCreateWatchlist:
         mock_watchlist.id = uuid4()
         mock_stock = MagicMock()
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "count_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=0,
-        ), patch.object(
-            watchlist_service.stock_repo,
-            "get_by_code",
-            new_callable=AsyncMock,
-            return_value=mock_stock,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "create",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "add_stock",
-            new_callable=AsyncMock,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "count_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=0,
+            ),
+            patch.object(
+                watchlist_service.stock_repo,
+                "get_by_code",
+                new_callable=AsyncMock,
+                return_value=mock_stock,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "create",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "add_stock",
+                new_callable=AsyncMock,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             data = WatchlistCreate(name="Test Watchlist", stock_codes=["005930"])
             await watchlist_service.create_watchlist(user_id=1, data=data)
@@ -245,20 +265,24 @@ class TestUpdateWatchlist:
         mock_watchlist.id = watchlist_id
         mock_watchlist.name = "Old Name"
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "update",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "update",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             data = WatchlistUpdate(name="New Name")
             result = await watchlist_service.update_watchlist(
@@ -295,34 +319,41 @@ class TestUpdateWatchlist:
         mock_watchlist.id = watchlist_id
         mock_stock = MagicMock()
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.stock_repo,
-            "get_by_code",
-            new_callable=AsyncMock,
-            return_value=mock_stock,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "stock_in_watchlist",
-            new_callable=AsyncMock,
-            return_value=False,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "add_stock",
-            new_callable=AsyncMock,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "update",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.stock_repo,
+                "get_by_code",
+                new_callable=AsyncMock,
+                return_value=mock_stock,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "stock_in_watchlist",
+                new_callable=AsyncMock,
+                return_value=False,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "add_stock",
+                new_callable=AsyncMock,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "update",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             data = WatchlistUpdate(add_stocks=["005930"])
             await watchlist_service.update_watchlist(
@@ -342,24 +373,29 @@ class TestUpdateWatchlist:
         mock_watchlist = MagicMock()
         mock_watchlist.id = watchlist_id
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "remove_stock",
-            new_callable=AsyncMock,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "update",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "remove_stock",
+                new_callable=AsyncMock,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "update",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             data = WatchlistUpdate(remove_stocks=["005930"])
             await watchlist_service.update_watchlist(
@@ -380,19 +416,23 @@ class TestDeleteWatchlist:
         mock_watchlist.id = watchlist_id
         mock_watchlist.name = "Test Watchlist"
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "delete",
-            new_callable=AsyncMock,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "delete",
+                new_callable=AsyncMock,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             await watchlist_service.delete_watchlist(
                 watchlist_id=watchlist_id, user_id=1
@@ -429,25 +469,30 @@ class TestAddStockToWatchlist:
         mock_stock.name = "삼성전자"
         mock_watchlist_stock = MagicMock()
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.stock_repo,
-            "get_by_code",
-            new_callable=AsyncMock,
-            return_value=mock_stock,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "add_stock",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist_stock,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.stock_repo,
+                "get_by_code",
+                new_callable=AsyncMock,
+                return_value=mock_stock,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "add_stock",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist_stock,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             result = await watchlist_service.add_stock_to_watchlist(
                 watchlist_id=watchlist_id, user_id=1, stock_code="005930"
@@ -474,16 +519,19 @@ class TestAddStockToWatchlist:
         """Test add stock fails with invalid stock code"""
         mock_watchlist = MagicMock()
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.stock_repo,
-            "get_by_code",
-            new_callable=AsyncMock,
-            return_value=None,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.stock_repo,
+                "get_by_code",
+                new_callable=AsyncMock,
+                return_value=None,
+            ),
         ):
             with pytest.raises(ValueError, match="does not exist"):
                 await watchlist_service.add_stock_to_watchlist(
@@ -501,20 +549,24 @@ class TestRemoveStockFromWatchlist:
         mock_watchlist = MagicMock()
         mock_watchlist.id = watchlist_id
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "remove_stock",
-            new_callable=AsyncMock,
-            return_value=1,  # 1 row deleted
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "create",
-            new_callable=AsyncMock,
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "remove_stock",
+                new_callable=AsyncMock,
+                return_value=1,  # 1 row deleted
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "create",
+                new_callable=AsyncMock,
+            ),
         ):
             await watchlist_service.remove_stock_from_watchlist(
                 watchlist_id=watchlist_id, user_id=1, stock_code="005930"
@@ -528,16 +580,19 @@ class TestRemoveStockFromWatchlist:
         watchlist_id = uuid4()
         mock_watchlist = MagicMock()
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "get_by_id",
-            new_callable=AsyncMock,
-            return_value=mock_watchlist,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "remove_stock",
-            new_callable=AsyncMock,
-            return_value=0,  # 0 rows deleted
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_by_id",
+                new_callable=AsyncMock,
+                return_value=mock_watchlist,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "remove_stock",
+                new_callable=AsyncMock,
+                return_value=0,  # 0 rows deleted
+            ),
         ):
             with pytest.raises(ValueError, match="not found in watchlist"):
                 await watchlist_service.remove_stock_from_watchlist(
@@ -578,16 +633,19 @@ class TestGetRecentActivities:
         """Test fetching recent activities"""
         mock_activity = MagicMock()
 
-        with patch.object(
-            watchlist_service.activity_repo,
-            "get_user_activities",
-            new_callable=AsyncMock,
-            return_value=[mock_activity],
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "count_user_activities",
-            new_callable=AsyncMock,
-            return_value=1,
+        with (
+            patch.object(
+                watchlist_service.activity_repo,
+                "get_user_activities",
+                new_callable=AsyncMock,
+                return_value=[mock_activity],
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "count_user_activities",
+                new_callable=AsyncMock,
+                return_value=1,
+            ),
         ):
             activities, total = await watchlist_service.get_recent_activities(
                 user_id=1, limit=10
@@ -611,34 +669,41 @@ class TestGetDashboardSummary:
         mock_prefs.screening_quota_used = 5
         mock_prefs.screening_quota_reset_at = datetime.now() + timedelta(days=30)
 
-        with patch.object(
-            watchlist_service.watchlist_repo,
-            "count_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=2,
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "get_user_watchlists",
-            new_callable=AsyncMock,
-            return_value=[mock_watchlist],
-        ), patch.object(
-            watchlist_service.watchlist_repo,
-            "get_watchlist_stocks",
-            new_callable=AsyncMock,
-            return_value=["005930", "000660"],
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "count_user_activities",
-            new_callable=AsyncMock,
-            return_value=10,
-        ), patch.object(
-            watchlist_service.activity_repo,
-            "get_user_activities",
-            new_callable=AsyncMock,
-            return_value=[mock_activity],
-        ), patch(
-            "app.services.watchlist_service.UserPreferencesRepository"
-        ) as mock_prefs_repo_class:
+        with (
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "count_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=2,
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_user_watchlists",
+                new_callable=AsyncMock,
+                return_value=[mock_watchlist],
+            ),
+            patch.object(
+                watchlist_service.watchlist_repo,
+                "get_watchlist_stocks",
+                new_callable=AsyncMock,
+                return_value=["005930", "000660"],
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "count_user_activities",
+                new_callable=AsyncMock,
+                return_value=10,
+            ),
+            patch.object(
+                watchlist_service.activity_repo,
+                "get_user_activities",
+                new_callable=AsyncMock,
+                return_value=[mock_activity],
+            ),
+            patch(
+                "app.services.watchlist_service.UserPreferencesRepository"
+            ) as mock_prefs_repo_class,
+        ):
             mock_prefs_repo = AsyncMock()
             mock_prefs_repo.get_by_user_id.return_value = mock_prefs
             mock_prefs_repo_class.return_value = mock_prefs_repo

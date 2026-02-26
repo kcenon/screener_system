@@ -20,7 +20,7 @@ describe('SocialLoginButtons', () => {
     return render(
       <QueryClientProvider client={queryClient}>
         <SocialLoginButtons {...props} />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
   }
 
@@ -43,9 +43,15 @@ describe('SocialLoginButtons', () => {
     it('renders all three OAuth provider buttons', () => {
       renderComponent()
 
-      expect(screen.getByRole('button', { name: /sign in with google/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /sign in with kakao/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /sign in with naver/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /sign in with kakao/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /sign in with naver/i }),
+      ).toBeInTheDocument()
     })
 
     it('renders "Or continue with" divider in login mode', () => {
@@ -71,11 +77,16 @@ describe('SocialLoginButtons', () => {
     it('calls initiateLogin when clicking Google button in login mode', async () => {
       const user = userEvent.setup()
       const mockInitiateLogin = vi.fn().mockResolvedValue(undefined)
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLogin').mockImplementation(mockInitiateLogin)
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLogin',
+      ).mockImplementation(mockInitiateLogin)
 
       renderComponent({ mode: 'login' })
 
-      await user.click(screen.getByRole('button', { name: /sign in with google/i }))
+      await user.click(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      )
 
       expect(mockInitiateLogin).toHaveBeenCalledWith('google')
     })
@@ -83,11 +94,16 @@ describe('SocialLoginButtons', () => {
     it('calls initiateLogin when clicking Kakao button', async () => {
       const user = userEvent.setup()
       const mockInitiateLogin = vi.fn().mockResolvedValue(undefined)
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLogin').mockImplementation(mockInitiateLogin)
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLogin',
+      ).mockImplementation(mockInitiateLogin)
 
       renderComponent({ mode: 'login' })
 
-      await user.click(screen.getByRole('button', { name: /sign in with kakao/i }))
+      await user.click(
+        screen.getByRole('button', { name: /sign in with kakao/i }),
+      )
 
       expect(mockInitiateLogin).toHaveBeenCalledWith('kakao')
     })
@@ -95,11 +111,16 @@ describe('SocialLoginButtons', () => {
     it('calls initiateLogin when clicking Naver button', async () => {
       const user = userEvent.setup()
       const mockInitiateLogin = vi.fn().mockResolvedValue(undefined)
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLogin').mockImplementation(mockInitiateLogin)
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLogin',
+      ).mockImplementation(mockInitiateLogin)
 
       renderComponent({ mode: 'login' })
 
-      await user.click(screen.getByRole('button', { name: /sign in with naver/i }))
+      await user.click(
+        screen.getByRole('button', { name: /sign in with naver/i }),
+      )
 
       expect(mockInitiateLogin).toHaveBeenCalledWith('naver')
     })
@@ -107,11 +128,16 @@ describe('SocialLoginButtons', () => {
     it('calls initiateLink when in link mode', async () => {
       const user = userEvent.setup()
       const mockInitiateLink = vi.fn().mockResolvedValue(undefined)
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLink').mockImplementation(mockInitiateLink)
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLink',
+      ).mockImplementation(mockInitiateLink)
 
       renderComponent({ mode: 'link' })
 
-      await user.click(screen.getByRole('button', { name: /sign in with google/i }))
+      await user.click(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      )
 
       expect(mockInitiateLink).toHaveBeenCalledWith('google')
     })
@@ -122,14 +148,19 @@ describe('SocialLoginButtons', () => {
       const user = userEvent.setup()
       // Create a promise that doesn't resolve immediately
       let resolveLogin: () => void
-      const loginPromise = new Promise<void>((resolve) => {
+      const loginPromise = new Promise<void>(resolve => {
         resolveLogin = resolve
       })
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLogin').mockImplementation(() => loginPromise)
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLogin',
+      ).mockImplementation(() => loginPromise)
 
       renderComponent({ mode: 'login' })
 
-      const googleButton = screen.getByRole('button', { name: /sign in with google/i })
+      const googleButton = screen.getByRole('button', {
+        name: /sign in with google/i,
+      })
       await user.click(googleButton)
 
       // Check for loading spinner
@@ -145,18 +176,23 @@ describe('SocialLoginButtons', () => {
     it('disables all buttons while loading', async () => {
       const user = userEvent.setup()
       let resolveLogin: () => void
-      const loginPromise = new Promise<void>((resolve) => {
+      const loginPromise = new Promise<void>(resolve => {
         resolveLogin = resolve
       })
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLogin').mockImplementation(() => loginPromise)
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLogin',
+      ).mockImplementation(() => loginPromise)
 
       renderComponent({ mode: 'login' })
 
-      await user.click(screen.getByRole('button', { name: /sign in with google/i }))
+      await user.click(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      )
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button')
-        buttons.forEach((button) => {
+        buttons.forEach(button => {
           expect(button).toBeDisabled()
         })
       })
@@ -171,11 +207,16 @@ describe('SocialLoginButtons', () => {
       const user = userEvent.setup()
       const onError = vi.fn()
       const error = new Error('OAuth failed')
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLogin').mockRejectedValue(error)
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLogin',
+      ).mockRejectedValue(error)
 
       renderComponent({ mode: 'login', onError })
 
-      await user.click(screen.getByRole('button', { name: /sign in with google/i }))
+      await user.click(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      )
 
       await waitFor(() => {
         expect(onError).toHaveBeenCalledWith(error)
@@ -184,15 +225,20 @@ describe('SocialLoginButtons', () => {
 
     it('re-enables buttons after error', async () => {
       const user = userEvent.setup()
-      vi.spyOn(oauthServiceModule.oauthService, 'initiateLogin').mockRejectedValue(new Error('Failed'))
+      vi.spyOn(
+        oauthServiceModule.oauthService,
+        'initiateLogin',
+      ).mockRejectedValue(new Error('Failed'))
 
       renderComponent({ mode: 'login' })
 
-      await user.click(screen.getByRole('button', { name: /sign in with google/i }))
+      await user.click(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      )
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button')
-        buttons.forEach((button) => {
+        buttons.forEach(button => {
           expect(button).not.toBeDisabled()
         })
       })
@@ -203,16 +249,22 @@ describe('SocialLoginButtons', () => {
     it('has proper aria-labels for all buttons', () => {
       renderComponent()
 
-      expect(screen.getByRole('button', { name: /sign in with google/i })).toHaveAttribute('aria-label')
-      expect(screen.getByRole('button', { name: /sign in with kakao/i })).toHaveAttribute('aria-label')
-      expect(screen.getByRole('button', { name: /sign in with naver/i })).toHaveAttribute('aria-label')
+      expect(
+        screen.getByRole('button', { name: /sign in with google/i }),
+      ).toHaveAttribute('aria-label')
+      expect(
+        screen.getByRole('button', { name: /sign in with kakao/i }),
+      ).toHaveAttribute('aria-label')
+      expect(
+        screen.getByRole('button', { name: /sign in with naver/i }),
+      ).toHaveAttribute('aria-label')
     })
 
     it('all buttons are of type="button"', () => {
       renderComponent()
 
       const buttons = screen.getAllByRole('button')
-      buttons.forEach((button) => {
+      buttons.forEach(button => {
         expect(button).toHaveAttribute('type', 'button')
       })
     })
@@ -222,7 +274,9 @@ describe('SocialLoginButtons', () => {
     it('Google button has correct styling', () => {
       renderComponent()
 
-      const googleButton = screen.getByRole('button', { name: /sign in with google/i })
+      const googleButton = screen.getByRole('button', {
+        name: /sign in with google/i,
+      })
       expect(googleButton).toHaveClass('bg-white')
       expect(googleButton).toHaveClass('text-gray-700')
     })
@@ -230,14 +284,18 @@ describe('SocialLoginButtons', () => {
     it('Kakao button has correct styling', () => {
       renderComponent()
 
-      const kakaoButton = screen.getByRole('button', { name: /sign in with kakao/i })
+      const kakaoButton = screen.getByRole('button', {
+        name: /sign in with kakao/i,
+      })
       expect(kakaoButton).toHaveClass('bg-[#FEE500]')
     })
 
     it('Naver button has correct styling', () => {
       renderComponent()
 
-      const naverButton = screen.getByRole('button', { name: /sign in with naver/i })
+      const naverButton = screen.getByRole('button', {
+        name: /sign in with naver/i,
+      })
       expect(naverButton).toHaveClass('bg-[#03C75A]')
       expect(naverButton).toHaveClass('text-white')
     })

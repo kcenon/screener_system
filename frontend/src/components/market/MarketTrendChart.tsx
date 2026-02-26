@@ -118,7 +118,7 @@ export function MarketTrendChart({
     if (!chartRef.current || !data) return
 
     // Clear existing series
-    seriesRefs.current.forEach((series) => {
+    seriesRefs.current.forEach(series => {
       chartRef.current?.removeSeries(series)
     })
     seriesRefs.current.clear()
@@ -131,7 +131,7 @@ export function MarketTrendChart({
     }
 
     // Create series for each index
-    data.trends.forEach((trend) => {
+    data.trends.forEach(trend => {
       if (!chartRef.current) return
 
       const series = chartRef.current.addSeries(LineSeries, {
@@ -146,7 +146,7 @@ export function MarketTrendChart({
       })
 
       // Convert data to chart format
-      const chartData: LineData[] = trend.data.map((point) => ({
+      const chartData: LineData[] = trend.data.map(point => ({
         time: Math.floor(new Date(point.date).getTime() / 1000) as any, // Convert to seconds (Unix timestamp)
         value: point.value,
       }))
@@ -164,12 +164,15 @@ export function MarketTrendChart({
       {/* Header with timeframe selector */}
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">
-          시장 추세 <span className="text-sm font-normal text-gray-500">Market Trend</span>
+          시장 추세{' '}
+          <span className="text-sm font-normal text-gray-500">
+            Market Trend
+          </span>
         </h2>
 
         {/* Timeframe selector */}
         <div className="flex gap-2">
-          {TREND_TIMEFRAMES.map((tf) => (
+          {TREND_TIMEFRAMES.map(tf => (
             <button
               key={tf.value}
               onClick={() => setTimeframe(tf.value)}
@@ -188,7 +191,9 @@ export function MarketTrendChart({
       {/* Error State */}
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-          <p className="text-sm text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-red-600">
+            데이터를 불러오는 중 오류가 발생했습니다.
+          </p>
         </div>
       )}
 
@@ -203,14 +208,12 @@ export function MarketTrendChart({
       )}
 
       {/* Chart */}
-      {!isLoading && (
-        <div ref={chartContainerRef} className="relative" />
-      )}
+      {!isLoading && <div ref={chartContainerRef} className="relative" />}
 
       {/* Legend */}
       {data && (
         <div className="mt-4 flex justify-center gap-6">
-          {data.trends.map((trend) => (
+          {data.trends.map(trend => (
             <div key={trend.code} className="flex items-center gap-2">
               <div
                 className="h-3 w-3 rounded-full"

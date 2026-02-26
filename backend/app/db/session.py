@@ -1,8 +1,8 @@
 """Database session management for PostgreSQL + TimescaleDB"""
 
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from app.core.config import settings
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
 
 # Create async engine for PostgreSQL
 engine = create_async_engine(

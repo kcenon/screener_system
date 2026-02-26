@@ -52,42 +52,61 @@ interface LevelRowProps {
   flash?: boolean
 }
 
-const LevelRow = memo<LevelRowProps>(({ level, maxVolume, type, highlight, flash }) => {
-  const volumePercentage = maxVolume > 0 ? (level.volume / maxVolume) * 100 : 0
+const LevelRow = memo<LevelRowProps>(
+  ({ level, maxVolume, type, highlight, flash }) => {
+    const volumePercentage =
+      maxVolume > 0 ? (level.volume / maxVolume) * 100 : 0
 
-  const baseColor = type === 'bid' ? 'bg-blue-500' : 'bg-red-500'
-  const lightColor = type === 'bid' ? 'bg-blue-50' : 'bg-red-50'
-  const textColor = type === 'bid' ? 'text-blue-600' : 'text-red-600'
-  const borderColor = highlight ? (type === 'bid' ? 'border-blue-600' : 'border-red-600') : 'border-transparent'
+    const baseColor = type === 'bid' ? 'bg-blue-500' : 'bg-red-500'
+    const lightColor = type === 'bid' ? 'bg-blue-50' : 'bg-red-50'
+    const textColor = type === 'bid' ? 'text-blue-600' : 'text-red-600'
+    const borderColor = highlight
+      ? type === 'bid'
+        ? 'border-blue-600'
+        : 'border-red-600'
+      : 'border-transparent'
 
-  return (
-    <div
-      className={clsx(
-        'relative grid grid-cols-3 gap-2 py-1.5 px-2 text-sm border-l-2 transition-all duration-200',
-        borderColor,
-        flash && 'animate-pulse',
-        lightColor
-      )}
-    >
-      {/* Volume bar (background) */}
+    return (
       <div
-        className={clsx('absolute inset-0 opacity-10 transition-all duration-300', baseColor)}
-        style={{ width: `${volumePercentage}%` }}
-      />
+        className={clsx(
+          'relative grid grid-cols-3 gap-2 py-1.5 px-2 text-sm border-l-2 transition-all duration-200',
+          borderColor,
+          flash && 'animate-pulse',
+          lightColor,
+        )}
+      >
+        {/* Volume bar (background) */}
+        <div
+          className={clsx(
+            'absolute inset-0 opacity-10 transition-all duration-300',
+            baseColor,
+          )}
+          style={{ width: `${volumePercentage}%` }}
+        />
 
-      {/* Price */}
-      <div className={clsx('relative z-10 text-right font-mono font-semibold', textColor)}>
-        {formatPrice(level.price)}
+        {/* Price */}
+        <div
+          className={clsx(
+            'relative z-10 text-right font-mono font-semibold',
+            textColor,
+          )}
+        >
+          {formatPrice(level.price)}
+        </div>
+
+        {/* Volume */}
+        <div className="relative z-10 text-right text-gray-700">
+          {formatNumber(level.volume)}
+        </div>
+
+        {/* Total (cumulative) */}
+        <div className="relative z-10 text-right text-gray-500 text-xs">
+          {formatNumber(level.total)}
+        </div>
       </div>
-
-      {/* Volume */}
-      <div className="relative z-10 text-right text-gray-700">{formatNumber(level.volume)}</div>
-
-      {/* Total (cumulative) */}
-      <div className="relative z-10 text-right text-gray-500 text-xs">{formatNumber(level.total)}</div>
-    </div>
-  )
-})
+    )
+  },
+)
 
 LevelRow.displayName = 'LevelRow'
 
@@ -100,30 +119,42 @@ interface SpreadDisplayProps {
   midPrice?: number
 }
 
-const SpreadDisplay = memo<SpreadDisplayProps>(({ spread, spreadPct, midPrice }) => {
-  if (spread === undefined || spreadPct === undefined || midPrice === undefined) {
-    return null
-  }
+const SpreadDisplay = memo<SpreadDisplayProps>(
+  ({ spread, spreadPct, midPrice }) => {
+    if (
+      spread === undefined ||
+      spreadPct === undefined ||
+      midPrice === undefined
+    ) {
+      return null
+    }
 
-  return (
-    <div className="bg-gray-100 border-y border-gray-300 py-3 px-4">
-      <div className="grid grid-cols-3 gap-4 text-center text-sm">
-        <div>
-          <div className="text-gray-500 text-xs mb-1">호가차</div>
-          <div className="font-semibold text-gray-900">{formatPrice(spread)}</div>
-        </div>
-        <div>
-          <div className="text-gray-500 text-xs mb-1">스프레드</div>
-          <div className="font-semibold text-gray-900">{spreadPct.toFixed(2)}%</div>
-        </div>
-        <div>
-          <div className="text-gray-500 text-xs mb-1">중간가</div>
-          <div className="font-semibold text-gray-900">{formatPrice(midPrice)}</div>
+    return (
+      <div className="bg-gray-100 border-y border-gray-300 py-3 px-4">
+        <div className="grid grid-cols-3 gap-4 text-center text-sm">
+          <div>
+            <div className="text-gray-500 text-xs mb-1">호가차</div>
+            <div className="font-semibold text-gray-900">
+              {formatPrice(spread)}
+            </div>
+          </div>
+          <div>
+            <div className="text-gray-500 text-xs mb-1">스프레드</div>
+            <div className="font-semibold text-gray-900">
+              {spreadPct.toFixed(2)}%
+            </div>
+          </div>
+          <div>
+            <div className="text-gray-500 text-xs mb-1">중간가</div>
+            <div className="font-semibold text-gray-900">
+              {formatPrice(midPrice)}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  )
-})
+    )
+  },
+)
 
 SpreadDisplay.displayName = 'SpreadDisplay'
 
@@ -139,7 +170,8 @@ const ImbalanceIndicator = memo<ImbalanceIndicatorProps>(({ imbalance }) => {
     return null
   }
 
-  const { imbalance_ratio, direction, total_bid_volume, total_ask_volume } = imbalance
+  const { imbalance_ratio, direction, total_bid_volume, total_ask_volume } =
+    imbalance
 
   const buyWidth = imbalance_ratio * 100
   const sellWidth = (1 - imbalance_ratio) * 100
@@ -159,7 +191,9 @@ const ImbalanceIndicator = memo<ImbalanceIndicatorProps>(({ imbalance }) => {
     <div className="bg-white border-t border-gray-200 py-3 px-4">
       <div className="flex items-center justify-between mb-2">
         <div className="text-xs text-gray-500">주문 불균형</div>
-        <div className={clsx('text-xs font-semibold', directionColor)}>{directionText}</div>
+        <div className={clsx('text-xs font-semibold', directionColor)}>
+          {directionText}
+        </div>
       </div>
 
       {/* Visual bar */}
@@ -171,10 +205,12 @@ const ImbalanceIndicator = memo<ImbalanceIndicatorProps>(({ imbalance }) => {
       {/* Volume breakdown */}
       <div className="grid grid-cols-2 gap-4 text-xs">
         <div className="text-blue-600">
-          <span className="font-semibold">매수:</span> {formatNumber(total_bid_volume)}
+          <span className="font-semibold">매수:</span>{' '}
+          {formatNumber(total_bid_volume)}
         </div>
         <div className="text-red-600 text-right">
-          <span className="font-semibold">매도:</span> {formatNumber(total_ask_volume)}
+          <span className="font-semibold">매도:</span>{' '}
+          {formatNumber(total_ask_volume)}
         </div>
       </div>
     </div>
@@ -187,7 +223,15 @@ ImbalanceIndicator.displayName = 'ImbalanceIndicator'
  * Main OrderBook Component
  */
 export const OrderBook = memo<OrderBookProps>(
-  ({ data, imbalance, isLoading, frozen, onToggleFreeze, levels = 10, detailed = true }) => {
+  ({
+    data,
+    imbalance,
+    isLoading,
+    frozen,
+    onToggleFreeze,
+    levels = 10,
+    detailed = true,
+  }) => {
     const [flashingLevels, setFlashingLevels] = useState<Set<string>>(new Set())
 
     // Track price changes for flash effect
@@ -222,7 +266,10 @@ export const OrderBook = memo<OrderBookProps>(
     const maxVolume = useMemo(() => {
       if (!data) return 0
 
-      const allVolumes = [...data.asks.map((l) => l.volume), ...data.bids.map((l) => l.volume)]
+      const allVolumes = [
+        ...data.asks.map(l => l.volume),
+        ...data.bids.map(l => l.volume),
+      ]
 
       return Math.max(...allVolumes, 0)
     }, [data])
@@ -252,7 +299,12 @@ export const OrderBook = memo<OrderBookProps>(
       return (
         <div className="bg-white rounded-lg shadow-sm p-8 text-center">
           <div className="text-gray-400 mb-2">
-            <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg
+              className="w-12 h-12 mx-auto"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -271,7 +323,9 @@ export const OrderBook = memo<OrderBookProps>(
         {/* Header */}
         <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <h3 className="text-sm font-semibold text-gray-900">호가 ({levels}단계)</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              호가 ({levels}단계)
+            </h3>
             <div className="text-xs text-gray-500">
               {new Date(data.timestamp).toLocaleTimeString('ko-KR', {
                 hour: '2-digit',
@@ -290,7 +344,7 @@ export const OrderBook = memo<OrderBookProps>(
                   'px-3 py-1 text-xs font-medium rounded-md transition-colors',
                   frozen
                     ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
                 )}
                 title={frozen ? '업데이트 재개' : '업데이트 중지'}
               >
@@ -324,7 +378,13 @@ export const OrderBook = memo<OrderBookProps>(
         </div>
 
         {/* Spread display */}
-        {detailed && <SpreadDisplay spread={data.spread} spreadPct={data.spread_pct} midPrice={data.mid_price} />}
+        {detailed && (
+          <SpreadDisplay
+            spread={data.spread}
+            spreadPct={data.spread_pct}
+            midPrice={data.mid_price}
+          />
+        )}
 
         {/* Bid levels (매수, buy orders) */}
         <div className="border-b border-gray-200">
@@ -344,7 +404,7 @@ export const OrderBook = memo<OrderBookProps>(
         {detailed && <ImbalanceIndicator imbalance={imbalance} />}
       </div>
     )
-  }
+  },
 )
 
 OrderBook.displayName = 'OrderBook'

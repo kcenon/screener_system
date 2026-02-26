@@ -10,11 +10,11 @@ import type { LoginRequest, RegisterRequest } from '@/types'
  */
 export function useLogin() {
   const navigate = useNavigate()
-  const login = useAuthStore((state) => state.login)
+  const login = useAuthStore(state => state.login)
 
   return useMutation({
     mutationFn: (data: LoginRequest) => authService.login(data),
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Track successful login
       analytics.identify(String(response.user.id), {
         email: response.user.email,
@@ -28,7 +28,7 @@ export function useLogin() {
       login(response.user, response.access_token, response.refresh_token)
       navigate('/')
     },
-    onError: (error) => {
+    onError: error => {
       analytics.track(AnalyticsEvents.ERROR_OCCURRED, {
         error_type: 'login_failed',
         error_message: error.message || 'Login failed',
@@ -43,11 +43,11 @@ export function useLogin() {
  */
 export function useRegister() {
   const navigate = useNavigate()
-  const login = useAuthStore((state) => state.login)
+  const login = useAuthStore(state => state.login)
 
   return useMutation({
     mutationFn: (data: RegisterRequest) => authService.register(data),
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Track successful signup
       analytics.identify(String(response.user.id), {
         email: response.user.email,
@@ -61,7 +61,7 @@ export function useRegister() {
       login(response.user, response.access_token, response.refresh_token)
       navigate('/')
     },
-    onError: (error) => {
+    onError: error => {
       analytics.track(AnalyticsEvents.ERROR_OCCURRED, {
         error_type: 'signup_failed',
         error_message: error.message || 'Signup failed',
@@ -76,7 +76,7 @@ export function useRegister() {
  */
 export function useLogout() {
   const navigate = useNavigate()
-  const logout = useAuthStore((state) => state.logout)
+  const logout = useAuthStore(state => state.logout)
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -98,7 +98,7 @@ export function useLogout() {
  */
 export function useLogoutAll() {
   const navigate = useNavigate()
-  const logout = useAuthStore((state) => state.logout)
+  const logout = useAuthStore(state => state.logout)
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -115,8 +115,8 @@ export function useLogoutAll() {
  * Hook for fetching current user
  */
 export function useCurrentUser() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const setUser = useAuthStore((state) => state.setUser)
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const setUser = useAuthStore(state => state.setUser)
 
   return useQuery({
     queryKey: ['currentUser'],
@@ -134,9 +134,9 @@ export function useCurrentUser() {
  * Hook for refreshing access token
  */
 export function useRefreshToken() {
-  const refreshToken = useAuthStore((state) => state.refreshToken)
-  const updateTokens = useAuthStore((state) => state.updateTokens)
-  const logout = useAuthStore((state) => state.logout)
+  const refreshToken = useAuthStore(state => state.refreshToken)
+  const updateTokens = useAuthStore(state => state.updateTokens)
+  const logout = useAuthStore(state => state.logout)
 
   return useMutation({
     mutationFn: () => {
@@ -145,7 +145,7 @@ export function useRefreshToken() {
       }
       return authService.refreshToken({ refresh_token: refreshToken })
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       updateTokens(response.access_token, response.refresh_token)
     },
     onError: () => {
@@ -159,8 +159,8 @@ export function useRefreshToken() {
  * Hook for getting auth status
  */
 export function useAuthStatus() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated)
+  const user = useAuthStore(state => state.user)
 
   return {
     isAuthenticated,

@@ -1,8 +1,9 @@
 import argparse
 import os
 
-from app.ml.models.pattern_cnn import PatternRecognitionCNN
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+from app.ml.models.pattern_cnn import PatternRecognitionCNN
 
 
 def train_model(data_dir, epochs=50, batch_size=32):

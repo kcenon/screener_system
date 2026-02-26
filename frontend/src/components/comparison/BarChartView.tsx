@@ -45,22 +45,23 @@ const METRIC_CATEGORIES = [
 type CategoryId = (typeof METRIC_CATEGORIES)[number]['id']
 
 export function BarChartView({ stocks, className = '' }: BarChartViewProps) {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryId>('valuation')
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryId>('valuation')
 
   // Get metrics for selected category (limit to 5 for readability)
   const categoryMetrics = COMPARISON_METRICS.filter(
-    (m) => m.category === selectedCategory
+    m => m.category === selectedCategory,
   ).slice(0, 5)
 
   // Prepare bar chart data
-  const barData = categoryMetrics.map((metric) => {
+  const barData = categoryMetrics.map(metric => {
     const dataPoint: any = {
       metric: metric.label,
       metricKey: metric.key,
       format: metric.format,
     }
 
-    stocks.forEach((stock) => {
+    stocks.forEach(stock => {
       const value = getMetricValue(stock, metric.key)
       dataPoint[stock.code] = value ?? 0
     })
@@ -107,7 +108,7 @@ export function BarChartView({ stocks, className = '' }: BarChartViewProps) {
     <div className={className}>
       {/* Category tabs */}
       <div className="flex gap-2 mb-6 overflow-x-auto">
-        {METRIC_CATEGORIES.map((category) => (
+        {METRIC_CATEGORIES.map(category => (
           <button
             key={category.id}
             onClick={() => setSelectedCategory(category.id)}
@@ -128,7 +129,10 @@ export function BarChartView({ stocks, className = '' }: BarChartViewProps) {
 
       {/* Bar chart */}
       <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <BarChart
+          data={barData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey="metric"

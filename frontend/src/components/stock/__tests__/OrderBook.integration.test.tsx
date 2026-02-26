@@ -22,7 +22,11 @@ interface TestOrderBookContainerProps {
   levels?: number
 }
 
-function TestOrderBookContainer({ stockCode, enabled = true, levels = 10 }: TestOrderBookContainerProps) {
+function TestOrderBookContainer({
+  stockCode,
+  enabled = true,
+  levels = 10,
+}: TestOrderBookContainerProps) {
   const {
     orderBook,
     imbalance,
@@ -64,11 +68,11 @@ const mockWebSocketService = {
   disconnect: vi.fn(),
   subscribe: vi.fn(),
   unsubscribe: vi.fn(),
-  onMessage: vi.fn((handler) => {
+  onMessage: vi.fn(handler => {
     mockMessageHandler = handler
     return vi.fn()
   }),
-  onStateChange: vi.fn((handler) => {
+  onStateChange: vi.fn(handler => {
     mockStateChangeHandler = handler
     return vi.fn()
   }),
@@ -86,7 +90,9 @@ vi.mock('@/utils/format', () => ({
 }))
 
 // Helper to create mock order book data
-function createMockOrderBookData(overrides?: Partial<OrderBookData>): OrderBookData {
+function createMockOrderBookData(
+  overrides?: Partial<OrderBookData>,
+): OrderBookData {
   return {
     stock_code: '005930',
     timestamp: new Date().toISOString(),
@@ -135,7 +141,9 @@ describe('OrderBook Integration Tests', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByTestId('connection-state')).toHaveTextContent('connected')
+        expect(screen.getByTestId('connection-state')).toHaveTextContent(
+          'connected',
+        )
         expect(screen.getByTestId('loading-state')).toHaveTextContent('loaded')
       })
     })
@@ -206,9 +214,7 @@ describe('OrderBook Integration Tests', () => {
           { price: 70900, volume: 5000, total: 5000 },
           { price: 70800, volume: 4000, total: 9000 },
         ],
-        asks: [
-          { price: 71000, volume: 1000, total: 1000 },
-        ],
+        asks: [{ price: 71000, volume: 1000, total: 1000 }],
       })
 
       act(() => {
@@ -249,12 +255,8 @@ describe('OrderBook Integration Tests', () => {
       // Second update with different data
       const data2 = createMockOrderBookData({
         sequence: 2,
-        asks: [
-          { price: 72000, volume: 2000, total: 2000 },
-        ],
-        bids: [
-          { price: 71900, volume: 1800, total: 1800 },
-        ],
+        asks: [{ price: 72000, volume: 2000, total: 2000 }],
+        bids: [{ price: 71900, volume: 1800, total: 1800 }],
       })
 
       act(() => {
@@ -334,8 +336,12 @@ describe('OrderBook Integration Tests', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByTestId('connection-state')).toHaveTextContent('error')
-        expect(screen.getByTestId('error-state')).toHaveTextContent('Connection error')
+        expect(screen.getByTestId('connection-state')).toHaveTextContent(
+          'error',
+        )
+        expect(screen.getByTestId('error-state')).toHaveTextContent(
+          'Connection error',
+        )
       })
     })
 
@@ -354,7 +360,9 @@ describe('OrderBook Integration Tests', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByTestId('error-state')).toHaveTextContent('Subscription failed')
+        expect(screen.getByTestId('error-state')).toHaveTextContent(
+          'Subscription failed',
+        )
       })
     })
 
@@ -363,7 +371,9 @@ describe('OrderBook Integration Tests', () => {
 
       render(<TestOrderBookContainer stockCode="005930" />)
 
-      expect(screen.getByTestId('error-state')).toHaveTextContent('Authentication required')
+      expect(screen.getByTestId('error-state')).toHaveTextContent(
+        'Authentication required',
+      )
     })
 
     it('should handle refresh action', async () => {
@@ -382,8 +392,14 @@ describe('OrderBook Integration Tests', () => {
       // Click refresh
       await user.click(screen.getByTestId('refresh-button'))
 
-      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith('stock', '005930')
-      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith('stock', '005930')
+      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
+      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
     })
   })
 
@@ -442,7 +458,10 @@ describe('OrderBook Integration Tests', () => {
       render(<TestOrderBookContainer stockCode="005930" />)
 
       expect(mockWebSocketService.connect).toHaveBeenCalled()
-      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith('stock', '005930')
+      expect(mockWebSocketService.subscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
     })
 
     it('should disconnect on unmount', () => {
@@ -450,7 +469,10 @@ describe('OrderBook Integration Tests', () => {
 
       unmount()
 
-      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith('stock', '005930')
+      expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith(
+        'stock',
+        '005930',
+      )
       expect(mockWebSocketService.disconnect).toHaveBeenCalled()
     })
 
@@ -464,8 +486,14 @@ describe('OrderBook Integration Tests', () => {
       rerender(<TestOrderBookContainer stockCode="000660" />)
 
       await waitFor(() => {
-        expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith('stock', '005930')
-        expect(mockWebSocketService.subscribe).toHaveBeenCalledWith('stock', '000660')
+        expect(mockWebSocketService.unsubscribe).toHaveBeenCalledWith(
+          'stock',
+          '005930',
+        )
+        expect(mockWebSocketService.subscribe).toHaveBeenCalledWith(
+          'stock',
+          '000660',
+        )
       })
     })
   })

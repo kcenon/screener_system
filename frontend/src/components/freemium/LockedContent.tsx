@@ -66,12 +66,21 @@ export default function LockedContent({
   height = 'auto',
 }: LockedContentProps) {
   return (
-    <div className="relative" style={{ minHeight: typeof height === 'number' ? `${height}px` : height }}>
+    <div
+      className="relative"
+      style={{ minHeight: typeof height === 'number' ? `${height}px` : height }}
+    >
       {/* Blurred content placeholder */}
-      <div className="filter blur-md pointer-events-none select-none" aria-hidden="true">
+      <div
+        className="filter blur-md pointer-events-none select-none"
+        aria-hidden="true"
+      >
         <div
           className="bg-gradient-to-b from-gray-100 to-gray-200 rounded-lg"
-          style={{ height: typeof height === 'number' ? `${height}px` : height || '320px' }}
+          style={{
+            height:
+              typeof height === 'number' ? `${height}px` : height || '320px',
+          }}
         >
           {/* Simulated content bars */}
           <div className="p-6 space-y-4">
@@ -99,7 +108,8 @@ export default function LockedContent({
 
           {/* Description */}
           <p className="text-gray-600 mb-6">
-            {description || `Sign up for free to unlock ${feature.toLowerCase()} and access full stock analysis`}
+            {description ||
+              `Sign up for free to unlock ${feature.toLowerCase()} and access full stock analysis`}
           </p>
 
           {/* CTA buttons */}

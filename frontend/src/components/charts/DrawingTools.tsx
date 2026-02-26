@@ -31,21 +31,22 @@ export function useDrawings(symbol: string) {
 
   // Persist to localStorage
   useEffect(() => {
-    localStorage.setItem(`${STORAGE_KEY_PREFIX}${symbol}`, JSON.stringify(drawings))
+    localStorage.setItem(
+      `${STORAGE_KEY_PREFIX}${symbol}`,
+      JSON.stringify(drawings),
+    )
   }, [symbol, drawings])
 
   const addDrawing = useCallback((drawing: Drawing) => {
-    setDrawings((prev) => [...prev, drawing])
+    setDrawings(prev => [...prev, drawing])
   }, [])
 
   const removeDrawing = useCallback((id: string) => {
-    setDrawings((prev) => prev.filter((d) => d.id !== id))
+    setDrawings(prev => prev.filter(d => d.id !== id))
   }, [])
 
   const updateDrawing = useCallback((id: string, updates: Partial<Drawing>) => {
-    setDrawings((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, ...updates } : d))
-    )
+    setDrawings(prev => prev.map(d => (d.id === id ? { ...d, ...updates } : d)))
   }, [])
 
   const clearAll = useCallback(() => {
@@ -68,7 +69,7 @@ export default function DrawingTools({
   const [selectedDrawing, setSelectedDrawing] = useState<string | null>(null)
 
   const handleDelete = (id: string) => {
-    onDrawingsChange(drawings.filter((d) => d.id !== id))
+    onDrawingsChange(drawings.filter(d => d.id !== id))
     if (selectedDrawing === id) {
       setSelectedDrawing(null)
     }
@@ -80,9 +81,7 @@ export default function DrawingTools({
   }
 
   const handleColorChange = (id: string, color: string) => {
-    onDrawingsChange(
-      drawings.map((d) => (d.id === id ? { ...d, color } : d))
-    )
+    onDrawingsChange(drawings.map(d => (d.id === id ? { ...d, color } : d)))
   }
 
   if (drawings.length === 0) {
@@ -106,7 +105,7 @@ export default function DrawingTools({
         </div>
 
         <div className="space-y-1 max-h-32 overflow-y-auto">
-          {drawings.map((drawing) => (
+          {drawings.map(drawing => (
             <div
               key={drawing.id}
               className={`flex items-center gap-2 px-2 py-1 rounded text-xs ${
@@ -127,12 +126,12 @@ export default function DrawingTools({
               <input
                 type="color"
                 value={drawing.color}
-                onChange={(e) => handleColorChange(drawing.id, e.target.value)}
+                onChange={e => handleColorChange(drawing.id, e.target.value)}
                 className="w-4 h-4 rounded cursor-pointer"
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
               />
               <button
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation()
                   handleDelete(drawing.id)
                 }}
@@ -154,7 +153,7 @@ export default function DrawingTools({
 export function createDrawing(
   tool: DrawingTool,
   points: { time: string; price: number }[],
-  color: string = '#2196F3'
+  color: string = '#2196F3',
 ): Drawing | null {
   if (tool === 'none' || points.length === 0) return null
 
@@ -223,12 +222,12 @@ export function createDrawing(
  */
 export function calculateFibonacciLevels(
   startPrice: number,
-  endPrice: number
+  endPrice: number,
 ): { level: number; price: number; label: string }[] {
   const diff = endPrice - startPrice
   const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1]
 
-  return levels.map((level) => ({
+  return levels.map(level => ({
     level,
     price: startPrice + diff * level,
     label: `${(level * 100).toFixed(1)}%`,

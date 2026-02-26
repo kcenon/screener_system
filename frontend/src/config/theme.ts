@@ -173,7 +173,9 @@ export function getMarketColor(value: number | null | undefined) {
  * const color = getMarketSentiment(0.7) // bullish
  * console.log(color.icon) // '🐂'
  */
-export function getMarketSentiment(sentiment: number | 'bullish' | 'bearish' | 'neutral') {
+export function getMarketSentiment(
+  sentiment: number | 'bullish' | 'bearish' | 'neutral',
+) {
   if (typeof sentiment === 'string') {
     if (sentiment === 'bullish') return marketColors.bullish
     if (sentiment === 'bearish') return marketColors.bearish

@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from app.ml.data.pattern_detector import PatternDetector
 
 

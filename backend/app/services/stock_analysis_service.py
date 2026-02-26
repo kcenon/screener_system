@@ -3,10 +3,11 @@ import logging
 from datetime import datetime
 from typing import Any, Dict
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.services.llm.manager import LLMManager, LLMMessage
 from app.services.llm.prompt_templates import PromptTemplate
 from app.services.stock_service import StockService
-from sqlalchemy.ext.asyncio import AsyncSession
 
 # Assuming we have a Redis cache manager, if not we'll use a simple dict
 # or mock

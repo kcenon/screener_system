@@ -24,7 +24,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       expect(screen.getByText('인기 필터')).toBeInTheDocument()
@@ -37,20 +37,38 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       // All 10 preset filters should be rendered
-      expect(screen.getByRole('button', { name: /상위상승/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /상위하락/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고거래량/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /1년급등/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고배당/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /상위상승/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /상위하락/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /고거래량/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /1년급등/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /고배당/i }),
+      ).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /저PER/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고성장/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /소형주/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /대형주/i })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /고품질/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /고성장/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /소형주/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /대형주/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /고품질/i }),
+      ).toBeInTheDocument()
     })
 
     it('renders filter buttons with icons', () => {
@@ -59,7 +77,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
@@ -78,7 +96,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       expect(screen.queryByText('모두 지우기')).not.toBeInTheDocument()
@@ -91,7 +109,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       // Click on "Top Gainers" filter
@@ -110,7 +128,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
@@ -132,7 +150,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
@@ -156,7 +174,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       // Activate Top Gainers
@@ -182,7 +200,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       // Test Top Losers (-5%)
@@ -216,7 +234,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       // Activate a filter
@@ -234,7 +252,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       // Activate two filters
@@ -267,7 +285,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
@@ -289,7 +307,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       const topGainersButton = screen.getByRole('button', { name: /상위상승/i })
@@ -313,7 +331,7 @@ describe('QuickFiltersBar', () => {
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
           className="custom-class"
-        />
+        />,
       )
 
       const wrapper = container.firstChild as HTMLElement
@@ -325,7 +343,10 @@ describe('QuickFiltersBar', () => {
     it('handles missing onClearAll callback gracefully', async () => {
       const user = userEvent.setup()
       render(
-        <QuickFiltersBar currentFilters={mockFilters} onFilterChange={onFilterChangeMock} />
+        <QuickFiltersBar
+          currentFilters={mockFilters}
+          onFilterChange={onFilterChangeMock}
+        />,
       )
 
       // Activate a filter
@@ -343,7 +364,7 @@ describe('QuickFiltersBar', () => {
           currentFilters={mockFilters}
           onFilterChange={onFilterChangeMock}
           onClearAll={onClearAllMock}
-        />
+        />,
       )
 
       const topGainersButton = screen.getByRole('button', { name: /상위상승/i })

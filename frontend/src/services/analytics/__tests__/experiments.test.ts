@@ -52,7 +52,8 @@ describe('ExperimentService', () => {
       // Create new service would load from localStorage
       const storedAssignments = JSON.parse(stored!)
       const storedVariant = storedAssignments.find(
-        (a: { experimentId: string }) => a.experimentId === COMPACT_TABLE_EXPERIMENT.id,
+        (a: { experimentId: string }) =>
+          a.experimentId === COMPACT_TABLE_EXPERIMENT.id,
       )
 
       expect(storedVariant?.variant).toBe(variant1)
@@ -143,8 +144,12 @@ describe('ExperimentService', () => {
     it('should check if user is in specific variant', () => {
       experiments.setVariant(COMPACT_TABLE_EXPERIMENT.id, 'compact')
 
-      expect(experiments.isInVariant(COMPACT_TABLE_EXPERIMENT, 'compact')).toBe(true)
-      expect(experiments.isInVariant(COMPACT_TABLE_EXPERIMENT, 'control')).toBe(false)
+      expect(experiments.isInVariant(COMPACT_TABLE_EXPERIMENT, 'compact')).toBe(
+        true,
+      )
+      expect(experiments.isInVariant(COMPACT_TABLE_EXPERIMENT, 'control')).toBe(
+        false,
+      )
     })
   })
 

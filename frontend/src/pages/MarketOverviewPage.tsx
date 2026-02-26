@@ -31,9 +31,7 @@ export function MarketOverviewPage() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                시장 현황
-              </h1>
+              <h1 className="text-3xl font-bold text-gray-900">시장 현황</h1>
               <p className="mt-1 text-sm text-gray-600">
                 한국 주식 시장의 실시간 현황과 섹터 분석을 한눈에 확인하세요
               </p>
@@ -45,7 +43,7 @@ export function MarketOverviewPage() {
                 <input
                   type="checkbox"
                   checked={autoRefresh}
-                  onChange={(e) => setAutoRefresh(e.target.checked)}
+                  onChange={e => setAutoRefresh(e.target.checked)}
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <span className="text-sm text-gray-700">자동 새로고침</span>
@@ -74,10 +72,7 @@ export function MarketOverviewPage() {
           />
 
           {/* Row 3: Sector Heatmap */}
-          <SectorHeatmap
-            defaultTimeframe="1D"
-            autoRefresh={autoRefresh}
-          />
+          <SectorHeatmap defaultTimeframe="1D" autoRefresh={autoRefresh} />
 
           {/* Row 4: Market Movers */}
           <MarketMoversWidget
@@ -106,8 +101,8 @@ export function MarketOverviewPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="rounded-lg bg-blue-50 p-4 text-center">
           <p className="text-sm text-blue-800">
-            💡 <strong>Tip:</strong> 섹터를 클릭하면 해당 섹터의 종목 목록을 확인할 수 있으며,
-            종목명을 클릭하면 상세 정보를 볼 수 있습니다.
+            💡 <strong>Tip:</strong> 섹터를 클릭하면 해당 섹터의 종목 목록을
+            확인할 수 있으며, 종목명을 클릭하면 상세 정보를 볼 수 있습니다.
           </p>
         </div>
       </div>

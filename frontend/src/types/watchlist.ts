@@ -184,7 +184,12 @@ export interface WatchlistStats {
  */
 export interface WatchlistError {
   /** Error code */
-  code: 'NOT_FOUND' | 'DUPLICATE' | 'LIMIT_EXCEEDED' | 'INVALID_INPUT' | 'SERVER_ERROR'
+  code:
+    | 'NOT_FOUND'
+    | 'DUPLICATE'
+    | 'LIMIT_EXCEEDED'
+    | 'INVALID_INPUT'
+    | 'SERVER_ERROR'
 
   /** Human-readable error message */
   message: string

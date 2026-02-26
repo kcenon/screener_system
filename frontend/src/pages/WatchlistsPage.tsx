@@ -14,7 +14,9 @@ import type { Watchlist } from '@/types/watchlist'
 
 export default function WatchlistsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingWatchlist, setEditingWatchlist] = useState<Watchlist | undefined>()
+  const [editingWatchlist, setEditingWatchlist] = useState<
+    Watchlist | undefined
+  >()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   // Zustand store
@@ -33,10 +35,13 @@ export default function WatchlistsPage() {
     clearError,
   } = useWatchlistStore()
 
-  const activeWatchlist = useWatchlistStore(watchlistSelectors.selectActiveWatchlist)
+  const activeWatchlist = useWatchlistStore(
+    watchlistSelectors.selectActiveWatchlist,
+  )
 
   // Real-time price updates via WebSocket
-  const { connectionState, isConnected, subscriptionCount } = useWatchlistPrices()
+  const { connectionState, isConnected, subscriptionCount } =
+    useWatchlistPrices()
 
   // Fetch watchlists on mount
   useEffect(() => {
@@ -63,7 +68,10 @@ export default function WatchlistsPage() {
   }
 
   // Handle save watchlist (create or update)
-  const handleSaveWatchlist = async (data: { name: string; description?: string }) => {
+  const handleSaveWatchlist = async (data: {
+    name: string
+    description?: string
+  }) => {
     if (editingWatchlist) {
       // Update existing
       await updateWatchlist(editingWatchlist.id, data)
@@ -122,7 +130,9 @@ export default function WatchlistsPage() {
                       <>
                         <WifiOff className="w-4 h-4 text-gray-400" />
                         <span className="text-gray-500">
-                          {connectionState === 'connecting' ? 'Connecting...' : 'Offline'}
+                          {connectionState === 'connecting'
+                            ? 'Connecting...'
+                            : 'Offline'}
                         </span>
                       </>
                     )}
@@ -143,7 +153,9 @@ export default function WatchlistsPage() {
                   flex items-center gap-2
                 "
               >
-                <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`}
+                />
                 Refresh Prices
               </button>
             )}
@@ -187,7 +199,9 @@ export default function WatchlistsPage() {
               {/* Watchlist Header */}
               <div className="px-6 py-4 bg-white border-b border-gray-200">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl">{activeWatchlist.icon || '📋'}</span>
+                  <span className="text-3xl">
+                    {activeWatchlist.icon || '📋'}
+                  </span>
                   <div>
                     <h2 className="text-xl font-semibold text-gray-900">
                       {activeWatchlist.name}

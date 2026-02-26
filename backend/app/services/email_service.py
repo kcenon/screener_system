@@ -74,9 +74,7 @@ class EmailService:
                 "EmailService initialized (disabled — emails will be logged only)"
             )
 
-    def _render_template(
-        self, template_name: str, context: Dict
-    ) -> Optional[str]:
+    def _render_template(self, template_name: str, context: Dict) -> Optional[str]:
         """Render an HTML email template with the given context.
 
         Args:
@@ -188,7 +186,9 @@ class EmailService:
             logger.info(f"Email sent: to={to_email}, subject='{subject}'")
             return True
         except Exception:
-            logger.exception(f"Failed to send email: to={to_email}, subject='{subject}'")
+            logger.exception(
+                f"Failed to send email: to={to_email}, subject='{subject}'"
+            )
             return False
 
     async def send_verification_email(

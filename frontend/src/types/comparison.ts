@@ -13,7 +13,13 @@ export interface ComparisonMetric {
   /** Display label */
   label: string
   /** Category */
-  category: 'fundamental' | 'valuation' | 'financial_health' | 'profitability' | 'technical' | 'performance'
+  category:
+    | 'fundamental'
+    | 'valuation'
+    | 'financial_health'
+    | 'profitability'
+    | 'technical'
+    | 'performance'
   /** Format type */
   format: 'currency' | 'percent' | 'number' | 'ratio'
   /** Whether higher value is better for highlighting */
@@ -50,7 +56,14 @@ export type MetricHighlight = 'best' | 'worst' | 'neutral'
 /**
  * Performance timeframe
  */
-export type PerformanceTimeframe = '1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | '3Y'
+export type PerformanceTimeframe =
+  | '1D'
+  | '1W'
+  | '1M'
+  | '3M'
+  | '6M'
+  | '1Y'
+  | '3Y'
 
 /**
  * Comparison state
@@ -108,7 +121,8 @@ export const COMPARISON_METRICS: ComparisonMetric[] = [
     category: 'valuation',
     format: 'ratio',
     higher_is_better: false,
-    description: 'Price-to-Earnings Ratio - lower is generally better for value',
+    description:
+      'Price-to-Earnings Ratio - lower is generally better for value',
   },
   {
     key: 'pbr',
@@ -316,14 +330,14 @@ export const COMPARISON_METRICS: ComparisonMetric[] = [
  * Get metrics by category
  */
 export function getMetricsByCategory(
-  category: ComparisonMetric['category']
+  category: ComparisonMetric['category'],
 ): ComparisonMetric[] {
-  return COMPARISON_METRICS.filter((m) => m.category === category)
+  return COMPARISON_METRICS.filter(m => m.category === category)
 }
 
 /**
  * Get metric by key
  */
 export function getMetric(key: string): ComparisonMetric | undefined {
-  return COMPARISON_METRICS.find((m) => m.key === key)
+  return COMPARISON_METRICS.find(m => m.key === key)
 }

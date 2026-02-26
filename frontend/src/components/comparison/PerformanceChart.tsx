@@ -43,14 +43,17 @@ const PERFORMANCE_PERIODS = [
   { key: 'return_1y', label: '1Y' },
 ]
 
-export function PerformanceChart({ stocks, className = '' }: PerformanceChartProps) {
+export function PerformanceChart({
+  stocks,
+  className = '',
+}: PerformanceChartProps) {
   // Prepare line chart data
-  const performanceData = PERFORMANCE_PERIODS.map((period) => {
+  const performanceData = PERFORMANCE_PERIODS.map(period => {
     const dataPoint: any = {
       period: period.label,
     }
 
-    stocks.forEach((stock) => {
+    stocks.forEach(stock => {
       const value = getMetricValue(stock, period.key)
       dataPoint[stock.code] = value !== null ? value : null
     })

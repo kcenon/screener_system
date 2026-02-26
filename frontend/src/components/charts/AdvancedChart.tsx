@@ -69,14 +69,21 @@ export default function AdvancedChart({
   showVolume = true,
   loading = false,
   onChartReady,
-}: AdvancedChartProps & { 
-  onChartReady?: (chart: IChartApi, series: ISeriesApi<'Candlestick' | 'Line' | 'Area' | 'Bar'>) => void 
+}: AdvancedChartProps & {
+  onChartReady?: (
+    chart: IChartApi,
+    series: ISeriesApi<'Candlestick' | 'Line' | 'Area' | 'Bar'>,
+  ) => void
 }) {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
-  const mainSeriesRef = useRef<ISeriesApi<'Candlestick' | 'Line' | 'Area' | 'Bar'> | null>(null)
+  const mainSeriesRef = useRef<ISeriesApi<
+    'Candlestick' | 'Line' | 'Area' | 'Bar'
+  > | null>(null)
   const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null)
-  const indicatorSeriesRef = useRef<Map<string, ISeriesApi<'Line' | 'Histogram'>>>(new Map())
+  const indicatorSeriesRef = useRef<
+    Map<string, ISeriesApi<'Line' | 'Histogram'>>
+  >(new Map())
   const rsiPaneRef = useRef<ISeriesApi<'Line'> | null>(null)
   const macdSeriesRef = useRef<{
     macd: ISeriesApi<'Line'> | null
@@ -84,7 +91,10 @@ export default function AdvancedChart({
     histogram: ISeriesApi<'Histogram'> | null
   }>({ macd: null, signal: null, histogram: null })
 
-  const chartTheme = useMemo(() => (theme === 'dark' ? DARK_THEME : LIGHT_THEME), [theme])
+  const chartTheme = useMemo(
+    () => (theme === 'dark' ? DARK_THEME : LIGHT_THEME),
+    [theme],
+  )
 
   // Transform OHLCV data based on chart type
   const transformedData = useMemo(() => {
@@ -97,54 +107,60 @@ export default function AdvancedChart({
   }, [data, chartType])
 
   // Create chart options
-  const createChartOptions = useCallback(() => ({
-    layout: {
-      background: { type: ColorType.Solid, color: chartTheme.backgroundColor },
-      textColor: chartTheme.textColor,
-    },
-    width: chartContainerRef.current?.clientWidth || 800,
-    height,
-    grid: {
-      vertLines: { color: chartTheme.gridColor, style: LineStyle.Solid },
-      horzLines: { color: chartTheme.gridColor, style: LineStyle.Solid },
-    },
-    crosshair: {
-      mode: CrosshairMode.Normal,
-      vertLine: {
-        width: 1 as const,
-        color: chartTheme.crosshairColor,
-        style: LineStyle.Dashed,
-        labelBackgroundColor: chartTheme.crosshairColor,
+  const createChartOptions = useCallback(
+    () => ({
+      layout: {
+        background: {
+          type: ColorType.Solid,
+          color: chartTheme.backgroundColor,
+        },
+        textColor: chartTheme.textColor,
       },
-      horzLine: {
-        width: 1 as const,
-        color: chartTheme.crosshairColor,
-        style: LineStyle.Dashed,
-        labelBackgroundColor: chartTheme.crosshairColor,
+      width: chartContainerRef.current?.clientWidth || 800,
+      height,
+      grid: {
+        vertLines: { color: chartTheme.gridColor, style: LineStyle.Solid },
+        horzLines: { color: chartTheme.gridColor, style: LineStyle.Solid },
       },
-    },
-    rightPriceScale: {
-      borderColor: chartTheme.borderColor,
-      scaleMargins: {
-        top: 0.1,
-        bottom: showVolume ? 0.25 : 0.1,
+      crosshair: {
+        mode: CrosshairMode.Normal,
+        vertLine: {
+          width: 1 as const,
+          color: chartTheme.crosshairColor,
+          style: LineStyle.Dashed,
+          labelBackgroundColor: chartTheme.crosshairColor,
+        },
+        horzLine: {
+          width: 1 as const,
+          color: chartTheme.crosshairColor,
+          style: LineStyle.Dashed,
+          labelBackgroundColor: chartTheme.crosshairColor,
+        },
       },
-    },
-    timeScale: {
-      borderColor: chartTheme.borderColor,
-      timeVisible: true,
-      secondsVisible: false,
-    },
-    handleScale: {
-      axisPressedMouseMove: {
-        time: true,
-        price: true,
+      rightPriceScale: {
+        borderColor: chartTheme.borderColor,
+        scaleMargins: {
+          top: 0.1,
+          bottom: showVolume ? 0.25 : 0.1,
+        },
       },
-    },
-    handleScroll: {
-      vertTouchDrag: true,
-    },
-  }), [chartTheme, height, showVolume])
+      timeScale: {
+        borderColor: chartTheme.borderColor,
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      handleScale: {
+        axisPressedMouseMove: {
+          time: true,
+          price: true,
+        },
+      },
+      handleScroll: {
+        vertTouchDrag: true,
+      },
+    }),
+    [chartTheme, height, showVolume],
+  )
 
   // Initialize chart
   useEffect(() => {
@@ -181,7 +197,10 @@ export default function AdvancedChart({
 
     chartRef.current.applyOptions({
       layout: {
-        background: { type: ColorType.Solid, color: chartTheme.backgroundColor },
+        background: {
+          type: ColorType.Solid,
+          color: chartTheme.backgroundColor,
+        },
         textColor: chartTheme.textColor,
       },
       grid: {
@@ -211,7 +230,7 @@ export default function AdvancedChart({
         color: chartTheme.upColor,
         lineWidth: 2,
       })
-      const lineData: LineData[] = transformedData.map((d) => ({
+      const lineData: LineData[] = transformedData.map(d => ({
         time: d.time as Time,
         value: d.close,
       }))
@@ -224,7 +243,7 @@ export default function AdvancedChart({
         lineColor: chartTheme.upColor,
         lineWidth: 2,
       })
-      const areaData: LineData[] = transformedData.map((d) => ({
+      const areaData: LineData[] = transformedData.map(d => ({
         time: d.time as Time,
         value: d.close,
       }))
@@ -235,7 +254,7 @@ export default function AdvancedChart({
         upColor: chartTheme.upColor,
         downColor: chartTheme.downColor,
       })
-      const barData = transformedData.map((d) => ({
+      const barData = transformedData.map(d => ({
         time: d.time as Time,
         open: d.open,
         high: d.high,
@@ -254,7 +273,7 @@ export default function AdvancedChart({
         wickUpColor: chartTheme.upColor,
         wickDownColor: chartTheme.downColor,
       })
-      const candleData: CandlestickData[] = transformedData.map((d) => ({
+      const candleData: CandlestickData[] = transformedData.map(d => ({
         time: d.time as Time,
         open: d.open,
         high: d.high,
@@ -267,9 +286,9 @@ export default function AdvancedChart({
 
     // Fit content
     chart.timeScale().fitContent()
-    
+
     if (onChartReady && mainSeriesRef.current) {
-        onChartReady(chart, mainSeriesRef.current)
+      onChartReady(chart, mainSeriesRef.current)
     }
   }, [transformedData, chartType, chartTheme, onChartReady])
 
@@ -305,7 +324,10 @@ export default function AdvancedChart({
       return {
         time: d.time as Time,
         value: d.volume,
-        color: d.close >= prevClose ? `${chartTheme.upColor}80` : `${chartTheme.downColor}80`,
+        color:
+          d.close >= prevClose
+            ? `${chartTheme.upColor}80`
+            : `${chartTheme.downColor}80`,
       }
     })
 
@@ -320,7 +342,7 @@ export default function AdvancedChart({
     const chart = chartRef.current
 
     // Remove existing indicator series
-    indicatorSeriesRef.current.forEach((series) => {
+    indicatorSeriesRef.current.forEach(series => {
       chart.removeSeries(series)
     })
     indicatorSeriesRef.current.clear()
@@ -346,7 +368,7 @@ export default function AdvancedChart({
     }
 
     // Add new indicators
-    indicators.forEach((indicator) => {
+    indicators.forEach(indicator => {
       if (!indicator.visible) return
 
       switch (indicator.type) {
@@ -360,7 +382,9 @@ export default function AdvancedChart({
             priceLineVisible: false,
             lastValueVisible: false,
           })
-          series.setData(smaData.map((d) => ({ time: d.time as Time, value: d.value })))
+          series.setData(
+            smaData.map(d => ({ time: d.time as Time, value: d.value })),
+          )
           indicatorSeriesRef.current.set(indicator.id, series)
           break
         }
@@ -374,7 +398,9 @@ export default function AdvancedChart({
             priceLineVisible: false,
             lastValueVisible: false,
           })
-          series.setData(emaData.map((d) => ({ time: d.time as Time, value: d.value })))
+          series.setData(
+            emaData.map(d => ({ time: d.time as Time, value: d.value })),
+          )
           indicatorSeriesRef.current.set(indicator.id, series)
           break
         }
@@ -382,7 +408,7 @@ export default function AdvancedChart({
           const bbData = calculateBollingerBands(
             data,
             indicator.params.period || 20,
-            indicator.params.stdDev || 2
+            indicator.params.stdDev || 2,
           )
           if (bbData.length === 0) return
 
@@ -394,7 +420,9 @@ export default function AdvancedChart({
             priceLineVisible: false,
             lastValueVisible: false,
           })
-          upperSeries.setData(bbData.map((d) => ({ time: d.time as Time, value: d.upper })))
+          upperSeries.setData(
+            bbData.map(d => ({ time: d.time as Time, value: d.upper })),
+          )
           indicatorSeriesRef.current.set(`${indicator.id}-upper`, upperSeries)
 
           // Middle band
@@ -404,7 +432,9 @@ export default function AdvancedChart({
             priceLineVisible: false,
             lastValueVisible: false,
           })
-          middleSeries.setData(bbData.map((d) => ({ time: d.time as Time, value: d.middle })))
+          middleSeries.setData(
+            bbData.map(d => ({ time: d.time as Time, value: d.middle })),
+          )
           indicatorSeriesRef.current.set(`${indicator.id}-middle`, middleSeries)
 
           // Lower band
@@ -415,7 +445,9 @@ export default function AdvancedChart({
             priceLineVisible: false,
             lastValueVisible: false,
           })
-          lowerSeries.setData(bbData.map((d) => ({ time: d.time as Time, value: d.lower })))
+          lowerSeries.setData(
+            bbData.map(d => ({ time: d.time as Time, value: d.lower })),
+          )
           indicatorSeriesRef.current.set(`${indicator.id}-lower`, lowerSeries)
           break
         }
@@ -439,7 +471,9 @@ export default function AdvancedChart({
             autoScale: false,
           })
 
-          series.setData(rsiData.map((d) => ({ time: d.time as Time, value: d.value })))
+          series.setData(
+            rsiData.map(d => ({ time: d.time as Time, value: d.value })),
+          )
           rsiPaneRef.current = series
           break
         }
@@ -448,7 +482,7 @@ export default function AdvancedChart({
             data,
             indicator.params.fastPeriod || 12,
             indicator.params.slowPeriod || 26,
-            indicator.params.signalPeriod || 9
+            indicator.params.signalPeriod || 9,
           )
           if (macdData.length === 0) return
 
@@ -460,7 +494,9 @@ export default function AdvancedChart({
             priceLineVisible: false,
             lastValueVisible: false,
           })
-          macdSeries.setData(macdData.map((d) => ({ time: d.time as Time, value: d.macd })))
+          macdSeries.setData(
+            macdData.map(d => ({ time: d.time as Time, value: d.macd })),
+          )
           macdSeriesRef.current.macd = macdSeries
 
           // Signal line
@@ -471,7 +507,9 @@ export default function AdvancedChart({
             priceLineVisible: false,
             lastValueVisible: false,
           })
-          signalSeries.setData(macdData.map((d) => ({ time: d.time as Time, value: d.signal })))
+          signalSeries.setData(
+            macdData.map(d => ({ time: d.time as Time, value: d.signal })),
+          )
           macdSeriesRef.current.signal = signalSeries
 
           // Histogram
@@ -479,11 +517,11 @@ export default function AdvancedChart({
             priceScaleId: 'macd',
           })
           histogramSeries.setData(
-            macdData.map((d) => ({
+            macdData.map(d => ({
               time: d.time as Time,
               value: d.histogram,
               color: d.histogram >= 0 ? '#26a69a80' : '#ef535080',
-            }))
+            })),
           )
           macdSeriesRef.current.histogram = histogramSeries
 
@@ -508,7 +546,9 @@ export default function AdvancedChart({
       >
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-solid border-blue-600 dark:border-blue-400 border-r-transparent mb-2" />
-          <p className="text-sm text-gray-600 dark:text-gray-300">차트 로딩 중...</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            차트 로딩 중...
+          </p>
         </div>
       </div>
     )
@@ -535,7 +575,9 @@ export default function AdvancedChart({
               d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
             />
           </svg>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">차트 데이터가 없습니다</p>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            차트 데이터가 없습니다
+          </p>
         </div>
       </div>
     )

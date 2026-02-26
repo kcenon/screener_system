@@ -77,9 +77,9 @@ class ChartImageGenerator:
         required_cols = ["open", "high", "low", "close", "volume"]
 
         if not all(col in df.columns for col in required_cols):
-             # Fallback or error? For now, assume columns exist or try to use iloc
-             # If columns are missing, this will fail.
-             pass
+            # Fallback or error? For now, assume columns exist or try to use iloc
+            # If columns are missing, this will fail.
+            pass
 
         ohlcv_data = df[required_cols].values
 
