@@ -162,8 +162,7 @@ export function GradientText({
  * </GradientButton>
  * ```
  */
-export interface GradientButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface GradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**
    * Gradient preset
    */
