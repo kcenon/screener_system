@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import CurrentAdminUser, get_auth_service
-from app.schemas import SuccessResponse, UserAdminResponse, UserSuspendRequest
+from app.schemas import UserAdminResponse, UserSuspendRequest
 from app.services import AuthService
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
