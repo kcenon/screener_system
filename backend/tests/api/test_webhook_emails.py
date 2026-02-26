@@ -157,6 +157,35 @@ class TestWebhookUpcomingInvoiceEmail:
             )
 
     @pytest.mark.asyncio
+    async def test_falls_back_to_period_end_for_due_date(self, mock_db, mock_user):
+        """Uses period_end when next_payment_attempt is missing."""
+        invoice = {
+            "customer": "cus_test123",
+            "amount_due": 1999,
+            "currency": "usd",
+            "period_end": int(
+                datetime(2025, 4, 15, tzinfo=timezone.utc).timestamp()
+            ),
+        }
+
+        mock_result = MagicMock()
+        mock_result.scalar_one_or_none.return_value = mock_user
+        mock_db.execute = AsyncMock(return_value=mock_result)
+
+        with patch(
+            "app.api.v1.endpoints.webhooks.EmailService"
+        ) as MockEmailService:
+            mock_email = MagicMock()
+            mock_email.send_upcoming_invoice_email = AsyncMock(return_value=True)
+            MockEmailService.return_value = mock_email
+
+            await _handle_invoice_upcoming(mock_db, invoice)
+
+            call_kwargs = mock_email.send_upcoming_invoice_email.call_args[1]
+            assert call_kwargs["due_date"] == "2025-04-15"
+            assert call_kwargs["amount"] == 19.99
+
+    @pytest.mark.asyncio
     async def test_no_email_when_user_not_found(self, mock_db):
         """No email sent when user is not found."""
         invoice = {
@@ -229,6 +258,34 @@ class TestWebhookTrialEndingEmail:
 
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = None
+        mock_db.execute = AsyncMock(return_value=mock_result)
+
+        with patch(
+            "app.api.v1.endpoints.webhooks.EmailService"
+        ) as MockEmailService:
+            mock_email = MagicMock()
+            mock_email.send_trial_ending_email = AsyncMock()
+            MockEmailService.return_value = mock_email
+
+            await _handle_trial_will_end(mock_db, subscription_data)
+
+            mock_email.send_trial_ending_email.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_no_email_when_user_not_found(
+        self, mock_db, mock_subscription
+    ):
+        """No email sent when user is not found for subscription."""
+        subscription_data = {
+            "id": "sub_test456",
+            "trial_end": 1739577600,
+        }
+
+        mock_result = MagicMock()
+        mock_result.scalar_one_or_none.side_effect = [
+            mock_subscription,
+            None,  # User not found
+        ]
         mock_db.execute = AsyncMock(return_value=mock_result)
 
         with patch(
