@@ -50,7 +50,10 @@ def _ensure_postgres_operator_importable():
     except (ImportError, ModuleNotFoundError):
         pass
 
-    from airflow.models.baseoperator import BaseOperator
+    try:
+        from airflow.models.baseoperator import BaseOperator
+    except (ImportError, ModuleNotFoundError):
+        return  # Airflow not installed — skip stub (non-DAG tests still work)
 
     class _StubPostgresOperator(BaseOperator):
         """Minimal PostgresOperator stub for DAG structure testing."""
