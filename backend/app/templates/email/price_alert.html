@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Alert: {{ stock_symbol }}{% endblock %}
+
+{% block content %}
+<p>Your stock alert has been triggered:</p>
+
+<table style="width:100%; border-collapse:collapse; margin:20px 0;">
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600; width:40%;">Symbol</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ stock_symbol }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600;">Alert Type</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ alert_type }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600;">Condition</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ condition_value }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600;">Current Value</td>
+    <td style="padding:8px 12px; border:1px solid #eee; color:#2563eb; font-weight:600;">{{ current_value }}</td>
+  </tr>
+</table>
+
+<div class="btn-wrapper">
+  <a href="{{ dashboard_url }}" class="btn">View Dashboard</a>
+</div>
+
+<p class="muted">You can manage your alerts in the dashboard settings.</p>
+{% endblock %}

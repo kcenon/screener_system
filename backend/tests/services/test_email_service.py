@@ -238,6 +238,104 @@ class TestEmailService:
             )
             mock_server.sendmail.assert_called_once()
 
+    @pytest.mark.asyncio
+    async def test_send_alert_email_with_html_template(self, email_service):
+        """Test stock alert email includes HTML template"""
+        with patch.object(email_service, "send_notification_email") as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_alert_email(
+                to_email="user@example.com",
+                alert_type="PRICE_ABOVE",
+                stock_symbol="AAPL",
+                condition_value=150.0,
+                current_value=155.0,
+            )
+
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args[1]
+        assert "AAPL" in call_kwargs["subject"]
+        # html_body may be None if template dir is missing in test env,
+        # but the kwarg should be passed
+        assert "html_body" in call_kwargs
+
+    @pytest.mark.asyncio
+    async def test_send_payment_failure_email(self, email_service):
+        """Test payment failure email with amount and currency"""
+        with patch.object(email_service, "send_notification_email") as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_payment_failure_email(
+                to_email="user@example.com",
+                amount=29.99,
+                currency="USD",
+                failure_reason="Card declined",
+            )
+
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args[1]
+        assert call_kwargs["subject"] == "Payment Failed - Action Required"
+        assert "29.99" in call_kwargs["body"]
+        assert "Card declined" in call_kwargs["body"]
+
+    @pytest.mark.asyncio
+    async def test_send_payment_failure_email_no_reason(self, email_service):
+        """Test payment failure email without failure reason"""
+        with patch.object(email_service, "send_notification_email") as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_payment_failure_email(
+                to_email="user@example.com",
+                amount=9.99,
+                currency="USD",
+            )
+
+        assert result is True
+        call_kwargs = mock_send.call_args[1]
+        assert "9.99" in call_kwargs["body"]
+        assert "Reason" not in call_kwargs["body"]
+
+    @pytest.mark.asyncio
+    async def test_send_upcoming_invoice_email(self, email_service):
+        """Test upcoming invoice email with amount and due date"""
+        with patch.object(email_service, "send_notification_email") as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_upcoming_invoice_email(
+                to_email="user@example.com",
+                amount=49.99,
+                currency="USD",
+                due_date="2025-02-01",
+            )
+
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args[1]
+        assert call_kwargs["subject"] == "Upcoming Invoice"
+        assert "49.99" in call_kwargs["body"]
+        assert "2025-02-01" in call_kwargs["body"]
+
+    @pytest.mark.asyncio
+    async def test_send_trial_ending_email(self, email_service):
+        """Test trial ending email with plan name and date"""
+        with patch.object(email_service, "send_notification_email") as mock_send:
+            mock_send.return_value = True
+
+            result = await email_service.send_trial_ending_email(
+                to_email="user@example.com",
+                trial_end_date="2025-02-15",
+                plan_name="Pro",
+            )
+
+        assert result is True
+        mock_send.assert_called_once()
+        call_kwargs = mock_send.call_args[1]
+        assert "Pro" in call_kwargs["subject"]
+        assert "2025-02-15" in call_kwargs["body"]
+        assert "Pro" in call_kwargs["body"]
+
     def test_render_template_missing(self, email_service):
         """Test template rendering when template doesn't exist"""
         email_service._jinja_env = None

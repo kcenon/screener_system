@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Failed{% endblock %}
+
+{% block content %}
+<p>We were unable to process your payment.</p>
+
+<table style="width:100%; border-collapse:collapse; margin:20px 0;">
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600; width:40%;">Amount</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ currency }} {{ amount }}</td>
+  </tr>
+  {% if failure_reason %}
+  <tr>
+    <td style="padding:8px 12px; border:1px solid #eee; font-weight:600;">Reason</td>
+    <td style="padding:8px 12px; border:1px solid #eee;">{{ failure_reason }}</td>
+  </tr>
+  {% endif %}
+</table>
+
+<p>Please update your payment method to avoid service interruption.</p>
+
+<div class="btn-wrapper">
+  <a href="{{ billing_url }}" class="btn">Update Payment Method</a>
+</div>
+
+<p class="muted">If you believe this is an error, please contact support.</p>
+{% endblock %}

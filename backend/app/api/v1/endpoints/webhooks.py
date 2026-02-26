@@ -5,14 +5,13 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Annotated
 
-# from app.api.dependencies import get_stripe_service  # Unused
-# from app.core.config import settings  # Unused
 from app.core.exceptions import BadRequestException
 from app.db.models import (Payment, PaymentStatus, SubscriptionPlan, User,
                            UserSubscription)
 from app.db.session import get_db
 from app.schemas import StripeWebhookResponse
 from app.services import StripeService
+from app.services.email_service import EmailService
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -249,16 +248,48 @@ async def _handle_invoice_payment_failed(db: AsyncSession, invoice: dict) -> Non
     db.add(payment)
     await db.flush()
 
-    # TODO: Send payment failed notification to user
+    # Send payment failure notification
+    email_service = EmailService()
+    await email_service.send_payment_failure_email(
+        to_email=user.email,
+        amount=amount,
+        currency=invoice.get("currency", "usd").upper(),
+        failure_reason=invoice.get("last_finalization_error", {}).get("message"),
+    )
 
 
 async def _handle_invoice_upcoming(db: AsyncSession, invoice: dict) -> None:
     """Handle upcoming invoice notification"""
     customer_id = invoice.get("customer")
+    amount = invoice.get("amount_due", 0) / 100
+    currency = invoice.get("currency", "usd").upper()
 
     logger.info(f"Upcoming invoice for customer {customer_id}")
 
-    # TODO: Send upcoming invoice notification to user
+    # Find user
+    result = await db.execute(
+        select(User).where(User.stripe_customer_id == customer_id)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        return
+
+    # Derive due date from next_payment_attempt or period_end
+    due_ts = invoice.get("next_payment_attempt") or invoice.get("period_end")
+    due_date = (
+        datetime.fromtimestamp(due_ts, tz=timezone.utc).strftime("%Y-%m-%d")
+        if due_ts
+        else "N/A"
+    )
+
+    email_service = EmailService()
+    await email_service.send_upcoming_invoice_email(
+        to_email=user.email,
+        amount=amount,
+        currency=currency,
+        due_date=due_date,
+    )
 
 
 # =============================================================================
@@ -377,11 +408,50 @@ async def _handle_subscription_deleted(db: AsyncSession, subscription: dict) -> 
 async def _handle_trial_will_end(db: AsyncSession, subscription: dict) -> None:
     """Handle trial ending soon notification"""
     stripe_subscription_id = subscription.get("id")
-    # trial_end = subscription.get("trial_end")
+    trial_end = subscription.get("trial_end")
 
     logger.info(f"Trial will end for subscription {stripe_subscription_id}")
 
-    # TODO: Send trial ending notification to user
+    # Find subscription and user
+    result = await db.execute(
+        select(UserSubscription).where(
+            UserSubscription.stripe_subscription_id == stripe_subscription_id
+        )
+    )
+    user_subscription = result.scalar_one_or_none()
+
+    if not user_subscription:
+        return
+
+    result = await db.execute(
+        select(User).where(User.id == user_subscription.user_id)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        return
+
+    # Get plan name
+    result = await db.execute(
+        select(SubscriptionPlan).where(
+            SubscriptionPlan.id == user_subscription.plan_id
+        )
+    )
+    plan = result.scalar_one_or_none()
+    plan_name = plan.name if plan else "Premium"
+
+    trial_end_date = (
+        datetime.fromtimestamp(trial_end, tz=timezone.utc).strftime("%Y-%m-%d")
+        if trial_end
+        else "N/A"
+    )
+
+    email_service = EmailService()
+    await email_service.send_trial_ending_email(
+        to_email=user.email,
+        trial_end_date=trial_end_date,
+        plan_name=plan_name,
+    )
 
 
 # =============================================================================
