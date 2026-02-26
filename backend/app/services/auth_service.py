@@ -100,6 +100,10 @@ class AuthService:
         if not verify_password(credentials.password, user.password_hash):
             raise UnauthorizedException("Invalid email or password")
 
+        # Check if account is suspended
+        if not user.is_active:
+            raise UnauthorizedException("Account is suspended")
+
         # Update last login
         user.update_last_login()
         await self.user_repo.update(user)
@@ -142,6 +146,10 @@ class AuthService:
         user = await self.user_repo.get_by_id(user_session.user_id)
         if not user:
             raise UnauthorizedException("User not found")
+
+        # Check if account is suspended
+        if not user.is_active:
+            raise UnauthorizedException("Account is suspended")
 
         # Update session last accessed
         user_session.update_last_accessed()
@@ -220,12 +228,78 @@ class AuthService:
             if not user:
                 raise UnauthorizedException("User not found")
 
+            # Check if account is suspended
+            if not user.is_active:
+                raise UnauthorizedException("Account is suspended")
+
             return user
 
         except JWTError as e:
             raise UnauthorizedException(f"Invalid token: {str(e)}") from e
         except ValueError as e:
             raise UnauthorizedException(f"Invalid user ID: {str(e)}") from e
+
+    async def suspend_user(self, user_id: int, reason: str) -> User:
+        """
+        Suspend a user account and invalidate all sessions
+
+        Args:
+            user_id: ID of the user to suspend
+            reason: Reason for suspension
+
+        Returns:
+            Updated user object
+
+        Raises:
+            ValueError: If user not found or already suspended
+        """
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+            raise ValueError(f"User with ID {user_id} not found")
+
+        if user.is_suspended:
+            raise ValueError("User is already suspended")
+
+        user.is_suspended = True
+        user.suspended_at = datetime.now(timezone.utc)
+        user.suspension_reason = reason
+
+        await self.user_repo.update(user)
+
+        # Invalidate all existing sessions
+        await self.session_repo.revoke_all_user_sessions(user_id)
+        await self.session.commit()
+
+        return user
+
+    async def unsuspend_user(self, user_id: int) -> User:
+        """
+        Unsuspend a user account
+
+        Args:
+            user_id: ID of the user to unsuspend
+
+        Returns:
+            Updated user object
+
+        Raises:
+            ValueError: If user not found or not suspended
+        """
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+            raise ValueError(f"User with ID {user_id} not found")
+
+        if not user.is_suspended:
+            raise ValueError("User is not suspended")
+
+        user.is_suspended = False
+        user.suspended_at = None
+        user.suspension_reason = None
+
+        await self.user_repo.update(user)
+        await self.session.commit()
+
+        return user
 
     async def _create_user_session(
         self,

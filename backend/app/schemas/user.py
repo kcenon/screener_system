@@ -151,3 +151,29 @@ class SuccessResponse(BaseModel):
 
     success: bool
     message: str
+
+
+class UserSuspendRequest(BaseModel):
+    """Schema for suspending a user account"""
+
+    reason: str = Field(
+        ..., min_length=1, max_length=500, description="Reason for suspension"
+    )
+
+
+class UserAdminResponse(BaseModel):
+    """Schema for admin user detail response"""
+
+    id: int
+    email: EmailStr
+    name: Optional[str] = None
+    subscription_tier: str
+    email_verified: bool
+    is_suspended: bool
+    suspended_at: Optional[datetime] = None
+    suspension_reason: Optional[str] = None
+    is_admin: bool
+    created_at: datetime
+    last_login_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}

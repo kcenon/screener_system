@@ -138,7 +138,32 @@ async def get_current_active_user(
     return current_user
 
 
+async def get_current_admin_user(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+) -> User:
+    """
+    Get current admin user
+
+    Args:
+        current_user: Current active user
+
+    Returns:
+        Current admin user
+
+    Raises:
+        HTTPException 403: If user is not an admin
+    """
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required",
+        )
+
+    return current_user
+
+
 # Type aliases for cleaner endpoint signatures
 CurrentUser = Annotated[User, Depends(get_current_user)]
 CurrentActiveUser = Annotated[User, Depends(get_current_active_user)]
+CurrentAdminUser = Annotated[User, Depends(get_current_admin_user)]
 DatabaseSession = Annotated[AsyncSession, Depends(get_db)]
