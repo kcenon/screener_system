@@ -4,8 +4,10 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.dependencies import get_current_admin_user
 from app.core.exceptions import UnauthorizedException
 from app.db.models import User, UserSession
 from app.schemas import UserLogin
@@ -40,6 +42,12 @@ class TestUserIsActive:
         user = User(id=1, email="test@example.com", is_suspended=False)
         assert user.is_suspended is False
         assert user.is_active is True
+
+    def test_is_active_fail_safe_when_none(self):
+        """Test is_active is False (fail-safe) when is_suspended is None (pre-migration)"""
+        user = User(id=1, email="test@example.com")
+        # Before migration applies, is_suspended may be None at Python level
+        assert user.is_active is False  # not None == True → fail-safe deny
 
 
 class TestAuthServiceSuspension:
@@ -259,3 +267,62 @@ class TestAuthServiceSuspension:
             await service.unsuspend_user(user_id=1)
 
         assert "not suspended" in str(exc_info.value)
+
+    # ========================================================================
+    # Session invalidation on suspension
+    # ========================================================================
+
+    @pytest.mark.asyncio
+    async def test_suspend_user_invalidates_sessions(
+        self, service, active_user, mock_session
+    ):
+        """Test that suspending a user revokes all their sessions"""
+        service.user_repo.get_by_id = AsyncMock(return_value=active_user)
+        service.user_repo.update = AsyncMock()
+        service.session_repo.revoke_all_user_sessions = AsyncMock(return_value=5)
+
+        await service.suspend_user(user_id=1, reason="Abuse")
+
+        service.session_repo.revoke_all_user_sessions.assert_called_once_with(1)
+
+    @pytest.mark.asyncio
+    async def test_unsuspend_does_not_create_sessions(
+        self, service, suspended_user, mock_session
+    ):
+        """Test that unsuspending does not automatically create sessions"""
+        service.user_repo.get_by_id = AsyncMock(return_value=suspended_user)
+        service.user_repo.update = AsyncMock()
+
+        await service.unsuspend_user(user_id=2)
+
+        # session_repo.create should not be called on unsuspend
+        assert not hasattr(service.session_repo, "create") or not getattr(
+            service.session_repo.create, "called", False
+        )
+
+
+class TestAdminDependency:
+    """Test admin user dependency"""
+
+    @pytest.mark.asyncio
+    async def test_admin_user_passes(self):
+        """Test that admin users pass the admin dependency check"""
+        mock_admin = Mock(spec=User)
+        mock_admin.is_admin = True
+        mock_admin.is_active = True
+
+        result = await get_current_admin_user(mock_admin)
+        assert result == mock_admin
+
+    @pytest.mark.asyncio
+    async def test_non_admin_user_rejected(self):
+        """Test that non-admin users are rejected with 403"""
+        mock_user = Mock(spec=User)
+        mock_user.is_admin = False
+        mock_user.is_active = True
+
+        with pytest.raises(HTTPException) as exc_info:
+            await get_current_admin_user(mock_user)
+
+        assert exc_info.value.status_code == 403
+        assert "Admin access required" in str(exc_info.value.detail)

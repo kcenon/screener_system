@@ -157,8 +157,12 @@ class User(BaseModel):
 
     @property
     def is_active(self) -> bool:
-        """Check if user account is active (not suspended)"""
-        return not self.is_suspended
+        """Check if user account is active (not suspended)
+
+        Uses strict equality check so that None (pre-migration state)
+        is treated as inactive (fail-safe deny).
+        """
+        return self.is_suspended is False
 
     @property
     def is_premium(self) -> bool:
