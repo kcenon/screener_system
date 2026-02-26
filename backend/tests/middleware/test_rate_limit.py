@@ -6,7 +6,12 @@ from fastapi.testclient import TestClient
 
 from app.core.cache import cache_manager
 from app.core.config import settings
-from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS, RateLimitMiddleware
+from app.middleware.rate_limit import (
+    ENDPOINT_RATE_LIMITS,
+    InMemoryRateLimiter,
+    RateLimitMiddleware,
+    _fallback_limiter,
+)
 
 
 @pytest.fixture
@@ -30,6 +35,10 @@ def app():
     @app.post("/v1/auth/login")
     async def login_endpoint():
         return {"token": "fake_token"}
+
+    @app.post("/v1/auth/refresh")
+    async def refresh_endpoint():
+        return {"token": "refreshed_token"}
 
     @app.get("/health")
     async def health_endpoint():
@@ -197,17 +206,28 @@ class TestRateLimitMiddleware:
         # This is a placeholder for the concept
         pytest.skip("Requires time mocking or Redis TTL manipulation")
 
-    def test_redis_unavailable_allows_requests(self, app: FastAPI, monkeypatch):
-        """Test graceful degradation when Redis is unavailable"""
-        # Mock Redis as unavailable
+    def test_redis_unavailable_uses_fallback(self, app: FastAPI, monkeypatch):
+        """Test in-memory fallback rate limiting when Redis is unavailable"""
         monkeypatch.setattr(cache_manager, "redis", None)
+        monkeypatch.setattr(settings, "RATE_LIMIT_FREE", 5)
+        _fallback_limiter.reset()
+
+        import app.middleware.rate_limit as rl_module
+
+        monkeypatch.setattr(rl_module, "_fallback_logged", False)
 
         client = TestClient(app)
 
-        # Requests should still work without rate limiting
-        for i in range(200):  # More than any limit
+        # Requests within limit should succeed
+        for i in range(5):
             response = client.get("/test")
-            assert response.status_code == 200
+            assert response.status_code == 200, f"Request {i+1} should succeed"
+            assert "X-RateLimit-Limit" in response.headers
+
+        # Request exceeding limit should be blocked
+        response = client.get("/test")
+        assert response.status_code == 429, "Should be rate limited by fallback"
+        assert "rate limit exceeded" in response.json()["message"].lower()
 
     def test_multiple_clients_separate_limits(self, app: FastAPI):
         """Test that different clients (IPs) have separate rate limits"""
@@ -231,6 +251,7 @@ class TestEndpointRateLimitConfiguration:
         assert "/v1/stocks/" in ENDPOINT_RATE_LIMITS
         assert "/v1/auth/register" in ENDPOINT_RATE_LIMITS
         assert "/v1/auth/login" in ENDPOINT_RATE_LIMITS
+        assert "/v1/auth/refresh" in ENDPOINT_RATE_LIMITS
 
     def test_endpoint_limits_reasonable(self):
         """Test that endpoint limits are within reasonable ranges"""
@@ -331,3 +352,153 @@ class TestRateLimitIntegration:
 
         # Remaining should decrease
         assert remaining2 == remaining1 - 1
+
+
+class TestInMemoryRateLimiter:
+    """Test suite for InMemoryRateLimiter class"""
+
+    def test_increment_counts_requests(self):
+        """Test basic increment counting within a window"""
+        limiter = InMemoryRateLimiter()
+        assert limiter.increment("key1", window=60) == 1
+        assert limiter.increment("key1", window=60) == 2
+        assert limiter.increment("key1", window=60) == 3
+
+    def test_separate_keys_have_separate_counts(self):
+        """Test that different keys are tracked independently"""
+        limiter = InMemoryRateLimiter()
+        assert limiter.increment("user:A", window=60) == 1
+        assert limiter.increment("user:B", window=60) == 1
+        assert limiter.increment("user:A", window=60) == 2
+        assert limiter.increment("user:B", window=60) == 2
+
+    def test_expired_entries_are_excluded(self, monkeypatch):
+        """Test that timestamps outside the window are excluded"""
+        import time as time_module
+
+        limiter = InMemoryRateLimiter()
+
+        # Mock monotonic to control time
+        current_time = 1000.0
+
+        def mock_monotonic():
+            return current_time
+
+        monkeypatch.setattr(time_module, "monotonic", mock_monotonic)
+
+        # Add requests at t=1000
+        assert limiter.increment("key1", window=10) == 1
+        assert limiter.increment("key1", window=10) == 2
+
+        # Advance time past the window
+        current_time = 1011.0
+        assert limiter.increment("key1", window=10) == 1  # Old entries expired
+
+    def test_reset_clears_all_counters(self):
+        """Test that reset() clears all state"""
+        limiter = InMemoryRateLimiter()
+        limiter.increment("key1", window=60)
+        limiter.increment("key2", window=60)
+        limiter.reset()
+        assert limiter.increment("key1", window=60) == 1
+        assert limiter.increment("key2", window=60) == 1
+
+    def test_cleanup_removes_stale_keys(self, monkeypatch):
+        """Test periodic cleanup removes keys with no recent activity"""
+        import time as time_module
+
+        current_time = 1000.0
+
+        def mock_monotonic():
+            return current_time
+
+        monkeypatch.setattr(time_module, "monotonic", mock_monotonic)
+
+        limiter = InMemoryRateLimiter(cleanup_interval=10)
+
+        # Add entry at t=1000
+        limiter.increment("key1", window=5)
+
+        # Advance past cleanup_interval (>10s after key1's last timestamp)
+        current_time = 1011.0
+        # Next increment triggers cleanup; key1 is stale (1000 < 1011-10=1001)
+        limiter.increment("key2", window=60)
+
+        assert "key1" not in limiter._counters
+        assert "key2" in limiter._counters
+
+
+class TestFallbackRateLimitingBehavior:
+    """Test fallback behavior when Redis is unavailable"""
+
+    def test_auth_refresh_endpoint_rate_limited(
+        self, app: FastAPI, mock_redis, monkeypatch
+    ):
+        """Test /v1/auth/refresh endpoint has rate limiting"""
+        from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
+        original_limit = ENDPOINT_RATE_LIMITS["/v1/auth/refresh"]
+        ENDPOINT_RATE_LIMITS["/v1/auth/refresh"] = 3
+
+        try:
+            client = TestClient(app)
+            for i in range(3):
+                response = client.post("/v1/auth/refresh")
+                assert response.status_code == 200, f"Request {i+1} failed"
+
+            response = client.post("/v1/auth/refresh")
+            assert response.status_code == 429
+            assert "endpoint rate limit exceeded" in response.json()["message"].lower()
+        finally:
+            ENDPOINT_RATE_LIMITS["/v1/auth/refresh"] = original_limit
+
+    def test_fallback_enforces_endpoint_limits(self, app: FastAPI, monkeypatch):
+        """Test that fallback also enforces endpoint-specific limits"""
+        monkeypatch.setattr(cache_manager, "redis", None)
+        _fallback_limiter.reset()
+
+        import app.middleware.rate_limit as rl_module
+
+        monkeypatch.setattr(rl_module, "_fallback_logged", False)
+
+        from app.middleware.rate_limit import ENDPOINT_RATE_LIMITS
+
+        original_limit = ENDPOINT_RATE_LIMITS["/v1/screen"]
+        ENDPOINT_RATE_LIMITS["/v1/screen"] = 3
+
+        try:
+            client = TestClient(app)
+            for i in range(3):
+                response = client.post("/v1/screen")
+                assert response.status_code == 200, f"Request {i+1} failed"
+
+            response = client.post("/v1/screen")
+            assert response.status_code == 429
+        finally:
+            ENDPOINT_RATE_LIMITS["/v1/screen"] = original_limit
+
+    def test_fallback_log_deduplication(self, app: FastAPI, monkeypatch, caplog):
+        """Test that fallback activation is logged only once"""
+        import logging
+
+        monkeypatch.setattr(cache_manager, "redis", None)
+        monkeypatch.setattr(settings, "RATE_LIMIT_FREE", 100)
+        _fallback_limiter.reset()
+
+        import app.middleware.rate_limit as rl_module
+
+        monkeypatch.setattr(rl_module, "_fallback_logged", False)
+
+        client = TestClient(app)
+
+        with caplog.at_level(logging.WARNING):
+            # Multiple requests should only log fallback message once
+            for _ in range(5):
+                client.get("/test")
+
+        fallback_messages = [
+            r for r in caplog.records if "in-memory rate limiting fallback" in r.message
+        ]
+        assert (
+            len(fallback_messages) == 1
+        ), f"Expected 1 fallback log, got {len(fallback_messages)}"

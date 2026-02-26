@@ -1,6 +1,13 @@
-"""Rate limiting middleware with per-endpoint and KIS API quota management"""
+"""Rate limiting middleware with per-endpoint rate limits and in-memory fallback.
 
-from typing import Callable, Dict, Optional
+When Redis is available, rate limiting uses atomic Lua scripts for distributed
+counting. When Redis is unavailable, an in-memory sliding window counter
+provides fallback rate limiting to prevent abuse during outages.
+"""
+
+import threading
+import time
+from typing import Callable, Dict, List, Optional
 
 from fastapi import Request, Response, status
 from fastapi.responses import JSONResponse
@@ -28,7 +35,69 @@ ENDPOINT_RATE_LIMITS: Dict[str, int] = {
     "/v1/stocks/": settings.RATE_LIMIT_STOCK_DETAIL,  # Matches /v1/stocks/{code}
     "/v1/auth/register": settings.RATE_LIMIT_AUTH,
     "/v1/auth/login": settings.RATE_LIMIT_AUTH,
+    "/v1/auth/refresh": settings.RATE_LIMIT_AUTH,
 }
+
+
+class InMemoryRateLimiter:
+    """Thread-safe in-memory rate limiter using sliding window counters.
+
+    Used as fallback when Redis is unavailable. Tracks request timestamps
+    per key and counts requests within the configured time window.
+    """
+
+    def __init__(self, cleanup_interval: int = 3600) -> None:
+        self._counters: Dict[str, List[float]] = {}
+        self._lock = threading.Lock()
+        self._cleanup_interval = cleanup_interval
+        self._last_cleanup = time.monotonic()
+
+    def increment(self, key: str, window: int) -> int:
+        """Record a request and return the count within the window.
+
+        Args:
+            key: Rate limit key (e.g., "rate_limit:tier:127.0.0.1:free")
+            window: Time window in seconds
+
+        Returns:
+            Number of requests within the window (including this one)
+        """
+        now = time.monotonic()
+        with self._lock:
+            self._maybe_cleanup(now)
+            if key not in self._counters:
+                self._counters[key] = []
+            cutoff = now - window
+            self._counters[key] = [ts for ts in self._counters[key] if ts > cutoff]
+            self._counters[key].append(now)
+            return len(self._counters[key])
+
+    def _maybe_cleanup(self, now: float) -> None:
+        """Periodically remove stale keys to prevent memory growth.
+
+        A key is stale when its most recent timestamp is older than the
+        cleanup interval, meaning no requests have been made recently.
+        """
+        if now - self._last_cleanup < self._cleanup_interval:
+            return
+        self._last_cleanup = now
+        cutoff = now - self._cleanup_interval
+        stale_keys = [
+            key
+            for key, timestamps in self._counters.items()
+            if not timestamps or timestamps[-1] < cutoff
+        ]
+        for key in stale_keys:
+            del self._counters[key]
+
+    def reset(self) -> None:
+        """Clear all counters. For testing only."""
+        with self._lock:
+            self._counters.clear()
+
+
+_fallback_limiter = InMemoryRateLimiter()
+_fallback_logged = False
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
@@ -65,10 +134,34 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         Returns:
             Tuple of (is_allowed, current_count)
         """
+        global _fallback_logged
+
         # Check if Redis is available
         if not cache_manager.redis:
-            logger.warning("Redis not available, skipping rate limiting")
-            return True, 0
+            if not _fallback_logged:
+                logger.warning(
+                    "Redis not available, using in-memory rate limiting fallback"
+                )
+                _fallback_logged = True
+            current = _fallback_limiter.increment(key, window)
+            if current > limit:
+                logger.warning(
+                    f"Rate limit exceeded (fallback) | "
+                    f"Type: {limit_type} | "
+                    f"Identifier: {identifier} | "
+                    f"Current: {current} | "
+                    f"Limit: {limit} | "
+                    f"Window: {window}s"
+                )
+                return False, current
+            return True, current
+
+        # Redis is available — clear fallback log flag for next outage
+        if _fallback_logged:
+            logger.info(
+                "Redis connection restored, switching back to Redis rate limiting"
+            )
+            _fallback_logged = False
 
         # Atomically increment counter and set TTL
         current = await cache_manager.redis.eval(RATE_LIMIT_SCRIPT, 1, key, window)
