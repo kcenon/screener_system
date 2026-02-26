@@ -9,9 +9,9 @@ from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import UnauthorizedException
-from app.services.auth_service import AuthService
 from app.db.models import User, UserSession
 from app.schemas import TokenResponse, UserCreate, UserLogin
+from app.services.auth_service import AuthService
 
 
 class TestAuthService:

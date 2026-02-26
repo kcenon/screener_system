@@ -10,11 +10,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.endpoints.webhooks import (
-    _handle_invoice_payment_failed,
-    _handle_invoice_upcoming,
-    _handle_trial_will_end,
-)
+from app.api.v1.endpoints.webhooks import (_handle_invoice_payment_failed,
+                                           _handle_invoice_upcoming,
+                                           _handle_trial_will_end)
 
 
 @pytest.fixture
@@ -77,9 +75,7 @@ class TestWebhookPaymentFailedEmail:
         mock_db.execute = AsyncMock(return_value=mock_result)
         mock_db.flush = AsyncMock()
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_payment_failure_email = AsyncMock(return_value=True)
             MockEmailService.return_value = mock_email
@@ -109,9 +105,7 @@ class TestWebhookPaymentFailedEmail:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_payment_failure_email = AsyncMock()
             MockEmailService.return_value = mock_email
@@ -140,9 +134,7 @@ class TestWebhookUpcomingInvoiceEmail:
         mock_result.scalar_one_or_none.return_value = mock_user
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_upcoming_invoice_email = AsyncMock(return_value=True)
             MockEmailService.return_value = mock_email
@@ -163,18 +155,14 @@ class TestWebhookUpcomingInvoiceEmail:
             "customer": "cus_test123",
             "amount_due": 1999,
             "currency": "usd",
-            "period_end": int(
-                datetime(2025, 4, 15, tzinfo=timezone.utc).timestamp()
-            ),
+            "period_end": int(datetime(2025, 4, 15, tzinfo=timezone.utc).timestamp()),
         }
 
         mock_result = MagicMock()
         mock_result.scalar_one_or_none.return_value = mock_user
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_upcoming_invoice_email = AsyncMock(return_value=True)
             MockEmailService.return_value = mock_email
@@ -198,9 +186,7 @@ class TestWebhookUpcomingInvoiceEmail:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_upcoming_invoice_email = AsyncMock()
             MockEmailService.return_value = mock_email
@@ -220,9 +206,7 @@ class TestWebhookTrialEndingEmail:
         """Trial ending sends notification email with plan name."""
         subscription_data = {
             "id": "sub_test456",
-            "trial_end": int(
-                datetime(2025, 2, 15, tzinfo=timezone.utc).timestamp()
-            ),
+            "trial_end": int(datetime(2025, 2, 15, tzinfo=timezone.utc).timestamp()),
         }
 
         mock_result = MagicMock()
@@ -233,9 +217,7 @@ class TestWebhookTrialEndingEmail:
         ]
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_trial_ending_email = AsyncMock(return_value=True)
             MockEmailService.return_value = mock_email
@@ -260,9 +242,7 @@ class TestWebhookTrialEndingEmail:
         mock_result.scalar_one_or_none.return_value = None
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_trial_ending_email = AsyncMock()
             MockEmailService.return_value = mock_email
@@ -272,9 +252,7 @@ class TestWebhookTrialEndingEmail:
             mock_email.send_trial_ending_email.assert_not_called()
 
     @pytest.mark.asyncio
-    async def test_no_email_when_user_not_found(
-        self, mock_db, mock_subscription
-    ):
+    async def test_no_email_when_user_not_found(self, mock_db, mock_subscription):
         """No email sent when user is not found for subscription."""
         subscription_data = {
             "id": "sub_test456",
@@ -288,9 +266,7 @@ class TestWebhookTrialEndingEmail:
         ]
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_trial_ending_email = AsyncMock()
             MockEmailService.return_value = mock_email
@@ -306,9 +282,7 @@ class TestWebhookTrialEndingEmail:
         """Uses 'Premium' as default plan name when plan is not found."""
         subscription_data = {
             "id": "sub_test456",
-            "trial_end": int(
-                datetime(2025, 2, 15, tzinfo=timezone.utc).timestamp()
-            ),
+            "trial_end": int(datetime(2025, 2, 15, tzinfo=timezone.utc).timestamp()),
         }
 
         mock_result = MagicMock()
@@ -319,9 +293,7 @@ class TestWebhookTrialEndingEmail:
         ]
         mock_db.execute = AsyncMock(return_value=mock_result)
 
-        with patch(
-            "app.api.v1.endpoints.webhooks.EmailService"
-        ) as MockEmailService:
+        with patch("app.api.v1.endpoints.webhooks.EmailService") as MockEmailService:
             mock_email = MagicMock()
             mock_email.send_trial_ending_email = AsyncMock(return_value=True)
             MockEmailService.return_value = mock_email

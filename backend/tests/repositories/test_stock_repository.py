@@ -6,8 +6,8 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db.models import CalculatedIndicator, DailyPrice, Stock
 from app.repositories.stock_repository import StockRepository
-from app.db.models import Stock, DailyPrice, CalculatedIndicator
 
 
 class TestStockRepository:

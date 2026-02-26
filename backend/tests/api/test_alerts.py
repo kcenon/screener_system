@@ -7,9 +7,10 @@ covering CRUD operations, validation, authorization, and edge cases.
 from decimal import Decimal
 
 import pytest
-from app.db.models import Alert, Stock, User
 from fastapi import status
 from sqlalchemy import select
+
+from app.db.models import Alert, Stock, User
 
 pytestmark = pytest.mark.asyncio
 

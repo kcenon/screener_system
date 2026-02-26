@@ -1,9 +1,10 @@
 from unittest.mock import MagicMock
 
 import pytest
+from sqlalchemy.orm import Session
+
 from app.schemas.recommendation import UserBehaviorEventCreate
 from app.services.recommendation_service import RecommendationService
-from sqlalchemy.orm import Session
 
 
 @pytest.fixture

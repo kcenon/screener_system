@@ -2,10 +2,11 @@
 
 from typing import TYPE_CHECKING
 
-from app.db.base import Base, TimestampMixin
 from sqlalchemy import (Boolean, CheckConstraint, Column, ForeignKey, Integer,
                         String, Text)
 from sqlalchemy.orm import relationship
+
+from app.db.base import Base, TimestampMixin
 
 if TYPE_CHECKING:
     from app.db.models.holding import Holding  # noqa: F401

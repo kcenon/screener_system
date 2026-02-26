@@ -3,11 +3,12 @@ from typing import List
 
 import numpy as np
 import pandas as pd
-from app.db.models.calculated_indicator import CalculatedIndicator
-from app.db.models.ml_feature import MLFeature
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.models.calculated_indicator import CalculatedIndicator
+from app.db.models.ml_feature import MLFeature
 
 
 class FeatureEngineer:

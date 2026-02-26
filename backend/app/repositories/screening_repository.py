@@ -2,9 +2,10 @@
 
 from typing import Any, Dict, List, Set, Tuple
 
-from app.schemas.screening import FilterRange, ScreeningFilters
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.schemas.screening import FilterRange, ScreeningFilters
 
 
 class ScreeningRepository:
@@ -154,7 +155,6 @@ class ScreeningRepository:
         params = {}
 
         # Market filter (parameterized)
-
 
         if filters.market and filters.market != "ALL":
             conditions.append("market = :market")

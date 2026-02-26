@@ -3,10 +3,11 @@
 from decimal import Decimal
 from typing import Optional
 
-from app.db.base import Base, TimestampMixin
 from sqlalchemy import (BigInteger, CheckConstraint, Column, Date, ForeignKey,
                         Integer, Numeric, String)
 from sqlalchemy.orm import relationship
+
+from app.db.base import Base, TimestampMixin
 
 
 class FinancialStatement(Base, TimestampMixin):

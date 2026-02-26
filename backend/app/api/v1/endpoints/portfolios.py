@@ -2,6 +2,9 @@
 
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import CurrentUser
 from app.db.session import get_db
 from app.schemas.portfolio import (HoldingCreate, HoldingListResponse,
@@ -13,8 +16,6 @@ from app.schemas.portfolio import (HoldingCreate, HoldingListResponse,
                                    TransactionListResponse,
                                    TransactionResponse)
 from app.services.portfolio_service import PortfolioService
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/portfolios", tags=["portfolios"])
 

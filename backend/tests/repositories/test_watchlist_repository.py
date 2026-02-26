@@ -3,13 +3,12 @@
 from datetime import datetime, timedelta
 
 import pytest
+
 from app.db.models import Stock, User, UserActivity, UserPreferences
 from app.db.models.watchlist import Watchlist
-from app.repositories.watchlist_repository import (
-    UserActivityRepository,
-    UserPreferencesRepository,
-    WatchlistRepository,
-)
+from app.repositories.watchlist_repository import (UserActivityRepository,
+                                                   UserPreferencesRepository,
+                                                   WatchlistRepository)
 
 
 @pytest.fixture

@@ -2,11 +2,12 @@
 
 from typing import Optional
 
-from app.db.models import Holding, Portfolio, Transaction
 from sqlalchemy import delete as sql_delete
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+
+from app.db.models import Holding, Portfolio, Transaction
 
 
 class PortfolioRepository:

@@ -163,7 +163,10 @@ class TestEmailService:
         assert call_kwargs["to_email"] == "user@example.com"
         assert call_kwargs["subject"] == "Verify Your Email Address"
         assert "test-token-123" in call_kwargs["body"]
-        assert "https://example.com/auth/verify-email?token=test-token-123" in call_kwargs["body"]
+        assert (
+            "https://example.com/auth/verify-email?token=test-token-123"
+            in call_kwargs["body"]
+        )
 
     @pytest.mark.asyncio
     async def test_send_password_reset_email(self, email_service):
@@ -182,7 +185,10 @@ class TestEmailService:
         assert call_kwargs["to_email"] == "user@example.com"
         assert call_kwargs["subject"] == "Reset Your Password"
         assert "reset-token-456" in call_kwargs["body"]
-        assert "https://example.com/auth/reset-password?token=reset-token-456" in call_kwargs["body"]
+        assert (
+            "https://example.com/auth/reset-password?token=reset-token-456"
+            in call_kwargs["body"]
+        )
 
     @pytest.mark.asyncio
     async def test_send_password_changed_email(self, email_service):
@@ -233,9 +239,7 @@ class TestEmailService:
 
             mock_server.ehlo.assert_called()
             mock_server.starttls.assert_called_once()
-            mock_server.login.assert_called_once_with(
-                "user@example.com", "secret"
-            )
+            mock_server.login.assert_called_once_with("user@example.com", "secret")
             mock_server.sendmail.assert_called_once()
 
     @pytest.mark.asyncio

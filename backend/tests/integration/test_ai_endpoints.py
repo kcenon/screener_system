@@ -1,9 +1,10 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from httpx import ASGITransport, AsyncClient
+
 from app.api.dependencies import get_current_user
 from app.main import app
-from httpx import ASGITransport, AsyncClient
 
 # Mock User
 mock_user = MagicMock()

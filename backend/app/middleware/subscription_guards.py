@@ -4,12 +4,13 @@ import functools
 import logging
 from typing import Callable, List, Optional
 
+from fastapi import Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.dependencies import get_current_active_user
 from app.db.models import User
 from app.db.session import get_db
 from app.services import SubscriptionService
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

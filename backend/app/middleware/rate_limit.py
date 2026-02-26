@@ -2,12 +2,13 @@
 
 from typing import Callable, Dict, Optional
 
-from app.core.cache import cache_manager
-from app.core.config import settings
-from app.core.logging import logger
 from fastapi import Request, Response, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
+
+from app.core.cache import cache_manager
+from app.core.config import settings
+from app.core.logging import logger
 
 # Lua script for atomic incr+expire operation
 # This ensures that the counter is incremented and TTL is set atomically,

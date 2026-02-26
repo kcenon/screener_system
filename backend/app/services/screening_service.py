@@ -6,13 +6,14 @@ import logging
 import time
 from typing import Any, Dict
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.cache import CacheManager
 from app.repositories.screening_repository import ScreeningRepository
 from app.schemas.screening import (ScreenedStock, ScreeningFilters,
                                    ScreeningMetadata, ScreeningRequest,
                                    ScreeningResponse, ScreeningTemplate,
                                    ScreeningTemplateList)
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

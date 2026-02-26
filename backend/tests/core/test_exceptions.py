@@ -12,6 +12,12 @@ Test Coverage:
 """
 
 import pytest
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.testclient import TestClient
+from pydantic import BaseModel, field_validator
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.api.error_handlers import (app_exception_handler,
                                     generic_exception_handler,
                                     sqlalchemy_exception_handler,
@@ -22,11 +28,6 @@ from app.core.exceptions import (AppException, BadRequestException,
                                  ForbiddenException, NotFoundException,
                                  RateLimitException, UnauthorizedException,
                                  ValidationException)
-from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
-from fastapi.testclient import TestClient
-from pydantic import BaseModel, field_validator
-from sqlalchemy.exc import SQLAlchemyError
 
 # ============================================================================
 # TEST FIXTURES

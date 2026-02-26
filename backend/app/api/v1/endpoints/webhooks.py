@@ -5,6 +5,10 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.exceptions import BadRequestException
 from app.db.models import (Payment, PaymentStatus, SubscriptionPlan, User,
                            UserSubscription)
@@ -12,9 +16,6 @@ from app.db.session import get_db
 from app.schemas import StripeWebhookResponse
 from app.services import StripeService
 from app.services.email_service import EmailService
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
@@ -423,9 +424,7 @@ async def _handle_trial_will_end(db: AsyncSession, subscription: dict) -> None:
     if not user_subscription:
         return
 
-    result = await db.execute(
-        select(User).where(User.id == user_subscription.user_id)
-    )
+    result = await db.execute(select(User).where(User.id == user_subscription.user_id))
     user = result.scalar_one_or_none()
 
     if not user:
@@ -433,9 +432,7 @@ async def _handle_trial_will_end(db: AsyncSession, subscription: dict) -> None:
 
     # Get plan name
     result = await db.execute(
-        select(SubscriptionPlan).where(
-            SubscriptionPlan.id == user_subscription.plan_id
-        )
+        select(SubscriptionPlan).where(SubscriptionPlan.id == user_subscription.plan_id)
     )
     plan = result.scalar_one_or_none()
     plan_name = plan.name if plan else "Premium"

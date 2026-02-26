@@ -3,10 +3,11 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
-from app.db.base import Base
 from sqlalchemy import (Boolean, CheckConstraint, Column, DateTime, ForeignKey,
                         Integer, String, Text, text)
 from sqlalchemy.orm import relationship
+
+from app.db.base import Base
 
 if TYPE_CHECKING:
     from app.db.models.alert import Alert  # noqa: F401

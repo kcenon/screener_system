@@ -2,6 +2,8 @@
 
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+
 from app.api.dependencies import (CurrentActiveUser, get_auth_service,
                                   get_email_verification_service,
                                   get_password_reset_service)
@@ -13,7 +15,6 @@ from app.schemas import (EmailVerificationRequest, PasswordResetConfirm,
                          UserResponse, VerificationStatusResponse)
 from app.services import (AuthService, EmailVerificationService,
                           PasswordResetService)
-from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 

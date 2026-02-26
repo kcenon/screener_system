@@ -8,9 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.cache import CacheManager
 from app.core.exceptions import NotFoundException
+from app.db.models import CalculatedIndicator, DailyPrice, Stock
+from app.schemas import StockDetail, StockListResponse, StockSearchResponse
 from app.services.stock_service import StockService
-from app.db.models import Stock, DailyPrice, CalculatedIndicator
-from app.schemas import StockListResponse, StockDetail, StockSearchResponse
 
 
 class TestStockService:

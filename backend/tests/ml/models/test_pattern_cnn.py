@@ -37,6 +37,7 @@ class TestPatternRecognitionCNN:
             # Mock predict return
             def predict_side_effect(x, *args, **kwargs):
                 return np.zeros((x.shape[0], 10))
+
             mock_model.predict.side_effect = predict_side_effect
 
             # Mock fit return

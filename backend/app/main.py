@@ -26,6 +26,12 @@ Attributes:
 
 from contextlib import asynccontextmanager
 
+from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from sqlalchemy.exc import SQLAlchemyError
+
 from app.api.error_handlers import (app_exception_handler,
                                     generic_exception_handler,
                                     sqlalchemy_exception_handler,
@@ -42,11 +48,6 @@ from app.core.logging import logger
 from app.middleware.logging import LoggingMiddleware
 from app.middleware.metrics import PrometheusMetricsMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
-from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
-from sqlalchemy.exc import SQLAlchemyError
 
 
 @asynccontextmanager

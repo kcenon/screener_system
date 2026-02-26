@@ -1,11 +1,12 @@
 """Health check endpoints"""
 
-from app.core.cache import CacheManager, get_cache
-from app.db.session import get_db
 from fastapi import APIRouter, Depends, Response, status
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.cache import CacheManager, get_cache
+from app.db.session import get_db
 
 router = APIRouter(tags=["health"])
 

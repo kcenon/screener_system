@@ -5,9 +5,10 @@ import json
 from typing import Any, Callable, Dict, Optional, Set
 
 import redis.asyncio as redis
+from redis.asyncio.client import PubSub
+
 from app.core.config import settings
 from app.core.logging import logger
-from redis.asyncio.client import PubSub
 
 
 class RedisPubSubClient:

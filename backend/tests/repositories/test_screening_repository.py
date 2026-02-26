@@ -3,9 +3,10 @@
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.repositories.screening_repository import ScreeningRepository
 from app.schemas.screening import FilterRange, ScreeningFilters
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class TestScreeningRepository:

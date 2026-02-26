@@ -4,14 +4,15 @@ import json
 from datetime import datetime
 from typing import Optional
 
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+# from fastapi import Depends, status  # Unused
+from jose import JWTError, jwt
+
 from app.core.config import settings
 from app.core.logging import logger
 from app.core.websocket import connection_manager
 from app.schemas.websocket import (MessageType, PongMessage, SubscribeRequest,
                                    SubscriptionResponse, UnsubscribeRequest)
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-# from fastapi import Depends, status  # Unused
-from jose import JWTError, jwt
 
 # from app.schemas.websocket import ErrorMessage  # Unused
 

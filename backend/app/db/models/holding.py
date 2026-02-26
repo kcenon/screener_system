@@ -3,10 +3,11 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from app.db.base import BaseModel
 from sqlalchemy import (CheckConstraint, Column, Float, ForeignKey, Integer,
                         String)
 from sqlalchemy.orm import relationship
+
+from app.db.base import BaseModel
 
 if TYPE_CHECKING:
     from app.db.models.portfolio import Portfolio  # noqa: F401

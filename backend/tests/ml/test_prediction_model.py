@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import pytest
+
 from app.ml.prediction_model import StockPredictionModel
 
 

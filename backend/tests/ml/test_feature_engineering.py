@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock, MagicMock
 import numpy as np
 import pandas as pd
 import pytest
+
 from app.ml.feature_engineering import FeatureEngineer
 
 
@@ -50,7 +51,6 @@ async def test_feature_engineering_pipeline(sample_data):
     df_derived = engineer.create_derived_features(df_clean)
     assert "per_lag1" in df_derived.columns
     assert "close_roll5_mean" in df_derived.columns
-
 
     # 3. Test Lag Features
     # Check lag1 is shifted correctly

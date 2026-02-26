@@ -1,4 +1,5 @@
 import pytest
+
 from app.schemas.pattern import AlertConfigCreate
 from app.services.pattern_recognition_service import PatternRecognitionService
 

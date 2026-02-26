@@ -3,8 +3,9 @@
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
-from app.db.base import BaseModel
 from sqlalchemy import JSON, Boolean, Column, DateTime, String, Text
+
+from app.db.base import BaseModel
 
 # from sqlalchemy.dialects.postgresql import JSONB
 

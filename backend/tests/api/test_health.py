@@ -3,10 +3,11 @@
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from app.core.cache import CacheManager
-from app.db.session import get_db
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.cache import CacheManager
+from app.db.session import get_db
 
 
 class TestBasicHealthCheck:

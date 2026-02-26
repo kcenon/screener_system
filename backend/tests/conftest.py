@@ -4,16 +4,14 @@ import asyncio
 import os
 import sys
 from typing import AsyncGenerator
-from unittest.mock import MagicMock
+# Mock Redis connection to prevent startup failures
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool, StaticPool
-
-# Mock Redis connection to prevent startup failures
-from unittest.mock import AsyncMock
 
 from app.core.cache import cache_manager
 from app.core.redis_pubsub import redis_pubsub
@@ -56,18 +54,18 @@ from app.main import app  # noqa: E402
 # 2. Use DATABASE_URL env var if set (CI/Docker)
 # 3. Fallback to SQLite in-memory for local testing
 DEFAULT_TEST_DB_URL = os.getenv(
-    "TEST_DATABASE_URL",
-    os.getenv(
-        "DATABASE_URL",
-        "sqlite+aiosqlite:///:memory:"
-    )
+    "TEST_DATABASE_URL", os.getenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
 )
 
 # Handle Postgres URL format for asyncpg
 if DEFAULT_TEST_DB_URL.startswith("postgresql://"):
-    DEFAULT_TEST_DB_URL = DEFAULT_TEST_DB_URL.replace("postgresql://", "postgresql+asyncpg://")
+    DEFAULT_TEST_DB_URL = DEFAULT_TEST_DB_URL.replace(
+        "postgresql://", "postgresql+asyncpg://"
+    )
 elif DEFAULT_TEST_DB_URL.startswith("postgres://"):
-    DEFAULT_TEST_DB_URL = DEFAULT_TEST_DB_URL.replace("postgres://", "postgresql+asyncpg://")
+    DEFAULT_TEST_DB_URL = DEFAULT_TEST_DB_URL.replace(
+        "postgres://", "postgresql+asyncpg://"
+    )
 
 TEST_DATABASE_URL = DEFAULT_TEST_DB_URL
 

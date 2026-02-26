@@ -273,6 +273,7 @@ class TestRateLimitMiddlewareAsync:
     ):
         """Test that concurrent requests properly enforce rate limits"""
         import asyncio
+
         from httpx import ASGITransport, AsyncClient
 
         # Lower the limit for testing to avoid high concurrency issues

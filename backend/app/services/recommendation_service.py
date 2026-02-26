@@ -1,9 +1,10 @@
 from typing import List
 
+from sqlalchemy.orm import Session
+
 from app.db.models.user_behavior import UserBehaviorEvent
 from app.schemas.recommendation import (RecommendationResponse,
                                         UserBehaviorEventCreate)
-from sqlalchemy.orm import Session
 
 
 class RecommendationService:

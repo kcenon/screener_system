@@ -1,10 +1,11 @@
 """Tests for authentication API endpoints"""
 
 import pytest
-from app.core.security import create_access_token, get_password_hash
-from app.db.models import User
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.security import create_access_token, get_password_hash
+from app.db.models import User
 
 
 class TestAuthRegistration:

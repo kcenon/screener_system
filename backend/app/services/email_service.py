@@ -24,12 +24,8 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from tenacity import (
-    retry,
-    retry_if_exception_type,
-    stop_after_attempt,
-    wait_exponential,
-)
+from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
+                      wait_exponential)
 
 logger = logging.getLogger(__name__)
 
@@ -74,9 +70,7 @@ class EmailService:
                 "EmailService initialized (disabled — emails will be logged only)"
             )
 
-    def _render_template(
-        self, template_name: str, context: Dict
-    ) -> Optional[str]:
+    def _render_template(self, template_name: str, context: Dict) -> Optional[str]:
         """Render an HTML email template with the given context.
 
         Args:
@@ -188,7 +182,9 @@ class EmailService:
             logger.info(f"Email sent: to={to_email}, subject='{subject}'")
             return True
         except Exception:
-            logger.exception(f"Failed to send email: to={to_email}, subject='{subject}'")
+            logger.exception(
+                f"Failed to send email: to={to_email}, subject='{subject}'"
+            )
             return False
 
     async def send_verification_email(

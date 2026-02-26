@@ -4,10 +4,11 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
-from app.db.base import BaseModel
 from sqlalchemy import (Boolean, CheckConstraint, Column, DateTime, ForeignKey,
                         Integer, Numeric, String)
 from sqlalchemy.orm import relationship
+
+from app.db.base import BaseModel
 
 if TYPE_CHECKING:
     from app.db.models.notification import Notification  # noqa: F401
