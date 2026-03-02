@@ -74,7 +74,7 @@ mypy==1.19.1
 isort==7.0.0
 
 # Utilities
-python-dotenv==1.2.1  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
+python-dotenv==1.2.2  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
 pyyaml==6.0.3
 email-validator==2.3.0
 zipp>=3.19.1
