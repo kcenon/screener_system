@@ -16,7 +16,7 @@ psycopg2-binary==2.9.11
 greenlet==3.3.0  # Required for SQLAlchemy asyncio
 
 # Cache
-redis[hiredis]==5.0.1
+redis[hiredis]==7.2.1
 
 # Authentication & Security
 python-jose[cryptography]==3.5.0  # Security: Fixed algorithm confusion and JWT bomb (PYSEC-2024-232, PYSEC-2024-233)
