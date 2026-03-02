@@ -71,7 +71,7 @@ freezegun==1.5.5
 black==25.11.0  # Security: Fixed ReDoS (PYSEC-2024-48)
 flake8==7.3.0
 mypy==1.19.1
-isort==7.0.0
+isort==8.0.1
 
 # Utilities
 python-dotenv==1.2.1  # Upgraded: Required by mlflow 3.x (fastmcp dependency)
