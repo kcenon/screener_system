@@ -101,16 +101,17 @@ class Settings(BaseSettings):
         return []  # Default to empty list if neither string nor list
 
     # ========================================================================
-    # RATE LIMITING
+    # RATE LIMITING (single source of truth — do not duplicate in docker-compose)
+    # Override via environment variables or .env file when needed.
     # ========================================================================
 
-    # General API rate limits (requests per hour)
-    RATE_LIMIT_FREE: int = 100  # 100 req/hour
-    RATE_LIMIT_BASIC: int = 1000  # 1000 req/hour
-    RATE_LIMIT_PRO: int = 10000  # 10000 req/hour
+    # General API rate limits (requests per window)
+    RATE_LIMIT_FREE: int = 100  # Free tier: 100 req/window
+    RATE_LIMIT_BASIC: int = 1000  # Basic tier: 1000 req/window
+    RATE_LIMIT_PRO: int = 10000  # Pro tier: 10000 req/window
     RATE_LIMIT_WINDOW: int = 3600  # Rate limit window in seconds (1 hour)
 
-    # Per-endpoint rate limits (requests per hour)
+    # Per-endpoint rate limits (requests per window)
     # These limits are in addition to general tier limits
     RATE_LIMIT_SCREENING: int = 50  # Screening queries (more expensive)
     RATE_LIMIT_STOCK_DETAIL: int = 200  # Stock detail queries
