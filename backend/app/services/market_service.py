@@ -90,7 +90,7 @@ class MarketService:
     # Market Indices Operations
     # ========================================================================
 
-    async def get_market_indices(self) -> Dict[str, List[Dict]]:
+    async def get_market_indices(self) -> Dict:
         """
         Get current market indices with sparklines
 

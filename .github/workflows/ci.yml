@@ -126,8 +126,7 @@ jobs:
 
       - name: Run mypy
         working-directory: backend
-        run: mypy app --ignore-missing-imports || echo "⚠️ Type checking issues found (non-blocking)"
-        continue-on-error: true
+        run: mypy app --ignore-missing-imports
 
   data-pipeline-test:
     name: Data Pipeline Tests

@@ -59,8 +59,8 @@ async def stripe_webhook(
             detail="Invalid webhook signature",
         ) from e
 
-    event_id = event.get("id")
-    event_type = event.get("type")
+    event_id: str = event.get("id", "")
+    event_type: str = event.get("type", "")
 
     logger.info(f"Received Stripe webhook: {event_type} (ID: {event_id})")
 
@@ -313,7 +313,7 @@ async def _handle_subscription_created(db: AsyncSession, subscription: dict) -> 
 async def _handle_subscription_updated(db: AsyncSession, subscription: dict) -> None:
     """Handle subscription update"""
     stripe_subscription_id = subscription.get("id")
-    status = subscription.get("status")
+    status: str = subscription.get("status", "")
 
     logger.info(f"Subscription updated: {stripe_subscription_id} to status {status}")
 
@@ -341,19 +341,24 @@ async def _handle_subscription_updated(db: AsyncSession, subscription: dict) -> 
     }
 
     user_subscription.status = status_map.get(status, status)
-    user_subscription.current_period_start = datetime.fromtimestamp(
-        subscription.get("current_period_start"), tz=timezone.utc
-    )
-    user_subscription.current_period_end = datetime.fromtimestamp(
-        subscription.get("current_period_end"), tz=timezone.utc
-    )
+    period_start = subscription.get("current_period_start")
+    if period_start is not None:
+        user_subscription.current_period_start = datetime.fromtimestamp(
+            period_start, tz=timezone.utc
+        )
+    period_end = subscription.get("current_period_end")
+    if period_end is not None:
+        user_subscription.current_period_end = datetime.fromtimestamp(
+            period_end, tz=timezone.utc
+        )
     user_subscription.cancel_at_period_end = subscription.get(
         "cancel_at_period_end", False
     )
 
-    if subscription.get("canceled_at"):
+    canceled_at = subscription.get("canceled_at")
+    if canceled_at is not None:
         user_subscription.canceled_at = datetime.fromtimestamp(
-            subscription.get("canceled_at"), tz=timezone.utc
+            canceled_at, tz=timezone.utc
         )
 
     await db.flush()
