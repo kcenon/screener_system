@@ -326,7 +326,11 @@ class ConnectionManager:
             ConnectionRefusedError: If per-IP connection limit is exceeded
         """
         # Check per-IP connection limit before accepting
-        if client_ip and len(self._connections_by_ip[client_ip]) >= self._max_connections_per_ip:
+        if (
+            client_ip
+            and len(self._connections_by_ip[client_ip])
+            >= self._max_connections_per_ip
+        ):
             logger.warning(
                 f"WebSocket connection rejected: IP {client_ip} "
                 f"exceeded limit of {self._max_connections_per_ip} connections"
