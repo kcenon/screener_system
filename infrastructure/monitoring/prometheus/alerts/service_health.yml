@@ -1,0 +1,101 @@
+# ============================================================================
+# Service Health Alert Rules
+# ============================================================================
+# Alerts for service availability and basic health checks.
+
+groups:
+  - name: service_health
+    rules:
+      # ------------------------------------------------------------------
+      # Target Down
+      # ------------------------------------------------------------------
+
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.job }} is down"
+          description: >-
+            {{ $labels.job }} (instance {{ $labels.instance }}) has been
+            unreachable for more than 1 minute.
+
+      # ------------------------------------------------------------------
+      # Backend API Health
+      # ------------------------------------------------------------------
+
+      - alert: BackendApiDown
+        expr: up{job="backend"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "Backend API is down"
+          description: >-
+            The FastAPI backend has been unreachable for more than 30 seconds.
+            Immediate investigation required.
+
+      # ------------------------------------------------------------------
+      # PostgreSQL Down
+      # ------------------------------------------------------------------
+
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "PostgreSQL exporter is down"
+          description: >-
+            The postgres-exporter has been unreachable for more than 1 minute.
+            Database may be unavailable.
+
+      # ------------------------------------------------------------------
+      # Redis Down
+      # ------------------------------------------------------------------
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis exporter is down"
+          description: >-
+            The redis-exporter has been unreachable for more than 1 minute.
+            Cache layer may be unavailable.
+
+      # ------------------------------------------------------------------
+      # Nginx Down
+      # ------------------------------------------------------------------
+
+      - alert: NginxDown
+        expr: up{job="nginx"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: nginx
+        annotations:
+          summary: "Nginx exporter is down"
+          description: >-
+            The nginx-exporter has been unreachable for more than 1 minute.
+            Reverse proxy may be unavailable.
+
+      # ------------------------------------------------------------------
+      # Prometheus Configuration Reload Failure
+      # ------------------------------------------------------------------
+
+      - alert: PrometheusConfigReloadFailed
+        expr: prometheus_config_last_reload_successful != 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus configuration reload failed"
+          description: >-
+            Prometheus failed to reload its configuration.
+            Check for syntax errors in prometheus.yml or alert rules.
