@@ -13,16 +13,16 @@ global:
 # Retain data for 15 days (default is 15d anyway)
 # --storage.tsdb.retention.time=15d (set in docker-compose)
 
-# Alertmanager configuration (optional)
-# alerting:
-#   alertmanagers:
-#     - static_configs:
-#         - targets:
-#             - alertmanager:9093
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
 
 # Rule files
 rule_files:
-  # - "alerts/*.yml"
+  - "alerts/*.yml"
 
 # Scrape configurations
 scrape_configs:

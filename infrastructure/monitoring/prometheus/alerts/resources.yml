@@ -1,0 +1,112 @@
+# ============================================================================
+# Resource Alert Rules
+# ============================================================================
+# Alerts for disk space, memory, and connection pool exhaustion.
+
+groups:
+  - name: resources
+    rules:
+      # ------------------------------------------------------------------
+      # Prometheus Storage (Disk Space)
+      # ------------------------------------------------------------------
+
+      - alert: PrometheusStorageHigh
+        expr: >-
+          (prometheus_tsdb_storage_blocks_bytes / 1024 / 1024 / 1024) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus storage exceeds 10 GB"
+          description: >-
+            Prometheus TSDB storage is using {{ $value | humanize1024 }}B.
+            Consider reducing retention or adding disk space.
+
+      # ------------------------------------------------------------------
+      # Database Connection Pool
+      # ------------------------------------------------------------------
+
+      - alert: DbConnectionPoolExhaustion
+        expr: >-
+          db_connections_active
+          /
+          (db_connections_active + db_connections_idle)
+          > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Database connection pool near exhaustion"
+          description: >-
+            Active database connections exceed 85% of the total pool
+            (active: {{ $value | humanizePercentage }}).
+            The pool may soon be exhausted.
+
+      - alert: DbConnectionPoolFull
+        expr: db_connections_idle == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection pool fully exhausted"
+          description: >-
+            There are zero idle database connections for the last 2 minutes.
+            New queries may be blocked waiting for a connection.
+
+      # ------------------------------------------------------------------
+      # Redis Memory
+      # ------------------------------------------------------------------
+
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis memory usage above 85%"
+          description: >-
+            Redis memory usage is {{ $value | humanizePercentage }} of the
+            configured maximum. Evictions may start soon.
+
+      - alert: CacheMemoryHigh
+        expr: cache_memory_usage_bytes > 500 * 1024 * 1024
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Application cache memory exceeds 500 MB"
+          description: >-
+            Application-level cache memory is using
+            {{ $value | humanize1024 }}B.
+
+      # ------------------------------------------------------------------
+      # PostgreSQL Replication Lag (for future HA setups)
+      # ------------------------------------------------------------------
+
+      - alert: PostgresReplicationLag
+        expr: pg_replication_lag > 30
+        for: 5m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL replication lag > 30s"
+          description: >-
+            Replication lag is {{ $value | humanizeDuration }}.
+            Read replicas may be serving stale data.
+
+      # ------------------------------------------------------------------
+      # Too Many WebSocket Connections
+      # ------------------------------------------------------------------
+
+      - alert: HighWebSocketConnections
+        expr: websocket_connections_active > 500
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of active WebSocket connections"
+          description: >-
+            There are {{ $value }} active WebSocket connections.
+            This may indicate abnormal client behavior or a connection leak.
