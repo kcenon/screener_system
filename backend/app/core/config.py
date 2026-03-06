@@ -153,6 +153,7 @@ class Settings(BaseSettings):
 
     # WebSocket limits (DoS protection)
     WEBSOCKET_MAX_MESSAGE_SIZE: int = 65536  # 64KB max message size
+    WEBSOCKET_MAX_CONNECTIONS_PER_IP: int = 5  # Max concurrent connections per IP
     WEBSOCKET_MAX_SUBSCRIPTIONS_PER_CONNECTION: int = (
         100  # Max subscriptions per connection
     )
