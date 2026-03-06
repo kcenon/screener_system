@@ -27,7 +27,7 @@ Example:
 """
 
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Dict
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
