@@ -152,7 +152,7 @@ class ScreeningRepository:
             Tuple of (conditions list, parameters dict)
         """
         conditions = []
-        params = {}
+        params: Dict[str, Any] = {}
 
         # Market filter (parameterized)
 
