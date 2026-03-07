@@ -115,7 +115,7 @@ class ModelService:
             # Handle different return types (numpy array, dataframe, list)
             if isinstance(prediction_result, np.ndarray):
                 if prediction_result.size == 1:
-                    prediction_proba = float(prediction_result[0])
+                    prediction_proba = float(prediction_result.item())
                 else:
                     prediction_proba = float(prediction_result[0][0])
             else:
