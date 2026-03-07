@@ -133,7 +133,7 @@ class PrometheusMetricsMiddleware(BaseHTTPMiddleware):
             Normalized path with placeholders
         """
         parts = path.split("/")
-        normalized_parts = []
+        normalized_parts: list[str] = []
 
         for i, part in enumerate(parts):
             # Empty part (leading slash)

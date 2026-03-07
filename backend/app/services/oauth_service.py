@@ -166,6 +166,10 @@ class OAuthService:
                 expires_in=token_response.expires_in,
             )
 
+        # Ensure user was resolved
+        if not user:
+            raise BadRequestException("Failed to find or create user from OAuth info")
+
         # Update last login
         user.update_last_login()
         await self.user_repo.update(user)
@@ -358,7 +362,12 @@ class OAuthService:
             await self.social_account_repo.update(social_account)
 
             # Return existing user
-            return await self.user_repo.get_by_id(social_account.user_id)
+            user = await self.user_repo.get_by_id(social_account.user_id)
+            if not user:
+                raise BadRequestException(
+                    "User associated with social account not found"
+                )
+            return user
 
         # Check if user with same email exists
         user = None

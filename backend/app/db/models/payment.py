@@ -158,8 +158,9 @@ class Payment(BaseModel):
     @property
     def net_amount(self) -> Decimal:
         """Calculate net amount after refunds"""
-        if self.refund_amount:
-            return self.amount_decimal - self.refund_amount_decimal
+        refund = self.refund_amount_decimal
+        if self.refund_amount and refund is not None:
+            return self.amount_decimal - refund
         return self.amount_decimal
 
     def mark_as_succeeded(self) -> None:
