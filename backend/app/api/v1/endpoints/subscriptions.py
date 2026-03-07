@@ -98,6 +98,11 @@ async def get_current_subscription(
     """Get current user's subscription"""
     subscription = await subscription_service.get_user_subscription(current_user.id)
     plan = await subscription_service.get_user_plan(current_user.id)
+    if not plan:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Subscription plan not found",
+        )
 
     if subscription:
         return SubscriptionResponse(
@@ -168,6 +173,11 @@ async def subscribe(
         )
 
         plan = await subscription_service.get_plan_by_id(subscription.plan_id)
+        if not plan:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Subscription plan not found",
+            )
 
         return SubscriptionActionResponse(
             success=True,
@@ -223,6 +233,11 @@ async def cancel_subscription(
         )
 
         plan = await subscription_service.get_plan_by_id(subscription.plan_id)
+        if not plan:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Subscription plan not found",
+            )
 
         message = (
             "Subscription canceled immediately"
@@ -286,6 +301,11 @@ async def upgrade_subscription(
         )
 
         plan = await subscription_service.get_plan_by_id(subscription.plan_id)
+        if not plan:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Subscription plan not found",
+            )
 
         return SubscriptionActionResponse(
             success=True,

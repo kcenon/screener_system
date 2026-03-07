@@ -85,15 +85,8 @@ services:
       ENVIRONMENT: ${ENVIRONMENT:-development}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
 
-      # Rate Limiting
-      RATE_LIMIT_FREE: ${RATE_LIMIT_FREE:-100}
-      RATE_LIMIT_BASIC: ${RATE_LIMIT_BASIC:-500}
-      RATE_LIMIT_PRO: ${RATE_LIMIT_PRO:-2000}
-      RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW:-60}
-      RATE_LIMIT_SCREENING: ${RATE_LIMIT_SCREENING:-50}
-      RATE_LIMIT_STOCK_DETAIL: ${RATE_LIMIT_STOCK_DETAIL:-100}
-      RATE_LIMIT_AUTH: ${RATE_LIMIT_AUTH:-10}
-      RATE_LIMIT_WHITELIST_PATHS: ${RATE_LIMIT_WHITELIST_PATHS:-/health,/docs,/redoc,/openapi.json}
+      # Rate Limiting — defaults defined in backend/app/core/config.py (single source of truth)
+      # Override via .env file or environment variables when needed
 
       # External APIs
       KRX_API_KEY: ${KRX_API_KEY}
@@ -294,6 +287,7 @@ services:
       - "${PROMETHEUS_PORT:-9090}:9090"
     volumes:
       - ./infrastructure/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infrastructure/monitoring/prometheus/alerts:/etc/prometheus/alerts:ro
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -323,6 +317,21 @@ services:
       - ./infrastructure/monitoring/grafana/dashboards/json:/var/lib/grafana/dashboards:ro
       - ./infrastructure/monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
       - grafana_data:/var/lib/grafana
+    networks:
+      - screener_network
+
+  alertmanager:
+    profiles: ["monitoring", "full"]
+    image: prom/alertmanager:latest
+    container_name: screener_alertmanager
+    restart: unless-stopped
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    volumes:
+      - ./infrastructure/monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
     networks:
       - screener_network
 
@@ -366,6 +375,19 @@ services:
       - '--nginx.scrape-uri=http://nginx:8081/stub_status'
     depends_on:
       - nginx
+    networks:
+      - screener_network
+
+  celery-exporter:
+    profiles: ["monitoring", "full"]
+    image: danihodovic/celery-exporter:latest
+    container_name: screener_celery_exporter
+    restart: unless-stopped
+    environment:
+      CE_BROKER_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD environment variable is required}@redis:6379/1
+    depends_on:
+      redis:
+        condition: service_healthy
     networks:
       - screener_network
 
