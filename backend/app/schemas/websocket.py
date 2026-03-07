@@ -340,6 +340,7 @@ class ConnectionInfo(BaseModel):
 
     connection_id: str
     user_id: Optional[str] = None
+    client_ip: Optional[str] = None
     connected_at: datetime
     subscriptions: Dict[SubscriptionType, List[str]] = Field(default_factory=dict)
     message_count: int = 0

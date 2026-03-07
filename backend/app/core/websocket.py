@@ -37,6 +37,7 @@ class ConnectionManager:
         batch_interval: float = 0.03,  # 30ms default
         enable_rate_limiting: bool = True,
         rate_limit: int = 100,  # messages per second per connection
+        max_connections_per_ip: int = 5,  # max concurrent connections per IP
     ):
         """
         Initialize connection manager.
@@ -47,12 +48,17 @@ class ConnectionManager:
             batch_interval: Batch flush interval in seconds (Phase 4)
             enable_rate_limiting: Enable per-connection rate limiting (Phase 4)
             rate_limit: Max messages per second per connection (Phase 4)
+            max_connections_per_ip: Max concurrent WebSocket connections per IP
         """
         # Active connections: connection_id -> WebSocket
         self.active_connections: Dict[str, WebSocket] = {}
 
         # Connection metadata: connection_id -> ConnectionInfo
         self.connection_info: Dict[str, ConnectionInfo] = {}
+
+        # Per-IP connection tracking: ip -> Set[connection_id]
+        self._connections_by_ip: Dict[str, Set[str]] = defaultdict(set)
+        self._max_connections_per_ip = max_connections_per_ip
 
         # Subscriptions: subscription_type -> target -> Set[connection_id]
         # Example: {"stock": {"005930": {"conn1", "conn2"}}}
@@ -299,17 +305,43 @@ class ConnectionManager:
         except Exception as e:
             logger.error(f"Error handling Redis message from {channel}: {e}")
 
-    async def connect(self, websocket: WebSocket, user_id: Optional[str] = None) -> str:
+    async def connect(
+        self,
+        websocket: WebSocket,
+        user_id: Optional[str] = None,
+        client_ip: Optional[str] = None,
+    ) -> str:
         """
         Accept and register a new WebSocket connection.
 
         Args:
             websocket: FastAPI WebSocket instance
             user_id: Optional authenticated user ID
+            client_ip: Client IP address for connection-level rate limiting
 
         Returns:
             connection_id: Unique connection identifier
+
+        Raises:
+            ConnectionRefusedError: If per-IP connection limit is exceeded
         """
+        # Check per-IP connection limit before accepting
+        if (
+            client_ip
+            and len(self._connections_by_ip[client_ip]) >= self._max_connections_per_ip
+        ):
+            logger.warning(
+                f"WebSocket connection rejected: IP {client_ip} "
+                f"exceeded limit of {self._max_connections_per_ip} connections"
+            )
+            await websocket.close(
+                code=1008,
+                reason=f"Too many connections from this IP (max: {self._max_connections_per_ip})",
+            )
+            raise ConnectionRefusedError(
+                f"IP {client_ip} exceeded max connections ({self._max_connections_per_ip})"
+            )
+
         await websocket.accept()
 
         # Generate unique connection ID
@@ -318,10 +350,15 @@ class ConnectionManager:
         # Register connection
         self.active_connections[connection_id] = websocket
 
+        # Track IP-based connections
+        if client_ip:
+            self._connections_by_ip[client_ip].add(connection_id)
+
         # Create connection info
         info = ConnectionInfo(
             connection_id=connection_id,
             user_id=user_id,
+            client_ip=client_ip,
             connected_at=datetime.utcnow(),
             last_activity=datetime.utcnow(),
         )
@@ -330,6 +367,7 @@ class ConnectionManager:
         logger.info(
             f"WebSocket connected: {connection_id} "
             f"(user: {user_id or 'anonymous'}, "
+            f"ip: {client_ip or 'unknown'}, "
             f"total: {len(self.active_connections)})"
         )
 
@@ -372,8 +410,15 @@ class ConnectionManager:
 
             del self.connection_subscriptions[connection_id]
 
-        # Remove connection info
+        # Remove connection info and clean up IP tracking
         info = self.connection_info.pop(connection_id, None)
+
+        if info and info.client_ip:
+            ip_connections = self._connections_by_ip.get(info.client_ip)
+            if ip_connections:
+                ip_connections.discard(connection_id)
+                if not ip_connections:
+                    del self._connections_by_ip[info.client_ip]
 
         user_id = info.user_id if info else "unknown"
         logger.info(
@@ -958,8 +1003,22 @@ class ConnectionManager:
             ),
             "rate_limiting_enabled": self._enable_rate_limiting,
             "rate_limit": self._rate_limit if self._enable_rate_limiting else None,
+            "max_connections_per_ip": self._max_connections_per_ip,
+            "unique_ips": len(self._connections_by_ip),
         }
 
 
 # Global connection manager instance
-connection_manager = ConnectionManager()
+def _create_connection_manager() -> ConnectionManager:
+    """Create ConnectionManager with settings from config."""
+    try:
+        from app.core.config import settings
+
+        return ConnectionManager(
+            max_connections_per_ip=settings.WEBSOCKET_MAX_CONNECTIONS_PER_IP,
+        )
+    except Exception:
+        return ConnectionManager()
+
+
+connection_manager = _create_connection_manager()
