@@ -27,7 +27,7 @@ Example:
 """
 
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Dict
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -90,7 +90,7 @@ class MarketService:
     # Market Indices Operations
     # ========================================================================
 
-    async def get_market_indices(self) -> Dict[str, List[Dict]]:
+    async def get_market_indices(self) -> Dict:
         """
         Get current market indices with sparklines
 
