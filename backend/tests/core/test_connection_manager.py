@@ -690,3 +690,126 @@ class TestSessionRestoration:
 
         with pytest.raises(ValueError, match="User ID mismatch"):
             await manager.reconnect(mock_ws2, conn_id, user_id="user2")
+
+
+class TestConnectionRateLimitingPerIP:
+    """Test per-IP connection rate limiting"""
+
+    @pytest.fixture
+    def rate_limited_manager(self):
+        """Create a manager with low per-IP connection limit"""
+        return ConnectionManager(
+            enable_redis=False,
+            enable_batching=False,
+            enable_rate_limiting=False,
+            max_connections_per_ip=2,
+        )
+
+    def _make_ws(self):
+        ws = Mock()
+        ws.accept = AsyncMock()
+        ws.send_json = AsyncMock()
+        ws.close = AsyncMock()
+        return ws
+
+    @pytest.mark.asyncio
+    async def test_connections_within_limit(self, rate_limited_manager):
+        """Test that connections within per-IP limit are accepted"""
+        ws1 = self._make_ws()
+        ws2 = self._make_ws()
+
+        conn1 = await rate_limited_manager.connect(ws1, client_ip="10.0.0.1")
+        conn2 = await rate_limited_manager.connect(ws2, client_ip="10.0.0.1")
+
+        assert conn1 in rate_limited_manager.active_connections
+        assert conn2 in rate_limited_manager.active_connections
+        assert len(rate_limited_manager._connections_by_ip["10.0.0.1"]) == 2
+
+    @pytest.mark.asyncio
+    async def test_connection_rejected_over_limit(self, rate_limited_manager):
+        """Test that connections exceeding per-IP limit are rejected"""
+        ws1 = self._make_ws()
+        ws2 = self._make_ws()
+        ws3 = self._make_ws()
+
+        await rate_limited_manager.connect(ws1, client_ip="10.0.0.1")
+        await rate_limited_manager.connect(ws2, client_ip="10.0.0.1")
+
+        with pytest.raises(ConnectionRefusedError):
+            await rate_limited_manager.connect(ws3, client_ip="10.0.0.1")
+
+        ws3.close.assert_called_once()
+        assert len(rate_limited_manager.active_connections) == 2
+
+    @pytest.mark.asyncio
+    async def test_different_ips_independent(self, rate_limited_manager):
+        """Test that different IPs have independent limits"""
+        ws1 = self._make_ws()
+        ws2 = self._make_ws()
+        ws3 = self._make_ws()
+        ws4 = self._make_ws()
+
+        await rate_limited_manager.connect(ws1, client_ip="10.0.0.1")
+        await rate_limited_manager.connect(ws2, client_ip="10.0.0.1")
+        await rate_limited_manager.connect(ws3, client_ip="10.0.0.2")
+        await rate_limited_manager.connect(ws4, client_ip="10.0.0.2")
+
+        assert len(rate_limited_manager._connections_by_ip["10.0.0.1"]) == 2
+        assert len(rate_limited_manager._connections_by_ip["10.0.0.2"]) == 2
+        assert len(rate_limited_manager.active_connections) == 4
+
+    @pytest.mark.asyncio
+    async def test_disconnect_frees_ip_slot(self, rate_limited_manager):
+        """Test that disconnecting frees a slot for the same IP"""
+        ws1 = self._make_ws()
+        ws2 = self._make_ws()
+        ws3 = self._make_ws()
+
+        conn1 = await rate_limited_manager.connect(ws1, client_ip="10.0.0.1")
+        await rate_limited_manager.connect(ws2, client_ip="10.0.0.1")
+
+        # Disconnect first connection
+        await rate_limited_manager.disconnect(conn1)
+
+        # Now a new connection from same IP should succeed
+        conn3 = await rate_limited_manager.connect(ws3, client_ip="10.0.0.1")
+        assert conn3 in rate_limited_manager.active_connections
+        assert len(rate_limited_manager._connections_by_ip["10.0.0.1"]) == 2
+
+    @pytest.mark.asyncio
+    async def test_no_ip_bypasses_limit(self, rate_limited_manager):
+        """Test that connections without IP are not rate limited"""
+        connections = []
+        for _ in range(5):
+            ws = self._make_ws()
+            conn_id = await rate_limited_manager.connect(ws)
+            connections.append(conn_id)
+
+        assert len(rate_limited_manager.active_connections) == 5
+
+    @pytest.mark.asyncio
+    async def test_ip_cleanup_on_full_disconnect(self, rate_limited_manager):
+        """Test that IP tracking is cleaned up when all connections disconnect"""
+        ws1 = self._make_ws()
+        ws2 = self._make_ws()
+
+        conn1 = await rate_limited_manager.connect(ws1, client_ip="10.0.0.1")
+        conn2 = await rate_limited_manager.connect(ws2, client_ip="10.0.0.1")
+
+        await rate_limited_manager.disconnect(conn1)
+        await rate_limited_manager.disconnect(conn2)
+
+        assert "10.0.0.1" not in rate_limited_manager._connections_by_ip
+
+    @pytest.mark.asyncio
+    async def test_stats_include_ip_info(self, rate_limited_manager):
+        """Test that stats include per-IP connection info"""
+        ws1 = self._make_ws()
+        ws2 = self._make_ws()
+
+        await rate_limited_manager.connect(ws1, client_ip="10.0.0.1")
+        await rate_limited_manager.connect(ws2, client_ip="10.0.0.2")
+
+        stats = rate_limited_manager.get_stats()
+        assert stats["max_connections_per_ip"] == 2
+        assert stats["unique_ips"] == 2

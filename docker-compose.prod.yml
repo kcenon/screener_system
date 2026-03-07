@@ -82,10 +82,7 @@ services:
       ENVIRONMENT: production
       CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS is required for production}
       LOG_LEVEL: WARNING
-      RATE_LIMIT_FREE: ${RATE_LIMIT_FREE:-100}
-      RATE_LIMIT_BASIC: ${RATE_LIMIT_BASIC:-1000}
-      RATE_LIMIT_PRO: ${RATE_LIMIT_PRO:-10000}
-      RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW:-3600}
+      # Rate Limiting — defaults defined in backend/app/core/config.py (single source of truth)
       KRX_API_KEY: ${KRX_API_KEY:-}
       FGUIDE_API_KEY: ${FGUIDE_API_KEY:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
