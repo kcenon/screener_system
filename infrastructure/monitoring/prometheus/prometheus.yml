@@ -13,16 +13,16 @@ global:
 # Retain data for 15 days (default is 15d anyway)
 # --storage.tsdb.retention.time=15d (set in docker-compose)
 
-# Alertmanager configuration (optional)
-# alerting:
-#   alertmanagers:
-#     - static_configs:
-#         - targets:
-#             - alertmanager:9093
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
 
 # Rule files
 rule_files:
-  # - "alerts/*.yml"
+  - "alerts/*.yml"
 
 # Scrape configurations
 scrape_configs:
@@ -88,17 +88,15 @@ scrape_configs:
   # ============================================================================
   # CELERY WORKERS
   # ============================================================================
-  # Celery does not natively expose Prometheus metrics.
-  # Uncomment and configure when a celery-exporter or Flower with metrics is deployed.
 
-  # - job_name: 'celery'
-  #   scrape_interval: 30s
-  #   metrics_path: '/metrics'
-  #   static_configs:
-  #     - targets: ['celery-exporter:9808']
-  #       labels:
-  #         service: 'celery-worker'
-  #         tier: 'background-jobs'
+  - job_name: 'celery'
+    scrape_interval: 30s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['celery-exporter:9808']
+        labels:
+          service: 'celery-worker'
+          tier: 'background-jobs'
 
   # ============================================================================
   # AIRFLOW
