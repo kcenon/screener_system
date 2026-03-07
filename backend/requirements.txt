@@ -38,7 +38,7 @@ numpy==2.3.5
 scikit-learn==1.8.0
 lightgbm==4.6.0
 xgboost==3.1.2
-optuna==4.6.0
+optuna==4.7.0
 openai==1.58.1  # Upgraded: httpx 0.28.x compatibility (fixes proxies parameter issue)
 anthropic==0.75.0  # Upgraded: httpx 0.28.x compatibility (fixes proxies parameter issue)
 tenacity==9.1.2
