@@ -74,6 +74,11 @@ async def websocket_endpoint(
     # Verify authentication (optional, allows anonymous connections)
     user_id = await verify_token(token)
 
+    # Extract client IP for connection-level rate limiting
+    client_ip = None
+    if websocket.client:
+        client_ip = websocket.client.host
+
     # Phase 3: Handle reconnection if session_id provided
     connection_id = None
     restored_subscriptions = None
@@ -105,7 +110,12 @@ async def websocket_endpoint(
         except ValueError as e:
             # Session restoration failed, connect normally
             logger.warning(f"Session restoration failed for {session_id}: {e}")
-            connection_id = await connection_manager.connect(websocket, user_id)
+            try:
+                connection_id = await connection_manager.connect(
+                    websocket, user_id, client_ip=client_ip
+                )
+            except ConnectionRefusedError:
+                return
 
             # Send error message about failed restoration
             await connection_manager.send_error(
@@ -115,7 +125,12 @@ async def websocket_endpoint(
             )
     else:
         # Normal connection
-        connection_id = await connection_manager.connect(websocket, user_id)
+        try:
+            connection_id = await connection_manager.connect(
+                websocket, user_id, client_ip=client_ip
+            )
+        except ConnectionRefusedError:
+            return
 
     try:
         # Send welcome message
