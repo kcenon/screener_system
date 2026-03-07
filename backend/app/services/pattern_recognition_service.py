@@ -45,11 +45,15 @@ class PatternRecognitionService:
             List of recognized patterns
         """
         # Get price history
+        # Note: stock_repo is not initialized in __init__ — this method
+        # is a stub for future implementation when dependency injection is added.
+        if not hasattr(self, "stock_repo"):
+            return []
         prices = await self.stock_repo.get_price_history(stock_code, limit=days)
         if len(prices) < 20:
             return []
 
-        patterns = []
+        patterns: list[PatternResponse] = []
 
         # Convert to format needed for analysis
         # Note: In real implementation, we would use numpy here

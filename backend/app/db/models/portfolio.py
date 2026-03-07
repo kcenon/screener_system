@@ -62,6 +62,7 @@ class Portfolio(Base, TimestampMixin):
 
     def __repr__(self) -> str:
         """String representation"""
+        return f"<Portfolio(id={self.id}, name={self.name})>"
 
     def has_holding(self, stock_symbol: str) -> bool:
         """Check if portfolio has holding for stock"""
