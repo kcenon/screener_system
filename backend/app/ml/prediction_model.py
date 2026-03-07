@@ -106,8 +106,9 @@ class StockPredictionModel:
                 "eval_metric": "mlogloss",
             }
             params = {**default_params, **self.params}
-            self.model = xgb.XGBClassifier(**params)
-            self.model.fit(features, labels)
+            clf = xgb.XGBClassifier(**params)
+            clf.fit(features, labels)
+            self.model = clf
 
         else:
             raise ValueError(f"Unsupported model type: {self.model_type}")
