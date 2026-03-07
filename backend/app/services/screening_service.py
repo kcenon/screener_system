@@ -67,9 +67,12 @@ class ScreeningService:
             cached["query_time_ms"] = (time.time() - start_time) * 1000
             return ScreeningResponse(**cached)
 
+        # Ensure filters are provided
+        filters = request.filters or ScreeningFilters()
+
         # Execute screening query
         results, total = await self.screening_repo.screen_stocks(
-            filters=request.filters,
+            filters=filters,
             sort_by=request.sort_by,
             order=request.order,
             offset=offset,
@@ -89,7 +92,7 @@ class ScreeningService:
         )
 
         # Build filters summary
-        filters_applied = self._build_filters_summary(request.filters)
+        filters_applied = self._build_filters_summary(filters)
 
         # Calculate query time
         query_time_ms = (time.time() - start_time) * 1000
@@ -211,7 +214,8 @@ class ScreeningService:
             Cache key string (e.g., "screening:v1:a3f2c9e4...:market_cap:desc:1:50")
         """
         # Create a deterministic hash of filters
-        filters_dict = request.filters.model_dump(exclude_none=True)
+        filters = request.filters or ScreeningFilters()
+        filters_dict = filters.model_dump(exclude_none=True)
         filters_json = json.dumps(filters_dict, sort_keys=True)
 
         # Use SHA-256 (secure against collisions)

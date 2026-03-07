@@ -70,10 +70,7 @@ services:
       ENVIRONMENT: staging
       CORS_ORIGINS: ${CORS_ORIGINS:-https://staging.screener.example.com}
       LOG_LEVEL: INFO
-      RATE_LIMIT_FREE: ${RATE_LIMIT_FREE:-100}
-      RATE_LIMIT_BASIC: ${RATE_LIMIT_BASIC:-500}
-      RATE_LIMIT_PRO: ${RATE_LIMIT_PRO:-2000}
-      RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW:-60}
+      # Rate Limiting — defaults defined in backend/app/core/config.py (single source of truth)
       KRX_API_KEY: ${KRX_API_KEY:-}
       FGUIDE_API_KEY: ${FGUIDE_API_KEY:-}
     ports:
