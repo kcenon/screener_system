@@ -52,6 +52,10 @@
     "workbox-window": "^7.4.0",
     "zustand": "^5.0.11"
   },
+  "overrides": {
+    "serialize-javascript": ">=7.0.3",
+    "markdown-it": ">=14.1.1"
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.58.2",
