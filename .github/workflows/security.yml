@@ -46,7 +46,7 @@ jobs:
         run: |
           if [ -f npm-audit.json ]; then
             echo "=== npm Audit Results ==="
-            cat npm-audit.json | jq -r '.vulnerabilities | to_entries | .[] | "\(.value.severity): \(.key) - \(.value.via[0].title // .value.via[0])"' || cat npm-audit.json
+            cat npm-audit.json | jq -r '.vulnerabilities | to_entries | .[] | "\(.value.severity): \(.key) - \(.value.via[0] | if type == "object" then .title else . end)"' || cat npm-audit.json
           fi
 
       - name: Check for high/critical vulnerabilities
