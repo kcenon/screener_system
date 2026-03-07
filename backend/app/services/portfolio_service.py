@@ -270,7 +270,7 @@ class PortfolioService:
         await self.holding_repo.delete(holding)
 
     async def get_portfolio_holdings(
-        self, portfolio_id: int, user_id: int = None, active_only: bool = True
+        self, portfolio_id: int, user_id: Optional[int] = None, active_only: bool = True
     ) -> list[Holding]:
         """
         Get all holdings for a portfolio
@@ -402,7 +402,7 @@ class PortfolioService:
         )
         return_percent = (
             (unrealized_gain / Decimal(str(total_cost)) * 100)
-            if current_value and total_cost > 0
+            if unrealized_gain is not None and current_value and total_cost > 0
             else None
         )
 
@@ -523,7 +523,7 @@ class PortfolioService:
 
         total_value = Decimal("0")
         by_stock = []
-        by_sector = defaultdict(Decimal)
+        by_sector: dict[str, Decimal] = defaultdict(Decimal)
 
         for holding in holdings:
             stock = await self.stock_repo.get_by_code(holding.stock_symbol)
