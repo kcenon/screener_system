@@ -314,16 +314,16 @@ class MarketRepository:
             Tuple of (stock_code, stock_name, change_percent) or None
         """
         # Rank all prices per stock by date (most recent = rank 1)
+        row_num = func.row_number().over(
+            partition_by=DailyPrice.stock_code,
+            order_by=desc(DailyPrice.trade_date),
+        )
         ranked_prices = (
             select(
                 DailyPrice.stock_code,
                 DailyPrice.close_price,
                 DailyPrice.trade_date,
-                func.row_number()
-                .over(
-                    partition_by=DailyPrice.stock_code,
-                    order_by=desc(DailyPrice.trade_date),
-                ).label("rn"),
+                row_num.label("rn"),
             )
             .subquery()
         )
