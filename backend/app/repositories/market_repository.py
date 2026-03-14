@@ -3,7 +3,8 @@
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 
-from sqlalchemy import and_, case, desc, func, select
+from sqlalchemy import and_, case, desc, func, select, type_coerce
+from sqlalchemy.types import Date as DateType
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import DailyPrice, MarketIndex, Stock
@@ -333,7 +334,8 @@ class MarketRepository:
                 DailyPrice.stock_code == latest_prices.c.stock_code,
             )
             .where(
-                DailyPrice.trade_date == latest_prices.c.max_date - timedelta(days=1)
+                DailyPrice.trade_date
+                == type_coerce(latest_prices.c.max_date, DateType) - timedelta(days=1)
             )
             .subquery()
         )
@@ -424,7 +426,8 @@ class MarketRepository:
                 DailyPrice.stock_code == latest_prices.c.stock_code,
             )
             .where(
-                DailyPrice.trade_date == latest_prices.c.max_date - timedelta(days=1)
+                DailyPrice.trade_date
+                == type_coerce(latest_prices.c.max_date, DateType) - timedelta(days=1)
             )
             .subquery()
         )
@@ -539,7 +542,8 @@ class MarketRepository:
                 DailyPrice.stock_code == latest_prices.c.stock_code,
             )
             .where(
-                DailyPrice.trade_date == latest_prices.c.max_date - timedelta(days=1)
+                DailyPrice.trade_date
+                == type_coerce(latest_prices.c.max_date, DateType) - timedelta(days=1)
             )
             .subquery()
         )
