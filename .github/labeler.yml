@@ -1,30 +1,37 @@
 backend:
-  - backend/**/*
+  - changed-files:
+    - any-glob-to-any-file: 'backend/**/*'
 
 frontend:
-  - frontend/**/*
+  - changed-files:
+    - any-glob-to-any-file: 'frontend/**/*'
 
 database:
-  - database/**/*
-  - backend/app/db/**/*
-  - backend/alembic/**/*
+  - changed-files:
+    - any-glob-to-any-file: 'database/**/*'
+    - any-glob-to-any-file: 'backend/app/db/**/*'
+    - any-glob-to-any-file: 'backend/alembic/**/*'
 
 data-pipeline:
-  - data_pipeline/**/*
+  - changed-files:
+    - any-glob-to-any-file: 'data_pipeline/**/*'
 
 infrastructure:
-  - docker-compose.yml
-  - Dockerfile
-  - .github/**/*
-  - infrastructure/**/*
+  - changed-files:
+    - any-glob-to-any-file: 'docker-compose.yml'
+    - any-glob-to-any-file: 'Dockerfile'
+    - any-glob-to-any-file: '.github/**/*'
+    - any-glob-to-any-file: 'infrastructure/**/*'
 
 documentation:
-  - '**/*.md'
-  - docs/**/*
+  - changed-files:
+    - any-glob-to-any-file: '**/*.md'
+    - any-glob-to-any-file: 'docs/**/*'
 
 tests:
-  - '**/*test*.py'
-  - '**/*test*.ts'
-  - '**/*test*.tsx'
-  - backend/tests/**/*
-  - frontend/src/**/__tests__/**/*
+  - changed-files:
+    - any-glob-to-any-file: '**/*test*.py'
+    - any-glob-to-any-file: '**/*test*.ts'
+    - any-glob-to-any-file: '**/*test*.tsx'
+    - any-glob-to-any-file: 'backend/tests/**/*'
+    - any-glob-to-any-file: 'frontend/src/**/__tests__/**/*'

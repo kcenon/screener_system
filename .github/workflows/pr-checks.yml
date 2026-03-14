@@ -40,9 +40,9 @@ jobs:
             ci
             build
           requireScope: false
-          subjectPattern: ^[A-Z].+[^.]$
+          subjectPattern: ^[a-zA-Z].+[^.]$
           subjectPatternError: |
-            The subject must start with an uppercase letter and not end with a period.
+            The subject must start with a letter and not end with a period.
 
       - name: Check for merge conflicts
         run: |
