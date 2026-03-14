@@ -1,2 +1,2 @@
-apache-airflow==3.0.6
+apache-airflow==3.2.0b1
 sqlalchemy<3.0
