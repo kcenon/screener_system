@@ -163,14 +163,19 @@ async def lifespan(app: FastAPI):
         logger.warning(f"Error disconnecting from Redis: {e}")
 
 
+# Disable API docs in production to prevent information disclosure
+_docs_url = None if settings.ENVIRONMENT == "production" else "/docs"
+_redoc_url = None if settings.ENVIRONMENT == "production" else "/redoc"
+_openapi_url = None if settings.ENVIRONMENT == "production" else "/openapi.json"
+
 # Create FastAPI application
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="Stock Screening Platform - Backend API",
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
+    docs_url=_docs_url,
+    redoc_url=_redoc_url,
+    openapi_url=_openapi_url,
     lifespan=lifespan,
     debug=settings.DEBUG,
 )
@@ -297,12 +302,14 @@ async def root():
         >>> print(response["docs"])
         /docs
     """
-    return {
+    response = {
         "message": "Welcome to Stock Screening Platform API",
         "version": settings.VERSION,
-        "docs": "/docs",
         "health": "/v1/health",
     }
+    if settings.ENVIRONMENT != "production":
+        response["docs"] = "/docs"
+    return response
 
 
 if __name__ == "__main__":
