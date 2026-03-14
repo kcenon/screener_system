@@ -1,4 +1,5 @@
 name: Pull Request Checks
+# CI fix: Node.js 20 with npm ci
 
 on:
   pull_request:
