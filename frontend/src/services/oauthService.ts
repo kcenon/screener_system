@@ -3,7 +3,6 @@
  */
 
 import { api } from './api'
-import { authService } from './authService'
 import type {
   OAuthAuthorizationResponse,
   OAuthCallbackRequest,
@@ -53,10 +52,7 @@ class OAuthService {
       { params: { code, state } },
     )
 
-    // Store tokens
-    const { access_token, refresh_token } = response.data
-    authService.storeTokens(access_token, refresh_token)
-
+    // Tokens are set as HttpOnly cookies by the backend OAuth callback
     return response.data
   }
 

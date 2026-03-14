@@ -25,7 +25,7 @@ export function useLogin() {
         login_method: 'email',
       })
 
-      login(response.user, response.access_token, response.refresh_token)
+      login(response.user)
       navigate('/')
     },
     onError: error => {
@@ -58,7 +58,7 @@ export function useRegister() {
         signup_source: 'email',
       })
 
-      login(response.user, response.access_token, response.refresh_token)
+      login(response.user)
       navigate('/')
     },
     onError: error => {
@@ -131,23 +131,14 @@ export function useCurrentUser() {
 }
 
 /**
- * Hook for refreshing access token
+ * Hook for refreshing access token via cookie
  */
 export function useRefreshToken() {
-  const refreshToken = useAuthStore(state => state.refreshToken)
-  const updateTokens = useAuthStore(state => state.updateTokens)
   const logout = useAuthStore(state => state.logout)
 
   return useMutation({
-    mutationFn: () => {
-      if (!refreshToken) {
-        throw new Error('No refresh token available')
-      }
-      return authService.refreshToken({ refresh_token: refreshToken })
-    },
-    onSuccess: response => {
-      updateTokens(response.access_token, response.refresh_token)
-    },
+    // Refresh token cookie is sent automatically — no arguments needed
+    mutationFn: () => authService.refreshToken(),
     onError: () => {
       // If refresh fails, logout user
       logout()

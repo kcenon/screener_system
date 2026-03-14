@@ -3,7 +3,6 @@ import type {
   LoginRequest,
   RegisterRequest,
   TokenResponse,
-  RefreshTokenRequest,
   User,
   EmailVerificationRequest,
   VerificationStatusResponse,
@@ -44,18 +43,13 @@ class AuthService {
    * Logout from current session
    */
   async logout(): Promise<void> {
-    const refreshToken = localStorage.getItem('refresh_token')
-    if (refreshToken) {
-      try {
-        await api.post(`${this.AUTH_BASE_URL}/logout`, {
-          refresh_token: refreshToken,
-        })
-      } catch (error) {
-        // Ignore errors during logout
-        console.error('Logout error:', error)
-      }
+    try {
+      // No body needed — refresh_token cookie is sent automatically
+      await api.post(`${this.AUTH_BASE_URL}/logout`)
+    } catch (error) {
+      // Ignore errors during logout — cookies will be cleared by backend
+      console.error('Logout error:', error)
     }
-    this.clearTokens()
   }
 
   /**
@@ -71,12 +65,13 @@ class AuthService {
   }
 
   /**
-   * Refresh access token using refresh token
+   * Refresh access token using refresh token cookie
    */
-  async refreshToken(data: RefreshTokenRequest): Promise<TokenResponse> {
+  async refreshToken(): Promise<TokenResponse> {
+    // No body needed — refresh_token HttpOnly cookie is sent automatically
     const response = await api.post<TokenResponse>(
       `${this.AUTH_BASE_URL}/refresh`,
-      data,
+      null,
     )
     return response.data
   }
@@ -89,42 +84,6 @@ class AuthService {
     return response.data
   }
 
-  /**
-   * Store tokens in localStorage
-   */
-  storeTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem('access_token', accessToken)
-    localStorage.setItem('refresh_token', refreshToken)
-  }
-
-  /**
-   * Clear all stored tokens
-   */
-  clearTokens(): void {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-  }
-
-  /**
-   * Get stored access token
-   */
-  getAccessToken(): string | null {
-    return localStorage.getItem('access_token')
-  }
-
-  /**
-   * Get stored refresh token
-   */
-  getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token')
-  }
-
-  /**
-   * Check if user is authenticated (has access token)
-   */
-  isAuthenticated(): boolean {
-    return !!this.getAccessToken()
-  }
 
   /**
    * Verify email address with verification token
@@ -189,8 +148,6 @@ class AuthService {
       `${this.AUTH_BASE_URL}/reset-password`,
       data,
     )
-    // Clear tokens after password reset (user is logged out)
-    this.clearTokens()
     return response.data
   }
 }

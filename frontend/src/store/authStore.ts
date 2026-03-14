@@ -12,14 +12,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User } from '@/types'
-import { authService } from '@/services/authService'
 
 /**
  * Authentication store state and actions.
  *
- * Manages user authentication lifecycle including login, logout, token
- * management, and persistence. Automatically syncs with localStorage
- * to maintain auth state across page refreshes.
+ * Manages user authentication state. JWT tokens are stored in HttpOnly
+ * cookies by the backend — this store only tracks the user profile and
+ * authentication status.
  *
  * @interface
  * @category Types
@@ -32,47 +31,29 @@ interface AuthState {
   user: User | null
 
   /**
-   * JWT access token for API authentication.
-   * Short-lived token for authorizing requests.
-   */
-  accessToken: string | null
-
-  /**
-   * JWT refresh token for obtaining new access tokens.
-   * Long-lived token stored securely in localStorage.
-   */
-  refreshToken: string | null
-
-  /**
    * Whether user is currently authenticated.
-   * True if user is logged in with valid tokens.
+   * True if user is logged in with valid session cookies.
    */
   isAuthenticated: boolean
 
   /**
-   * Logs user in and stores authentication credentials.
+   * Logs user in and stores user profile.
    *
-   * Stores tokens in localStorage and updates auth state.
-   * Should be called after successful login API call.
+   * Tokens are handled via HttpOnly cookies set by the backend.
    *
    * @param user - Authenticated user profile
-   * @param accessToken - JWT access token from server
-   * @param refreshToken - JWT refresh token from server
    *
    * @example
    * ```typescript
    * const { login } = useAuthStore();
    * const response = await authService.login(email, password);
-   * login(response.user, response.access_token, response.refresh_token);
+   * login(response.user);
    * ```
    */
-  login: (user: User, accessToken: string, refreshToken: string) => void
+  login: (user: User) => void
 
   /**
    * Logs user out and clears authentication state.
-   *
-   * Removes tokens from localStorage and resets auth state to defaults.
-   * Triggers navigation to login page.
    *
    * @example
    * ```typescript
@@ -84,26 +65,11 @@ interface AuthState {
   logout: () => void
 
   /**
-   * Updates user profile without affecting tokens.
-   *
-   * Useful for updating user information after profile edits.
+   * Updates user profile without affecting authentication status.
    *
    * @param user - Updated user profile or null to clear
    */
   setUser: (user: User | null) => void
-
-  /**
-   * Updates stored tokens without changing user profile.
-   *
-   * Called automatically by token refresh interceptor when access
-   * token expires and is renewed.
-   *
-   * @param accessToken - New access token
-   * @param refreshToken - New refresh token
-   *
-   * @internal
-   */
-  updateTokens: (accessToken: string, refreshToken: string) => void
 }
 
 /**
@@ -160,39 +126,18 @@ export const useAuthStore = create<AuthState>()(
   persist(
     set => ({
       user: null,
-      accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
 
-      login: (user, accessToken, refreshToken) => {
-        // Store tokens in localStorage
-        authService.storeTokens(accessToken, refreshToken)
-        set({
-          user,
-          accessToken,
-          refreshToken,
-          isAuthenticated: true,
-        })
+      login: user => {
+        // Tokens are managed via HttpOnly cookies by the backend
+        set({ user, isAuthenticated: true })
       },
 
       logout: () => {
-        // Clear tokens from localStorage
-        authService.clearTokens()
-        set({
-          user: null,
-          accessToken: null,
-          refreshToken: null,
-          isAuthenticated: false,
-        })
+        set({ user: null, isAuthenticated: false })
       },
 
       setUser: user => set({ user }),
-
-      updateTokens: (accessToken, refreshToken) => {
-        // Update tokens in localStorage
-        authService.storeTokens(accessToken, refreshToken)
-        set({ accessToken, refreshToken })
-      },
     }),
     {
       name: 'auth-storage',

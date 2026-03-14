@@ -31,6 +31,12 @@ class TestAuthRegistration:
         assert data["user"]["name"] == "New User"
         assert data["user"]["subscription_tier"] == "free"
 
+        # Verify HttpOnly cookies are set
+        assert "access_token" in response.cookies
+        assert "refresh_token" in response.cookies
+        set_cookie_header = response.headers.get("set-cookie", "")
+        assert "HttpOnly" in set_cookie_header or "httponly" in set_cookie_header.lower()
+
     @pytest.mark.asyncio
     async def test_register_duplicate_email(
         self, client: AsyncClient, db: AsyncSession
@@ -103,6 +109,12 @@ class TestAuthLogin:
         assert "refresh_token" in data
         assert data["user"]["email"] == "testuser@example.com"
 
+        # Verify HttpOnly cookies are set
+        assert "access_token" in response.cookies
+        assert "refresh_token" in response.cookies
+        set_cookie_header = response.headers.get("set-cookie", "")
+        assert "HttpOnly" in set_cookie_header or "httponly" in set_cookie_header.lower()
+
     @pytest.mark.asyncio
     async def test_login_invalid_password(self, client: AsyncClient, db: AsyncSession):
         """Test login with invalid password"""
@@ -172,6 +184,31 @@ class TestAuthProtectedEndpoints:
         data = response.json()
         assert data["email"] == "testuser@example.com"
         assert data["name"] == "Test User"
+
+    @pytest.mark.asyncio
+    async def test_get_current_user_via_cookie(
+        self, client: AsyncClient, db: AsyncSession
+    ):
+        """Test accessing protected endpoint with access_token cookie"""
+        user = User(
+            email="cookieuser@example.com",
+            password_hash=get_password_hash("Password123"),
+            name="Cookie User",
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+
+        access_token = create_access_token(user.id)
+
+        response = await client.get(
+            "/v1/auth/me",
+            cookies={"access_token": access_token},
+        )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["email"] == "cookieuser@example.com"
 
     @pytest.mark.asyncio
     async def test_get_current_user_no_token(self, client: AsyncClient):

@@ -1,8 +1,8 @@
 """API dependencies for dependency injection"""
 
-from typing import Annotated
+from typing import Annotated, Optional
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,8 +20,8 @@ from app.services import (
 )
 from app.services.watchlist_service import WatchlistService
 
-# HTTP Bearer token scheme
-security = HTTPBearer()
+# HTTP Bearer token scheme (auto_error=False allows cookie fallback)
+security = HTTPBearer(auto_error=False)
 
 
 async def get_auth_service(
@@ -81,29 +81,43 @@ async def get_ai_service(
 
 
 async def get_current_user(
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    request: Request,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    credentials: Annotated[
+        Optional[HTTPAuthorizationCredentials], Depends(security)
+    ] = None,
+    access_token_cookie: Optional[str] = Cookie(default=None, alias="access_token"),
 ) -> User:
     """
-    Get current authenticated user from JWT token
+    Get current authenticated user from JWT token.
+
+    Accepts token from HttpOnly cookie (preferred) or Authorization Bearer header
+    (fallback for backward compatibility with non-browser clients).
 
     Args:
-        credentials: HTTP Bearer token from Authorization header
+        request: FastAPI request object
         auth_service: AuthService instance
+        credentials: Optional HTTP Bearer credentials from Authorization header
+        access_token_cookie: Optional access token from HttpOnly cookie
 
     Returns:
         Current authenticated user
 
     Raises:
-        HTTPException 401: If token is invalid or user not found
+        HTTPException 401: If no token provided or token is invalid/expired
     """
+    # Cookie takes precedence over Bearer header
+    token = access_token_cookie or (credentials.credentials if credentials else None)
+
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     try:
-        # Extract token from credentials
-        token = credentials.credentials
-
-        # Verify token and get user
         user = await auth_service.verify_access_token(token)
-
         return user
 
     except UnauthorizedException as e:

@@ -1,8 +1,8 @@
 """Authentication endpoints"""
 
-from typing import Annotated
+from typing import Annotated, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
 
 from app.api.dependencies import (
     CurrentActiveUser,
@@ -10,6 +10,7 @@ from app.api.dependencies import (
     get_email_verification_service,
     get_password_reset_service,
 )
+from app.core.config import settings
 from app.core.exceptions import (
     BadRequestException,
     NotFoundException,
@@ -32,6 +33,35 @@ from app.services import AuthService, EmailVerificationService, PasswordResetSer
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
+def _set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+    """Set HttpOnly auth cookies in the response."""
+    is_production = settings.ENVIRONMENT == "production"
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=is_production,
+        samesite="lax",
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        path="/",
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=is_production,
+        samesite="lax",
+        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 3600,
+        path="/v1/auth/refresh",
+    )
+
+
+def _clear_auth_cookies(response: Response) -> None:
+    """Clear auth cookies from the response."""
+    response.delete_cookie("access_token", path="/")
+    response.delete_cookie("refresh_token", path="/v1/auth/refresh")
+
+
 @router.post(
     "/register",
     response_model=TokenResponse,
@@ -42,6 +72,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 async def register(
     user_data: UserCreate,
     request: Request,
+    response: Response,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> TokenResponse:
     """
@@ -50,6 +81,7 @@ async def register(
     Args:
         user_data: User registration data (email, password, name)
         request: FastAPI request object
+        response: FastAPI response object for setting cookies
         auth_service: AuthService dependency
 
     Returns:
@@ -71,6 +103,9 @@ async def register(
             user_agent=user_agent,
         )
 
+        # Set HttpOnly cookies
+        _set_auth_cookies(response, token_response.access_token, token_response.refresh_token)
+
         return token_response
 
     except ValueError as e:
@@ -89,6 +124,7 @@ async def register(
 async def login(
     credentials: UserLogin,
     request: Request,
+    response: Response,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ) -> TokenResponse:
     """
@@ -97,6 +133,7 @@ async def login(
     Args:
         credentials: User login credentials (email, password)
         request: FastAPI request object
+        response: FastAPI response object for setting cookies
         auth_service: AuthService dependency
 
     Returns:
@@ -117,6 +154,9 @@ async def login(
             user_agent=user_agent,
         )
 
+        # Set HttpOnly cookies
+        _set_auth_cookies(response, token_response.access_token, token_response.refresh_token)
+
         return token_response
 
     except UnauthorizedException as e:
@@ -133,32 +173,49 @@ async def login(
     description="Get new access token using valid refresh token",
 )
 async def refresh_token(
-    refresh_data: RefreshTokenRequest,
+    request: Request,
+    response: Response,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    refresh_data: Optional[RefreshTokenRequest] = None,
+    refresh_token_cookie: Optional[str] = Cookie(default=None, alias="refresh_token"),
 ) -> TokenResponse:
     """
     Refresh access token using refresh token
 
+    Accepts refresh token from HttpOnly cookie (preferred) or request body (fallback).
+
     Args:
-        refresh_data: Refresh token request data
+        request: FastAPI request object
+        response: FastAPI response object for setting cookies
         auth_service: AuthService dependency
+        refresh_data: Optional refresh token in request body (backward compatibility)
+        refresh_token_cookie: Refresh token from HttpOnly cookie
 
     Returns:
         TokenResponse with new access token and user data
 
     Raises:
-        401: Invalid or expired refresh token
+        401: Invalid or expired refresh token, or no token provided
     """
-    try:
-        # Refresh access token
-        access_token, user = await auth_service.refresh_access_token(
-            refresh_data.refresh_token
+    # Cookie takes precedence; fall back to request body
+    token = refresh_token_cookie or (refresh_data.refresh_token if refresh_data else None)
+
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token required",
         )
 
-        # Return response (keep same refresh token)
+    try:
+        # Refresh access token
+        access_token, user = await auth_service.refresh_access_token(token)
+
+        # Set new access token cookie (keep same refresh token)
+        _set_auth_cookies(response, access_token, token)
+
         return TokenResponse(
             access_token=access_token,
-            refresh_token=refresh_data.refresh_token,
+            refresh_token=token,
             user=user,
         )
 
@@ -176,26 +233,37 @@ async def refresh_token(
     description="Revoke refresh token to logout user from current device",
 )
 async def logout(
-    refresh_data: RefreshTokenRequest,
+    response: Response,
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    refresh_data: Optional[RefreshTokenRequest] = None,
+    refresh_token_cookie: Optional[str] = Cookie(default=None, alias="refresh_token"),
 ) -> None:
     """
-    Logout user by revoking refresh token
+    Logout user by revoking refresh token and clearing cookies
+
+    Accepts refresh token from HttpOnly cookie (preferred) or request body (fallback).
 
     Args:
-        refresh_data: Refresh token to revoke
+        response: FastAPI response object for clearing cookies
         auth_service: AuthService dependency
+        refresh_data: Optional refresh token in request body (backward compatibility)
+        refresh_token_cookie: Refresh token from HttpOnly cookie
 
     Raises:
         404: Token not found
     """
-    success = await auth_service.logout(refresh_data.refresh_token)
+    token = refresh_token_cookie or (refresh_data.refresh_token if refresh_data else None)
 
-    if not success:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Refresh token not found",
-        )
+    if token:
+        success = await auth_service.logout(token)
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Refresh token not found",
+            )
+
+    # Always clear cookies regardless of token presence
+    _clear_auth_cookies(response)
 
 
 @router.post(
