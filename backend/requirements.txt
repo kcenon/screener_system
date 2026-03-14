@@ -9,7 +9,7 @@ uvicorn[standard]==0.41.0
 gunicorn==25.1.0  # Security: Fixed request smuggling (GHSA-w3h3-4rj7-4ph4, GHSA-hc5x-x2vx-497g)
 
 # Database
-sqlalchemy[asyncio]==2.0.44
+sqlalchemy[asyncio]==2.0.48
 asyncpg==0.31.0
 alembic==1.18.4
 psycopg2-binary==2.9.11
