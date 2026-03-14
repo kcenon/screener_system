@@ -68,7 +68,7 @@ freezegun==1.5.5
 # httpx already listed in HTTP Requests section
 
 # Code Quality
-black==25.11.0  # Security: Fixed ReDoS (PYSEC-2024-48)
+black==26.3.1  # Security: Fixed ReDoS (PYSEC-2024-48)
 flake8==7.3.0
 mypy==1.19.1
 isort==8.0.1
