@@ -61,7 +61,6 @@ class AuthService {
     } catch (error) {
       console.error('Logout all error:', error)
     }
-    this.clearTokens()
   }
 
   /**
@@ -83,7 +82,6 @@ class AuthService {
     const response = await api.get<User>(`${this.AUTH_BASE_URL}/me`)
     return response.data
   }
-
 
   /**
    * Verify email address with verification token

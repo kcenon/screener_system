@@ -33,7 +33,9 @@ from app.services import AuthService, EmailVerificationService, PasswordResetSer
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
-def _set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+def _set_auth_cookies(
+    response: Response, access_token: str, refresh_token: str
+) -> None:
     """Set HttpOnly auth cookies in the response."""
     is_production = settings.ENVIRONMENT == "production"
     response.set_cookie(
@@ -104,7 +106,9 @@ async def register(
         )
 
         # Set HttpOnly cookies
-        _set_auth_cookies(response, token_response.access_token, token_response.refresh_token)
+        _set_auth_cookies(
+            response, token_response.access_token, token_response.refresh_token
+        )
 
         return token_response
 
@@ -155,7 +159,9 @@ async def login(
         )
 
         # Set HttpOnly cookies
-        _set_auth_cookies(response, token_response.access_token, token_response.refresh_token)
+        _set_auth_cookies(
+            response, token_response.access_token, token_response.refresh_token
+        )
 
         return token_response
 
@@ -198,7 +204,9 @@ async def refresh_token(
         401: Invalid or expired refresh token, or no token provided
     """
     # Cookie takes precedence; fall back to request body
-    token = refresh_token_cookie or (refresh_data.refresh_token if refresh_data else None)
+    token = refresh_token_cookie or (
+        refresh_data.refresh_token if refresh_data else None
+    )
 
     if not token:
         raise HTTPException(
@@ -252,7 +260,9 @@ async def logout(
     Raises:
         404: Token not found
     """
-    token = refresh_token_cookie or (refresh_data.refresh_token if refresh_data else None)
+    token = refresh_token_cookie or (
+        refresh_data.refresh_token if refresh_data else None
+    )
 
     if token:
         success = await auth_service.logout(token)

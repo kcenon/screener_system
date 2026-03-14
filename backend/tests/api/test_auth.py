@@ -35,7 +35,9 @@ class TestAuthRegistration:
         assert "access_token" in response.cookies
         assert "refresh_token" in response.cookies
         set_cookie_header = response.headers.get("set-cookie", "")
-        assert "HttpOnly" in set_cookie_header or "httponly" in set_cookie_header.lower()
+        assert (
+            "HttpOnly" in set_cookie_header or "httponly" in set_cookie_header.lower()
+        )
 
     @pytest.mark.asyncio
     async def test_register_duplicate_email(
@@ -113,7 +115,9 @@ class TestAuthLogin:
         assert "access_token" in response.cookies
         assert "refresh_token" in response.cookies
         set_cookie_header = response.headers.get("set-cookie", "")
-        assert "HttpOnly" in set_cookie_header or "httponly" in set_cookie_header.lower()
+        assert (
+            "HttpOnly" in set_cookie_header or "httponly" in set_cookie_header.lower()
+        )
 
     @pytest.mark.asyncio
     async def test_login_invalid_password(self, client: AsyncClient, db: AsyncSession):
