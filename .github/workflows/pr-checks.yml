@@ -81,6 +81,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: [pr-validation]
 
+    services:
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -101,7 +112,7 @@ jobs:
       - name: Run backend tests
         working-directory: backend
         env:
-          DATABASE_URL: sqlite+aiosqlite:///:memory:
+          DATABASE_URL: "sqlite+aiosqlite:///:memory:"
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key
           PYTHONPATH: ${{ github.workspace }}/backend
@@ -141,7 +152,7 @@ jobs:
 
             const output = `### Test Summary
 
-             All tests passed successfully!
+             All tests passed successfully!
 
             **Backend**: Tests completed
             **Frontend**: Tests completed

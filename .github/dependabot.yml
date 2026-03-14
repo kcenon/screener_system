@@ -18,6 +18,10 @@ updates:
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
+    # Ignore major version bumps for packages with known ecosystem gaps
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
     # Group minor and patch updates
     groups:
       development-dependencies:
