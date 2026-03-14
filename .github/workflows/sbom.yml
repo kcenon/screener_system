@@ -61,7 +61,7 @@ jobs:
           fi
 
       - name: Upload Frontend SBOM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom-frontend
           path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-frontend.json
@@ -108,7 +108,7 @@ jobs:
           fi
 
       - name: Upload Backend SBOM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom-backend
           path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-backend.json
@@ -148,7 +148,7 @@ jobs:
           fi
 
       - name: Upload Data Pipeline SBOM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom-datapipeline
           path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-datapipeline.json
@@ -239,7 +239,7 @@ jobs:
           grype sbom:${{ env.SBOM_OUTPUT_DIR }}/sbom-complete.json --output table || true
 
       - name: Upload merged SBOM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sbom-complete
           path: ${{ env.SBOM_OUTPUT_DIR }}/sbom-complete.json
