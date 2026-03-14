@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy import and_, case, desc, func, select, type_coerce
-from sqlalchemy.types import Date as DateType
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.types import Date as DateType
 
 from app.db.models import DailyPrice, MarketIndex, Stock
 
@@ -313,30 +313,40 @@ class MarketRepository:
         Returns:
             Tuple of (stock_code, stock_name, change_percent) or None
         """
-        # Subquery for latest prices
-        latest_prices = (
+        # Rank all prices per stock by date (most recent = rank 1)
+        ranked_prices = (
             select(
                 DailyPrice.stock_code,
-                func.max(DailyPrice.trade_date).label("max_date"),
+                DailyPrice.close_price,
+                DailyPrice.trade_date,
+                func.row_number()
+                .over(
+                    partition_by=DailyPrice.stock_code,
+                    order_by=desc(DailyPrice.trade_date),
+                )
+                .label("rn"),
             )
-            .group_by(DailyPrice.stock_code)
             .subquery()
         )
 
-        # Subquery for previous day prices
+        # Latest prices: rank 1
+        latest_prices = (
+            select(
+                ranked_prices.c.stock_code,
+                ranked_prices.c.close_price.label("latest_close"),
+                ranked_prices.c.trade_date.label("latest_date"),
+            )
+            .where(ranked_prices.c.rn == 1)
+            .subquery()
+        )
+
+        # Previous prices: rank 2 (previous trading day, no date arithmetic needed)
         prev_prices = (
             select(
-                DailyPrice.stock_code,
-                DailyPrice.close_price.label("prev_close"),
+                ranked_prices.c.stock_code,
+                ranked_prices.c.close_price.label("prev_close"),
             )
-            .join(
-                latest_prices,
-                DailyPrice.stock_code == latest_prices.c.stock_code,
-            )
-            .where(
-                DailyPrice.trade_date
-                == type_coerce(latest_prices.c.max_date, DateType) - timedelta(days=1)
-            )
+            .where(ranked_prices.c.rn == 2)
             .subquery()
         )
 
@@ -346,7 +356,7 @@ class MarketRepository:
                 Stock.code,
                 Stock.name,
                 (
-                    (DailyPrice.close_price - prev_prices.c.prev_close)
+                    (latest_prices.c.latest_close - prev_prices.c.prev_close)
                     / prev_prices.c.prev_close
                     * 100
                 ).label("change_percent"),
@@ -355,13 +365,6 @@ class MarketRepository:
             .join(
                 latest_prices,
                 Stock.code == latest_prices.c.stock_code,
-            )
-            .join(
-                DailyPrice,
-                and_(
-                    DailyPrice.stock_code == Stock.code,
-                    DailyPrice.trade_date == latest_prices.c.max_date,
-                ),
             )
             .join(
                 prev_prices,
