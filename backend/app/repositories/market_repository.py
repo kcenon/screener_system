@@ -323,8 +323,7 @@ class MarketRepository:
                 .over(
                     partition_by=DailyPrice.stock_code,
                     order_by=desc(DailyPrice.trade_date),
-                )
-                .label("rn"),
+                ).label("rn"),
             )
             .subquery()
         )
