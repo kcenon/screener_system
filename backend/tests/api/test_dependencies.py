@@ -10,7 +10,7 @@ Tests the core dependency injection infrastructure that provides:
 from unittest.mock import AsyncMock, Mock
 
 import pytest
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -142,7 +142,7 @@ async def test_service_dependencies_chain(db: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_get_current_user_valid_token(db: AsyncSession):
-    """Test current user extraction from valid token"""
+    """Test current user extraction from valid Bearer token"""
     # Create mock user (use Mock instead of actual User model)
     mock_user = Mock(spec=User)
     mock_user.id = 1
@@ -155,12 +155,20 @@ async def test_get_current_user_valid_token(db: AsyncSession):
         credentials="valid_token_123",
     )
 
+    # Create mock request (no cookies)
+    mock_request = Mock(spec=Request)
+
     # Create mock auth service
     auth_service = AsyncMock(spec=AuthService)
     auth_service.verify_access_token.return_value = mock_user
 
-    # Test get_current_user
-    user = await get_current_user(credentials, auth_service)
+    # Test get_current_user with Bearer token (no cookie)
+    user = await get_current_user(
+        request=mock_request,
+        auth_service=auth_service,
+        credentials=credentials,
+        access_token_cookie=None,
+    )
 
     # Verify
     assert user == mock_user
@@ -176,6 +184,8 @@ async def test_get_current_user_invalid_token():
         credentials="invalid_token",
     )
 
+    mock_request = Mock(spec=Request)
+
     # Create mock auth service that raises exception
     auth_service = AsyncMock(spec=AuthService)
     auth_service.verify_access_token.side_effect = UnauthorizedException(
@@ -184,7 +194,12 @@ async def test_get_current_user_invalid_token():
 
     # Test get_current_user raises HTTPException
     with pytest.raises(HTTPException) as exc_info:
-        await get_current_user(credentials, auth_service)
+        await get_current_user(
+            request=mock_request,
+            auth_service=auth_service,
+            credentials=credentials,
+            access_token_cookie=None,
+        )
 
     # Verify exception details
     assert exc_info.value.status_code == 401
@@ -200,13 +215,20 @@ async def test_get_current_user_expired_token():
         credentials="expired_token",
     )
 
+    mock_request = Mock(spec=Request)
+
     auth_service = AsyncMock(spec=AuthService)
     auth_service.verify_access_token.side_effect = UnauthorizedException(
         "Token has expired"
     )
 
     with pytest.raises(HTTPException) as exc_info:
-        await get_current_user(credentials, auth_service)
+        await get_current_user(
+            request=mock_request,
+            auth_service=auth_service,
+            credentials=credentials,
+            access_token_cookie=None,
+        )
 
     assert exc_info.value.status_code == 401
     assert "Token has expired" in str(exc_info.value.detail)
@@ -290,8 +312,15 @@ async def test_dependency_injection_full_chain(db: AsyncSession):
         credentials=access_token,
     )
 
+    mock_request = Mock(spec=Request)
+
     # Verify user extraction
-    user = await get_current_user(credentials, auth_service)
+    user = await get_current_user(
+        request=mock_request,
+        auth_service=auth_service,
+        credentials=credentials,
+        access_token_cookie=None,
+    )
     assert user.id == test_user.id
     assert user.email == test_user.email
 
