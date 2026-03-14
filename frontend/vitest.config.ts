@@ -8,6 +8,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
+    server: {
+      deps: {
+        inline: ['@exodus/bytes'],
+      },
+    },
     // Exclude E2E tests (Playwright) from Vitest
     exclude: [
       '**/node_modules/**',
