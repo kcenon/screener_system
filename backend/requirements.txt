@@ -37,7 +37,7 @@ pandas==2.3.3
 numpy==2.4.2
 scikit-learn==1.8.0
 lightgbm==4.6.0
-xgboost==3.1.2
+xgboost==3.2.0
 optuna==4.7.0
 openai==1.58.1  # Upgraded: httpx 0.28.x compatibility (fixes proxies parameter issue)
 anthropic==0.84.0  # Upgraded: httpx 0.28.x compatibility (fixes proxies parameter issue)
