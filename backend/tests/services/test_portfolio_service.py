@@ -10,7 +10,6 @@ from app.db.models import Transaction
 from app.db.models.holding import Holding as HoldingModel
 from app.services.portfolio_service import PortfolioService
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
