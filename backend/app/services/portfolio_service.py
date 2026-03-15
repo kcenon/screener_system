@@ -388,9 +388,7 @@ class PortfolioService:
 
         stock = await self.stock_repo.get_by_code(holding.stock_code)
         latest_price = await self.stock_repo.get_latest_price(holding.stock_code)
-        current_price = (
-            Decimal(str(latest_price.close_price)) if latest_price else None
-        )
+        current_price = Decimal(str(latest_price.close_price)) if latest_price else None
 
         cost = holding.total_cost
         current_value = (
@@ -548,9 +546,7 @@ class PortfolioService:
             elif tx.transaction_type == "SELL":
                 avg_cost = avg_costs.get(code, price)
                 realized_gain += (price - avg_cost) * qty - commission
-                qty_held[code] = max(
-                    Decimal("0"), qty_held.get(code, qty) - qty
-                )
+                qty_held[code] = max(Decimal("0"), qty_held.get(code, qty) - qty)
 
         return realized_gain
 
@@ -614,9 +610,7 @@ class PortfolioService:
 
         if total_value > 0:
             for item in by_stock:
-                item["percent"] = float(
-                    Decimal(str(item["value"])) / total_value * 100
-                )
+                item["percent"] = float(Decimal(str(item["value"])) / total_value * 100)
 
         by_sector_list = [
             {
@@ -628,15 +622,13 @@ class PortfolioService:
         ]
 
         by_market_cap = {
-            "large": float(large_cap_value / total_value * 100)
-            if total_value > 0
-            else 0,
-            "mid": float(mid_cap_value / total_value * 100)
-            if total_value > 0
-            else 0,
-            "small": float(small_cap_value / total_value * 100)
-            if total_value > 0
-            else 0,
+            "large": (
+                float(large_cap_value / total_value * 100) if total_value > 0 else 0
+            ),
+            "mid": float(mid_cap_value / total_value * 100) if total_value > 0 else 0,
+            "small": (
+                float(small_cap_value / total_value * 100) if total_value > 0 else 0
+            ),
         }
 
         return PortfolioAllocation(

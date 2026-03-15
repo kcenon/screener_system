@@ -100,9 +100,7 @@ class TestCalculateRealizedGain:
     async def test_buy_only_no_realized_gain(self, service):
         """Holding without any sell → realized gain is zero."""
         buy_tx = _make_transaction("005930", "BUY", 100, 70000.0)
-        service.session.execute = AsyncMock(
-            return_value=_mock_scalars([buy_tx])
-        )
+        service.session.execute = AsyncMock(return_value=_mock_scalars([buy_tx]))
         result = await service._calculate_realized_gain(portfolio_id=1)
         assert result == Decimal("0")
 
@@ -198,9 +196,7 @@ class TestDayChangeCalculation:
         """When close price rose, day_change should be positive."""
         holding = _make_holding(stock_code="005930", shares=100, average_price=70000.0)
         service.holding_repo.get_portfolio_holdings = AsyncMock(return_value=[holding])
-        service.stock_repo.get_by_code = AsyncMock(
-            return_value=_make_stock("005930")
-        )
+        service.stock_repo.get_by_code = AsyncMock(return_value=_make_stock("005930"))
         # today: 75000, yesterday: 70000 → day_change = +5000 * 100 = +500000
         service.stock_repo.get_price_history = AsyncMock(
             return_value=[
@@ -220,9 +216,7 @@ class TestDayChangeCalculation:
         """When only one price record exists, day_change contribution is zero."""
         holding = _make_holding(stock_code="005930", shares=100, average_price=70000.0)
         service.holding_repo.get_portfolio_holdings = AsyncMock(return_value=[holding])
-        service.stock_repo.get_by_code = AsyncMock(
-            return_value=_make_stock("005930")
-        )
+        service.stock_repo.get_by_code = AsyncMock(return_value=_make_stock("005930"))
         service.stock_repo.get_price_history = AsyncMock(
             return_value=[_make_daily_price(75000)]  # Only one record
         )
