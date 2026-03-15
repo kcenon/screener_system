@@ -33,14 +33,14 @@ class PortfolioService:
 
     # Subscription tier limits
     MAX_PORTFOLIOS = {
-        "free": 0,
-        "premium": 3,
+        "free": 1,
+        "basic": 3,
         "pro": 999,  # Unlimited
     }
 
     MAX_HOLDINGS_PER_PORTFOLIO = {
-        "free": 0,
-        "premium": 100,
+        "free": 10,
+        "basic": 100,
         "pro": 9999,  # Unlimited
     }
 
@@ -93,7 +93,7 @@ class PortfolioService:
 
         Args:
             user_id: User ID
-            user_tier: User subscription tier (free, premium, pro)
+            user_tier: User subscription tier (free, basic, pro)
             data: Portfolio creation data
 
         Returns:
@@ -107,7 +107,8 @@ class PortfolioService:
         max_portfolios = self.MAX_PORTFOLIOS.get(user_tier, 0)
         if count >= max_portfolios:
             raise ValueError(
-                f"Portfolio limit reached for {user_tier} tier (max {max_portfolios})"
+                f"Portfolio limit reached for {user_tier} tier (max {max_portfolios}). "
+                "Upgrade your subscription to create more portfolios."
             )
 
         # Check for duplicate name
@@ -223,7 +224,8 @@ class PortfolioService:
         max_holdings = self.MAX_HOLDINGS_PER_PORTFOLIO.get(user_tier, 0)
         if portfolio.holding_count >= max_holdings:
             raise ValueError(
-                f"Holding limit reached for {user_tier} tier (max {max_holdings})"
+                f"Holding limit reached for {user_tier} tier (max {max_holdings}). "
+                "Upgrade your subscription to add more holdings."
             )
 
         # Validate stock exists
