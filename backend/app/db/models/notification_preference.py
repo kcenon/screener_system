@@ -167,6 +167,38 @@ class NotificationPreference(BaseModel):
         else:
             return current_time >= start or current_time <= end
 
+    def seconds_until_quiet_hours_end(self) -> int:
+        """
+        Calculate seconds until quiet hours end.
+
+        Returns:
+            Seconds until quiet hours end, or 0 if not in quiet hours
+            or quiet hours are not configured.
+        """
+        from datetime import timedelta
+
+        from app.db.base import utc_now
+
+        if not self.quiet_hours_start or not self.quiet_hours_end:
+            return 0
+
+        now = utc_now()
+        current_time = now.time()
+
+        if not self.is_in_quiet_hours(current_time):
+            return 0
+
+        end = self.quiet_hours_end
+        end_dt = now.replace(
+            hour=end.hour, minute=end.minute, second=end.second, microsecond=0
+        )
+
+        # If quiet hours end tomorrow (overnight case)
+        if end_dt <= now:
+            end_dt += timedelta(days=1)
+
+        return max(0, int((end_dt - now).total_seconds()))
+
     def enable_all_channels(self) -> None:
         """Enable all notification channels"""
         self.email_enabled = True

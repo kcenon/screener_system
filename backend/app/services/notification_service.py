@@ -22,6 +22,7 @@ Example:
             )
 """
 
+import asyncio
 import logging
 from typing import Optional
 
@@ -30,6 +31,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.db.models import Notification, NotificationPreference
+from app.schemas.websocket import MessageType, NotificationMessage
 from app.services.email_service import EmailService
 
 logger = logging.getLogger(__name__)
@@ -68,6 +70,7 @@ class NotificationService:
         self,
         user_id: int,
         notification_id: int,
+        skip_quiet_hours: bool = False,
     ) -> bool:
         """Send notification via all enabled channels.
 
@@ -77,6 +80,8 @@ class NotificationService:
         Args:
             user_id: User ID to send notification to.
             notification_id: Notification ID to send.
+            skip_quiet_hours: If True, bypass quiet hours check (used for
+                deferred delivery after quiet hours end).
 
         Returns:
             True if notification was sent successfully via at least one channel.
@@ -107,12 +112,15 @@ class NotificationService:
             await self.session.flush()
 
         # Check quiet hours
-        if preferences.is_in_quiet_hours():
+        if not skip_quiet_hours and preferences.is_in_quiet_hours():
+            delay = preferences.seconds_until_quiet_hours_end()
             logger.info(
                 f"User {user_id} is in quiet hours. "
-                "Notification will be queued for later."
+                f"Scheduling notification {notification_id} for delivery in {delay}s."
             )
-            # TODO: Implement notification queuing for quiet hours
+            asyncio.create_task(
+                self._deliver_after_delay(user_id, notification_id, delay)
+            )
             return False
 
         sent_via_any_channel = False
@@ -169,6 +177,10 @@ class NotificationService:
     ) -> bool:
         """Send in-app notification via WebSocket.
 
+        Pushes the notification to all active WebSocket connections for the
+        user. The notification is also persisted in the database and will be
+        visible to clients that poll for unread notifications.
+
         Args:
             notification: Notification to send.
 
@@ -176,16 +188,23 @@ class NotificationService:
             True if notification was sent successfully.
         """
         try:
-            # TODO: Integrate with WebSocket connection manager
-            # For now, just log that notification is available in-app
-            logger.info(
-                f"In-app notification {notification.id} available for "
-                f"user {notification.user_id}"
+            from app.core.websocket import connection_manager
+
+            ws_message = NotificationMessage(
+                type=MessageType.NOTIFICATION,
+                notification_id=notification.id,
+                title=notification.title,
+                message=notification.message,
+                notification_type=notification.notification_type,
+                priority=notification.priority,
             )
-
-            # The notification is already in the database, so it will be
-            # visible when the user refreshes or polls for notifications
-
+            await connection_manager.send_personal_message(
+                ws_message, str(notification.user_id)
+            )
+            logger.info(
+                f"In-app notification {notification.id} sent via WebSocket "
+                f"to user {notification.user_id}"
+            )
             return True
         except Exception as e:
             logger.error(
@@ -256,12 +275,44 @@ class NotificationService:
         Returns:
             True if push notification was sent successfully.
         """
-        # TODO: Implement push notification service
+        # Push notification delivery is tracked in issue #583
         logger.debug(
-            f"Push notification for notification {notification.id} "
-            "(not yet implemented)"
+            f"Push notification for notification {notification.id} skipped "
+            "(Web Push API support not yet enabled — see issue #583)"
         )
         return False
+
+    async def _deliver_after_delay(
+        self,
+        user_id: int,
+        notification_id: int,
+        delay_seconds: int,
+    ) -> None:
+        """Deliver a notification after a delay (quiet hours deferral).
+
+        Creates a new DB session for the deferred delivery, since the original
+        session may be closed by the time the delay elapses.
+
+        Args:
+            user_id: User ID.
+            notification_id: Notification to deliver.
+            delay_seconds: Seconds to wait before delivery.
+        """
+        await asyncio.sleep(delay_seconds)
+        try:
+            from app.db.session import AsyncSessionLocal
+
+            async with AsyncSessionLocal() as session:
+                service = NotificationService(session)
+                await service.send_notification(
+                    user_id, notification_id, skip_quiet_hours=True
+                )
+        except Exception as e:
+            logger.error(
+                f"Error delivering deferred notification {notification_id} "
+                f"for user {user_id}: {str(e)}",
+                exc_info=True,
+            )
 
     async def mark_as_read(
         self,

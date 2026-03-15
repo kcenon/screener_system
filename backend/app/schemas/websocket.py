@@ -22,6 +22,7 @@ class MessageType(str, Enum):
     ORDERBOOK_UPDATE = "orderbook_update"
     MARKET_STATUS = "market_status"
     ALERT = "alert"
+    NOTIFICATION = "notification"  # In-app notification delivery
     ERROR = "error"
     PONG = "pong"
     SUBSCRIBED = "subscribed"
@@ -193,6 +194,17 @@ class Alert(WebSocketMessage):
     alert_type: str  # price_target, volume_spike, news, etc.
     message: str
     data: Dict[str, Any] = Field(default_factory=dict)
+
+
+class NotificationMessage(WebSocketMessage):
+    """In-app notification delivery via WebSocket"""
+
+    type: MessageType = MessageType.NOTIFICATION
+    notification_id: int
+    title: str
+    message: str
+    notification_type: str  # ALERT, MARKET_EVENT, SYSTEM, PORTFOLIO
+    priority: str  # LOW, NORMAL, HIGH, URGENT
 
 
 # ============================================================================
