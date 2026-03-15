@@ -211,6 +211,33 @@ async def auth_headers(test_user):
 
 
 @pytest_asyncio.fixture
+async def basic_user(db: AsyncSession):
+    """Create a basic tier test user"""
+    from app.core.security import get_password_hash
+    from app.db.models import User
+
+    user = User(
+        email="basic@example.com",
+        name="basicuser",
+        password_hash=get_password_hash("testpassword"),
+        subscription_tier="basic",
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
+@pytest_asyncio.fixture
+async def basic_auth_headers(basic_user):
+    """Create authentication headers for basic tier user"""
+    from app.core.security import create_access_token
+
+    access_token = create_access_token(subject=basic_user.id)
+    return {"Authorization": f"Bearer {access_token}"}
+
+
+@pytest_asyncio.fixture
 async def client(db: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """Create test HTTP client"""
 
