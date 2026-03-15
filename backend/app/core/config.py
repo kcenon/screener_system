@@ -121,9 +121,6 @@ class Settings(BaseSettings):
         "/health",
         "/health/db",
         "/health/redis",
-        "/docs",
-        "/redoc",
-        "/openapi.json",
     ]
 
     @field_validator("RATE_LIMIT_WHITELIST_PATHS", mode="before")
