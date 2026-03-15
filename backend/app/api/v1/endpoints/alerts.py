@@ -51,10 +51,9 @@ router = APIRouter(prefix="/alerts", tags=["alerts"])
     - `CHANGE_PERCENT_ABOVE`: Trigger when day change exceeds +X%
     - `CHANGE_PERCENT_BELOW`: Trigger when day change falls below -X%
 
-    **Rate Limits:**
-    - Maximum 50 alerts per user
-    - Free tier: 10 alerts
-    - Premium tier: 20 alerts
+    **Alert Limits by Subscription Tier:**
+    - Free tier: 5 alerts
+    - Basic tier: 50 alerts
     - Pro tier: Unlimited
 
     **Examples:**
@@ -82,13 +81,16 @@ async def create_alert(
     )
     alert_count = result.scalar_one()
 
-    # TODO: Get tier from user subscription
-    max_alerts = 50  # Default limit
+    tier_limits = {"free": 5, "basic": 50, "pro": None}
+    max_alerts = tier_limits.get(current_user.subscription_tier, 5)
 
-    if alert_count >= max_alerts:
+    if max_alerts is not None and alert_count >= max_alerts:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Maximum alert limit reached ({max_alerts} alerts)",
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                f"Alert limit reached for {current_user.subscription_tier} tier "
+                f"({max_alerts} alerts). Upgrade your subscription to create more alerts."
+            ),
         )
 
     # Verify stock exists

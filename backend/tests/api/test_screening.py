@@ -11,7 +11,9 @@ from httpx import AsyncClient
 class TestScreeningEndpoints:
     """Test screening API endpoints"""
 
-    async def test_screen_stocks_minimal_request(self, client: AsyncClient):
+    async def test_screen_stocks_minimal_request(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen with minimal request (defaults)"""
         # Mock the repository to avoid database dependency
         with patch(
@@ -30,7 +32,9 @@ class TestScreeningEndpoints:
                 1,
             )
 
-            response = await client.post("/v1/screen", json={})
+            response = await client.post(
+                "/v1/screen", json={}, headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
             data = response.json()
@@ -46,7 +50,9 @@ class TestScreeningEndpoints:
             assert data["meta"]["page"] == 1
             assert data["meta"]["per_page"] == 50
 
-    async def test_screen_stocks_with_filters(self, client: AsyncClient):
+    async def test_screen_stocks_with_filters(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen with specific filters"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
@@ -65,7 +71,9 @@ class TestScreeningEndpoints:
                 "per_page": 50,
             }
 
-            response = await client.post("/v1/screen", json=request_data)
+            response = await client.post(
+                "/v1/screen", json=request_data, headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
             data = response.json()
@@ -76,30 +84,47 @@ class TestScreeningEndpoints:
             assert "per" in filters_applied
             assert "roe" in filters_applied
 
-    async def test_screen_stocks_invalid_sort_field(self, client: AsyncClient):
+    async def test_screen_stocks_invalid_sort_field(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen with invalid sort field"""
         request_data = {
             "sort_by": "invalid_field",
         }
 
-        response = await client.post("/v1/screen", json=request_data)
+        response = await client.post(
+            "/v1/screen", json=request_data, headers=basic_auth_headers
+        )
 
         # Should return 422 Unprocessable Entity
         assert response.status_code == 422
 
-    async def test_screen_stocks_invalid_pagination(self, client: AsyncClient):
+    async def test_screen_stocks_invalid_pagination(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen with invalid pagination"""
         # page must be >= 1
         request_data = {"page": 0}
-        response = await client.post("/v1/screen", json=request_data)
+        response = await client.post(
+            "/v1/screen", json=request_data, headers=basic_auth_headers
+        )
         assert response.status_code == 422
 
         # per_page must be <= 200
         request_data = {"per_page": 300}
-        response = await client.post("/v1/screen", json=request_data)
+        response = await client.post(
+            "/v1/screen", json=request_data, headers=basic_auth_headers
+        )
         assert response.status_code == 422
 
-    async def test_screen_stocks_custom_pagination(self, client: AsyncClient):
+    async def test_screen_stocks_unauthenticated(self, client: AsyncClient):
+        """Test POST /v1/screen without authentication returns 401."""
+        response = await client.post("/v1/screen", json={})
+        assert response.status_code in (401, 403)
+
+    async def test_screen_stocks_custom_pagination(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen with custom pagination"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
@@ -111,7 +136,9 @@ class TestScreeningEndpoints:
                 "per_page": 100,
             }
 
-            response = await client.post("/v1/screen", json=request_data)
+            response = await client.post(
+                "/v1/screen", json=request_data, headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
             data = response.json()
@@ -121,7 +148,7 @@ class TestScreeningEndpoints:
             assert data["meta"]["total"] == 150
             assert data["meta"]["total_pages"] == 2
 
-    async def test_screen_stocks_sorting(self, client: AsyncClient):
+    async def test_screen_stocks_sorting(self, client: AsyncClient, basic_auth_headers):
         """Test POST /v1/screen with different sorting"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
@@ -133,7 +160,9 @@ class TestScreeningEndpoints:
                 "order": "asc",
             }
 
-            response = await client.post("/v1/screen", json=request_data)
+            response = await client.post(
+                "/v1/screen", json=request_data, headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
 
@@ -142,11 +171,15 @@ class TestScreeningEndpoints:
             assert call_kwargs["sort_by"] == "per"
             assert call_kwargs["order"] == "asc"
 
-    async def test_screen_stocks_range_filter_validation(self, client: AsyncClient):
+    async def test_screen_stocks_range_filter_validation(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen with invalid range (min > max)"""
         request_data = {"filters": {"per": {"min": 20.0, "max": 10.0}}}  # min > max
 
-        response = await client.post("/v1/screen", json=request_data)
+        response = await client.post(
+            "/v1/screen", json=request_data, headers=basic_auth_headers
+        )
 
         # Should return validation error
         assert response.status_code == 422
@@ -177,7 +210,9 @@ class TestScreeningEndpoints:
             assert len(data["templates"]) == 1
             assert data["templates"][0]["id"] == "dividend_stocks"
 
-    async def test_apply_screening_template(self, client: AsyncClient):
+    async def test_apply_screening_template(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen/templates/{template_id}"""
         with (
             patch(
@@ -216,7 +251,9 @@ class TestScreeningEndpoints:
                 1,
             )
 
-            response = await client.post("/v1/screen/templates/dividend_stocks")
+            response = await client.post(
+                "/v1/screen/templates/dividend_stocks", headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
             data = response.json()
@@ -230,7 +267,9 @@ class TestScreeningEndpoints:
             assert call_kwargs["filters"].quality_score.min == 70.0
             assert call_kwargs["sort_by"] == "dividend_yield"
 
-    async def test_apply_screening_template_not_found(self, client: AsyncClient):
+    async def test_apply_screening_template_not_found(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen/templates/{template_id} with non-existent template"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository"
@@ -238,13 +277,15 @@ class TestScreeningEndpoints:
         ) as mock_templates:
             mock_templates.return_value = []
 
-            response = await client.post("/v1/screen/templates/non_existent")
+            response = await client.post(
+                "/v1/screen/templates/non_existent", headers=basic_auth_headers
+            )
 
             # Should return 404 Not Found
             assert response.status_code == 404
 
     async def test_apply_screening_template_custom_pagination(
-        self, client: AsyncClient
+        self, client: AsyncClient, basic_auth_headers
     ):
         """Test POST /v1/screen/templates/{template_id} custom pagination"""
         with (
@@ -270,7 +311,8 @@ class TestScreeningEndpoints:
             mock_screen.return_value = ([], 200)
 
             response = await client.post(
-                "/v1/screen/templates/value_stocks?page=3&per_page=50"
+                "/v1/screen/templates/value_stocks?page=3&per_page=50",
+                headers=basic_auth_headers,
             )
 
             assert response.status_code == 200
@@ -280,14 +322,18 @@ class TestScreeningEndpoints:
             assert data["meta"]["page"] == 3
             assert data["meta"]["per_page"] == 50
 
-    async def test_screen_stocks_empty_results(self, client: AsyncClient):
+    async def test_screen_stocks_empty_results(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen returning no results"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
         ) as mock_screen:
             mock_screen.return_value = ([], 0)
 
-            response = await client.post("/v1/screen", json={})
+            response = await client.post(
+                "/v1/screen", json={}, headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
             data = response.json()
@@ -296,7 +342,9 @@ class TestScreeningEndpoints:
             assert data["meta"]["total"] == 0
             assert data["meta"]["total_pages"] == 0
 
-    async def test_screen_stocks_all_filter_types(self, client: AsyncClient):
+    async def test_screen_stocks_all_filter_types(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test POST /v1/screen with all types of filters"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
@@ -328,7 +376,9 @@ class TestScreeningEndpoints:
                 }
             }
 
-            response = await client.post("/v1/screen", json=request_data)
+            response = await client.post(
+                "/v1/screen", json=request_data, headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
             data = response.json()
@@ -336,7 +386,9 @@ class TestScreeningEndpoints:
             # Verify all filters were counted
             assert data["filters_applied"]["_count"] >= 10
 
-    async def test_screen_stocks_response_structure(self, client: AsyncClient):
+    async def test_screen_stocks_response_structure(
+        self, client: AsyncClient, basic_auth_headers
+    ):
         """Test that response has correct structure and types"""
         with patch(
             "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
@@ -364,7 +416,9 @@ class TestScreeningEndpoints:
                 1,
             )
 
-            response = await client.post("/v1/screen", json={})
+            response = await client.post(
+                "/v1/screen", json={}, headers=basic_auth_headers
+            )
 
             assert response.status_code == 200
             data = response.json()
@@ -386,3 +440,54 @@ class TestScreeningEndpoints:
             # Check top-level fields
             assert isinstance(data["query_time_ms"], float)
             assert isinstance(data["filters_applied"], dict)
+
+
+# ============================================================================
+# TIER ENFORCEMENT TESTS
+# ============================================================================
+
+
+@pytest.mark.asyncio
+class TestScreeningTierEnforcement:
+    """Tests for subscription tier-based screening limits."""
+
+    async def test_free_tier_per_page_capped(
+        self, client: AsyncClient, auth_headers, test_user, db_session
+    ):
+        """Test that free tier users have results capped at FREE_TIER_SCREENING_LIMIT."""
+        test_user.subscription_tier = "free"
+        await db_session.commit()
+
+        with patch(
+            "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
+        ) as mock_screen:
+            mock_screen.return_value = ([], 0)
+
+            # Request more than the free tier limit
+            request_data = {"per_page": 100}
+            response = await client.post(
+                "/v1/screen", json=request_data, headers=auth_headers
+            )
+
+            assert response.status_code == 200
+            # Verify per_page was capped to FREE_TIER_SCREENING_LIMIT (20)
+            call_kwargs = mock_screen.call_args.kwargs
+            assert call_kwargs["limit"] <= 20
+
+    async def test_basic_tier_full_results(
+        self, client: AsyncClient, basic_auth_headers, basic_user, db_session
+    ):
+        """Test that basic tier users can request more than 20 results."""
+        with patch(
+            "app.repositories.screening_repository.ScreeningRepository.screen_stocks"
+        ) as mock_screen:
+            mock_screen.return_value = ([], 0)
+
+            request_data = {"per_page": 100}
+            response = await client.post(
+                "/v1/screen", json=request_data, headers=basic_auth_headers
+            )
+
+            assert response.status_code == 200
+            call_kwargs = mock_screen.call_args.kwargs
+            assert call_kwargs["limit"] == 100

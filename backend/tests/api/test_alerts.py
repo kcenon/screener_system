@@ -752,3 +752,131 @@ class TestToggleAlert:
         )
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+# ============================================================================
+# TIER ENFORCEMENT TESTS
+# ============================================================================
+
+
+class TestAlertTierEnforcement:
+    """Tests for subscription tier-based alert limits."""
+
+    async def test_free_tier_alert_limit_enforced(
+        self, client, auth_headers, test_user, test_stock, db_session
+    ):
+        """Test that free tier users cannot exceed 5 alerts."""
+        # Set user to free tier (default)
+        test_user.subscription_tier = "free"
+        await db_session.commit()
+
+        # Create 5 alerts (the free tier limit)
+        for i in range(5):
+            alert = Alert(
+                user_id=test_user.id,
+                stock_code=test_stock.code,
+                alert_type="PRICE_ABOVE",
+                condition_value=Decimal(f"{50000 + i * 1000}.00"),
+            )
+            db_session.add(alert)
+        await db_session.commit()
+
+        # Attempt to create a 6th alert
+        alert_data = {
+            "stock_code": test_stock.code,
+            "alert_type": "PRICE_BELOW",
+            "condition_value": 40000.00,
+        }
+        response = await client.post(
+            "/v1/alerts",
+            json=alert_data,
+            headers=auth_headers,
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert "upgrade" in response.json()["detail"].lower()
+
+    async def test_basic_tier_alert_limit_enforced(
+        self, client, auth_headers, test_user, test_stock, db_session
+    ):
+        """Test that basic tier users cannot exceed 50 alerts."""
+        test_user.subscription_tier = "basic"
+        await db_session.commit()
+
+        # Create 50 alerts (the basic tier limit)
+        for i in range(50):
+            alert = Alert(
+                user_id=test_user.id,
+                stock_code=test_stock.code,
+                alert_type="PRICE_ABOVE",
+                condition_value=Decimal(f"{10000 + i * 100}.00"),
+            )
+            db_session.add(alert)
+        await db_session.commit()
+
+        # Attempt to create a 51st alert
+        alert_data = {
+            "stock_code": test_stock.code,
+            "alert_type": "PRICE_BELOW",
+            "condition_value": 9000.00,
+        }
+        response = await client.post(
+            "/v1/alerts",
+            json=alert_data,
+            headers=auth_headers,
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert "upgrade" in response.json()["detail"].lower()
+
+    async def test_pro_tier_no_alert_limit(
+        self, client, auth_headers, test_user, test_stock, db_session
+    ):
+        """Test that pro tier users have no alert limit."""
+        test_user.subscription_tier = "pro"
+        await db_session.commit()
+
+        # Create 55 alerts (above basic limit)
+        for i in range(55):
+            alert = Alert(
+                user_id=test_user.id,
+                stock_code=test_stock.code,
+                alert_type="PRICE_ABOVE",
+                condition_value=Decimal(f"{10000 + i * 100}.00"),
+            )
+            db_session.add(alert)
+        await db_session.commit()
+
+        # Pro tier user should still be able to create more
+        alert_data = {
+            "stock_code": test_stock.code,
+            "alert_type": "PRICE_BELOW",
+            "condition_value": 9000.00,
+        }
+        response = await client.post(
+            "/v1/alerts",
+            json=alert_data,
+            headers=auth_headers,
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+    async def test_free_tier_can_create_up_to_limit(
+        self, client, auth_headers, test_user, test_stock, db_session
+    ):
+        """Test that free tier users can create up to 5 alerts."""
+        test_user.subscription_tier = "free"
+        await db_session.commit()
+
+        for i in range(5):
+            alert_data = {
+                "stock_code": test_stock.code,
+                "alert_type": "PRICE_ABOVE",
+                "condition_value": float(50000 + i * 1000),
+            }
+            response = await client.post(
+                "/v1/alerts",
+                json=alert_data,
+                headers=auth_headers,
+            )
+            assert response.status_code == status.HTTP_201_CREATED

@@ -3,7 +3,9 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.dependencies import CurrentUser
 from app.core.cache import CacheManager, get_cache
+from app.core.config import settings
 from app.db.session import get_db
 from app.schemas.screening import (
     ScreeningRequest,
@@ -166,6 +168,7 @@ def get_screening_service(
 )
 async def screen_stocks(
     request: ScreeningRequest,
+    current_user: CurrentUser,
     screening_service: ScreeningService = Depends(get_screening_service),
 ):
     """
@@ -192,7 +195,10 @@ async def screen_stocks(
     - Multiple filters are combined with AND logic
     - Results are cached based on filter hash
     - Cache is invalidated after daily indicator calculation
+    - Free tier results are capped at FREE_TIER_SCREENING_LIMIT
     """
+    if current_user.subscription_tier == "free":
+        request.per_page = min(request.per_page, settings.FREE_TIER_SCREENING_LIMIT)
     return await screening_service.execute_screening(request)
 
 
@@ -275,6 +281,7 @@ async def get_screening_templates(
 )
 async def apply_screening_template(
     template_id: str,
+    current_user: CurrentUser,
     page: int = 1,
     per_page: int = 50,
     screening_service: ScreeningService = Depends(get_screening_service),
@@ -285,6 +292,8 @@ async def apply_screening_template(
     Execute screening using a predefined template's filters.
     Pagination can be customized via query parameters.
     """
+    if current_user.subscription_tier == "free":
+        per_page = min(per_page, settings.FREE_TIER_SCREENING_LIMIT)
     return await screening_service.apply_template(
         template_id=template_id,
         page=page,
