@@ -92,8 +92,8 @@ class Transaction(Base):
 
     @property
     def transaction_value(self) -> Decimal:
-        """Calculate transaction value (shares * price)"""
-        return Decimal(str(self.shares)) * Decimal(str(self.price))
+        """Calculate transaction value (quantity * price)"""
+        return Decimal(str(self.quantity)) * Decimal(str(self.price))
 
     @property
     def total_amount(self) -> Decimal:
