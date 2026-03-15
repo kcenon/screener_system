@@ -175,7 +175,7 @@ class NotificationPreference(BaseModel):
             Seconds until quiet hours end, or 0 if not in quiet hours
             or quiet hours are not configured.
         """
-        from datetime import datetime, timedelta
+        from datetime import timedelta
 
         from app.db.base import utc_now
 
