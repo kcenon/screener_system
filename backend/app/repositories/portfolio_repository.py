@@ -168,7 +168,7 @@ class HoldingRepository:
         if active_only:
             query = query.where(Holding.shares > 0)
 
-        query = query.order_by(Holding.last_update_date.desc())
+        query = query.order_by(Holding.updated_at.desc())
 
         result = await self.session.execute(query)
         return list(result.scalars().all())
@@ -180,7 +180,7 @@ class HoldingRepository:
         result = await self.session.execute(
             select(Holding).where(
                 Holding.portfolio_id == portfolio_id,
-                Holding.stock_symbol == stock_symbol,
+                Holding.stock_code == stock_symbol,
             )
         )
         return result.scalar_one_or_none()
@@ -240,7 +240,7 @@ class TransactionRepository:
         query = select(Transaction).where(Transaction.portfolio_id == portfolio_id)
 
         if stock_symbol:
-            query = query.where(Transaction.stock_symbol == stock_symbol)
+            query = query.where(Transaction.stock_code == stock_symbol)
 
         query = (
             query.order_by(Transaction.transaction_date.desc())
@@ -259,7 +259,7 @@ class TransactionRepository:
             Transaction.portfolio_id == portfolio_id
         )
         if stock_symbol:
-            query = query.where(Transaction.stock_symbol == stock_symbol)
+            query = query.where(Transaction.stock_code == stock_symbol)
 
         result = await self.session.execute(query)
         return result.scalar_one()

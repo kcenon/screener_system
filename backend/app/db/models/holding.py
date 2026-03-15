@@ -62,6 +62,11 @@ class Holding(BaseModel):
             f"code={self.stock_code}, shares={self.shares})>"
         )
 
+    @property
+    def total_cost(self) -> Decimal:
+        """Calculate total cost (shares * average_price)"""
+        return Decimal(str(self.shares)) * Decimal(str(self.average_price))
+
     def reduce_shares(self, shares_to_sell: int) -> None:
         """Reduce shares for sell transactions"""
         if shares_to_sell <= 0:
@@ -71,8 +76,8 @@ class Holding(BaseModel):
                 f"Cannot sell {shares_to_sell} shares, only {self.shares} available"
             )
 
-        self.shares = Decimal(str(self.shares)) - shares_to_sell
+        self.shares = int(Decimal(str(self.shares)) - shares_to_sell)
 
-        # If all shares sold, reset average cost
+        # If all shares sold, reset average price
         if self.shares == 0:
-            self.average_cost = Decimal("0")
+            self.average_price = 0.0

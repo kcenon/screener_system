@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
+from sqlalchemy import asc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Holding, Portfolio, Transaction
@@ -21,6 +22,10 @@ from app.schemas.portfolio import (
     TransactionCreate,
     TransactionType,
 )
+
+# Market cap thresholds (KRW)
+_LARGE_CAP_THRESHOLD = 1_000_000_000_000  # 1 trillion KRW
+_MID_CAP_THRESHOLD = 100_000_000_000  # 100 billion KRW
 
 
 class PortfolioService:
@@ -236,11 +241,9 @@ class PortfolioService:
         # Create holding
         holding = Holding(
             portfolio_id=portfolio_id,
-            stock_symbol=data.stock_symbol,
-            shares=data.shares,
-            average_cost=data.average_cost,
-            first_purchase_date=data.first_purchase_date or datetime.now().date(),
-            last_update_date=datetime.now(),
+            stock_code=data.stock_symbol,
+            shares=int(data.shares),
+            average_price=float(data.average_cost),
         )
 
         return await self.holding_repo.create(holding)
@@ -333,10 +336,9 @@ class PortfolioService:
 
         # Update fields
         if data.shares is not None:
-            holding.shares = data.shares
+            holding.shares = int(data.shares)
         if data.average_cost is not None:
-            holding.average_cost = data.average_cost
-        holding.last_update_date = datetime.now()
+            holding.average_price = float(data.average_cost)
 
         return await self.holding_repo.update(holding)
 
@@ -370,7 +372,7 @@ class PortfolioService:
 
     async def get_holding_with_price(self, holding_id: int):
         """
-        Get holding with current price (simplified)
+        Get holding with current price
 
         Args:
             holding_id: Holding ID
@@ -378,56 +380,51 @@ class PortfolioService:
         Returns:
             HoldingResponse with current price
         """
-        from decimal import Decimal
-
         from app.schemas.portfolio import HoldingResponse
 
         holding = await self.holding_repo.get_by_id(holding_id)
         if not holding:
             return None
 
-        # Get current stock price
-        stock = await self.stock_repo.get_by_code(holding.stock_symbol)
+        stock = await self.stock_repo.get_by_code(holding.stock_code)
+        latest_price = await self.stock_repo.get_latest_price(holding.stock_code)
         current_price = (
-            Decimal(str(stock.current_price)) if stock and stock.current_price else None
+            Decimal(str(latest_price.close_price)) if latest_price else None
         )
 
-        # Calculate current value and gains
-        total_cost = holding.total_cost
+        cost = holding.total_cost
         current_value = (
-            (Decimal(str(holding.shares)) * current_price) if current_price else None
+            Decimal(str(holding.shares)) * current_price if current_price else None
         )
-        unrealized_gain = (
-            (current_value - Decimal(str(total_cost))) if current_value else None
-        )
+        unrealized_gain = (current_value - cost) if current_value is not None else None
         return_percent = (
-            (unrealized_gain / Decimal(str(total_cost)) * 100)
-            if unrealized_gain is not None and current_value and total_cost > 0
+            (unrealized_gain / cost * 100)
+            if unrealized_gain is not None and cost > 0
             else None
         )
 
         return HoldingResponse(
             id=holding.id,
             portfolio_id=holding.portfolio_id,
-            stock_symbol=holding.stock_symbol,
-            stock_name=stock.name_kr if stock else None,
+            stock_symbol=holding.stock_code,
+            stock_name=stock.name if stock else None,
             sector=stock.sector if stock else None,
-            shares=holding.shares,
-            average_cost=holding.average_cost,
+            shares=Decimal(str(holding.shares)),
+            average_cost=Decimal(str(holding.average_price)),
             current_price=current_price,
-            total_cost=total_cost,
+            total_cost=cost,
             current_value=current_value,
             unrealized_gain=unrealized_gain,
             return_percent=return_percent,
-            first_purchase_date=holding.first_purchase_date,
-            last_update_date=holding.last_update_date,
+            first_purchase_date=None,
+            last_update_date=holding.updated_at,
             created_at=holding.created_at,
             updated_at=holding.updated_at,
         )
 
     async def get_portfolio_performance(self, portfolio_id: int):
         """
-        Get portfolio performance metrics (simplified)
+        Get portfolio performance metrics
 
         Args:
             portfolio_id: Portfolio ID
@@ -435,8 +432,6 @@ class PortfolioService:
         Returns:
             PortfolioPerformance or None
         """
-        from decimal import Decimal
-
         from app.schemas.portfolio import PortfolioPerformance
 
         holdings = await self.holding_repo.get_portfolio_holdings(
@@ -447,6 +442,8 @@ class PortfolioService:
 
         total_cost = Decimal("0")
         total_value = Decimal("0")
+        day_change = Decimal("0")
+        prev_total_value = Decimal("0")
 
         best_performer = None
         worst_performer = None
@@ -454,30 +451,41 @@ class PortfolioService:
         worst_return = Decimal("999999")
 
         for holding in holdings:
-            stock = await self.stock_repo.get_by_code(holding.stock_symbol)
-            if not stock or not stock.current_price:
+            stock = await self.stock_repo.get_by_code(holding.stock_code)
+            prices = await self.stock_repo.get_price_history(
+                holding.stock_code, limit=2
+            )
+            if not stock or not prices:
                 continue
 
-            cost = Decimal(str(holding.total_cost))
-            value = Decimal(str(holding.shares)) * Decimal(str(stock.current_price))
+            current_price = Decimal(str(prices[0].close_price))
+            cost = holding.total_cost
+            value = Decimal(str(holding.shares)) * current_price
             return_pct = ((value - cost) / cost * 100) if cost > 0 else Decimal("0")
 
             total_cost += cost
             total_value += value
 
+            # Day change: compare latest close vs previous close
+            if len(prices) >= 2:
+                prev_price = Decimal(str(prices[1].close_price))
+                holding_shares = Decimal(str(holding.shares))
+                day_change += (current_price - prev_price) * holding_shares
+                prev_total_value += prev_price * holding_shares
+
             if return_pct > best_return:
                 best_return = return_pct
                 best_performer = {
-                    "symbol": holding.stock_symbol,
-                    "name": stock.name_kr,
+                    "symbol": holding.stock_code,
+                    "name": stock.name,
                     "return_percent": float(return_pct),
                 }
 
             if return_pct < worst_return:
                 worst_return = return_pct
                 worst_performer = {
-                    "symbol": holding.stock_symbol,
-                    "name": stock.name_kr,
+                    "symbol": holding.stock_code,
+                    "name": stock.name,
                     "return_percent": float(return_pct),
                 }
 
@@ -486,6 +494,13 @@ class PortfolioService:
 
         unrealized_gain = total_value - total_cost
         return_percent = unrealized_gain / total_cost * 100
+        day_change_percent = (
+            day_change / prev_total_value * 100
+            if prev_total_value > 0
+            else Decimal("0")
+        )
+
+        realized_gain = await self._calculate_realized_gain(portfolio_id)
 
         return PortfolioPerformance(
             portfolio_id=portfolio_id,
@@ -493,16 +508,55 @@ class PortfolioService:
             total_value=total_value,
             unrealized_gain=unrealized_gain,
             return_percent=return_percent,
-            day_change=Decimal("0"),  # TODO: Calculate from price history
-            day_change_percent=Decimal("0"),  # TODO: Calculate from price history
-            realized_gain=Decimal("0"),  # TODO: Calculate from transactions
+            day_change=day_change,
+            day_change_percent=day_change_percent,
+            realized_gain=realized_gain,
             best_performer=best_performer,
             worst_performer=worst_performer,
         )
 
+    async def _calculate_realized_gain(self, portfolio_id: int) -> Decimal:
+        """
+        Calculate realized gain using the average cost method.
+
+        Processes all BUY/SELL transactions chronologically.
+        For each SELL: realized_gain += (sell_price - avg_cost) * qty - commission
+        """
+        result = await self.session.execute(
+            select(Transaction)
+            .where(Transaction.portfolio_id == portfolio_id)
+            .order_by(asc(Transaction.transaction_date))
+        )
+        transactions = result.scalars().all()
+
+        avg_costs: dict[str, Decimal] = {}
+        qty_held: dict[str, Decimal] = {}
+        realized_gain = Decimal("0")
+
+        for tx in transactions:
+            code = tx.stock_code
+            qty = Decimal(str(tx.quantity))
+            price = Decimal(str(tx.price))
+            commission = Decimal(str(tx.commission or 0))
+
+            if tx.transaction_type == "BUY":
+                current_qty = qty_held.get(code, Decimal("0"))
+                current_cost = avg_costs.get(code, Decimal("0"))
+                new_qty = current_qty + qty
+                avg_costs[code] = (current_qty * current_cost + qty * price) / new_qty
+                qty_held[code] = new_qty
+            elif tx.transaction_type == "SELL":
+                avg_cost = avg_costs.get(code, price)
+                realized_gain += (price - avg_cost) * qty - commission
+                qty_held[code] = max(
+                    Decimal("0"), qty_held.get(code, qty) - qty
+                )
+
+        return realized_gain
+
     async def get_portfolio_allocation(self, portfolio_id: int):
         """
-        Get portfolio allocation breakdown (simplified)
+        Get portfolio allocation breakdown
 
         Args:
             portfolio_id: Portfolio ID
@@ -511,7 +565,6 @@ class PortfolioService:
             PortfolioAllocation or None
         """
         from collections import defaultdict
-        from decimal import Decimal
 
         from app.schemas.portfolio import PortfolioAllocation
 
@@ -524,19 +577,24 @@ class PortfolioService:
         total_value = Decimal("0")
         by_stock = []
         by_sector: dict[str, Decimal] = defaultdict(Decimal)
+        large_cap_value = Decimal("0")
+        mid_cap_value = Decimal("0")
+        small_cap_value = Decimal("0")
 
         for holding in holdings:
-            stock = await self.stock_repo.get_by_code(holding.stock_symbol)
-            if not stock or not stock.current_price:
+            stock = await self.stock_repo.get_by_code(holding.stock_code)
+            latest_price = await self.stock_repo.get_latest_price(holding.stock_code)
+            if not stock or not latest_price:
                 continue
 
-            value = Decimal(str(holding.shares)) * Decimal(str(stock.current_price))
+            current_price = latest_price.close_price
+            value = Decimal(str(holding.shares)) * Decimal(str(current_price))
             total_value += value
 
             by_stock.append(
                 {
-                    "symbol": holding.stock_symbol,
-                    "name": stock.name_kr,
+                    "symbol": holding.stock_code,
+                    "name": stock.name,
                     "value": float(value),
                     "percent": 0,  # Will calculate after total
                 }
@@ -545,11 +603,20 @@ class PortfolioService:
             sector = stock.sector or "Unknown"
             by_sector[sector] += value
 
-        # Calculate percentages
+            # Market cap classification
+            market_cap = stock.get_market_cap(current_price)
+            if market_cap is not None and market_cap >= _LARGE_CAP_THRESHOLD:
+                large_cap_value += value
+            elif market_cap is not None and market_cap >= _MID_CAP_THRESHOLD:
+                mid_cap_value += value
+            else:
+                small_cap_value += value
+
         if total_value > 0:
             for item in by_stock:
-                item["percent"] = Decimal(str(item["value"])) / total_value * 100
-                item["percent"] = float(item["percent"])
+                item["percent"] = float(
+                    Decimal(str(item["value"])) / total_value * 100
+                )
 
         by_sector_list = [
             {
@@ -560,15 +627,23 @@ class PortfolioService:
             for sector, value in by_sector.items()
         ]
 
+        by_market_cap = {
+            "large": float(large_cap_value / total_value * 100)
+            if total_value > 0
+            else 0,
+            "mid": float(mid_cap_value / total_value * 100)
+            if total_value > 0
+            else 0,
+            "small": float(small_cap_value / total_value * 100)
+            if total_value > 0
+            else 0,
+        }
+
         return PortfolioAllocation(
             portfolio_id=portfolio_id,
             by_stock=by_stock,
             by_sector=by_sector_list,
-            by_market_cap={
-                "large": 0,
-                "mid": 0,
-                "small": 0,
-            },  # TODO: Implement market cap classification
+            by_market_cap=by_market_cap,
         )
 
     async def get_portfolio_transactions(
@@ -632,11 +707,12 @@ class PortfolioService:
         # Create transaction record
         transaction = Transaction(
             portfolio_id=portfolio_id,
-            stock_symbol=data.stock_symbol,
+            stock_code=data.stock_symbol,
             transaction_type=data.transaction_type.value,
-            shares=data.shares,
-            price=data.price,
-            commission=data.commission,
+            quantity=int(data.shares),
+            price=float(data.price),
+            amount=float(data.shares * data.price),
+            commission=float(data.commission),
             transaction_date=data.transaction_date or datetime.now(),
             notes=data.notes,
         )
@@ -654,26 +730,19 @@ class PortfolioService:
             # Create new holding
             holding = Holding(
                 portfolio_id=portfolio_id,
-                stock_symbol=data.stock_symbol,
-                shares=data.shares,
-                average_cost=data.price,
-                first_purchase_date=(
-                    data.transaction_date.date()
-                    if data.transaction_date
-                    else datetime.now().date()
-                ),
-                last_update_date=datetime.now(),
+                stock_code=data.stock_symbol,
+                shares=int(data.shares),
+                average_price=float(data.price),
             )
             holding = await self.holding_repo.create(holding)
         else:
-            # Update existing holding with weighted average cost
+            # Update existing holding with weighted average price
             total_shares = Decimal(str(holding.shares)) + data.shares
             total_cost = (
-                Decimal(str(holding.shares)) * Decimal(str(holding.average_cost))
+                Decimal(str(holding.shares)) * Decimal(str(holding.average_price))
             ) + (data.shares * data.price)
-            holding.shares = total_shares
-            holding.average_cost = total_cost / total_shares
-            holding.last_update_date = datetime.now()
+            holding.shares = int(total_shares)
+            holding.average_price = float(total_cost / total_shares)
             holding = await self.holding_repo.update(holding)
 
         return holding
@@ -692,8 +761,7 @@ class PortfolioService:
             )
 
         # Reduce shares
-        holding.shares = Decimal(str(holding.shares)) - data.shares
-        holding.last_update_date = datetime.now()
+        holding.shares = int(Decimal(str(holding.shares)) - data.shares)
         holding = await self.holding_repo.update(holding)
 
         return holding
