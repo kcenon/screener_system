@@ -1,14 +1,16 @@
 """Tests for the push notification service."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 import pytest_asyncio
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models.push_subscription import PushSubscription
 from app.services.push_service import PushService
+
+# Dummy test values (not real keys)
+DUMMY_P256DH = "DUMMY_p256dh_test_value"
+DUMMY_AUTH = "DUMMY_auth_test_value"
 
 
 class TestPushService:
@@ -26,16 +28,16 @@ class TestPushService:
         sub = await push_service.subscribe(
             user_id=test_user.id,
             endpoint="https://push.example.com/sub/abc123",
-            p256dh_key="test-p256dh-key",
-            auth_key="test-auth-key",
+            p256dh_key=DUMMY_P256DH,
+            auth_key=DUMMY_AUTH,
             user_agent="TestBrowser/1.0",
         )
 
         assert sub.id is not None
         assert sub.user_id == test_user.id
         assert sub.endpoint == "https://push.example.com/sub/abc123"
-        assert sub.p256dh_key == "test-p256dh-key"
-        assert sub.auth_key == "test-auth-key"
+        assert sub.p256dh_key == DUMMY_P256DH
+        assert sub.auth_key == DUMMY_AUTH
         assert sub.user_agent == "TestBrowser/1.0"
 
     @pytest.mark.asyncio
@@ -45,25 +47,23 @@ class TestPushService:
         """Test that re-subscribing with same endpoint updates keys."""
         endpoint = "https://push.example.com/sub/existing"
 
-        # First subscription
         sub1 = await push_service.subscribe(
             user_id=test_user.id,
             endpoint=endpoint,
-            p256dh_key="old-key",
-            auth_key="old-auth",
+            p256dh_key="old-val",
+            auth_key="old-val",
         )
 
-        # Re-subscribe with new keys
         sub2 = await push_service.subscribe(
             user_id=test_user.id,
             endpoint=endpoint,
-            p256dh_key="new-key",
-            auth_key="new-auth",
+            p256dh_key="new-val",
+            auth_key="new-val",
         )
 
         assert sub2.id == sub1.id
-        assert sub2.p256dh_key == "new-key"
-        assert sub2.auth_key == "new-auth"
+        assert sub2.p256dh_key == "new-val"
+        assert sub2.auth_key == "new-val"
 
     @pytest.mark.asyncio
     async def test_unsubscribe_removes_subscription(
@@ -75,14 +75,13 @@ class TestPushService:
         await push_service.subscribe(
             user_id=test_user.id,
             endpoint=endpoint,
-            p256dh_key="key",
-            auth_key="auth",
+            p256dh_key=DUMMY_P256DH,
+            auth_key=DUMMY_AUTH,
         )
 
         removed = await push_service.unsubscribe(test_user.id, endpoint)
         assert removed is True
 
-        # Verify it's gone
         subs = await push_service.get_user_subscriptions(test_user.id)
         assert len(subs) == 0
 
@@ -103,7 +102,7 @@ class TestPushService:
             await push_service.subscribe(
                 user_id=test_user.id,
                 endpoint=f"https://push.example.com/sub/{i}",
-                p256dh_key=f"key-{i}",
+                p256dh_key=f"p256dh-{i}",
                 auth_key=f"auth-{i}",
             )
 
@@ -140,8 +139,8 @@ class TestPushService:
         await push_service.subscribe(
             user_id=test_user.id,
             endpoint="https://push.example.com/sub/1",
-            p256dh_key="key1",
-            auth_key="auth1",
+            p256dh_key=DUMMY_P256DH,
+            auth_key=DUMMY_AUTH,
         )
 
         with (
