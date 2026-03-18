@@ -97,9 +97,7 @@ class TestPushService:
         assert removed is False
 
     @pytest.mark.asyncio
-    async def test_get_user_subscriptions(
-        self, push_service: PushService, test_user
-    ):
+    async def test_get_user_subscriptions(self, push_service: PushService, test_user):
         """Test retrieving all user subscriptions."""
         for i in range(3):
             await push_service.subscribe(

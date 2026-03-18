@@ -120,11 +120,13 @@ class PushService:
         if not subscriptions:
             return 0
 
-        payload = json.dumps({
-            "title": title,
-            "body": body,
-            "url": url,
-        })
+        payload = json.dumps(
+            {
+                "title": title,
+                "body": body,
+                "url": url,
+            }
+        )
 
         vapid_claims = {"sub": settings.VAPID_CLAIMS_EMAIL}
         success_count = 0
@@ -161,9 +163,7 @@ class PushService:
                         f"Push subscription {sub.id} expired (HTTP {code}), removing"
                     )
                 else:
-                    logger.error(
-                        f"Failed to send push to subscription {sub.id}: {e}"
-                    )
+                    logger.error(f"Failed to send push to subscription {sub.id}: {e}")
             except Exception as e:
                 logger.error(f"Unexpected error sending push to {sub.id}: {e}")
 

@@ -183,7 +183,9 @@ class PushSubscriptionResponse(BaseModel):
     id: int = Field(..., description="Subscription ID")
     endpoint: str = Field(..., description="Push service URL")
     created_at: datetime = Field(..., description="Subscription creation timestamp")
-    message: str = Field("Subscription registered successfully", description="Status message")
+    message: str = Field(
+        "Subscription registered successfully", description="Status message"
+    )
 
     class Config:
         from_attributes = True
