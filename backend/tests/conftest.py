@@ -51,7 +51,15 @@ for module_name in [
     try:
         __import__(module_name)
     except ImportError:
-        sys.modules[module_name] = MagicMock()
+        mock = MagicMock()
+        # numpy mock needs real types for isinstance() checks used by
+        # Pydantic/SQLAlchemy (e.g., isinstance(val, np.bool_))
+        if module_name == "numpy":
+            mock.bool_ = bool
+            mock.integer = int
+            mock.floating = float
+            mock.ndarray = type("ndarray", (), {})
+        sys.modules[module_name] = mock
 
 import app.db.models  # noqa: F401, E402
 import app.middleware.rate_limit as rl_module  # noqa: E402
