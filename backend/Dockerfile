@@ -1,6 +1,9 @@
 # ============================================================================
 # Stock Screening Platform - Backend Dockerfile
 # ============================================================================
+# Build args:
+#   PYTHON_VERSION  - Python version (default: 3.11)
+#   INSTALL_ML      - Install ML dependencies (default: false)
 
 ARG PYTHON_VERSION=3.11
 
@@ -25,19 +28,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # ============================================================================
-# STAGE 2: Dependencies
+# STAGE 2: Core Dependencies
 # ============================================================================
 
 FROM base as dependencies
 
+ARG INSTALL_ML=false
+
 WORKDIR /tmp
 
-# Copy requirements file
+# Copy requirement files
 COPY requirements.txt .
+COPY requirements-ml.txt .
 
-# Install Python dependencies
+# Install Python dependencies (core or core+ML)
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    if [ "$INSTALL_ML" = "true" ]; then \
+        pip install -r requirements-ml.txt; \
+    else \
+        pip install -r requirements.txt; \
+    fi
 
 # ============================================================================
 # STAGE 3: Development

@@ -2,13 +2,26 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-import mlflow
-import numpy as np
-
 from app.core.cache import cache_manager
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
+
+# ML dependencies are optional — core API runs without them
+try:
+    import mlflow
+    import numpy as np
+
+    ML_AVAILABLE = True
+except ImportError:
+    ML_AVAILABLE = False
+    logger.info("ML dependencies not installed. ML endpoints will return 503.")
+
+
+class MLUnavailableError(Exception):
+    """Raised when ML libraries are not installed"""
+
+    pass
 
 
 class ModelService:
@@ -20,8 +33,18 @@ class ModelService:
         self.features = None
         self.preprocessing_pipeline = None
 
+    def _require_ml(self):
+        """Check ML availability, raise if not installed"""
+        if not ML_AVAILABLE:
+            raise MLUnavailableError(
+                "ML dependencies are not installed. "
+                "Install with: pip install -r requirements-ml.txt"
+            )
+
     def load_production_model(self):
         """Load production model from MLflow"""
+        self._require_ml()
+
         try:
             # In a real scenario, we would connect to a remote MLflow server.
             # For this implementation, we assume local or configured URI.
@@ -84,7 +107,12 @@ class ModelService:
 
         Returns:
             Dict containing prediction details
+
+        Raises:
+            MLUnavailableError: If ML dependencies are not installed
         """
+        self._require_ml()
+
         # Check cache first
         cache_key = f"prediction:{stock_code}:{self.model_version}:{horizon}"
         cached = await cache_manager.get(cache_key)
@@ -171,6 +199,8 @@ class ModelService:
         self, stock_codes: List[str], horizon: str = "1d"
     ) -> List[Dict]:
         """Generate predictions for multiple stocks"""
+        self._require_ml()
+
         results = []
         for code in stock_codes[:100]:  # Limit to 100
             try:
@@ -188,6 +218,7 @@ class ModelService:
             "version": str(self.model_version) if self.model_version else "None",
             "stage": "Production",
             "features": self.features or [],
+            "ml_available": ML_AVAILABLE,
             "mlflow_uri": getattr(settings, "MLFLOW_TRACKING_URI", "Not Configured"),
         }
 

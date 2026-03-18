@@ -1,11 +1,19 @@
+import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import numpy as np
 import pytest
 
-from app.services.ml_service import ModelService
+# Skip entire module when numpy is mocked (not real)
+np = sys.modules.get("numpy")
+_numpy_is_real = np is not None and hasattr(np, "__version__")
+
+if _numpy_is_real:
+    import numpy as np  # noqa: F811
+
+from app.services.ml_service import ModelService  # noqa: E402
 
 
+@pytest.mark.skipif(not _numpy_is_real, reason="Requires real numpy (not mocked)")
 class TestModelService:
     @pytest.fixture
     def model_service(self):

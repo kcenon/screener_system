@@ -64,6 +64,7 @@ services:
       dockerfile: Dockerfile
       args:
         PYTHON_VERSION: 3.11
+        INSTALL_ML: ${INSTALL_ML:-false}
     container_name: screener_backend
     restart: unless-stopped
     environment:
@@ -118,6 +119,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        INSTALL_ML: "true"
     container_name: screener_celery_worker
     restart: unless-stopped
     environment:

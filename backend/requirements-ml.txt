@@ -1,0 +1,36 @@
+# ============================================================================
+# Stock Screening Platform - ML/AI Dependencies
+# ============================================================================
+# Install on top of core: pip install -r requirements-ml.txt
+#
+# Required for:
+#   - ML model training and serving (app/ml/, app/services/ml_service.py)
+#   - Feature engineering pipeline (app/ml/feature_engineering.py)
+#   - Chart pattern recognition CNN (app/ml/models/pattern_cnn.py)
+#   - Airflow DAGs for model retraining (airflow/dags/)
+
+# Core dependencies
+-r requirements.txt
+
+# Data Processing
+pandas==2.3.3
+numpy==2.4.3
+scipy==1.17.1  # Upgraded: numpy 2.x compatibility
+
+# Machine Learning
+scikit-learn==1.8.0
+lightgbm==4.6.0
+xgboost==3.2.0
+optuna==4.7.0
+
+# Deep Learning
+tensorflow==2.21.0  # Upgraded: numpy 2.x compatibility
+keras==3.13.2  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-xfhp, GHSA-c9rc-mg46-23w3)
+
+# ML Experiment Tracking
+mlflow==3.10.1  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, path traversal, DoS)
+mcp>=1.23.0  # Security: Fixed DNS rebinding vulnerability (CVE-2025-66416) - transitive dep of mlflow
+
+# Visualization & Image Processing
+matplotlib==3.10.8  # Upgraded: numpy 2.x compatibility
+pillow==12.1.1  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
