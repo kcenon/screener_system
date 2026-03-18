@@ -23,3 +23,5 @@ cbcf6a2376e9b768fd2200a95f25dd7c87181076:backend/tests/core/test_security.py:gen
 # Push subscription test dummy values (not real keys)
 5a1a10e89e1d3152d1dd3471b3ac48f168f920a4:backend/tests/services/test_push_service.py:generic-api-key:29
 5a1a10e89e1d3152d1dd3471b3ac48f168f920a4:backend/tests/services/test_push_service.py:generic-api-key:37
+bca7b622ba250dd970f0cd9c60ab70b3948e3338:backend/tests/services/test_push_service.py:generic-api-key:29
+bca7b622ba250dd970f0cd9c60ab70b3948e3338:backend/tests/services/test_push_service.py:generic-api-key:37
