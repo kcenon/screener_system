@@ -20,6 +20,7 @@ on:
 permissions:
   contents: read
   packages: read
+  deployments: write
 
 env:
   REGISTRY: ghcr.io
@@ -53,6 +54,19 @@ jobs:
           else
             echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Record deploy start time
+        id: deploy_start
+        run: echo "timestamp=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub deployment status (in_progress)
+        id: deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ github.token }}
+          environment: staging
+          initial-status: in_progress
+          ref: ${{ github.sha }}
 
       - name: Copy deployment files to staging server
         uses: appleboy/scp-action@v0.1.7
@@ -117,6 +131,23 @@ jobs:
             echo "Health check failed after $MAX_RETRIES attempts"
             exit 1
 
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
+          environment-url: ${{ vars.STAGING_URL || 'https://staging.screener.example.com' }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: failure
+
       - name: Rollback on failure
         if: failure()
         uses: appleboy/ssh-action@v1.2.0
@@ -133,6 +164,57 @@ jobs:
               echo "Deploy script not found, manual rollback required"
             fi
 
+      - name: Calculate deployment duration
+        id: duration
+        if: always()
+        run: |
+          START=${{ steps.deploy_start.outputs.timestamp }}
+          END=$(date +%s)
+          SECONDS=$((END - START))
+          echo "seconds=$SECONDS" >> "$GITHUB_OUTPUT"
+          printf "display=%dm %ds\n" $((SECONDS / 60)) $((SECONDS % 60)) >> "$GITHUB_OUTPUT"
+
+      - name: Notify Slack (staging)
+        if: always() && vars.SLACK_WEBHOOK_URL
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          webhook: ${{ vars.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "${{ job.status == 'success' && 'Staging deployment succeeded' || 'Staging deployment failed' }}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ job.status == 'success' && 'Staging Deployment Succeeded' || 'Staging Deployment Failed' }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Environment:*\nstaging"},
+                    {"type": "mrkdwn", "text": "*Status:*\n${{ job.status }}"},
+                    {"type": "mrkdwn", "text": "*Commit:*\n`${{ github.sha }}`"},
+                    {"type": "mrkdwn", "text": "*Author:*\n${{ github.actor }}"},
+                    {"type": "mrkdwn", "text": "*Duration:*\n${{ steps.duration.outputs.display }}"},
+                    {"type": "mrkdwn", "text": "*Image Tag:*\n`${{ steps.tag.outputs.tag }}`"}
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "View Run"},
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+
       - name: Deployment summary
         if: always()
         run: |
@@ -144,6 +226,7 @@ jobs:
           echo "| Image Tag | \`${{ steps.tag.outputs.tag }}\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Triggered by | ${{ github.actor }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Duration | ${{ steps.duration.outputs.display }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Status | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
 
   # ==========================================================================
@@ -172,6 +255,19 @@ jobs:
           else
             echo "tag=${{ github.sha }}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Record deploy start time
+        id: deploy_start
+        run: echo "timestamp=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub deployment status (in_progress)
+        id: deployment
+        uses: chrnorm/deployment-action@v2
+        with:
+          token: ${{ github.token }}
+          environment: production
+          initial-status: in_progress
+          ref: ${{ github.sha }}
 
       - name: Copy deployment files to production server
         uses: appleboy/scp-action@v0.1.7
@@ -250,6 +346,23 @@ jobs:
             echo "Health check failed after $MAX_RETRIES attempts"
             exit 1
 
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
+          environment-url: ${{ vars.PRODUCTION_URL || 'https://screener.example.com' }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: failure
+
       - name: Rollback on failure
         if: failure()
         uses: appleboy/ssh-action@v1.2.0
@@ -266,6 +379,57 @@ jobs:
               echo "Deploy script not found, manual rollback required"
             fi
 
+      - name: Calculate deployment duration
+        id: duration
+        if: always()
+        run: |
+          START=${{ steps.deploy_start.outputs.timestamp }}
+          END=$(date +%s)
+          SECONDS=$((END - START))
+          echo "seconds=$SECONDS" >> "$GITHUB_OUTPUT"
+          printf "display=%dm %ds\n" $((SECONDS / 60)) $((SECONDS % 60)) >> "$GITHUB_OUTPUT"
+
+      - name: Notify Slack (production)
+        if: always() && vars.SLACK_WEBHOOK_URL
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          webhook: ${{ vars.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "${{ job.status == 'success' && 'Production deployment succeeded' || 'Production deployment failed' }}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ job.status == 'success' && 'Production Deployment Succeeded' || 'Production Deployment Failed' }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Environment:*\nproduction"},
+                    {"type": "mrkdwn", "text": "*Status:*\n${{ job.status }}"},
+                    {"type": "mrkdwn", "text": "*Commit:*\n`${{ github.sha }}`"},
+                    {"type": "mrkdwn", "text": "*Author:*\n${{ github.actor }}"},
+                    {"type": "mrkdwn", "text": "*Duration:*\n${{ steps.duration.outputs.display }}"},
+                    {"type": "mrkdwn", "text": "*Image Tag:*\n`${{ steps.tag.outputs.tag }}`"}
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "View Run"},
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+
       - name: Deployment summary
         if: always()
         run: |
@@ -277,4 +441,5 @@ jobs:
           echo "| Image Tag | \`${{ steps.tag.outputs.tag }}\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Commit | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Triggered by | ${{ github.actor }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Duration | ${{ steps.duration.outputs.display }} |" >> "$GITHUB_STEP_SUMMARY"
           echo "| Status | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
