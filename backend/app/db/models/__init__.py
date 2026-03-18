@@ -10,12 +10,12 @@ from app.db.models.market_index import MarketIndex
 from app.db.models.ml_feature import MLFeature
 from app.db.models.notification import Notification
 from app.db.models.notification_preference import NotificationPreference
-from app.db.models.push_subscription import PushSubscription
 from app.db.models.oauth_state import OAuthState
 from app.db.models.password_reset_token import PasswordResetToken
 from app.db.models.payment import Payment, PaymentStatus, PaymentType
 from app.db.models.payment_method import PaymentMethod, PaymentMethodType
 from app.db.models.portfolio import Portfolio
+from app.db.models.push_subscription import PushSubscription
 from app.db.models.social_account import OAuthProvider, SocialAccount
 from app.db.models.stock import Stock
 from app.db.models.stripe_webhook_event import StripeWebhookEvent
