@@ -13,7 +13,7 @@ from app.schemas.ai import (
 )
 from app.schemas.pattern import AlertConfigCreate, AlertConfigResponse, PatternResponse
 from app.services.ai_service import AIService
-from app.services.ml_service import model_service
+from app.services.ml_service import MLUnavailableError, model_service
 from app.services.pattern_recognition_service import pattern_service
 
 logger = logging.getLogger(__name__)
@@ -39,6 +39,8 @@ async def predict_stock(
     try:
         prediction = await model_service.predict(stock_code, horizon)
         return prediction
+    except MLUnavailableError as e:
+        raise HTTPException(status_code=503, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
@@ -89,10 +91,13 @@ async def predict_batch(
             detail="Batch size exceeds limit (max 100 stocks)",
         )
 
-    predictions = await model_service.predict_batch(
-        request.stock_codes, request.horizon
-    )
-    return predictions
+    try:
+        predictions = await model_service.predict_batch(
+            request.stock_codes, request.horizon
+        )
+        return predictions
+    except MLUnavailableError as e:
+        raise HTTPException(status_code=503, detail=str(e))
 
 
 @router.get("/model/info", response_model=ModelInfoResponse)
