@@ -47,6 +47,7 @@ for module_name in [
     "PIL",
     "PIL.Image",
     "joblib",
+    "pywebpush",
 ]:
     try:
         __import__(module_name)

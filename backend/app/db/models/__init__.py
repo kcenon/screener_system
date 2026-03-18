@@ -10,6 +10,7 @@ from app.db.models.market_index import MarketIndex
 from app.db.models.ml_feature import MLFeature
 from app.db.models.notification import Notification
 from app.db.models.notification_preference import NotificationPreference
+from app.db.models.push_subscription import PushSubscription
 from app.db.models.oauth_state import OAuthState
 from app.db.models.password_reset_token import PasswordResetToken
 from app.db.models.payment import Payment, PaymentStatus, PaymentType
@@ -57,6 +58,7 @@ __all__ = [
     "PaymentType",
     "PeriodType",
     "Portfolio",
+    "PushSubscription",
     "ResourceType",
     "SocialAccount",
     "Stock",

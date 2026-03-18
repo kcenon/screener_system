@@ -157,6 +157,54 @@ class NotificationPreferenceResponse(BaseModel):
         from_attributes = True
 
 
+class PushSubscriptionRequest(BaseModel):
+    """Schema for registering a browser push subscription."""
+
+    endpoint: str = Field(
+        ...,
+        description="Push service URL from PushSubscription",
+        max_length=2048,
+    )
+    p256dh: str = Field(
+        ...,
+        description="Public key for message encryption (base64url)",
+        max_length=256,
+    )
+    auth: str = Field(
+        ...,
+        description="Authentication secret (base64url)",
+        max_length=256,
+    )
+
+
+class PushSubscriptionResponse(BaseModel):
+    """Schema for push subscription response."""
+
+    id: int = Field(..., description="Subscription ID")
+    endpoint: str = Field(..., description="Push service URL")
+    created_at: datetime = Field(..., description="Subscription creation timestamp")
+    message: str = Field("Subscription registered successfully", description="Status message")
+
+    class Config:
+        from_attributes = True
+
+
+class PushUnsubscribeRequest(BaseModel):
+    """Schema for removing a push subscription."""
+
+    endpoint: str = Field(
+        ...,
+        description="Push service URL to unsubscribe",
+        max_length=2048,
+    )
+
+
+class PushUnsubscribeResponse(BaseModel):
+    """Schema for unsubscribe response."""
+
+    message: str = Field(..., description="Status message")
+
+
 class NotificationPreferenceUpdate(BaseModel):
     """Schema for updating notification preferences"""
 

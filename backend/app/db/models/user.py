@@ -95,6 +95,12 @@ class User(BaseModel):
         cascade="all, delete-orphan",
         lazy="select",
     )
+    push_subscriptions = relationship(
+        "PushSubscription",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="select",
+    )
     notification_preference = relationship(
         "NotificationPreference",
         back_populates="user",
