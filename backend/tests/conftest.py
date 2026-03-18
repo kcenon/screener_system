@@ -37,8 +37,14 @@ for module_name in [
     "sklearn.model_selection",
     "scipy",
     "scipy.stats",
+    "scipy.signal",
     "tensorflow",
     "keras",
+    "matplotlib",
+    "matplotlib.pyplot",
+    "matplotlib.patches",
+    "matplotlib.figure",
+    "joblib",
 ]:
     try:
         __import__(module_name)
