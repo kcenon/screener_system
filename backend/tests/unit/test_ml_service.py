@@ -10,7 +10,7 @@ _numpy_is_real = np is not None and hasattr(np, "__version__")
 if _numpy_is_real:
     import numpy as np  # noqa: F811
 
-from app.services.ml_service import ModelService
+from app.services.ml_service import ModelService  # noqa: E402
 
 
 @pytest.mark.skipif(not _numpy_is_real, reason="Requires real numpy (not mocked)")
