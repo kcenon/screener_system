@@ -44,6 +44,8 @@ for module_name in [
     "matplotlib.pyplot",
     "matplotlib.patches",
     "matplotlib.figure",
+    "PIL",
+    "PIL.Image",
     "joblib",
 ]:
     try:
