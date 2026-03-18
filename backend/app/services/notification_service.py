@@ -264,23 +264,49 @@ class NotificationService:
         self,
         notification: Notification,
     ) -> bool:
-        """Send push notification (placeholder).
+        """Send push notification via Web Push API.
 
-        This is a placeholder for future push notification integration
-        (Firebase Cloud Messaging, Apple Push Notification Service, etc.).
+        Delivers the notification to all registered browser push
+        subscriptions for the user.
 
         Args:
             notification: Notification to send.
 
         Returns:
-            True if push notification was sent successfully.
+            True if push notification was sent to at least one subscription.
         """
-        # Push notification delivery is tracked in issue #583
-        logger.debug(
-            f"Push notification for notification {notification.id} skipped "
-            "(Web Push API support not yet enabled — see issue #583)"
-        )
-        return False
+        try:
+            from app.services.push_service import PushService
+
+            push_service = PushService(self.session)
+
+            if not push_service.is_configured():
+                logger.debug(
+                    f"Push notification for {notification.id} skipped "
+                    "(VAPID keys not configured)"
+                )
+                return False
+
+            count = await push_service.send_push(
+                user_id=notification.user_id,
+                title=notification.title,
+                body=notification.message,
+            )
+
+            if count > 0:
+                logger.info(
+                    f"Push notification {notification.id} sent to "
+                    f"{count} subscription(s) for user {notification.user_id}"
+                )
+                return True
+
+            return False
+        except Exception as e:
+            logger.error(
+                f"Error sending push notification {notification.id}: {str(e)}",
+                exc_info=True,
+            )
+            return False
 
     async def _deliver_after_delay(
         self,

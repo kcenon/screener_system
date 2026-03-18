@@ -229,6 +229,14 @@ class Settings(BaseSettings):
     PRO_PRICE_MONTHLY: float = 29.99
     PRO_PRICE_YEARLY: float = 299.00
 
+    # ========================================================================
+    # WEB PUSH (VAPID)
+    # ========================================================================
+
+    VAPID_PRIVATE_KEY: str = ""
+    VAPID_PUBLIC_KEY: str = ""
+    VAPID_CLAIMS_EMAIL: str = ""  # mailto:admin@example.com
+
     # AI / LLM
     OPENAI_API_KEY: Optional[str] = None
     ANTHROPIC_API_KEY: Optional[str] = None

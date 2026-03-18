@@ -23,8 +23,13 @@ from app.schemas.notification import (
     NotificationPreferenceUpdate,
     NotificationResponse,
     NotificationUnreadCountResponse,
+    PushSubscriptionRequest,
+    PushSubscriptionResponse,
+    PushUnsubscribeRequest,
+    PushUnsubscribeResponse,
 )
 from app.services.notification_service import NotificationService
+from app.services.push_service import PushService
 
 logger = logging.getLogger(__name__)
 
@@ -372,3 +377,62 @@ async def update_preferences(
     logger.info(f"Updated notification preferences for user {current_user.id}")
 
     return NotificationPreferenceResponse.model_validate(preferences)
+
+
+# ============================================================================
+# Push Subscription Endpoints
+# ============================================================================
+
+
+@router.post(
+    "/push-subscription",
+    response_model=PushSubscriptionResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Register push subscription",
+    description="Register a browser push notification subscription for the authenticated user.",
+)
+async def subscribe_push(
+    subscription: PushSubscriptionRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> PushSubscriptionResponse:
+    """Register a browser push subscription."""
+    push_service = PushService(db)
+    sub = await push_service.subscribe(
+        user_id=current_user.id,
+        endpoint=subscription.endpoint,
+        p256dh_key=subscription.p256dh,
+        auth_key=subscription.auth,
+    )
+
+    return PushSubscriptionResponse(
+        id=sub.id,
+        endpoint=sub.endpoint,
+        created_at=sub.created_at,
+        message="Push subscription registered successfully",
+    )
+
+
+@router.delete(
+    "/push-subscription",
+    response_model=PushUnsubscribeResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Remove push subscription",
+    description="Remove a browser push notification subscription.",
+)
+async def unsubscribe_push(
+    request: PushUnsubscribeRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> PushUnsubscribeResponse:
+    """Remove a push subscription."""
+    push_service = PushService(db)
+    removed = await push_service.unsubscribe(current_user.id, request.endpoint)
+
+    if not removed:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Push subscription not found",
+        )
+
+    return PushUnsubscribeResponse(message="Push subscription removed successfully")
