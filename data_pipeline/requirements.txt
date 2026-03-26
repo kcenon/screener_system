@@ -21,7 +21,7 @@ numpy==2.4.3
 
 # HTTP Client
 # =============================================================================
-requests==2.32.5
+requests==2.33.0
 httpx==0.28.1  # Async HTTP client
 
 # Cache
