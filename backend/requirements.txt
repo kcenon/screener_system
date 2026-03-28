@@ -46,7 +46,7 @@ aiohttp==3.13.3  # Security: Fixed zip bomb DoS & request smuggling (CVE-2025-69
 
 # Monitoring & Logging
 prometheus-client==0.24.1
-sentry-sdk[fastapi]==2.54.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
+sentry-sdk[fastapi]==2.55.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
 
 # Testing
 pytest==9.0.2
