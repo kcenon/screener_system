@@ -21,7 +21,7 @@ scipy==1.17.1  # Upgraded: numpy 2.x compatibility
 scikit-learn==1.8.0
 lightgbm==4.6.0
 xgboost==3.2.0
-optuna==4.7.0
+optuna==4.8.0
 
 # Deep Learning
 tensorflow==2.21.0  # Upgraded: numpy 2.x compatibility
