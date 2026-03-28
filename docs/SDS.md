@@ -28,8 +28,9 @@
 8. [Performance Design](#8-performance-design)
 9. [Deployment Architecture](#9-deployment-architecture)
 10. [Technology Stack](#10-technology-stack)
-11. [Design Decisions](#11-design-decisions)
-12. [Appendices](#12-appendices)
+11. [Documentation Architecture](#11-documentation-architecture)
+12. [Design Decisions](#12-design-decisions)
+13. [Appendices](#13-appendices)
 
 ---
 
