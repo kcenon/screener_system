@@ -55,7 +55,8 @@
   "overrides": {
     "serialize-javascript": ">=7.0.3",
     "markdown-it": ">=14.1.1",
-    "flatted": ">=3.4.0",
+    "flatted": ">=3.4.2",
+    "picomatch": ">=2.3.2",
     "undici": ">=7.24.0",
     "jsdom": {
       "html-encoding-sniffer": "^3"
