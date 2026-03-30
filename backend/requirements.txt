@@ -42,7 +42,7 @@ pywebpush==2.3.0
 
 # HTTP Requests
 httpx==0.28.1
-aiohttp==3.13.3  # Security: Fixed zip bomb DoS & request smuggling (CVE-2025-69223~69230, CVE-2025-53643)
+aiohttp==3.13.4  # Security: Fixed zip bomb DoS & request smuggling (CVE-2025-69223~69230, CVE-2025-53643)
 
 # Monitoring & Logging
 prometheus-client==0.24.1
