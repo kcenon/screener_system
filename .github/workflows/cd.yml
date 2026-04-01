@@ -176,7 +176,7 @@ jobs:
 
       - name: Notify Slack (staging)
         if: always() && vars.SLACK_WEBHOOK_URL
-        uses: slackapi/slack-github-action@v2.1.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
           webhook: ${{ vars.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -391,7 +391,7 @@ jobs:
 
       - name: Notify Slack (production)
         if: always() && vars.SLACK_WEBHOOK_URL
-        uses: slackapi/slack-github-action@v2.1.0
+        uses: slackapi/slack-github-action@v3.0.1
         with:
           webhook: ${{ vars.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
