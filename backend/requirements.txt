@@ -35,14 +35,14 @@ celery[redis]==5.6.2
 
 # LLM API Clients (lightweight, used by core AI analysis endpoints)
 openai==2.29.0  # Upgraded: httpx 0.28.x compatibility (fixes proxies parameter issue)
-anthropic==0.86.0  # Upgraded: httpx 0.28.x compatibility (fixes proxies parameter issue)
+anthropic==0.89.0  # Security: Fixed CVE-2026-34450, CVE-2026-34452
 tenacity==9.1.4
 jinja2==3.1.6
 pywebpush==2.3.0
 
 # HTTP Requests
 httpx==0.28.1
-aiohttp==3.13.3  # Security: Fixed zip bomb DoS & request smuggling (CVE-2025-69223~69230, CVE-2025-53643)
+aiohttp==3.13.5  # Security: Fixed CVE-2026-34515~34519 and prior CVEs
 
 # Monitoring & Logging
 prometheus-client==0.24.1
