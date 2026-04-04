@@ -31,7 +31,7 @@ stripe==14.4.1
 
 # Background Tasks
 # Note: Celery 5.4.0+ supports redis 5.0+
-celery[redis]==5.6.2
+celery[redis]==5.6.3
 
 # LLM API Clients (lightweight, used by core AI analysis endpoints)
 openai==2.29.0  # Upgraded: httpx 0.28.x compatibility (fixes proxies parameter issue)
