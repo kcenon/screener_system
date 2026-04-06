@@ -33,4 +33,4 @@ mcp>=1.23.0  # Security: Fixed DNS rebinding vulnerability (CVE-2025-66416) - tr
 
 # Visualization & Image Processing
 matplotlib==3.10.8  # Upgraded: numpy 2.x compatibility
-pillow==12.1.1  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
+pillow==12.2.0  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
