@@ -46,7 +46,7 @@ aiohttp==3.13.5  # Security: Fixed CVE-2026-34515~34519 and prior CVEs
 
 # Monitoring & Logging
 prometheus-client==0.24.1
-sentry-sdk[fastapi]==2.56.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
+sentry-sdk[fastapi]==2.57.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
 
 # Testing
 pytest==9.0.2
