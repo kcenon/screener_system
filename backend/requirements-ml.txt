@@ -25,7 +25,7 @@ optuna==4.8.0
 
 # Deep Learning
 tensorflow==2.21.0  # Upgraded: numpy 2.x compatibility
-keras==3.13.2  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-xfhp, GHSA-c9rc-mg46-23w3)
+keras==3.14.0  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-xfhp, GHSA-c9rc-mg46-23w3)
 
 # ML Experiment Tracking
 mlflow==3.10.1  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, path traversal, DoS)
