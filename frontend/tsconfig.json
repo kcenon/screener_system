@@ -20,6 +20,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    /* TypeScript 6.0 migration: baseUrl is deprecated but still required for the path mapping below. */
+    "ignoreDeprecations": "6.0",
+
     /* Path mapping */
     "baseUrl": ".",
     "paths": {

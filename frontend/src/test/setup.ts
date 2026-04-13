@@ -8,5 +8,5 @@ afterEach(() => {
 })
 
 // Mock URL.createObjectURL and URL.revokeObjectURL (not available in jsdom)
-global.URL.createObjectURL = vi.fn(() => 'blob:mock-url')
-global.URL.revokeObjectURL = vi.fn()
+globalThis.URL.createObjectURL = vi.fn(() => 'blob:mock-url')
+globalThis.URL.revokeObjectURL = vi.fn()
