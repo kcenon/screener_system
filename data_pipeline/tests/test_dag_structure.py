@@ -21,12 +21,34 @@ def _get_schedule(dag):
     """Return the schedule string, compatible with Airflow 2.x and 3.x.
 
     Airflow 3.x removed the ``schedule_interval`` property in favour of
-    ``timetable``.  This helper falls back gracefully.
+    ``timetable``.  This helper inspects the timetable directly and returns:
+      * ``None`` for ``NullTimetable`` (``schedule=None``)
+      * the underlying cron expression for cron-based timetables
+      * the type name as a last-resort fallback
     """
+    # Airflow 2.x fast-path: ``schedule_interval`` is the canonical attribute.
     try:
         return dag.schedule_interval
     except AttributeError:
-        return dag.timetable.summary
+        pass
+
+    timetable = getattr(dag, "timetable", None)
+    if timetable is None:
+        return None
+
+    # ``NullTimetable`` corresponds to ``schedule=None``.
+    cls_name = type(timetable).__name__
+    if cls_name == "NullTimetable":
+        return None
+
+    # ``CronTriggerTimetable`` / ``CronDataIntervalTimetable`` / similar cron
+    # timetables store the expression on ``_expression`` (via ``CronMixin``).
+    expression = getattr(timetable, "_expression", None)
+    if expression is not None:
+        return expression
+
+    # Final fallback — useful for human-readable comparison in test failures.
+    return cls_name
 
 
 # ---------------------------------------------------------------------------
