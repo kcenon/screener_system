@@ -21,12 +21,52 @@ def _get_schedule(dag):
     """Return the schedule string, compatible with Airflow 2.x and 3.x.
 
     Airflow 3.x removed the ``schedule_interval`` property in favour of
-    ``timetable``.  This helper falls back gracefully.
+    ``timetable``.  This helper inspects the timetable directly and returns:
+      * ``None`` for ``NullTimetable`` (``schedule=None``)
+      * the underlying cron expression for cron-based timetables
+      * the type name as a last-resort fallback
     """
+    # Airflow 2.x fast-path: ``schedule_interval`` is the canonical attribute.
     try:
         return dag.schedule_interval
     except AttributeError:
-        return dag.timetable.summary
+        pass
+
+    timetable = getattr(dag, "timetable", None)
+    if timetable is None:
+        return None
+
+    # ``NullTimetable`` corresponds to ``schedule=None``.
+    cls_name = type(timetable).__name__
+    if cls_name == "NullTimetable":
+        return None
+
+    # Cron-based timetables: try a sequence of attributes that may carry the
+    # raw expression depending on the airflow version / serialization layer.
+    # In stock airflow 3.x the attribute is ``_expression`` (CronMixin), but
+    # serialized timetables expose ``cron`` directly, and some variants set
+    # ``summary`` as the canonical accessor.
+    for attr in ("_expression", "cron", "expression", "summary"):
+        value = getattr(timetable, attr, None)
+        if isinstance(value, str) and value:
+            return value
+
+    # ``serialize()`` returns a dict with the timetable's serializable state;
+    # extract the cron expression if present.
+    serialize = getattr(timetable, "serialize", None)
+    if callable(serialize):
+        try:
+            data = serialize()
+        except Exception:  # noqa: BLE001 — best-effort fallback
+            data = None
+        if isinstance(data, dict):
+            for key in ("expression", "cron"):
+                value = data.get(key)
+                if isinstance(value, str) and value:
+                    return value
+
+    # Final fallback — useful for human-readable comparison in test failures.
+    return cls_name
 
 
 # ---------------------------------------------------------------------------
