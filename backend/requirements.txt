@@ -27,7 +27,7 @@ pydantic[email]==2.12.5
 pydantic-settings==2.13.1  # Upgraded: Compatible with pydantic 2.11.7
 
 # Payment Processing
-stripe==15.0.0
+stripe==15.0.1
 
 # Background Tasks
 # Note: Celery 5.4.0+ supports redis 5.0+
