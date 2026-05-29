@@ -13,7 +13,7 @@
 -r requirements.txt
 
 # Data Processing
-pandas==2.3.3
+pandas==3.0.2
 numpy==2.4.4
 scipy==1.17.1  # Upgraded: numpy 2.x compatibility
 
