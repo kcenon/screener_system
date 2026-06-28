@@ -8,15 +8,7 @@ import type { StockScreeningResult } from './screening'
  * Time intervals for price history
  */
 export type PriceInterval =
-  | '1D'
-  | '1W'
-  | '1M'
-  | '3M'
-  | '6M'
-  | '1Y'
-  | '3Y'
-  | '5Y'
-  | 'ALL'
+  '1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | '3Y' | '5Y' | 'ALL'
 
 /**
  * Single candle in price history

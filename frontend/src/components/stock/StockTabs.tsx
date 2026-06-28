@@ -18,11 +18,7 @@ interface StockTabsProps {
 }
 
 type TabValue =
-  | 'overview'
-  | 'financials'
-  | 'valuation'
-  | 'technical'
-  | 'orderbook'
+  'overview' | 'financials' | 'valuation' | 'technical' | 'orderbook'
 
 /**
  * Stock Tabs Component

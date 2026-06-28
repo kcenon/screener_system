@@ -13,12 +13,7 @@ import { cn } from '@/utils/cn'
  * Available gradient presets
  */
 export type GradientPreset =
-  | 'premium'
-  | 'ai'
-  | 'hero'
-  | 'bullish'
-  | 'bearish'
-  | 'custom'
+  'premium' | 'ai' | 'hero' | 'bullish' | 'bearish' | 'custom'
 
 /**
  * Gradient configuration map
