@@ -80,7 +80,7 @@ jobs:
           overwrite: true
 
       - name: Deploy to staging via SSH
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         env:
           IMAGE_TAG: ${{ steps.tag.outputs.tag }}
           REGISTRY: ${{ env.REGISTRY }}
@@ -108,7 +108,7 @@ jobs:
               --github-actor "$GITHUB_ACTOR"
 
       - name: Verify deployment health
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.STAGING_SSH_HOST }}
           username: ${{ secrets.STAGING_SSH_USER }}
@@ -150,7 +150,7 @@ jobs:
 
       - name: Rollback on failure
         if: failure()
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.STAGING_SSH_HOST }}
           username: ${{ secrets.STAGING_SSH_USER }}
@@ -281,7 +281,7 @@ jobs:
           overwrite: true
 
       - name: Deploy to production via SSH
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         env:
           IMAGE_TAG: ${{ steps.tag.outputs.tag }}
           REGISTRY: ${{ env.REGISTRY }}
@@ -309,7 +309,7 @@ jobs:
               --github-actor "$GITHUB_ACTOR"
 
       - name: Verify deployment health
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
@@ -365,7 +365,7 @@ jobs:
 
       - name: Rollback on failure
         if: failure()
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USER }}
