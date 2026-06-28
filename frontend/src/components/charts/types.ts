@@ -9,21 +9,10 @@ import type { OHLCV } from '@/utils/indicators'
 export type ChartType = 'candlestick' | 'ohlc' | 'line' | 'area' | 'heikin-ashi'
 
 export type IndicatorType =
-  | 'sma'
-  | 'ema'
-  | 'bollinger'
-  | 'volume'
-  | 'rsi'
-  | 'macd'
-  | 'stochastic'
+  'sma' | 'ema' | 'bollinger' | 'volume' | 'rsi' | 'macd' | 'stochastic'
 
 export type DrawingTool =
-  | 'none'
-  | 'trendline'
-  | 'horizontal'
-  | 'fibonacci'
-  | 'rectangle'
-  | 'text'
+  'none' | 'trendline' | 'horizontal' | 'fibonacci' | 'rectangle' | 'text'
 
 export interface IndicatorConfig {
   id: string

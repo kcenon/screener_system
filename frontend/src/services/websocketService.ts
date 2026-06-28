@@ -20,11 +20,7 @@ import { OrderBookData } from '@/types/stock'
  * WebSocket connection state
  */
 export type WSConnectionState =
-  | 'connecting'
-  | 'connected'
-  | 'disconnecting'
-  | 'disconnected'
-  | 'error'
+  'connecting' | 'connected' | 'disconnecting' | 'disconnected' | 'error'
 
 /**
  * Subscription types supported by backend
@@ -91,10 +87,7 @@ interface ErrorMessage extends WSMessage {
  * Union type for all possible messages
  */
 type WSIncomingMessage =
-  | PriceUpdateMessage
-  | OrderBookUpdateMessage
-  | ErrorMessage
-  | WSMessage
+  PriceUpdateMessage | OrderBookUpdateMessage | ErrorMessage | WSMessage
 
 /**
  * Message handler callback type
