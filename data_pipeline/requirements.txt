@@ -16,12 +16,12 @@ psycopg2-binary==2.9.11  # PostgreSQL driver (for Airflow metadata DB)
 
 # Data Processing
 # =============================================================================
-pandas==3.0.1
+pandas==3.0.2
 numpy==2.4.4
 
 # HTTP Client
 # =============================================================================
-requests==2.33.0
+requests==2.33.1
 httpx==0.28.1  # Async HTTP client
 
 # Cache
@@ -34,5 +34,5 @@ python-dotenv==1.2.2  # Environment variable management
 
 # Testing
 # =============================================================================
-pytest==9.0.2
+pytest==9.0.3
 pytest-asyncio==0.21.1

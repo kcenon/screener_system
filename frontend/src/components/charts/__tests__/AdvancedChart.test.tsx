@@ -38,7 +38,8 @@ class MockResizeObserver {
   unobserve = vi.fn()
   disconnect = vi.fn()
 }
-global.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver
+globalThis.ResizeObserver =
+  MockResizeObserver as unknown as typeof ResizeObserver
 
 import AdvancedChart from '../AdvancedChart'
 
