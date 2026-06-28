@@ -21,12 +21,34 @@ def _get_schedule(dag):
     """Return the schedule string, compatible with Airflow 2.x and 3.x.
 
     Airflow 3.x removed the ``schedule_interval`` property in favour of
-    ``timetable``.  This helper falls back gracefully.
+    ``timetable``.  Airflow 3.2 timetable objects do not consistently expose
+    the older ``summary`` attribute, so fall back to their serialized cron
+    expression or null timetable identity.
     """
     try:
         return dag.schedule_interval
     except AttributeError:
-        return dag.timetable.summary
+        timetable = dag.timetable
+
+    summary = getattr(timetable, "summary", None)
+    if summary is not None:
+        return summary
+
+    serialize = getattr(timetable, "serialize", None)
+    serialized = serialize() if callable(serialize) else {}
+    expression = serialized.get("expression") or getattr(timetable, "_expression", None)
+    if expression is not None:
+        return expression
+
+    if timetable.__class__.__name__ == "NullTimetable":
+        return None
+
+    timetable_text = str(timetable)
+    expression_marker = "expression='"
+    if expression_marker in timetable_text:
+        return timetable_text.split(expression_marker, 1)[1].split("'", 1)[0]
+
+    return timetable_text
 
 
 # ---------------------------------------------------------------------------
