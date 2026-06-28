@@ -2,7 +2,7 @@
 # =============================================================================
 
 # Core Airflow with constraints for Python 3.11
-# Airflow 3.1.2 fixes werkzeug and flask-appbuilder vulnerabilities
+# Airflow 3.2.0 fixes werkzeug and flask-appbuilder vulnerabilities
 apache-airflow[postgres,celery]==3.2.0  # Security: Latest stable, fixes werkzeug & flask-appbuilder CVEs
 
 # Security: Override Airflow's transitive starlette dependency
