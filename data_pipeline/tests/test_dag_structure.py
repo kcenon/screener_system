@@ -43,7 +43,12 @@ def _get_schedule(dag):
     if timetable.__class__.__name__ == "NullTimetable":
         return None
 
-    return str(timetable)
+    timetable_text = str(timetable)
+    expression_marker = "expression='"
+    if expression_marker in timetable_text:
+        return timetable_text.split(expression_marker, 1)[1].split("'", 1)[0]
+
+    return timetable_text
 
 
 # ---------------------------------------------------------------------------
