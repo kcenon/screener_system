@@ -142,12 +142,7 @@ export function useEventTracking() {
       code: string,
       name: string,
       source:
-        | 'screener'
-        | 'search'
-        | 'watchlist'
-        | 'portfolio'
-        | 'direct'
-        | 'alert',
+        'screener' | 'search' | 'watchlist' | 'portfolio' | 'direct' | 'alert',
     ) => {
       analytics.track(AnalyticsEvents.STOCK_VIEWED, {
         stock_code: code,

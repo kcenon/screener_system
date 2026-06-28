@@ -44,6 +44,7 @@ export function usePullToRefresh({
 }: PullToRefreshOptions): PullToRefreshReturn {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [pullDistance, setPullDistance] = useState(0)
+  const [isPullingActive, setIsPullingActive] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const startY = useRef(0)
@@ -61,6 +62,7 @@ export function usePullToRefresh({
       if (container.scrollTop === 0) {
         startY.current = e.touches[0].clientY
         isPulling.current = true
+        setIsPullingActive(true)
       }
     },
     [disabled, isRefreshing],
@@ -86,9 +88,15 @@ export function usePullToRefresh({
   )
 
   const handleTouchEnd = useCallback(async () => {
-    if (!isPulling.current || disabled) return
+    if (!isPulling.current) return
 
     isPulling.current = false
+    setIsPullingActive(false)
+
+    if (disabled) {
+      setPullDistance(0)
+      return
+    }
 
     if (pullDistance >= threshold && !isRefreshing) {
       setIsRefreshing(true)
@@ -123,7 +131,7 @@ export function usePullToRefresh({
 
   const indicatorStyle: React.CSSProperties = {
     transform: `translateY(${pullDistance}px)`,
-    transition: isPulling.current ? 'none' : 'transform 0.3s ease-out',
+    transition: isPullingActive ? 'none' : 'transform 0.3s ease-out',
     opacity: Math.min(pullDistance / threshold, 1),
   }
 

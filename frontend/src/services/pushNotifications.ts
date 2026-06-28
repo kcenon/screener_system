@@ -9,10 +9,7 @@ interface PushSubscriptionData {
 }
 
 export type NotificationType =
-  | 'price_alert'
-  | 'watchlist'
-  | 'market'
-  | 'portfolio'
+  'price_alert' | 'watchlist' | 'market' | 'portfolio'
 
 interface NotificationPreferences {
   priceAlerts: boolean

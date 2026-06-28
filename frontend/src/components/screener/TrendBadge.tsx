@@ -4,11 +4,7 @@ import { memo, useMemo } from 'react'
  * Trend strength levels
  */
 export type TrendStrength =
-  | 'strong_up'
-  | 'up'
-  | 'neutral'
-  | 'down'
-  | 'strong_down'
+  'strong_up' | 'up' | 'neutral' | 'down' | 'strong_down'
 
 /**
  * Props for TrendBadge component
