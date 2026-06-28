@@ -12,7 +12,7 @@ starlette==1.3.1  # Security: Fixed CVE-2026-48817/48818, PYSEC-2026-161/248/249
 # Database Drivers
 # =============================================================================
 asyncpg==0.31.0  # Async PostgreSQL driver
-psycopg2-binary==2.9.11  # PostgreSQL driver (for Airflow metadata DB)
+psycopg2-binary==2.9.12  # PostgreSQL driver (for Airflow metadata DB)
 
 # Data Processing
 # =============================================================================
