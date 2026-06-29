@@ -29,7 +29,7 @@ keras==3.14.0  # Security: Fixed code execution vulnerabilities (GHSA-48g7-3x6r-
 
 # ML Experiment Tracking
 mlflow==3.11.1  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, path traversal, DoS)
-mcp>=1.23.0  # Security: Fixed DNS rebinding vulnerability (CVE-2025-66416) - transitive dep of mlflow
+mcp>=1.28.1  # Security: Fixed DNS rebinding vulnerability (CVE-2025-66416) - transitive dep of mlflow
 
 # Visualization & Image Processing
 matplotlib==3.10.8  # Upgraded: numpy 2.x compatibility
