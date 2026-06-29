@@ -68,5 +68,5 @@ pyyaml==6.0.3
 email-validator==2.3.0
 zipp>=3.19.1
 tornado>=6.4.1
-idna>=3.7
+idna>=3.18
 certifi>=2024.07.04
