@@ -23,7 +23,7 @@ redis[hiredis]==5.3.1
 python-jose[cryptography]==3.5.0  # Security: Fixed algorithm confusion and JWT bomb (PYSEC-2024-232, PYSEC-2024-233)
 bcrypt==5.0.0
 python-multipart==0.0.31  # Security: Fixed CVE-2026-53538/53539/53540 + prior multipart DoS/ReDoS CVEs
-pydantic[email]==2.12.5
+pydantic[email]==2.13.4
 pydantic-settings==2.14.2  # Security: Fixed GHSA-4xgf-cpjx-pc3j
 
 # Payment Processing
