@@ -35,4 +35,4 @@ python-dotenv==1.2.2  # Environment variable management
 # Testing
 # =============================================================================
 pytest==9.0.3
-pytest-asyncio==0.21.1
+pytest-asyncio==1.4.0
