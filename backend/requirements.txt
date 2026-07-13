@@ -46,7 +46,7 @@ aiohttp==3.14.1  # Security: Fixed PYSEC-2026-237 and CVE-2026-34993/47265/50269
 
 # Monitoring & Logging
 prometheus-client==0.24.1
-sentry-sdk[fastapi]==2.63.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
+sentry-sdk[fastapi]==2.64.0  # Security: Fixed env variable exposure (GHSA-g92j-qhmh-64v2)
 
 # Testing
 pytest==9.1.1  # Security: Fixed CVE-2025-71176 (insecure /tmp/pytest-of-{user} dir handling)
