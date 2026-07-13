@@ -7,7 +7,7 @@
 fastapi==0.135.3  # Security: Latest stable
 starlette==1.3.1  # Security: Fixed CVE-2026-48817/48818, PYSEC-2026-248/249 + prior BadHost and HTTP Range DoS CVEs
 uvicorn[standard]==0.42.0
-gunicorn==25.3.0  # Security: Fixed request smuggling (GHSA-w3h3-4rj7-4ph4, GHSA-hc5x-x2vx-497g)
+gunicorn==26.0.0  # Security: Fixed request smuggling (GHSA-w3h3-4rj7-4ph4, GHSA-hc5x-x2vx-497g)
 
 # Database
 sqlalchemy[asyncio]==2.0.51
