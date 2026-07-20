@@ -27,7 +27,7 @@ pydantic[email]==2.13.4
 pydantic-settings==2.14.2  # Security: Fixed GHSA-4xgf-cpjx-pc3j
 
 # Payment Processing
-stripe==15.0.1
+stripe==15.3.1
 
 # Background Tasks
 # Note: Celery 5.4.0+ supports redis 5.0+
