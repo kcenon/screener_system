@@ -32,5 +32,5 @@ mlflow==3.11.1  # Security: Fixed multiple CVEs (PYSEC-2025-17, PYSEC-2025-52, p
 mcp>=1.28.1  # Security: Fixed DNS rebinding vulnerability (CVE-2025-66416) - transitive dep of mlflow
 
 # Visualization & Image Processing
-matplotlib==3.10.8  # Upgraded: numpy 2.x compatibility
+matplotlib==3.11.1  # Upgraded: numpy 2.x compatibility
 pillow==12.2.0  # Security: Fixed buffer overflow (GHSA-44wm-f244-xhp3)
