@@ -247,7 +247,7 @@ jobs:
 
       - name: Attach SBOMs to Release
         if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.attach_to_release == 'true')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             ${{ env.SBOM_OUTPUT_DIR }}/sbom-complete.json
