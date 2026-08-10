@@ -7,7 +7,7 @@ apache-airflow[postgres,celery]==3.2.2  # Security: Fixed Airflow 3.2.0 CVEs and
 
 # Security: Override Airflow's transitive starlette dependency
 # Airflow pulls vulnerable starlette releases unless pinned above the fixed range
-starlette==1.3.1  # Security: Fixed CVE-2026-48817/48818, PYSEC-2026-161/248/249
+starlette==1.4.1  # Security: Fixed CVE-2026-48817/48818, PYSEC-2026-161/248/249
 
 # Database Drivers
 # =============================================================================
