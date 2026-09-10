@@ -1,3 +1,7 @@
+> Status: archived 2026-09. No further maintenance; kept for reference.
+>
+> Performance figures and feature claims in this README were written during active development and have not been re-verified.
+
 # Stock Screening Platform
 
 [![CI Pipeline](https://github.com/kcenon/screener_system/actions/workflows/ci.yml/badge.svg)](https://github.com/kcenon/screener_system/actions/workflows/ci.yml)
